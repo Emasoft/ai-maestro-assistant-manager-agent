@@ -90,10 +90,32 @@ The Emasoft Assistant Manager Agent (EAMA) is the **user's right hand** - the so
 2. **AI Maestro messages** - for short exchanges (status updates, questions)
 3. **GitHub Issues** - as permanent record and discovery mechanism
 
-## Installation
+## Installation (Production)
+
+Install from the Emasoft marketplace. Use `--scope local` to install only for the current project directory, or `--scope global` for all projects.
 
 ```bash
-claude --plugin-dir ./OUTPUT_SKILLS/assistant-manager-agent
+# Add Emasoft marketplace (first time only)
+claude plugin marketplace add emasoft-plugins --url https://github.com/Emasoft/emasoft-plugins
+
+# Install plugin (--scope local = this project only, recommended)
+claude plugin install emasoft-assistant-manager-agent@emasoft-plugins --scope local
+
+# RESTART Claude Code after installing (required!)
+```
+
+Once installed, start a session with the main agent:
+
+```bash
+claude --agent eama-assistant-manager-main-agent
+```
+
+## Development Only (--plugin-dir)
+
+`--plugin-dir` loads a plugin directly from a local directory without marketplace installation. Use only during plugin development.
+
+```bash
+claude --plugin-dir ./OUTPUT_SKILLS/emasoft-assistant-manager-agent
 ```
 
 ## Validation
