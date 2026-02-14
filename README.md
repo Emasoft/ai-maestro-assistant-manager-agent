@@ -99,6 +99,6 @@ claude --plugin-dir ./OUTPUT_SKILLS/assistant-manager-agent
 ## Validation
 
 ```bash
-cd OUTPUT_SKILLS/assistant-manager-agent
-uv run python scripts/eama_validate_plugin.py --verbose
+cd OUTPUT_SKILLS/emasoft-assistant-manager-agent
+uv run python scripts/validate_plugin.py . --verbose
 ```

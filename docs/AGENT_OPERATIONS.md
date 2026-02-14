@@ -337,7 +337,7 @@ All projects use the canonical **8-column kanban system** on GitHub Projects:
 | `scripts/pre-push-hook.py` | Pre-push validation (manifest, hooks, lint, Unicode compliance) |
 | `scripts/eama_approve_plan.py` | Plan approval workflow |
 | `scripts/eama_orchestration_status.py` | Orchestration status reporting |
-| `scripts/eama_validate_plugin.py` | Plugin structure validation |
+| `scripts/validate_plugin.py` | Plugin structure validation |
 | `scripts/eama_download.py` | Plugin download utility |
 
 ---
