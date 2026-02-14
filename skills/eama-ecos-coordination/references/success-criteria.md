@@ -1,5 +1,19 @@
 # Success Criteria for Assistant Manager Operations
 
+
+## Contents
+
+- [Success: User Request Understood](#success-user-request-understood)
+- [Success: Project Creation Complete](#success-project-creation-complete)
+- [Success: ECOS Spawned and Ready](#success-ecos-spawned-and-ready)
+- [Success: Approval Processed](#success-approval-processed)
+- [Success: Status Reported](#success-status-reported)
+- [General Success Verification Principles](#general-success-verification-principles)
+  - [Before Reporting Completion](#before-reporting-completion)
+  - [When Self-Checks Fail](#when-self-checks-fail)
+  - [Evidence Standards](#evidence-standards)
+  - [Completion vs. Progress](#completion-vs-progress)
+
 Each operation has clear success criteria. Verify these before reporting completion to the user.
 
 ---

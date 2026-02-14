@@ -1,5 +1,36 @@
 # Creating ECOS Procedure
 
+
+## Contents
+
+- [Overview](#overview)
+- [Key Principles](#key-principles)
+- [Session Naming Convention](#session-naming-convention)
+- [Agent Creation Template](#agent-creation-template)
+- [Required Parameters Explained](#required-parameters-explained)
+- [Critical Notes](#critical-notes)
+  - [Directory Structure](#directory-structure)
+  - [Plugin Path](#plugin-path)
+  - [Create vs Wake](#create-vs-wake)
+  - [Pre-requisite](#pre-requisite)
+- [Step-by-Step Procedure](#step-by-step-procedure)
+  - [Step 1: Choose Session Name](#step-1-choose-session-name)
+  - [Step 2: Prepare Agent Directory](#step-2-prepare-agent-directory)
+  - [Step 3: Copy Plugin](#step-3-copy-plugin)
+  - [Step 4: Execute Agent Creation](#step-4-execute-agent-creation)
+  - [Step 5: Wait for Initialization](#step-5-wait-for-initialization)
+  - [Step 6: Health Check Ping](#step-6-health-check-ping)
+  - [Step 7: Verify Response](#step-7-verify-response)
+  - [Step 9: Register ECOS](#step-9-register-ecos)
+- [Session: ecos-chief-of-staff-one](#session-ecos-chief-of-staff-one)
+  - [Step 10: Report to User](#step-10-report-to-user)
+- [Success Criteria](#success-criteria)
+- [Troubleshooting](#troubleshooting)
+  - [Creation Fails with Exit Code 1](#creation-fails-with-exit-code-1)
+  - [No Response to Health Ping](#no-response-to-health-ping)
+  - [Plugin Not Found Error](#plugin-not-found-error)
+- [Related Documents](#related-documents)
+
 ## Overview
 
 EAMA (Assistant Manager) is the ONLY agent authorized to create ECOS (Chief of Staff) instances. This document describes the step-by-step procedure for spawning a new ECOS agent.

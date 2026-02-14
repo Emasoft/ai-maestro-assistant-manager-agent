@@ -1,5 +1,14 @@
 # Workflow Checklists
 
+
+## Contents
+
+- [Checklist: Creating New Project](#checklist-creating-new-project)
+- [Checklist: Spawning ECOS](#checklist-spawning-ecos)
+- [Checklist: Processing ECOS Approval Request](#checklist-processing-ecos-approval-request)
+- [Checklist: Routing User Request to ECOS](#checklist-routing-user-request-to-ecos)
+- [Checklist: Providing Status to User](#checklist-providing-status-to-user)
+
 Use these checklists to ensure complete execution of each workflow. Check off items as you complete them.
 
 ## Checklist: Creating New Project

@@ -1,5 +1,40 @@
 # Record-Keeping Formats
 
+
+## Contents
+
+- [Overview](#overview)
+- [1. Project Registry](#1-project-registry)
+- [Project: inventory-system](#project-inventory-system)
+- [Project: data-pipeline](#project-data-pipeline)
+- [2. Approval Log](#2-approval-log)
+- [APPROVAL-2026-02-04-001](#approval-2026-02-04-001)
+- [APPROVAL-2026-02-04-002](#approval-2026-02-04-002)
+- [3. Active ECOS Sessions Log](#3-active-ecos-sessions-log)
+- [Session: ecos-inventory-system](#session-ecos-inventory-system)
+- [4. User Interactions Log](#4-user-interactions-log)
+- [Interaction 2026-02-04-001](#interaction-2026-02-04-001)
+- [Interaction 2026-02-04-002](#interaction-2026-02-04-002)
+- [Record-Keeping Best Practices](#record-keeping-best-practices)
+  - [1. Timestamps](#1-timestamps)
+  - [2. Exact Quotes](#2-exact-quotes)
+  - [3. Unique IDs](#3-unique-ids)
+  - [4. Completeness](#4-completeness)
+  - [5. Update Frequency](#5-update-frequency)
+  - [6. File Locations](#6-file-locations)
+- [Tools for Record-Keeping](#tools-for-record-keeping)
+  - [Write Tool](#write-tool)
+  - [Read Tool](#read-tool)
+- [Session Memory Persistence](#session-memory-persistence)
+- [Error Handling](#error-handling)
+  - [Corrupted Log Files](#corrupted-log-files)
+  - [Missing Log Files](#missing-log-files)
+  - [Concurrent Access](#concurrent-access)
+- [Audit Trail Requirements](#audit-trail-requirements)
+- [APPROVAL-2026-02-04-001](#approval-2026-02-04-001)
+  - [Correction (2026-02-04 18:00)](#correction-2026-02-04-1800)
+- [Summary](#summary)
+
 This reference documents the standard formats for session memory, state tracking, and audit logs used by the Emasoft Assistant Manager Agent (EAMA).
 
 ---

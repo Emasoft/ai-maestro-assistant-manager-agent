@@ -1,5 +1,18 @@
 # EAMA-ECOS Coordination Workflow Examples
 
+
+## Contents
+
+- [Example 1: User Requests New Project](#example-1-user-requests-new-project)
+- [Example 2: ECOS Requests Approval (Low Risk)](#example-2-ecos-requests-approval-low-risk)
+- [Example 3: ECOS Requests Approval (High Risk)](#example-3-ecos-requests-approval-high-risk)
+- [Example 4: User Requests Status](#example-4-user-requests-status)
+- [Example 5: ECOS Spawn Failure](#example-5-ecos-spawn-failure)
+- [ECOS Spawn Failure Recovery Protocol](#ecos-spawn-failure-recovery-protocol)
+  - [Recovery Steps](#recovery-steps)
+  - [Recovery Decision Tree](#recovery-decision-tree)
+- [Handoff Pattern](#handoff-pattern)
+
 This document contains practical examples of EAMA coordinating with ECOS, including routing requests, handling approvals, status queries, and failure recovery.
 
 ---
