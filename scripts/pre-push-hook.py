@@ -257,7 +257,7 @@ def main() -> int:
             print(f"  {YELLOW}⚠{NC} {msg}")
 
     if minor:
-        print(f"\n{BLUE}MINOR Issues (warnings only):{NC}")
+        print(f"\n{BLUE}MINOR Issues (push blocked):{NC}")
         for msg in minor:
             print(f"  {BLUE}ℹ{NC} {msg}")
 
@@ -265,10 +265,10 @@ def main() -> int:
     print(f"Summary: {RED}{len(critical)} critical{NC}, {YELLOW}{len(major)} major{NC}, {BLUE}{len(minor)} minor{NC}")
     print()
 
-    # Decision
-    if critical or major:
+    # Decision — strict mode: block on ALL issues including MINOR
+    if critical or major or minor:
         print(f"{RED}{'=' * 60}{NC}")
-        print(f"{RED}PUSH BLOCKED - Fix CRITICAL and MAJOR issues first{NC}")
+        print(f"{RED}PUSH BLOCKED - Fix ALL issues (CRITICAL, MAJOR, and MINOR){NC}")
         print(f"{RED}{'=' * 60}{NC}")
         print()
         print("To bypass (NOT RECOMMENDED): git push --no-verify")
