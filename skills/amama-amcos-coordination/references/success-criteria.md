@@ -83,7 +83,7 @@ Verify AMCOS is alive by sending a health check ping using the `agent-messaging`
 **Completion Checklist:**
 
 - [ ] Agent creation command succeeded (exit code 0) via the `ai-maestro-agents-management` skill
-- [ ] COS role assigned via the `team-governance` skill
+- [ ] COS role assigned via `PATCH /api/teams/{id}/chief-of-staff`
 - [ ] AMCOS session registered in AI Maestro (visible in agent list)
 - [ ] AMCOS main agent loaded with correct role constraints
 - [ ] AMCOS plugins loaded (verify via plugin list if possible)

@@ -96,9 +96,9 @@ Routing is based on **agent specialization/skills**, not governance role. The go
 
 | User Intent Pattern | Route To | Agent Specialization | Handoff Type |
 |---------------------|----------|----------------------|--------------|
-| "design", "plan", "architect", "spec", "requirements" | AMCOS (for AMAA) | architect | task_assignment |
-| "build", "implement", "create", "develop", "code" | AMCOS (for AMOA) | orchestrator | task_assignment |
-| "review", "test", "merge", "release", "deploy", "quality" | AMCOS (for AMIA) | integrator | task_assignment |
+| "design", "plan", "architect", "spec", "requirements" | AMCOS (for AMAA) | architect | work_request |
+| "build", "implement", "create", "develop", "code" | AMCOS (for AMOA) | orchestrator | work_request |
+| "review", "test", "merge", "release", "deploy", "quality" | AMCOS (for AMIA) | integrator | work_request |
 | "spawn agent", "terminate agent", "restart session", "agent health" | AMCOS | chief-of-staff (governance) | agent_lifecycle |
 | "status", "progress", "update" | Handle directly | — | none |
 | "approve", "reject", "confirm" | Handle directly | — | approval_response |
@@ -418,7 +418,7 @@ Copy this checklist and track your progress:
 
 **From**: AMAMA (Assistant Manager)
 **To**: AMCOS (Chief of Staff) -> AMAA (Architect agent, role: member)
-**Type**: task_assignment
+**Type**: work_request
 
 ### Request
 Design a user authentication system

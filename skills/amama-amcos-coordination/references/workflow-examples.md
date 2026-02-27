@@ -7,10 +7,8 @@
 - [Example 2: AMCOS Requests Approval (Low Risk)](#example-2-amcos-requests-approval-low-risk)
 - [Example 3: AMCOS Requests Approval (High Risk)](#example-3-amcos-requests-approval-high-risk)
 - [Example 4: User Requests Status](#example-4-user-requests-status)
-- [Example 5: AMCOS Agent Creation Failure](#example-5-amcos-agent-creation-failure)
-- [AMCOS Agent Creation Failure Recovery Protocol](#amcos-agent-creation-failure-recovery-protocol)
-  - [Recovery Steps](#recovery-steps)
-  - [Recovery Decision Tree](#recovery-decision-tree)
+- [Example 5: COS Role Assignment Failure](#example-5-cos-role-assignment-failure)
+- [COS Role Assignment Failure Recovery Protocol](#cos-role-assignment-failure-recovery-protocol)
 - [Handoff Pattern](#handoff-pattern)
 
 This document contains practical examples of AMAMA coordinating with AMCOS, including routing requests, handling approvals, status queries, and failure recovery.
@@ -23,10 +21,10 @@ This document contains practical examples of AMAMA coordinating with AMCOS, incl
 
 **Your Response**:
 ```
-Understood! I'll create a new project for the inventory management REST API.
+Understood! I'll create a new team for the inventory management REST API.
 
-Creating project: inventory-system
-Location: /Users/user/Code/inventory-system
+Creating team: inventory-system
+Team: inventory-system-team
 AMCOS session: amcos-inventory-system
 
 Routing to: ORCHESTRATOR (via AMCOS)
@@ -35,12 +33,12 @@ The AMOA will coordinate the implementation. I'll keep you updated on progress. 
 ```
 
 **Actions Taken**:
-1. Created project directory
-2. Initialized git
-3. Created amcos-inventory-system agent and assigned COS role
-4. Verified AMCOS alive
+1. Created AI Maestro team `inventory-system-team` via `POST /api/teams`
+2. Identified registered agent for COS role
+3. Assigned COS role via `PATCH /api/teams/{id}/chief-of-staff`
+4. Verified COS acknowledged (cos-role-accepted)
 5. Sent work request to AMCOS
-6. Logged to project-registry.md and user-interactions.md
+6. Logged to active-teams.md and user-interactions.md
 
 ---
 
@@ -154,144 +152,35 @@ Health: Yellow (blocked on external dependency)
 
 ---
 
-## Example 5: AMCOS Agent Creation Failure
+## Example 5: COS Role Assignment Failure
 
-**Scenario**: AMCOS agent creation fails
+**Scenario**: COS role assignment fails
 
 **Your Action**: Diagnose and report to user
 
 **Your Response to User**:
 ```
-Issue encountered: AMCOS agent creation failed
+Issue encountered: COS role assignment failed
 
-Details: Agent creation command exited with error
-Impact: Cannot coordinate agents for inventory-system project
-Attempted: Created amcos-inventory-system with standard configuration
+Details: COS role assignment API call returned error
+Impact: Cannot delegate work for inventory-system team
+Attempted: Attempted COS role assignment to registered agent
 
 Error output: [paste relevant error]
 
-I recommend: Verify AI Maestro is running by checking its health status
-using the `agent-messaging` skill. If down, restart it. Then I'll retry creating the AMCOS agent.
+I recommend: Verify AI Maestro API is running and the target agent is registered.
+If down, restart it. Then I'll retry COS role assignment.
 
 Should I retry once AI Maestro is confirmed running?
 ```
 
 ---
 
-## AMCOS Agent Creation Failure Recovery Protocol
+## COS Role Assignment Failure Recovery Protocol
 
-When AMCOS agent creation fails, follow this recovery procedure systematically before escalating to the user.
+When COS role assignment fails, follow the recovery procedure in [Agent Creation Failure Recovery Procedures](spawn-failure-recovery.md#1-amcos-agent-creation-failure-recovery-protocol).
 
-### Recovery Steps
-
-**Step 1: Verify AI Maestro is Running**
-
-Check AI Maestro health using the `agent-messaging` skill's health check feature.
-
-If AI Maestro is down:
-- Alert user: "AI Maestro service is not responding. Please restart it."
-- Do NOT proceed with creation retry until AI Maestro is confirmed running
-
-**Step 2: Check tmux Sessions for Conflicts**
-```bash
-# List existing sessions
-tmux list-sessions
-
-# Check if session name already exists
-tmux list-sessions | grep "amcos-<project-name>"
-```
-
-If session name collision detected:
-- Use alternative session name with numeric suffix: `amcos-<project-name>-2`
-- Document the collision in session log
-
-**Step 3: Retry with Different Session Name**
-
-Use the `ai-maestro-agents-management` skill to create the agent with an incremented session name:
-- **Agent name**: `amcos-<project-name>-<timestamp>` (use timestamp to ensure uniqueness)
-- **Working directory**: `~/agents/<new-session-name>/`
-- **Task**: "Coordinate agents for <project-name>"
-- **Plugin**: load `ai-maestro-chief-of-staff` using the skill's plugin management features
-- **Main agent**: `amcos-chief-of-staff-main-agent`
-
-**Verify**: confirm the agent appears in the agent list with correct status.
-
-**Step 4: If 3 Retries Fail**
-
-After 3 failed creation attempts:
-
-1. **Create project WITHOUT AMCOS**
-   - Project structure is still valid
-   - AMAMA can receive user requests
-   - Work cannot be routed to specialists
-
-2. **Notify User**
-   ```
-   AMCOS Agent Creation Failed After 3 Attempts
-
-   Project: <project-name>
-   Location: <path>
-   Status: Created WITHOUT AMCOS coordination
-
-   Attempted:
-   - Attempt 1: <error>
-   - Attempt 2: <error>
-   - Attempt 3: <error>
-
-   Impact:
-   - Cannot route work to specialist agents (AMOA, AMAA, AMIA)
-   - Project directory and git repo are ready
-   - You can still interact with me for planning
-
-   To fix:
-   1. Check AI Maestro logs: `journalctl -u aimaestro` or `cat ~/ai-maestro/logs/`
-   2. Check tmux for orphaned sessions: `tmux list-sessions`
-   3. Restart AI Maestro if needed
-
-   Once fixed, I can retry AMCOS agent creation. Say "retry AMCOS for <project-name>" when ready.
-   ```
-
-3. **Log Failure**
-   Record in `docs_dev/sessions/spawn-failures.md`:
-   ```markdown
-   ## Agent Creation Failure: <timestamp>
-   - Project: <project-name>
-   - Session Name: amcos-<project-name>
-   - Attempts: 3
-   - Errors: <error details>
-   - Resolution: Awaiting user intervention
-   ```
-
-**Step 5: Allow User Manual Fix and Retry**
-
-When user says "retry AMCOS for <project-name>":
-1. Re-run verification steps (AI Maestro health, session conflicts)
-2. Attempt agent creation with clean session name
-3. Report success or escalate again if still failing
-
-### Recovery Decision Tree
-
-```
-AMCOS Agent Creation Fails
-    |
-    v
-Is AI Maestro running? ──NO──> Alert user, STOP
-    |
-   YES
-    v
-Is session name collision? ──YES──> Use alternative name, RETRY
-    |
-   NO
-    v
-Retry count < 3? ──YES──> Wait 10 seconds, RETRY
-    |
-   NO
-    v
-Create project WITHOUT AMCOS
-Notify user with diagnostic info
-Log failure
-Wait for user to fix and request retry
-```
+**Quick reference**: Verify AI Maestro API → Check agent registration → Check team state → Retry COS assignment (up to 3 attempts) → Escalate to user if all fail.
 
 ---
 
@@ -301,7 +190,7 @@ This agent does NOT hand off to other agents directly. You communicate with AMCO
 
 **Your workflow**:
 1. Receive user request
-2. Create project/AMCOS if needed
+2. Create team and assign COS if needed
 3. Route work to AMCOS
 4. Monitor approvals
 5. Report status to user

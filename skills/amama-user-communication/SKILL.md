@@ -211,7 +211,7 @@ AMAMA Response: "I'll grant AMCOS autonomous mode for routine development operat
 
 Sending autonomy grant to AMCOS with scope limited to routine-operation and minor-decision types on feature/* branches. AMCOS will operate autonomously for these tasks but will still notify you of important completions and request approval for any critical operations."
 
-[Send AI Maestro message with autonomy-grant type]
+[Send AI Maestro message with autonomy_grant type]
 ```
 
 ### Workflow 3: Presenting AMCOS Approval Request to User

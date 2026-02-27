@@ -27,17 +27,17 @@ When AMCOS sends an approval request, AMAMA responds with one of:
 
 ### When to Use Each Decision
 
-**Approved**: Use when:
+**Approve** (`approve`): Use when:
 - Operation aligns with user preferences
 - Risk is acceptable
 - Resources are available
 
-**Rejected**: Use when:
+**Deny** (`deny`): Use when:
 - Operation violates policies
 - Risk is too high
 - User explicitly forbids this type of action
 
-**Needs Revision**: Use when:
+**Defer** (`defer`): Use when:
 - Operation is acceptable but scope needs adjustment
 - Additional safeguards are required
 - More information is needed before deciding
@@ -54,7 +54,7 @@ AMAMA sends responses using the `agent-messaging` skill:
 - **Content**: Include the following fields:
   - `type`: `approval_decision`
   - `request_id`: Must match the original request ID from AMCOS
-  - `decision`: One of `approved`, `rejected`, or `needs-revision`
+  - `decision`: One of `approve`, `deny`, or `defer`
   - `comment`: Optional explanation for the decision
   - `conditions`: Optional list of conditions AMCOS must follow if approved
   - `responded_at`: ISO-8601 timestamp of the response

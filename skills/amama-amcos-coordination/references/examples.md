@@ -25,11 +25,11 @@ AMCOS sends the following message using the `agent-messaging` skill:
 - **Subject**: "AMCOS Approval Request: Deploy v2.1.0 to staging"
 - **Priority**: `high`
 - **Content**:
-  - `type`: `approval-request`
+  - `type`: `approval_request`
   - `request_id`: `amcos-req-a1b2c3d4`
   - `category`: `routine-operation`
   - `operation`: type `deployment`, description "Deploy version 2.1.0 to staging environment", affected resources are `staging-server` and `staging-db`, risk level `medium`, reversible `true`
-  - `context`: triggered by `eoa`, related issues `#89` and `#92`
+  - `context`: triggered by `amoa`, related issues `#89` and `#92`
   - `recommendation`: `approve`
   - `requested_at`: `2025-02-02T14:30:00Z`
 
@@ -48,9 +48,9 @@ Send an approval response using the `agent-messaging` skill:
 - **Subject**: "AMAMA Approval Response: amcos-req-a1b2c3d4"
 - **Priority**: `high`
 - **Content**:
-  - `type`: `approval-response`
+  - `type`: `approval_decision`
   - `request_id`: `amcos-req-a1b2c3d4`
-  - `decision`: `approved`
+  - `decision`: `approve`
   - `comment`: "Proceed with staging deployment"
   - `responded_at`: `2025-02-02T14:32:00Z`
 
@@ -73,7 +73,7 @@ Send an autonomy grant using the `agent-messaging` skill:
 - **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
 - **Content**:
-  - `type`: `autonomy-grant`
+  - `type`: `autonomy_grant`
   - `operation_types`: `routine-operation` and `minor-decision`
   - `expires_at`: `2025-02-02T22:00:00Z`
   - `scope_limits`: max 100 files per operation, allowed branches `feature/*` and `fix/*`
@@ -109,7 +109,7 @@ AMCOS sends the following message using the `agent-messaging` skill:
 - **Subject**: "AMCOS Operation Complete: Feature implementation"
 - **Priority**: `normal`
 - **Content**:
-  - `type`: `operation-complete`
+  - `type`: `operation_complete`
   - `request_id`: `autonomous-x1y2z3`
   - `operation`: type `implementation`, description "Implemented user profile page components", result `success`, details "Created 5 components, 12 tests passing"
   - `autonomous_mode`: `true`

@@ -101,7 +101,7 @@ The response will arrive with the following structure:
 - **Content fields**:
   - `type`: `pong`
   - `status`: `alive` (confirms AMCOS is running)
-  - `uptime`: Number of seconds since AMCOS was spawned
+  - `uptime`: Number of seconds since AMCOS was created
   - `active_specialists`: List of currently active specialist roles (e.g., "AMOA", "AMIA")
 
 **How to read it**:
@@ -128,7 +128,7 @@ Send an approval decision to AMCOS using the `agent-messaging` skill:
 - **Priority**: `high`
 
 **Required content fields**:
-- `request_id`: Same ID from the incoming request
+- `request_id`: Same ID from the incoming request (format: `amcos-req-<uuid>`, e.g., `amcos-req-a1b2c3d4`)
 - `decision`: `approve`, `deny`, or `defer`
 - `reason`: Explanation of the decision
 - `conditions`: Any conditions for approval (if applicable)
@@ -229,14 +229,14 @@ Send a health check ping using the `agent-messaging` skill:
 **Required content fields**:
 - `message`: "Verify AMCOS alive"
 - `expect_reply`: true
-- `timeout`: 10 (seconds)
+- `timeout`: 30 (seconds)
 
 **Verify**: check inbox for a `pong` response within the timeout period using the `agent-messaging` skill.
 
 **Example**: Send a health check using the `agent-messaging` skill:
 - **Recipient**: `amcos-inventory-system`
 - **Subject**: "Health Check"
-- **Content**: ping type, message "Verify AMCOS alive", expect_reply true, timeout 10
+- **Content**: ping type, message "Verify AMCOS alive", expect_reply true, timeout 30
 - **Priority**: `normal`
 
 **Expected response**: See section 1.3 (Receiving health check responses)

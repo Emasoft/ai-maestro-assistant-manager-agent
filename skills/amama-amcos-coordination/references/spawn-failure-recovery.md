@@ -4,7 +4,7 @@
 ## Contents
 
 - [Overview](#overview)
-- [1. AMCOS Agent Creation Failure Recovery Protocol](#1-amcos-agent-creation-failure-recovery-protocol)
+- [1. AMCOS COS Assignment Failure Recovery Protocol](#1-amcos-cos-assignment-failure-recovery-protocol)
   - [Recovery Steps](#recovery-steps)
   - [Recovery Decision Tree](#recovery-decision-tree)
 - [2. Communication Breakdown Recovery](#2-communication-breakdown-recovery)
@@ -21,72 +21,100 @@
 - [Failure: <timestamp>](#failure-timestamp)
 - [6. Timeliness Requirements](#6-timeliness-requirements)
 - [7. Example Scenarios](#7-example-scenarios)
-  - [Example 1: AMCOS Agent Creation Fails (AI Maestro Down)](#example-1-amcos-agent-creation-fails-ai-maestro-down)
+  - [Example 1: COS Assignment Fails (AI Maestro Down)](#example-1-cos-assignment-fails-ai-maestro-down)
   - [Example 2: AMCOS Not Responding to Routing Request](#example-2-amcos-not-responding-to-routing-request)
   - [Example 3: Conflicting Approval Requests](#example-3-conflicting-approval-requests)
 - [Summary](#summary)
 
 ## Overview
 
-This document provides recovery procedures for handling failures in AMCOS creation, agent creation, and inter-agent communication within the AMAMA system.
+This document provides recovery procedures for handling failures in COS (Chief of Staff) role assignment, agent registration, and inter-agent communication within the AMAMA system. All operations use the AI Maestro v2 API.
 
 ---
 
-## 1. AMCOS Agent Creation Failure Recovery Protocol
+## 1. AMCOS COS Assignment Failure Recovery Protocol
 
-When AMCOS agent creation fails, follow this recovery procedure systematically before escalating to the user.
+When COS (Chief of Staff) role assignment fails via the AI Maestro API, follow this recovery procedure systematically before escalating to the user.
+
+> **Note on retry counts:** AMCOS (COS) assignment gets 3 retries because it is critical for project coordination. General agent creation failures (Section 4) get 2 retries before escalation, since specialist agents can be re-added later without disrupting the team structure.
 
 ### Recovery Steps
 
-#### Step 1: Verify AI Maestro is Running
-
-Check AI Maestro health using the `agent-messaging` skill's health check feature.
-
-If AI Maestro is down:
-- Alert user: "AI Maestro service is not responding. Please restart it."
-- Do NOT proceed with creation retry until AI Maestro is confirmed running
-
-#### Step 2: Check tmux Sessions for Conflicts
+#### Step 1: Verify AI Maestro API is Running
 
 ```bash
-# List existing sessions
-tmux list-sessions
-
-# Check if session name already exists
-tmux list-sessions | grep "amcos-<project-name>"
+curl -s "http://localhost:23000/api/health" | jq .
 ```
 
-If session name collision detected:
-- Use alternative session name with numeric suffix: `amcos-<project-name>-2`
-- Document the collision in session log
+If AI Maestro API is down or not responding:
+- Alert user: "AI Maestro API is not responding. Please restart it."
+- Do NOT proceed with COS assignment retry until API health is confirmed
 
-#### Step 3: Retry with Different Session Name
+#### Step 2: Verify the Target Agent is Registered
 
-Use the `ai-maestro-agents-management` skill to create the agent with an incremented session name:
-- **Agent name**: `amcos-<project-name>-<timestamp>` (use timestamp to ensure uniqueness)
-- **Working directory**: `~/agents/<new-session-name>/`
-- **Task**: "Coordinate agents for <project-name>"
-- **Plugin**: load `ai-maestro-chief-of-staff` using the skill's plugin management features
-- **Main agent**: `amcos-chief-of-staff-main-agent`
+```bash
+curl -s "http://localhost:23000/api/agents?name=<agent-name>" | jq .
+```
 
-**Verify**: confirm the agent appears in the agent list with correct status.
+If the target agent is not registered:
+- Register the agent first via the AI Maestro API
+- Verify registration succeeded before proceeding
 
-#### Step 4: If 3 Retries Fail
+#### Step 3: Verify the Team Exists and is Type `closed`
 
-After 3 failed creation attempts:
+```bash
+curl -s "http://localhost:23000/api/teams/<team-id>" | jq '{id, name, type, chief_of_staff}'
+```
 
-1. **Create project WITHOUT AMCOS**
-   - Project structure is still valid
-   - AMAMA can receive user requests
-   - Work cannot be routed to specialists
+If the team does not exist or is not type `closed`:
+- Create the team or update its type as needed
+- Document the issue in session log
+
+#### Step 4: Check if Team Already Has a COS Assigned
+
+```bash
+curl -s "http://localhost:23000/api/teams/<team-id>" | jq '.chief_of_staff'
+```
+
+If a COS is already assigned:
+- Determine if re-assignment is needed (e.g., replacing a non-responsive COS)
+- If the existing COS is functioning, no action needed
+
+#### Step 5: Retry COS Assignment
+
+```bash
+curl -X PATCH "http://localhost:23000/api/teams/<team-id>/chief-of-staff" \
+  -H "Content-Type: application/json" \
+  -d '{"agent_id": "<agent-id>"}'
+```
+
+Retry with the same agent, or if repeated failures occur, try assigning a different eligible agent.
+
+Track retry count in the session state file `docs_dev/sessions/cos-assignment-retries.md` with timestamp, team ID, target agent, and attempt number:
+```markdown
+## COS Assignment Retry: <timestamp>
+- Team ID: <team-id>
+- Target Agent: <agent-name>
+- Attempt: <1|2|3>
+- Result: <success|error-details>
+```
+
+#### Step 6: If 3 Retries Fail
+
+After 3 failed COS assignment attempts:
+
+1. **Team continues WITHOUT COS**
+   - The team still exists in AI Maestro — it just lacks a COS
+   - AMAMA can still receive user requests
+   - AMAMA cannot delegate to specialists until a COS is assigned
 
 2. **Notify User**
    ```
-   AMCOS Agent Creation Failed After 3 Attempts
+   COS Assignment Failed After 3 Attempts
 
-   Project: <project-name>
-   Location: <path>
-   Status: Created WITHOUT AMCOS coordination
+   Team: <team-id>
+   Target Agent: <agent-name>
+   Status: Team exists WITHOUT COS coordination
 
    Attempted:
    - Attempt 1: <error>
@@ -94,55 +122,69 @@ After 3 failed creation attempts:
    - Attempt 3: <error>
 
    Impact:
-   - Cannot route work to specialist agents (AMOA, AMAA, AMIA)
-   - Project directory and git repo are ready
+   - Cannot delegate to specialist agents (AMOA, AMAA, AMIA)
+   - Team structure is intact in AI Maestro
    - You can still interact with me for planning
 
    To fix:
-   1. Check AI Maestro logs: `journalctl -u aimaestro` or `cat ~/ai-maestro/logs/`
-   2. Check tmux for orphaned sessions: `tmux list-sessions`
-   3. Restart AI Maestro if needed
+   1. Check AI Maestro API health: `curl -s http://localhost:23000/api/health`
+   2. Check agent registration: `curl -s http://localhost:23000/api/agents?name=<agent-name>`
+   3. Check team status: `curl -s http://localhost:23000/api/teams/<team-id>`
+   4. Restart AI Maestro if needed
 
-   Once fixed, I can retry AMCOS agent creation. Say "retry AMCOS for <project-name>" when ready.
+   Once fixed, I can retry COS assignment. Say "retry COS for <team-id>" when ready.
    ```
 
 3. **Log Failure**
    Record in `docs_dev/sessions/spawn-failures.md`:
    ```markdown
-   ## Agent Creation Failure: <timestamp>
-   - Project: <project-name>
-   - Session Name: amcos-<project-name>
+   ## COS Assignment Failure: <timestamp>
+   - Team: <team-id>
+   - Target Agent: <agent-name>
    - Attempts: 3
    - Errors: <error details>
    - Resolution: Awaiting user intervention
    ```
 
-#### Step 5: Allow User Manual Fix and Retry
+#### Step 7: Allow User Manual Fix and Retry
 
-When user says "retry AMCOS for <project-name>":
-1. Re-run verification steps (AI Maestro health, session conflicts)
-2. Attempt agent creation with clean session name
+When user says "retry COS for <team-id>":
+1. Re-run verification steps (API health, agent registration, team status)
+2. Attempt COS assignment with same or different agent
 3. Report success or escalate again if still failing
 
 ### Recovery Decision Tree
 
 ```
-AMCOS Agent Creation Fails
+COS Assignment Fails
     |
     v
-Is AI Maestro running? ──NO──> Alert user, STOP
+Is AI Maestro API running? ──NO──> Alert user, STOP
+(GET /api/health)
     |
    YES
     v
-Is session name collision? ──YES──> Use alternative name, RETRY
+Is target agent registered? ──NO──> Register agent first, RETRY
+(GET /api/agents?name=<name>)
+    |
+   YES
+    v
+Does team exist and type=closed? ──NO──> Create/fix team, RETRY
+(GET /api/teams/<team-id>)
+    |
+   YES
+    v
+Does team already have COS? ──YES──> Verify if re-assignment needed
+(GET /api/teams/<team-id>)
     |
    NO
     v
-Retry count < 3? ──YES──> Wait 10 seconds, RETRY
+Retry count < 3? ──YES──> Wait 10 seconds, RETRY COS assignment
+(Track in docs_dev/sessions/cos-assignment-retries.md)
     |
    NO
     v
-Create project WITHOUT AMCOS
+Team continues WITHOUT COS
 Notify user with diagnostic info
 Log failure
 Wait for user to fix and request retry
@@ -195,7 +237,7 @@ When AMCOS or other agents fail to respond to messages.
    3. AI Maestro routing issue
 
    Actions you can take:
-   1. Check AMCOS session: `tmux attach -t amcos-<project-name>`
+   1. Check AMCOS agent status: `curl -s http://localhost:23000/api/agents?name=amcos-<project-name>`
    2. Check AMCOS logs (if available)
    3. Restart AMCOS if needed
 
@@ -311,61 +353,61 @@ When approval workflow encounters errors.
 
 When creating specialist agents (AMOA, AMAA, AMIA) fails.
 
+> **Note:** General agent creation failures get 2 retries before escalation, compared to 3 retries for AMCOS (COS) assignment (Section 1). COS assignment is more critical because it is required for project coordination, while specialist agents can be re-added later.
+
 ### Symptoms
 
-- Agent creation command exits with non-zero code
-- Session created but agent doesn't respond
-- Plugin loading errors in creation output
+- Agent registration API call returns error
+- Agent registered but not responding to messages
+- Agent not appearing in AI Maestro registry after creation
 
 ### Recovery Procedure
 
-1. **Check AI Maestro health** (same as Step 1 for AMCOS)
-
-2. **Verify plugin availability**
+1. **Check AI Maestro API health**
    ```bash
-   # Check if specialist plugin exists
-   ls -la ~/agents/<session-name>/.claude/plugins/ai-maestro-orchestrator-agent
-   ls -la ~/agents/<session-name>/.claude/plugins/ai-maestro-architect-agent
-   ls -la ~/agents/<session-name>/.claude/plugins/ai-maestro-integrator-agent
+   curl -s "http://localhost:23000/api/health" | jq .
    ```
 
-3. **Check for tmux session zombie processes**
+2. **Verify agent is registered in AI Maestro**
    ```bash
-   # List sessions
-   tmux list-sessions
-
-   # Kill orphaned sessions if needed
-   tmux kill-session -t <zombie-session-name>
+   # Check if the agent exists in the registry
+   curl -s "http://localhost:23000/api/agents?name=<agent-name>" | jq .
    ```
 
-4. **Retry with clean environment**
-   - Use fresh session name with timestamp
-   - Ensure plugin directory is accessible
-   - Verify all --plugin-dir paths are valid
+3. **Check team membership**
+   ```bash
+   # Verify the agent's team assignment
+   curl -s "http://localhost:23000/api/teams/<team-id>" | jq '.members'
+   ```
+
+4. **Retry agent registration**
+   - Re-register the agent via the AI Maestro API
+   - Verify the agent appears in the registry with correct status
+   - Confirm the agent can receive messages
 
 5. **After 2 retries, escalate to user**
    ```
    Agent Creation Failed: <agent-type>
 
-   Session: <session-name>
+   Agent: <agent-name>
    Attempts: 2
-   Plugin: <plugin-name>
+   Team: <team-id>
    Error: <error output>
 
    Diagnostic info:
-   - AI Maestro: Running
-   - Session name: Available
-   - Plugin path: <verified/missing>
+   - AI Maestro API: Running
+   - Agent in registry: <yes/no>
+   - Team exists: <yes/no>
 
    Recommended actions:
-   1. Check plugin installation
-   2. Verify plugin compatibility
-   3. Review agent logs: `cat ~/agents/<session>/spawn.log`
+   1. Check AI Maestro API health: `curl -s http://localhost:23000/api/health`
+   2. Check agent registry: `curl -s http://localhost:23000/api/agents`
+   3. Review AI Maestro logs for registration errors
 
    Should I:
-   - Try alternate plugin version?
-   - Create without this plugin?
-   - Abort and manual investigation?
+   - Retry with a different agent configuration?
+   - Skip this specialist and continue without it?
+   - Abort and investigate manually?
    ```
 
 ---
@@ -378,7 +420,7 @@ All failures MUST be logged for debugging and audit purposes.
 
 | Failure Type | Log File | Format |
 |--------------|----------|--------|
-| AMCOS creation failures | `docs_dev/sessions/spawn-failures.md` | Markdown |
+| COS assignment failures | `docs_dev/sessions/spawn-failures.md` | Markdown |
 | Communication failures | `docs_dev/sessions/communication-failures.md` | Markdown |
 | Approval conflicts | `docs_dev/sessions/approval-conflicts.md` | Markdown |
 | Agent creation failures | `docs_dev/sessions/agent-spawn-failures.md` | Markdown |
@@ -404,7 +446,7 @@ All failures MUST be logged for debugging and audit purposes.
 
 **Response times for failure handling:**
 
-- AMCOS creation failure detection: Immediate (exit code check)
+- COS assignment failure detection: Immediate (API response check)
 - Communication timeout: 30 seconds before first retry
 - Approval request clarification: Within 60 seconds
 - User escalation: Within 2 minutes of detection
@@ -426,24 +468,24 @@ All failures MUST be logged for debugging and audit purposes.
 
 ## 7. Example Scenarios
 
-### Example 1: AMCOS Agent Creation Fails (AI Maestro Down)
+### Example 1: COS Assignment Fails (AI Maestro Down)
 
-**Scenario**: AMCOS agent creation fails with exit code 1
+**Scenario**: COS role assignment API call returns an error
 
 **Your Action**: Diagnose and report to user
 
 **Your Response to User**:
 ```
-Issue encountered: AMCOS agent creation failed
+Issue encountered: COS role assignment failed
 
-Details: Agent creation command exited with error code 1
+Details: COS role assignment API call returned error (PATCH /api/teams/<team-id>/chief-of-staff)
 Impact: Cannot coordinate agents for inventory-system project
-Attempted: Created amcos-inventory-system with standard configuration
+Attempted: Assigning COS role to amcos-inventory-system agent
 
 Error output: [paste relevant error]
 
-I recommend: Verify AI Maestro is running by checking its health status
-using the `agent-messaging` skill. If down, restart it. Then I'll retry creating the AMCOS agent.
+I recommend: Verify AI Maestro API is running by checking `GET /api/health`.
+If down, restart it. Then I'll retry COS assignment.
 
 Should I retry once AI Maestro is confirmed running?
 ```
@@ -474,7 +516,7 @@ This could mean:
 - AMCOS is stuck processing another request
 - Messaging route is broken
 
-Can you check the AMCOS session? `tmux attach -t amcos-inventory-system`
+Can you check the AMCOS agent status? `curl -s http://localhost:23000/api/agents?name=amcos-inventory-system`
 
 Once you confirm AMCOS status, I can retry routing your request.
 ```
@@ -516,7 +558,7 @@ What should I do?
 
 Recovery from failures requires:
 
-1. **Systematic diagnosis** - Check AI Maestro, sessions, plugins
+1. **Systematic diagnosis** - Check AI Maestro API health, agent registry, team status
 2. **Automatic retries** - Up to 3 attempts with delays
 3. **Clear user escalation** - Provide diagnostic info and options
 4. **Comprehensive logging** - Audit trail for all failures

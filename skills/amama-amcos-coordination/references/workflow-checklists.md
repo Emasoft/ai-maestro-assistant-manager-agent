@@ -3,66 +3,66 @@
 
 ## Contents
 
-- [Checklist: Creating New Project](#checklist-creating-new-project)
-- [Checklist: Creating AMCOS Agent](#checklist-creating-amcos-agent)
+- [Checklist: Creating New Team](#checklist-creating-new-team)
+- [Checklist: Assigning COS Role](#checklist-assigning-cos-role)
 - [Checklist: Processing AMCOS Approval Request](#checklist-processing-amcos-approval-request)
 - [Checklist: Routing User Request to AMCOS](#checklist-routing-user-request-to-amcos)
 - [Checklist: Providing Status to User](#checklist-providing-status-to-user)
 
 Use these checklists to ensure complete execution of each workflow. Check off items as you complete them.
 
-## Checklist: Creating New Project and Team
+## Checklist: Creating New Team
 
-When user requests a new project:
+When user requests a new project team:
 
 - [ ] **Parse user request** for project name, purpose, and requirements
-- [ ] **Clarify ambiguities** if location/structure not specified
-- [ ] **Verify project name available** (directory doesn't exist)
-- [ ] **Create project directory** at agreed location
-- [ ] **Initialize git repository**
+- [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
+- [ ] **Verify team name available** (no existing team with that name via `GET $AIMAESTRO_API/api/teams`)
+- [ ] **Create AI Maestro team** via the Team API:
   ```bash
-  cd /path/to/new-project
-  git init
-  git config user.name "Emasoft"
-  git config user.email "713559+Emasoft@users.noreply.github.com"
+  curl -X POST "$AIMAESTRO_API/api/teams" \
+    -H "Content-Type: application/json" \
+    -d '{"name": "<team-name>", "project": "<project-name>", "description": "<purpose>"}'
   ```
-- [ ] **Create initial structure**
-  - README.md with project description
-  - .gitignore appropriate for project type
-  - docs_dev/, scripts_dev/ directories
-- [ ] **Commit initial structure**
+- [ ] **Identify available registered agent** for COS role (see "Checklist: Assigning COS Role")
+- [ ] **Assign COS role** to the selected agent via the Team API:
   ```bash
-  git add -A
-  git commit -m "Initial project structure"
+  curl -X PATCH "$AIMAESTRO_API/api/teams/{team-id}/chief-of-staff" \
+    -H "Content-Type: application/json" \
+    -d '{"agent_id": "<agent-id>"}'
   ```
-- [ ] **Create AI Maestro team** for this project using the `team-governance` skill
-- [ ] **Create AMCOS agent for this project** using the `ai-maestro-agents-management` skill
-- [ ] **Assign COS role** to the AMCOS agent via the `team-governance` skill
-- [ ] **Verify AMCOS responding** via health check ping
-- [ ] **Register project** in `docs_dev/projects/project-registry.md`
-- [ ] **Report to user** with project path and AMCOS session name
+- [ ] **Send health check ping** to the COS agent using the `agent-messaging` skill (mandatory)
+- [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
+- [ ] **Register team** in `docs_dev/projects/project-registry.md`
+- [ ] **Report to user** with team ID and AMCOS session name
 - [ ] **Log session creation** in `docs_dev/sessions/active-amcos-sessions.md`
 
-**Success Criteria**: Project directory exists, git initialized, AMCOS alive and registered.
+**Success Criteria**: AI Maestro team created via API, COS role assigned, AMCOS responds to health ping, team registered in logs.
 
-## Checklist: Creating AMCOS Agent
+## Checklist: Assigning COS Role
 
-When creating a new AMCOS agent:
+When assigning the Chief-of-Staff (COS) role to an existing registered agent:
 
 - [ ] **Determine AMCOS session name** (format: `amcos-<project-name>`)
-- [ ] **Identify working directory** (project root)
-- [ ] **Identify plugins to load** (ai-maestro-chief-of-staff required)
-- [ ] **Prepare agent creation** using the `ai-maestro-agents-management` skill:
-  - **Agent name**: `amcos-<project-name>`
-  - **Working directory**: `~/agents/amcos-<project-name>/`
-  - **Task**: "Coordinate agents for <project-name> development"
-  - **Plugin**: load `ai-maestro-chief-of-staff` (must be copied to agent's local plugins directory first)
-  - **Main agent**: `amcos-chief-of-staff-main-agent`
-- [ ] **Execute agent creation** using the `ai-maestro-agents-management` skill
-- [ ] **Assign COS role** to the new agent via `team-governance` skill
-- [ ] **Verify creation success** (exit code 0)
-- [ ] **Wait 5 seconds** for AMCOS initialization
-- [ ] **Send health check ping** using the `agent-messaging` skill:
+- [ ] **Identify available registered agent** suitable for COS role:
+  ```bash
+  curl -s "$AIMAESTRO_API/api/agents?status=available" | jq '.agents[]'
+  ```
+- [ ] **Verify agent is registered and reachable** (agent must already exist in AI Maestro)
+- [ ] **Assign COS role** to the agent via the Team API:
+  ```bash
+  curl -X PATCH "$AIMAESTRO_API/api/teams/{team-id}/chief-of-staff" \
+    -H "Content-Type: application/json" \
+    -d '{"agent_id": "<agent-id>"}'
+  ```
+- [ ] **Send cos-role-assignment message** to the agent using the `agent-messaging` skill:
+  - **Recipient**: `amcos-<project-name>`
+  - **Subject**: "COS Role Assignment"
+  - **Type**: `cos-role-assignment`
+  - **Content**: team ID, project name, role expectations
+  - **Priority**: `high`
+- [ ] **Wait for cos-role-accepted response** (check inbox within 30 seconds using the `agent-messaging` skill)
+- [ ] **Send health check ping** using the `agent-messaging` skill (mandatory):
   - **Recipient**: `amcos-<project-name>`
   - **Subject**: "Health Check"
   - **Type**: `ping`
@@ -71,7 +71,7 @@ When creating a new AMCOS agent:
 - [ ] **Register AMCOS session** in active sessions log
 - [ ] **Report AMCOS ready** to user
 
-**Success Criteria**: AMCOS agent created, COS role assigned, responds to ping, registered in logs.
+**Success Criteria**: COS role assigned via Team API, agent accepted role, responds to health ping, registered in logs.
 
 ## Checklist: Processing AMCOS Approval Request
 
@@ -119,8 +119,8 @@ When user gives a work request:
 - [ ] **Identify target AMCOS** (which project?)
 - [ ] **Verify AMCOS exists and is alive**
   - Check active sessions log
-  - Send health ping if uncertain
-  - Create AMCOS agent if not exists
+  - Send health ping (mandatory every time)
+  - Assign COS role if no AMCOS exists for this project
 - [ ] **Format work request** for AMCOS
 - [ ] **Send request** to AMCOS using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project>`

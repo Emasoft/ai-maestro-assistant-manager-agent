@@ -57,7 +57,7 @@ Send an autonomy grant using the `agent-messaging` skill:
 - **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
 - **Content**: Include the following fields:
-  - `type`: `autonomy-grant`
+  - `type`: `autonomy_grant`
   - `operation_types`: List of operation types AMCOS can perform autonomously (e.g., `routine-operation`, `minor-decision`)
   - `expires_at`: ISO-8601 timestamp when autonomous mode ends (e.g., `2025-02-02T18:00:00Z`)
   - `scope_limits`: A nested structure containing:
@@ -95,7 +95,7 @@ Send an autonomy revocation using the `agent-messaging` skill:
 - **Subject**: "AMAMA Autonomous Mode Revoked"
 - **Priority**: `urgent`
 - **Content**: Include the following fields:
-  - `type`: `autonomy-revoke`
+  - `type`: `autonomy_revoke`
   - `reason`: One of `User request`, `Scope exceeded`, `Security concern`, or `Timeout`
   - `effective_immediately`: `true` (revocation always takes effect immediately)
   - `revoked_at`: ISO-8601 timestamp of revocation

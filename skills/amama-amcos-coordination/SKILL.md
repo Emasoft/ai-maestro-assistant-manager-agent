@@ -198,7 +198,7 @@ A COS-assigned agent sends approval requests to AMAMA when:
 
 ## 5. Responding to COS Approval Requests
 
-AMAMA responds with: `approved`, `rejected`, or `needs-revision`. The response includes request_id, decision, optional comment, and conditions.
+AMAMA responds with: `approve`, `deny`, or `defer`. The response includes request_id, decision, optional comment, and conditions.
 
 See [approval-response-workflow.md](references/approval-response-workflow.md):
 - When a COS-assigned agent sends an approval request -> Section 1

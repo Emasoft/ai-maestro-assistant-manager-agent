@@ -17,7 +17,16 @@ triggers:
 
 ## Overview
 
-This skill provides the Assistant Manager (AMAMA) with structured workflows for handling governance approval requests through the GovernanceRequest API. All approval operations use typed GovernanceRequest objects with a defined state machine, replacing the previous message-based approval flow.
+This skill provides the Assistant Manager (AMAMA) with structured workflows for handling **governance** approval requests through the GovernanceRequest API.
+
+**Two approval tracks exist in AI Maestro:**
+
+| Track | Scope | Mechanism | Skill |
+|-------|-------|-----------|-------|
+| **Governance approvals** | Team membership, COS assignment, agent lifecycle, transfers | GovernanceRequest API (`POST /api/governance/requests/{id}/approve`) | This skill (`amama-approval-workflows`) |
+| **Operational approvals** | Deployments, merges, test runs, routine AMCOS operations | Message-based flow (`approval_request` / `approval_decision` messages) | `amama-amcos-coordination` skill |
+
+Governance approvals use typed GovernanceRequest objects with a defined state machine. Operational approvals use the message-based flow described in `amama-amcos-coordination/references/message-formats.md`.
 
 ## Prerequisites
 

@@ -1,7 +1,7 @@
 ---
 name: amama-respond-to-amcos
-description: "Respond to pending AMCOS approval requests with approve, reject, or needs-revision decision"
-argument-hint: "--request-id <id> --decision <approved|rejected|needs-revision> [--comment <text>]"
+description: "Respond to pending AMCOS approval requests with approve, deny, or defer decision"
+argument-hint: "--request-id <id> --decision <approve|deny|defer> [--comment <text>]"
 allowed-tools: ["Read", "Write"]
 ---
 
@@ -20,16 +20,16 @@ Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `--request-id` | Yes | The AMCOS request ID to respond to (format: `amcos-req-{uuid}`) |
-| `--decision` | Yes | Decision: `approved`, `rejected`, or `needs-revision` |
+| `--decision` | Yes | Decision: `approve`, `deny`, or `defer` |
 | `--comment` | No | Optional explanation or conditions for the decision |
 
 ## Decision Values
 
 | Decision | Effect | When to Use |
 |----------|--------|-------------|
-| `approved` | AMCOS proceeds with the operation | Operation is safe and aligned with goals |
-| `rejected` | AMCOS cancels the operation | Operation is inappropriate or risky |
-| `needs-revision` | AMCOS must modify and resubmit | Operation concept is okay but details need adjustment |
+| `approve` | AMCOS proceeds with the operation | Operation is safe and aligned with goals |
+| `deny` | AMCOS cancels the operation | Operation is inappropriate or risky |
+| `defer` | AMCOS must provide more info or modify and resubmit | Operation concept is okay but details need adjustment |
 
 ## What This Command Does
 
@@ -39,7 +39,7 @@ Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 
 2. **Validates Decision**
    - Ensures decision is one of the valid options
-   - For `needs-revision`, requires comment explaining what to change
+   - For `defer`, requires comment explaining what to change
 
 3. **Sends Response via AI Maestro**
    - Formats response message according to AMCOS protocol
@@ -91,10 +91,10 @@ Sent at: 2025-02-02T14:35:00Z
 AMCOS will cancel the operation.
 ```
 
-### Request Revision
+### Defer for Revision
 
 ```
-/amama-respond-to-amcos --request-id amcos-req-m4n5o6 --decision needs-revision --comment "Reduce scope to only feature/* branches, exclude main"
+/amama-respond-to-amcos --request-id amcos-req-m4n5o6 --decision defer --comment "Reduce scope to only feature/* branches, exclude main"
 ```
 
 Output:
@@ -125,9 +125,9 @@ The command sends an approval response to AMCOS using the `agent-messaging` skil
 - **Subject**: "AMAMA Approval Response: <request_id>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
-  - `type`: `approval-response`
+  - `type`: `approval_decision`
   - `request_id`: The request ID being responded to
-  - `decision`: The decision value (`approved`, `rejected`, or `needs-revision`)
+  - `decision`: The decision value (`approve`, `deny`, or `defer`)
   - `comment`: The optional comment text
   - `conditions`: List of conditions (empty list if none)
   - `responded_at`: ISO-8601 timestamp of the response
@@ -139,8 +139,8 @@ The command sends an approval response to AMCOS using the `agent-messaging` skil
 | Error | Cause | Solution |
 |-------|-------|----------|
 | `Request ID not found` | Invalid or already-responded request ID | Check pending requests list |
-| `Invalid decision value` | Decision not one of allowed values | Use: approved, rejected, needs-revision |
-| `needs-revision requires comment` | Missing comment for revision request | Add --comment explaining what to change |
+| `Invalid decision value` | Decision not one of allowed values | Use: approve, deny, defer |
+| `defer requires comment` | Missing comment for defer decision | Add --comment explaining what to change |
 | `AI Maestro unavailable` | Messaging system not running | Start AI Maestro service |
 | `AMCOS not registered` | AMCOS agent not in AI Maestro registry | Register AMCOS agent |
 

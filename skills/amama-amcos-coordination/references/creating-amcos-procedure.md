@@ -233,6 +233,14 @@ Expected response content:
 }
 ```
 
+**Handling `constraints_loaded: false`**: If the COS agent responds with `constraints_loaded: false`, the agent accepted the role but failed to load its governance constraints. In this case:
+1. Send a `cos-reload-constraints` message to the COS agent
+2. Wait 15 seconds and re-send the health ping
+3. If the response still shows `constraints_loaded: false`, revoke the COS role and try assigning to a different agent
+4. Report to user if no agent can load constraints
+
+**Handling no response**: If no `cos-role-accepted` response arrives within 30 seconds, the assignment may have failed silently. Verify the COS assignment via `GET /api/teams/<team-id>` and check if `chief_of_staff` is set. If set but no response, send a health ping. If not set, retry the PATCH call.
+
 ### Step 6: Log the Setup
 
 Record the team and COS assignment in the active sessions log:
