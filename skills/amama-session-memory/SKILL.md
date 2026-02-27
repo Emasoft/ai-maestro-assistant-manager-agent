@@ -313,7 +313,7 @@ curl -X POST "$AIMAESTRO_API/api/memory/store" \
     "data": {
       "id": "'$(uuidgen)'",
       "context": "Architect proposed PostgreSQL vs MySQL for user data",
-      "decision": "APPROVED PostgreSQL",
+      "decision": "Selected PostgreSQL",
       "reason": "We need JSON support and better concurrent writes",
       "related_issues": ["#45", "#47"],
       "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
@@ -326,7 +326,7 @@ curl -X POST "$AIMAESTRO_API/api/memory/store" \
 ## Decision: Database Selection - 2025-01-30
 
 **Context**: Architect proposed PostgreSQL vs MySQL for user data
-**Decision**: APPROVED PostgreSQL
+**Decision**: Selected PostgreSQL
 **Reason**: "We need JSON support and better concurrent writes"
 **Constraints Added**: Must use pgvector for embeddings
 **Related Issues**: #45, #47
