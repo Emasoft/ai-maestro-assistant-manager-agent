@@ -1,196 +1,55 @@
-# AMCOS Role Boundaries
+# AI Maestro Role Boundaries
 
-**CRITICAL: This document defines the strict boundaries between agent roles. Violating these boundaries breaks the system architecture.**
+## 3-Role System
 
----
+| Role | Singleton | Scope | Primary Function |
+|------|-----------|-------|------------------|
+| `manager` | Yes (per host) | Organization-wide | User interface, approval authority |
+| `chief-of-staff` | One per closed team | Team-scoped | Agent coordination within team |
+| `member` | Many per team | Task-scoped | Execution; skills determine specialization |
 
 ## Role Hierarchy
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                          USER                                    │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│              AMAMA (Assistant Manager Agent)                      │
-│              - User's sole interlocutor                          │
-│              - Creates projects                                  │
-│              - Approves AMCOS requests                            │
-│              - Supervises all operations                         │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-         ┌─────────────────┼─────────────────┐
-         │                 │                 │
-         ▼                 ▼                 ▼
-┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│      AMCOS       │ │      EOA        │ │      EIA        │
-│ Chief of Staff  │ │  Orchestrator   │ │   Integrator    │
-│                 │ │                 │ │                 │
-│ PROJECT-        │ │ PROJECT-        │ │ PROJECT-        │
-│ INDEPENDENT     │ │ LINKED          │ │ LINKED          │
-│ (one per org)   │ │ (one per proj)  │ │ (one per proj)  │
-└─────────────────┘ └─────────────────┘ └─────────────────┘
+User <-> manager <-> chief-of-staff <-> member(s)
 ```
 
----
+## Permission Matrix
 
-## AMCOS (Chief of Staff) - Responsibilities
+| Action | manager | chief-of-staff | member |
+|--------|---------|----------------|--------|
+| Talk to user | YES | NO | NO |
+| Create teams | YES | NO | NO |
+| Assign COS to team | YES | NO | NO |
+| Approve GovernanceRequests | YES | NO | NO |
+| Coordinate team members | NO | YES | NO |
+| Submit GovernanceRequests | NO | YES | NO |
+| Assign tasks to members | NO | YES | NO |
+| Manage kanban | NO | YES | NO |
+| Request agent replacement | NO | YES | NO |
+| Execute tasks | NO | NO | YES |
+| Create PRs | NO | NO | YES |
+| Report progress to COS | NO | NO | YES |
 
-### AMCOS CAN:
-- ✅ Create agents (with AMAMA approval)
-- ✅ Terminate agents (with AMAMA approval)
-- ✅ Hibernate/wake agents (with AMAMA approval)
-- ✅ Configure agents with skills and plugins
-- ✅ Assign agents to project teams
-- ✅ Handle handoff protocols between agents
-- ✅ Monitor agent health and availability
-- ✅ Replace failed agents (with AMAMA approval)
-- ✅ Report agent performance to AMAMA
-
-### AMCOS CANNOT:
-- ❌ Create projects (AMAMA only)
-- ❌ Assign tasks to agents (EOA only)
-- ❌ Manage GitHub Project kanban (EOA only)
-- ❌ Make architectural decisions (EAA only)
-- ❌ Perform code review (EIA only)
-- ❌ Communicate directly with user (AMAMA only)
-
-### AMCOS Scope:
-- **Project-independent**: One AMCOS manages agents across ALL projects
-- **Team-agnostic**: Creates teams but doesn't manage their work
-- **Infrastructure-focused**: Ensures agents exist and are configured
-
----
-
-## EOA (Orchestrator) - Responsibilities
-
-### EOA CAN:
-- ✅ Assign tasks to agents
-- ✅ Manage GitHub Project kanban for their project
-- ✅ Track task progress
-- ✅ Reassign tasks between agents
-- ✅ Generate handoff documents
-- ✅ Coordinate agent work within their project
-- ✅ Request AMCOS to create/replace agents for their project
-
-### EOA CANNOT:
-- ❌ Create agents directly (request via AMCOS)
-- ❌ Configure agent skills/plugins (AMCOS only)
-- ❌ Create projects (AMAMA only)
-- ❌ Manage agents outside their project
-
-### EOA Scope:
-- **Project-linked**: One EOA per project
-- **Task-focused**: Manages what agents DO, not what agents EXIST
-- **Kanban owner**: Owns the GitHub Project board for their project
-
----
-
-## AMAMA (Manager) - Responsibilities
-
-### AMAMA CAN:
-- ✅ Create projects
-- ✅ Approve/reject AMCOS requests (agent create/terminate/etc.)
-- ✅ Communicate with user
-- ✅ Set strategic direction
-- ✅ Override any agent decision
-- ✅ Grant autonomous operation directives
-
-### AMAMA CANNOT:
-- ❌ Create agents directly (delegates to AMCOS)
-- ❌ Assign tasks directly (delegates to EOA)
-
-### AMAMA Scope:
-- **Organization-wide**: Oversees all projects and agents
-- **User-facing**: Only agent that talks to user
-- **Decision authority**: Final approval on all significant operations
-
----
-
-## Interaction Patterns
-
-### Creating an Agent for a Project
+## Governance Flow
 
 ```
-EOA: "I need a frontend developer agent for Project X"
-  │
-  ▼
-AMCOS: Receives request, prepares agent specification
-  │
-  ▼
-AMCOS → AMAMA: "Request approval to spawn frontend-dev for Project X"
-  │
-  ▼
-AMAMA: Approves (or rejects with reason)
-  │
-  ▼
-AMCOS: Creates agent, configures skills, assigns to Project X team
-  │
-  ▼
-AMCOS → EOA: "Agent frontend-dev ready, assigned to your project"
-  │
-  ▼
-EOA: Assigns tasks from kanban to new agent
+member needs X -> COS submits GovernanceRequest -> manager approves/rejects
 ```
 
-### Task Assignment
+All significant operations require GovernanceRequest approval from manager.
 
-```
-User/AMAMA: Creates GitHub issue in Project X
-  │
-  ▼
-EOA (Project X): Detects new issue, decides assignment
-  │
-  ▼
-EOA: Updates GitHub Project custom field "Assigned Agent"
-EOA: Sends AI Maestro notification to assigned agent
-  │
-  ▼
-Agent: Receives task, begins work
-```
+## Team Types
 
-### Agent Replacement
+| Type | COS Required | Description |
+|------|-------------|-------------|
+| `open` | No | Loose coordination, no COS |
+| `closed` | Yes | Formal coordination via assigned COS |
 
-```
-AMCOS: Detects agent-123 is unresponsive (terminal failure)
-  │
-  ▼
-AMCOS → AMAMA: "Request approval to replace agent-123"
-  │
-  ▼
-AMAMA: Approves
-  │
-  ▼
-AMCOS: Creates replacement agent-456, configures it
-  │
-  ▼
-AMCOS → EOA: "agent-123 replaced by agent-456, generate handoff"
-  │
-  ▼
-EOA: Generates handoff document with task context
-EOA: Reassigns kanban tasks from agent-123 to agent-456
-EOA: Sends handoff to agent-456
-```
+## Key Constraints
 
----
-
-## Summary Table
-
-| Responsibility | AMAMA | AMCOS | EOA | EIA | EAA |
-|----------------|------|------|-----|-----|-----|
-| Create projects | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Create agents | Approves | ✅ | Requests | ❌ | ❌ |
-| Configure agents | ❌ | ✅ | ❌ | ❌ | ❌ |
-| Assign agents to teams | ❌ | ✅ | ❌ | ❌ | ❌ |
-| Assign tasks | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Manage kanban | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Code review | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Architecture | ❌ | ❌ | ❌ | ❌ | ✅ |
-| Talk to user | ✅ | ❌ | ❌ | ❌ | ❌ |
-
----
-
-**Document Version**: 1.0.0
-**Last Updated**: 2026-02-02
-**Author**: AMCOS Plugin Development
+- Manager NEVER executes technical work
+- COS NEVER communicates with user directly
+- Members NEVER bypass COS to reach manager
+- Skills on a member determine its specialization (architect, implementer, tester, etc.)
+- One COS per closed team; manager can reassign COS between teams

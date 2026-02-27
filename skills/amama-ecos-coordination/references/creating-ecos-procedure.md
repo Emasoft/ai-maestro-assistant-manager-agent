@@ -1,247 +1,325 @@
-# Creating AMCOS Procedure
-
+# Team Creation and Agent Registration Procedure
 
 ## Contents
 
 - [Overview](#overview)
 - [Key Principles](#key-principles)
-- [Session Naming Convention](#session-naming-convention)
-- [Agent Creation Template](#agent-creation-template)
-- [Required Parameters Explained](#required-parameters-explained)
-- [Critical Notes](#critical-notes)
-  - [Directory Structure](#directory-structure)
-  - [Plugin Path](#plugin-path)
-  - [Create vs Wake](#create-vs-wake)
-  - [Pre-requisite](#pre-requisite)
+- [Agent Registration](#agent-registration)
+  - [Registration API Call](#registration-api-call)
+  - [Required Parameters](#agent-required-parameters)
+  - [Verify Registration](#verify-registration)
+- [Team Creation](#team-creation)
+  - [Team Creation API Call](#team-creation-api-call)
+  - [Required Parameters](#team-required-parameters)
+  - [Team Types](#team-types)
+  - [Verify Team Creation](#verify-team-creation)
+- [COS Assignment](#cos-assignment)
 - [Step-by-Step Procedure](#step-by-step-procedure)
-  - [Step 1: Choose Session Name](#step-1-choose-session-name)
-  - [Step 2: Prepare Agent Directory](#step-2-prepare-agent-directory)
-  - [Step 3: Copy Plugin](#step-3-copy-plugin)
-  - [Step 4: Execute Agent Creation](#step-4-execute-agent-creation)
-  - [Step 5: Wait for Initialization](#step-5-wait-for-initialization)
-  - [Step 6: Health Check Ping](#step-6-health-check-ping)
-  - [Step 7: Verify Response](#step-7-verify-response)
-  - [Step 9: Register AMCOS](#step-9-register-ecos)
-- [Session: amcos-chief-of-staff-one](#session-amcos-chief-of-staff-one)
-  - [Step 10: Report to User](#step-10-report-to-user)
+  - [Step 1: Register Agent (if not already registered)](#step-1-register-agent)
+  - [Step 2: Create Team](#step-2-create-team)
+  - [Step 3: Assign COS Role](#step-3-assign-cos-role)
+  - [Step 4: Send Initialization Message](#step-4-send-initialization-message)
+  - [Step 5: Verify COS Acknowledgment](#step-5-verify-cos-acknowledgment)
+  - [Step 6: Log the Setup](#step-6-log-the-setup)
+  - [Step 7: Report to User](#step-7-report-to-user)
 - [Success Criteria](#success-criteria)
 - [Troubleshooting](#troubleshooting)
-  - [Creation Fails with Exit Code 1](#creation-fails-with-exit-code-1)
-  - [No Response to Health Ping](#no-response-to-health-ping)
-  - [Plugin Not Found Error](#plugin-not-found-error)
+  - [Agent Registration Fails](#agent-registration-fails)
+  - [Team Creation Fails](#team-creation-fails)
+  - [COS Assignment Fails](#cos-assignment-fails)
+  - [No Response to Initialization Message](#no-response-to-initialization-message)
 - [Related Documents](#related-documents)
 
 ## Overview
 
-AMAMA (Assistant Manager) is the ONLY agent authorized to create AMCOS (Chief of Staff) instances. This document describes the step-by-step procedure for spawning a new AMCOS agent.
+This document describes the step-by-step procedure for registering agents, creating teams, and assigning the COS (Chief of Staff) role. AMAMA (Assistant Manager) is the ONLY agent authorized to perform these operations.
 
 ## Key Principles
 
-1. **AMAMA chooses the session name** - To avoid collisions and maintain naming consistency
-2. **Session name = AI Maestro registry name** - The session name becomes the agent's identifier in AI Maestro
-3. **Plugin must be pre-copied** - Plugin files must exist in the target directory BEFORE spawning
-4. **Main agent injection** - The `--agent` flag ensures AMCOS receives its role-specific system prompt
+1. **Agents must exist before assignment** - An agent must be registered in the AI Maestro agent registry before it can be added to a team or assigned the COS role
+2. **Teams organize agents** - Teams group agents and define coordination boundaries
+3. **One COS per closed team** - Each closed team can have exactly one COS-assigned agent
+4. **Team registry is persistent** - Teams are stored in `~/.aimaestro/teams/registry.json`
+5. **AMAMA is the authority** - Only AMAMA can create teams and assign COS roles
 
-## Session Naming Convention
+---
 
-Use this format for AMCOS session names:
+## Agent Registration
 
+### Registration API Call
+
+Register a new agent via the Agent Creation API:
+
+```bash
+curl -X POST "$AIMAESTRO_API/api/agents/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "agent-session-name",
+    "workingDirectory": "~/agents/agent-session-name/",
+    "role": "member"
+  }'
 ```
-<role-prefix>-<descriptive>[-number]
-```
 
-**Examples:**
-- `amcos-chief-of-staff-one` - Primary AMCOS instance
-- `amcos-project-alpha` - AMCOS for specific project "alpha"
-- `amcos-inventory-system` - AMCOS for inventory-system project
-
-**Subordinate agents** spawned by AMCOS follow their own naming:
-- `amoa-svgbbox-orchestrator` (Orchestrator for svgbbox project)
-- `amia-inventory-review` (Integrator for inventory review)
-
-## Agent Creation Template
-
-Use the `ai-maestro-agents-management` skill to create the AMCOS agent with the following parameters:
-
-- **Agent name**: `amcos-chief-of-staff-one` (AMAMA picks a unique name; this becomes the AI Maestro registry name)
-- **Working directory**: `~/agents/amcos-chief-of-staff-one/`
-- **Task**: "Coordinate agents across all projects"
-- **Plugin**: load `ai-maestro-chief-of-staff` using the skill's plugin management features
-- **Main agent**: `amcos-chief-of-staff-main-agent`
-
-**Verify**: confirm the agent appears in the agent list with correct status.
-
-## Required Parameters Explained
+### Agent Required Parameters
 
 | Parameter | Purpose | Example Value |
 |-----------|---------|---------------|
-| Agent name | AI Maestro registry identifier | `amcos-chief-of-staff-one` |
-| Working directory | Working directory (flat structure) | `~/agents/amcos-chief-of-staff-one/` |
-| Task | Task description (for context) | `"Coordinate agents across all projects"` |
-| Plugin | Plugin to load for the agent | `ai-maestro-chief-of-staff` |
-| Main agent | Main agent prompt file | `amcos-chief-of-staff-main-agent` |
+| `name` | Agent session name and registry identifier | `coordinator-alpha` |
+| `workingDirectory` | Agent's working directory | `~/agents/coordinator-alpha/` |
+| `role` | Default role in the system | `member` |
 
-## Critical Notes
+Additional optional fields may include:
+- `description` - Human-readable description of the agent's purpose
+- `capabilities` - Array of capability tags
+- `metadata` - Key-value metadata for the agent
 
-### Directory Structure
+### Verify Registration
 
-- Use **FLAT agent folder structure**: `~/agents/<session-name>/`
-- NOT nested: `~/agents/project/session-name/`
-
-### Plugin Path
-
-- Use **LOCAL agent folder path**: `~/agents/<session-name>/.claude/plugins/`
-- NOT development path: `./OUTPUT_SKILLS/ai-maestro-chief-of-staff/`
-
-### Create vs Wake
-
-- **NEW creation**: Standard creation (no continue/wake option)
-- **Wake hibernated agent**: Use the wake feature of the `ai-maestro-agents-management` skill
-
-### Pre-requisite
-
-**Plugin files MUST be copied to target directory BEFORE creating the agent.**
-
-Prepare the agent's plugin directory:
 ```bash
-# Copy plugin to agent's local directory
-mkdir -p ~/agents/$SESSION_NAME/.claude/plugins/
-cp -r /path/to/ai-maestro-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
+curl -s "$AIMAESTRO_API/api/agents" | jq '.[] | select(.name == "agent-session-name")'
 ```
+
+The agent should appear with `status: "registered"`.
+
+---
+
+## Team Creation
+
+### Team Creation API Call
+
+Create a team via the Team Creation API:
+
+```bash
+curl -X POST "$AIMAESTRO_API/api/teams" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "team-name",
+    "description": "Team purpose and scope",
+    "type": "closed",
+    "agentIds": ["agent-id-1", "agent-id-2"]
+  }'
+```
+
+### Team Required Parameters
+
+| Parameter | Purpose | Example Value |
+|-----------|---------|---------------|
+| `name` | Team name (unique) | `svgbbox-development` |
+| `description` | Team purpose | `"SVG bounding box library development team"` |
+| `type` | Access model | `open` or `closed` |
+| `agentIds` | Initial member agents | `["coordinator-alpha", "dev-agent-1"]` |
+
+### Team Types
+
+| Type | Description | COS Allowed |
+|------|-------------|-------------|
+| `open` | Any registered agent can join | No |
+| `closed` | Invite-only, managed membership | Yes (one COS) |
+
+**Only closed teams can have a COS-assigned agent.** Open teams use ad-hoc coordination without a designated coordinator.
+
+### Verify Team Creation
+
+```bash
+curl -s "$AIMAESTRO_API/api/teams" | jq '.[] | select(.name == "team-name")'
+```
+
+Also verify the team registry file:
+
+```bash
+cat ~/.aimaestro/teams/registry.json | jq '.[] | select(.name == "team-name")'
+```
+
+---
+
+## COS Assignment
+
+After the team is created with at least one member agent, assign the COS role:
+
+```bash
+TEAM_ID="<team-id>"
+AGENT_ID="<agent-id>"
+
+curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"agentId\": \"$AGENT_ID\"
+  }"
+```
+
+See [creating-ecos-instance.md](creating-ecos-instance.md) for full COS assignment details including cross-host scenarios.
+
+---
 
 ## Step-by-Step Procedure
 
-### Step 1: Choose Session Name
+### Step 1: Register Agent
 
-Pick a unique session name following the naming convention:
-
-```bash
-SESSION_NAME="amcos-chief-of-staff-one"
-```
-
-### Step 2: Prepare Agent Directory
-
-Create the agent's working directory:
+If the target agent is not already in the registry, register it:
 
 ```bash
-mkdir -p ~/agents/$SESSION_NAME
+AGENT_NAME="coordinator-alpha"
+
+curl -X POST "$AIMAESTRO_API/api/agents/register" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"name\": \"$AGENT_NAME\",
+    \"workingDirectory\": \"~/agents/$AGENT_NAME/\",
+    \"role\": \"member\"
+  }"
 ```
 
-### Step 3: Copy Plugin
+**Verify**: `GET /api/agents` lists the agent.
 
-Copy the AMCOS plugin to the agent's local plugins directory:
+### Step 2: Create Team
+
+Create the team and include the agent as a member:
 
 ```bash
-mkdir -p ~/agents/$SESSION_NAME/.claude/plugins/
-cp -r /path/to/ai-maestro-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
+TEAM_NAME="project-alpha-team"
+
+curl -X POST "$AIMAESTRO_API/api/teams" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"name\": \"$TEAM_NAME\",
+    \"description\": \"Development team for project alpha\",
+    \"type\": \"closed\",
+    \"agentIds\": [\"$AGENT_NAME\"]
+  }"
 ```
 
-### Step 4: Execute Agent Creation
+**Verify**: `GET /api/teams` lists the team. Note the returned `teamId`.
 
-Use the `ai-maestro-agents-management` skill to create the agent with the parameters prepared in Steps 1-3.
+### Step 3: Assign COS Role
 
-**Verify**: the creation command succeeds (exit code 0).
+Assign the COS role to the agent within the team:
 
-### Step 5: Wait for Initialization
+```bash
+TEAM_ID="<team-id-from-step-2>"
 
-Wait 5 seconds for AMCOS to initialize.
+curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"agentId\": \"$AGENT_NAME\"
+  }"
+```
 
-### Step 6: Health Check Ping
+**Verify**: `GET /api/teams/$TEAM_ID` shows `chiefOfStaff` set to the agent.
 
-Send a health check message using the `agent-messaging` skill:
-- **Recipient**: The AMCOS session name chosen in Step 1
-- **Subject**: "Health Check"
-- **Content**: ping type, message "Verify AMCOS alive", expect_reply true, timeout 10
-- **Type**: `ping`
-- **Priority**: `normal`
+### Step 4: Send Initialization Message
 
-### Step 7: Verify Response
+Notify the agent of its COS role using the `agent-messaging` skill:
 
-Check your inbox using the `agent-messaging` skill for a `pong` response from AMCOS within 30 seconds.
+- **Recipient**: `$AGENT_NAME`
+- **Subject**: "COS Role Assignment"
+- **Content**:
+  - `type`: `cos-role-assignment`
+  - `team_id`: `$TEAM_ID`
+  - `team_name`: `$TEAM_NAME`
+  - `expected_role`: `chief-of-staff`
+- **Priority**: `high`
+
+### Step 5: Verify COS Acknowledgment
+
+Check inbox using the `agent-messaging` skill for a response from the COS-assigned agent within 30 seconds.
 
 Expected response content:
 ```json
 {
-  "type": "pong",
-  "status": "alive",
-  "uptime": "5",
-  "active_specialists": []
+  "type": "cos-role-accepted",
+  "team_id": "<team-id>",
+  "status": "active",
+  "constraints_loaded": true
 }
 ```
 
-### Step 9: Register AMCOS
+### Step 6: Log the Setup
 
-Record the new AMCOS instance in the active sessions log:
+Record the team and COS assignment in the active sessions log:
 
-File: `docs_dev/sessions/active-amcos-sessions.md`
+File: `docs_dev/sessions/active-teams.md`
 
 ```markdown
-## Session: amcos-chief-of-staff-one
-- **Spawned**: 2026-02-05 16:30:22
-- **Plugins**: ai-maestro-chief-of-staff
-- **Working Dir**: ~/agents/amcos-chief-of-staff-one
-- **Last Health Check**: 2026-02-05 16:30:30 (ALIVE)
-- **Active Specialists**: (none yet)
+## Team: project-alpha-team
+- **Created**: 2026-02-27 10:00:00
+- **Type**: closed
+- **Members**: coordinator-alpha, dev-agent-1
+- **COS**: coordinator-alpha
+- **COS Assigned**: 2026-02-27 10:00:05
+- **Last Health Check**: 2026-02-27 10:00:10 (ALIVE)
 - **Current Tasks**: Awaiting work requests
 ```
 
-### Step 10: Report to User
+### Step 7: Report to User
 
-Notify the user that AMCOS is ready:
+Notify the user that the team and COS are ready:
 
 ```
-✅ AMCOS ready!
+Team and COS ready!
 
-Session: amcos-chief-of-staff-one
+Team: project-alpha-team (closed)
+COS: coordinator-alpha
+Members: coordinator-alpha, dev-agent-1
 Status: Active and responding
-Working Dir: ~/agents/amcos-chief-of-staff-one
 
-AMCOS is now available to coordinate specialist agents (EOA, EAA, EIA).
+The COS-assigned agent is now available to coordinate specialist agents within this team.
 ```
 
 ## Success Criteria
 
-A successful AMCOS spawn meets ALL of the following criteria:
+A successful team setup with COS assignment meets ALL of the following:
 
-- [ ] Agent creation via `ai-maestro-agents-management` skill succeeded (exit code 0)
-- [ ] AMCOS session registered in AI Maestro (visible in agent list)
-- [ ] AMCOS main agent loaded with correct role constraints
-- [ ] AMCOS plugins loaded correctly
-- [ ] AMCOS working directory set correctly
-- [ ] AMCOS health check ping successful (pong received)
-- [ ] AMCOS added to active sessions log in `docs_dev/sessions/active-amcos-sessions.md`
+- [ ] Agent registered in AI Maestro registry (`GET /api/agents` lists it)
+- [ ] Team created via `POST /api/teams` (returns team ID)
+- [ ] Team stored in `~/.aimaestro/teams/registry.json`
+- [ ] COS assigned via `PATCH /api/teams/$TEAM_ID/chief-of-staff`
+- [ ] `GET /api/teams/$TEAM_ID` confirms `chiefOfStaff` set correctly
+- [ ] COS-assigned agent received and acknowledged role assignment message
+- [ ] Team and COS logged in `docs_dev/sessions/active-teams.md`
 
 ## Troubleshooting
 
-### Creation Fails with Exit Code 1
+### Agent Registration Fails
 
-**Cause**: AI Maestro service may be down or session name collision
+**Cause**: AI Maestro service may be down or agent name collision
 
 **Solution**:
-1. Check AI Maestro health using the `agent-messaging` skill's health check feature
-2. Use the `ai-maestro-agents-management` skill to list agents and check for name collisions
-3. If collision, use different session name with suffix: `amcos-chief-of-staff-two`
+1. Check AI Maestro health: `GET /api/health`
+2. Check for name collisions: `GET /api/agents?name=$AGENT_NAME`
+3. If collision, choose a different agent name with a suffix
 
-### No Response to Health Ping
+### Team Creation Fails
 
-**Cause**: AMCOS may not have finished initializing
+**Cause**: Invalid agent IDs, duplicate team name, or service issue
+
+**Solution**:
+1. Verify all `agentIds` exist in the registry
+2. Check for team name collisions: `GET /api/teams?name=$TEAM_NAME`
+3. Verify AI Maestro service is healthy
+
+### COS Assignment Fails
+
+**Cause**: Agent not a team member, team already has COS, or team type is `open`
+
+**Solution**:
+1. Verify agent is in the team's member list
+2. Check if team already has a COS: `GET /api/teams/$TEAM_ID`
+3. If team has existing COS, unassign first: `PATCH /api/teams/$TEAM_ID/chief-of-staff` with `agentId: null`
+4. Verify team type is `closed` (open teams cannot have COS)
+
+### No Response to Initialization Message
+
+**Cause**: Agent may not be running or not processing messages
 
 **Solution**:
 1. Wait additional 10 seconds
-2. Retry health ping
-3. Check tmux session manually: `tmux attach -t $SESSION_NAME`
-
-### Plugin Not Found Error
-
-**Cause**: Plugin not copied to local directory before spawn
-
-**Solution**:
-1. Verify plugin exists: `ls ~/agents/$SESSION_NAME/.claude/plugins/ai-maestro-chief-of-staff/`
-2. Copy plugin if missing
-3. Re-run spawn command
+2. Retry initialization message
+3. Check agent session status via `GET /api/agents/$AGENT_NAME`
+4. If agent is unresponsive, consider assigning COS to a different agent
 
 ## Related Documents
 
-- [AMCOS Communication Protocol](./amcos-communication-protocol.md)
-- [AMCOS Approval Workflow](./amcos-approval-workflow.md)
-- [Active AMCOS Sessions Management](./managing-active-sessions.md)
+- [creating-ecos-instance.md](creating-ecos-instance.md) - COS role assignment details and cross-host scenarios
+- [approval-response-workflow.md](approval-response-workflow.md) - COS approval workflow
+- [delegation-rules.md](delegation-rules.md) - COS delegation rules
+- [workflow-checklists.md](workflow-checklists.md) - Coordination checklists

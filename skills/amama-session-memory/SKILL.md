@@ -1,9 +1,9 @@
 ---
 name: amama-session-memory
-description: User preference and communication style persistence. Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start.
-version: 1.0.0
+description: User preference and communication style persistence via AI Maestro memory system. Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start.
+version: 2.0.0
 license: MIT
-compatibility: Requires file system access to handoff documents and GitHub issue comments for persistence. Requires AI Maestro installed.
+compatibility: Requires AI Maestro installed with CozoDB agent database. File system fallback available.
 metadata:
   author: Emasoft
 context: fork
@@ -21,7 +21,7 @@ triggers:
 
 ## Overview
 
-Session memory for the AI Maestro Assistant Manager Agent (AMAMA) serves a unique purpose: maintaining continuity in the user relationship across sessions. Unlike orchestration memory that tracks tasks and patterns, AMAMA session memory focuses on user-centric data that enables the assistant to communicate effectively with the user regardless of context compaction or session interruptions.
+Session memory for the AI Maestro Assistant Manager Agent (AMAMA) serves a unique purpose: maintaining continuity in the user relationship across sessions. AMAMA session memory integrates with AI Maestro's centralized memory system (CozoDB agent database, subconscious indexing, and long-term consolidation) as the primary storage backend, with a file-based fallback for resilience. This enables semantic search over conversation history, automatic memory consolidation, and cross-agent memory sharing.
 
 **Purpose**: Enable AMAMA to remember the user across sessions, maintaining relationship continuity and avoiding repetitive clarification requests.
 
@@ -29,10 +29,95 @@ Session memory for the AI Maestro Assistant Manager Agent (AMAMA) serves a uniqu
 
 ## Prerequisites
 
-1. File system access to create and maintain handoff documents directory (`thoughts/shared/handoffs/amama/`)
-2. GitHub API access for issue comment persistence (optional but recommended)
-3. Understanding of AMAMA role as user-facing communication agent
-4. Familiarity with context compaction and session continuity concepts
+1. AI Maestro installed with CozoDB agent database at `~/.aimaestro/agents/<agent-id>/`
+2. Subconscious memory indexing service running (conversation history to semantic search)
+3. File system access for fallback handoff documents directory (`thoughts/shared/handoffs/amama/`)
+4. GitHub API access for issue comment persistence (optional but recommended)
+5. Understanding of AMAMA role as user-facing communication agent
+6. Familiarity with context compaction and session continuity concepts
+
+## Memory Architecture
+
+AMAMA session memory uses a tiered storage architecture with AI Maestro as the primary backend and file-based handoffs as fallback.
+
+### Tier 1 (Primary): AI Maestro CozoDB Agent Database
+
+**Location**: `~/.aimaestro/agents/<agent-id>/memory.cozo`
+
+AI Maestro's CozoDB stores structured memory records with semantic indexing. Each memory entry is a typed relation:
+
+| Relation | Schema | Purpose |
+|----------|--------|---------|
+| `user_preferences` | `(key: String, value: String, source: String, timestamp: DateTime)` | Communication style, format, verbosity |
+| `decisions` | `(id: Uuid, context: String, decision: String, reason: String, related_issues: [String], timestamp: DateTime)` | Approval history |
+| `pending_items` | `(id: Uuid, type: String, description: String, priority: String, created: DateTime, deadline: DateTime?)` | Items awaiting user action |
+| `availability_state` | `(state: String, since: DateTime, notes: String)` | Current user availability |
+| `session_handoffs` | `(session_id: String, summary: String, resume_instructions: String, timestamp: DateTime)` | Session continuity data |
+
+**Why CozoDB**: Supports Datalog queries for complex relationship traversal, built-in vector search for semantic memory retrieval, and transactional writes for consistency.
+
+### Tier 2: Subconscious Memory Indexing
+
+AI Maestro's subconscious memory system automatically indexes conversation history into a semantic search index. AMAMA leverages this for:
+
+- **Implicit preference detection**: Searching past conversations for patterns like repeated format choices, tone corrections, or decision styles without AMAMA having explicitly recorded them.
+- **Decision context retrieval**: When a decision was made in a conversation but not formally logged, semantic search over history can recover the context.
+- **Cross-agent memory**: Preferences expressed to other agents (EIA, EAA, EOA) are indexed and accessible to AMAMA.
+
+**Query interface**:
+```bash
+# Semantic search over conversation history
+curl -s "$AIMAESTRO_API/api/memory/search" \
+  -H "Content-Type: application/json" \
+  -d '{"agent": "'$SESSION_NAME'", "query": "user preference for response format", "limit": 5}'
+```
+
+### Tier 3: Long-Term Memory Consolidation
+
+AI Maestro periodically consolidates short-term memory entries into long-term summaries. AMAMA benefits from:
+
+- **Preference stabilization**: Temporary preferences that persist across multiple sessions get promoted to stable preferences with higher confidence scores.
+- **Decision pattern recognition**: Consolidated view of decision history reveals patterns (e.g., "user consistently favors simplicity over feature richness").
+- **Stale item cleanup**: Pending items that remain unresolved beyond a configurable threshold are flagged for review or archival.
+
+Consolidation runs automatically via AI Maestro's background scheduler. AMAMA can trigger manual consolidation:
+```bash
+curl -X POST "$AIMAESTRO_API/api/memory/consolidate" \
+  -H "Content-Type: application/json" \
+  -d '{"agent": "'$SESSION_NAME'", "scope": "user_preferences"}'
+```
+
+### Tier 4 (Fallback): File-Based Handoff Documents
+
+**Location**: `thoughts/shared/handoffs/amama/`
+
+When AI Maestro's CozoDB is unavailable (service down, first-time setup, or recovery), AMAMA falls back to file-based storage:
+
+```
+thoughts/shared/handoffs/amama/
+  current.md              # Current session state
+  user-preferences.md     # Accumulated user preferences
+  decision-log.md         # Historical decisions
+  pending-items.md        # Items awaiting user action
+```
+
+**Fallback detection**: On session start, AMAMA checks CozoDB connectivity. If unavailable, it logs a warning and uses file-based storage. When CozoDB becomes available again, file-based state is synced back into CozoDB.
+
+### Secondary: GitHub Issue Comments
+
+**Location**: Comments on open issues with `amama-context` label.
+
+**Use Case**: When working on a specific issue, AMAMA records user decisions and preferences as issue comments to preserve context within the GitHub thread.
+
+**Format in Issue Comments**:
+```markdown
+<!-- AMAMA-CONTEXT
+user_preference: prefers detailed error messages
+decision: approved retry logic with exponential backoff
+pending: awaiting input on max retry count
+availability_state: active
+-->
+```
 
 ## What AMAMA Session Memory Stores
 
@@ -49,6 +134,17 @@ Data that helps AMAMA communicate in ways the user prefers:
 | Format preference | "likes bullet points over prose" | Match reading style |
 | Language quirks | "uses 'ship it' to mean 'approve'" | Understand user jargon |
 | Communication channel | "prefers GitHub comments over chat" | Route responses correctly |
+
+**CozoDB write**:
+```bash
+curl -X POST "$AIMAESTRO_API/api/memory/store" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": "'$SESSION_NAME'",
+    "relation": "user_preferences",
+    "data": {"key": "verbosity", "value": "concise", "source": "explicit", "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+  }'
+```
 
 ### 2. Previous Decisions and Approvals
 
@@ -86,41 +182,6 @@ State-based availability tracking (not time-based):
 | `do-not-disturb` | User explicitly requested no interruptions | Only critical escalations |
 | `unknown` | Availability not established | Assume monitoring, ask if needed |
 
-## Memory Storage Locations
-
-AMAMA stores session memory in two persistent locations.
-
-### Primary: Handoff Documents
-
-**Location**: `thoughts/shared/handoffs/amama/`
-
-**Structure**:
-```
-thoughts/shared/handoffs/amama/
-  current.md              # Current session state
-  user-preferences.md     # Accumulated user preferences
-  decision-log.md         # Historical decisions
-  pending-items.md        # Items awaiting user action
-```
-
-**Why Handoff Documents**: They survive context compaction, are human-readable, and can be shared across AMAMA sessions.
-
-### Secondary: GitHub Issue Comments
-
-**Location**: Comments on open issues with `amama-context` label.
-
-**Use Case**: When working on a specific issue, AMAMA records user decisions and preferences as issue comments to preserve context within the GitHub thread.
-
-**Format in Issue Comments**:
-```markdown
-<!-- AMAMA-CONTEXT
-user_preference: prefers detailed error messages
-decision: approved retry logic with exponential backoff
-pending: awaiting input on max retry count
-availability_state: active
--->
-```
-
 ## Memory Retrieval Triggers
 
 AMAMA retrieves session memory based on state changes, not time intervals.
@@ -130,20 +191,29 @@ AMAMA retrieves session memory based on state changes, not time intervals.
 **Condition**: AMAMA agent initializes or resumes after compaction.
 
 **Actions**:
-1. Read `thoughts/shared/handoffs/amama/current.md`
-2. Load user preferences from `user-preferences.md`
-3. Check `pending-items.md` for items needing attention
-4. Restore user availability state
-5. Report loaded context to user if preferences indicate
+1. Check CozoDB connectivity at `~/.aimaestro/agents/<agent-id>/`
+2. If CozoDB available:
+   a. Query `session_handoffs` for latest handoff record
+   b. Query `user_preferences` for all active preferences
+   c. Query `pending_items` for unresolved items
+   d. Query `availability_state` for current state
+   e. Run semantic search for any recent preference changes from other agents
+3. If CozoDB unavailable (fallback):
+   a. Read `thoughts/shared/handoffs/amama/current.md`
+   b. Load user preferences from `user-preferences.md`
+   c. Check `pending-items.md` for items needing attention
+   d. Restore user availability state
+4. Report loaded context to user if preferences indicate
 
 **Example**:
 ```markdown
 ## Session Restored
 
-I've loaded your previous context:
+I've loaded your previous context (via AI Maestro memory):
 - You prefer concise responses
 - Pending: database schema choice (deferred)
 - Last state: monitoring
+- Cross-agent note: EAA recorded you prefer modular designs
 
 Would you like to continue where we left off?
 ```
@@ -153,30 +223,33 @@ Would you like to continue where we left off?
 **Condition**: User sends a request that AMAMA must route to another role.
 
 **Actions**:
-1. Check decision-log.md for relevant prior decisions
-2. Check pending-items.md for related pending items
-3. Include context in handoff to target role
-4. Record routing decision
+1. Query CozoDB `decisions` relation for relevant prior decisions
+2. Query CozoDB `pending_items` for related pending items
+3. Run semantic search for related conversation context
+4. Include context in handoff to target role
+5. Record routing decision
 
 ### Trigger 3: GitHub Issue Context
 
 **Condition**: User references a GitHub issue number.
 
 **Actions**:
-1. Query issue for AMAMA-CONTEXT comments
-2. Extract user preferences and decisions
-3. Merge with session preferences (issue-specific takes precedence)
-4. Apply context to current interaction
+1. Query CozoDB for decisions linked to the issue number
+2. Query issue for AMAMA-CONTEXT comments
+3. Run semantic search for conversations mentioning the issue
+4. Merge all sources (CozoDB takes precedence, then semantic, then GitHub comments)
+5. Apply context to current interaction
 
 ### Trigger 4: Approval Request
 
 **Condition**: AMAMA needs to request user approval.
 
 **Actions**:
-1. Check decision-log.md for similar past decisions
-2. Check if item was previously deferred
-3. Adapt request based on user communication style
-4. Record approval or rejection when received
+1. Query CozoDB `decisions` for similar past decisions
+2. Run semantic search for related past conversations
+3. Check if item was previously deferred in `pending_items`
+4. Adapt request based on user communication style from `user_preferences`
+5. Record approval or rejection when received
 
 ## Memory Update Triggers
 
@@ -193,11 +266,23 @@ AMAMA updates session memory based on user actions, not time intervals.
 
 **Actions**:
 1. Extract preference
-2. Update user-preferences.md
-3. Apply immediately to current session
-4. Confirm understanding if preference is major
+2. Write to CozoDB `user_preferences` relation (or fallback to `user-preferences.md`)
+3. Index the conversation snippet via subconscious memory for future semantic search
+4. Apply immediately to current session
+5. Confirm understanding if preference is major
 
-**Example Update**:
+**Example CozoDB Write**:
+```bash
+curl -X POST "$AIMAESTRO_API/api/memory/store" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": "'$SESSION_NAME'",
+    "relation": "user_preferences",
+    "data": {"key": "response_length", "value": "concise", "source": "explicit-2025-01-30", "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+  }'
+```
+
+**Fallback file update** (`user-preferences.md`):
 ```markdown
 ## User Preferences - Updated
 
@@ -212,12 +297,31 @@ AMAMA updates session memory based on user actions, not time intervals.
 **Condition**: User approves, rejects, or defers something.
 
 **Actions**:
-1. Record decision in decision-log.md with context
-2. If deferred, add to pending-items.md
+1. Record decision in CozoDB `decisions` relation (or fallback to `decision-log.md`)
+2. If deferred, add to CozoDB `pending_items` (or fallback to `pending-items.md`)
 3. If rejection, record reason for future reference
 4. Update any related pending items
+5. Index via subconscious memory for semantic retrieval
 
-**Example Decision Log Entry**:
+**Example CozoDB Write**:
+```bash
+curl -X POST "$AIMAESTRO_API/api/memory/store" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": "'$SESSION_NAME'",
+    "relation": "decisions",
+    "data": {
+      "id": "'$(uuidgen)'",
+      "context": "Architect proposed PostgreSQL vs MySQL for user data",
+      "decision": "APPROVED PostgreSQL",
+      "reason": "We need JSON support and better concurrent writes",
+      "related_issues": ["#45", "#47"],
+      "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+    }
+  }'
+```
+
+**Fallback Decision Log Entry** (`decision-log.md`):
 ```markdown
 ## Decision: Database Selection - 2025-01-30
 
@@ -239,7 +343,7 @@ AMAMA updates session memory based on user actions, not time intervals.
 - DND requests ("don't interrupt me unless critical")
 
 **Actions**:
-1. Update availability state in current.md
+1. Update CozoDB `availability_state` relation (or fallback to `current.md`)
 2. Adjust AMAMA behavior accordingly
 3. Queue or release pending items based on state
 
@@ -248,8 +352,8 @@ AMAMA updates session memory based on user actions, not time intervals.
 **Condition**: Pending item is addressed (answered, decided, or cancelled).
 
 **Actions**:
-1. Remove from pending-items.md
-2. If decision made, add to decision-log.md
+1. Remove from CozoDB `pending_items` (or fallback `pending-items.md`)
+2. If decision made, add to CozoDB `decisions` (or fallback `decision-log.md`)
 3. Update related items if dependencies exist
 4. Notify user of resolution if requested
 
@@ -258,16 +362,36 @@ AMAMA updates session memory based on user actions, not time intervals.
 **Condition**: Session is ending or context approaching limit.
 
 **Actions**:
-1. Write all in-memory state to handoff documents
-2. Ensure pending-items.md is current
-3. Create handoff summary in current.md
-4. Validate all files are written successfully
+1. Write all in-memory state to CozoDB `session_handoffs` relation
+2. Ensure `pending_items` is current in CozoDB
+3. Trigger subconscious memory indexing for the current session
+4. Also write fallback handoff documents for resilience:
+   a. Write `thoughts/shared/handoffs/amama/current.md`
+   b. Sync `pending-items.md` from CozoDB state
+5. Validate all writes succeeded
 
 ## Handoff Document Creation
 
-When AMAMA session ends or context compacts, a handoff document ensures continuity.
+When AMAMA session ends or context compacts, a handoff record ensures continuity. The primary handoff is stored in CozoDB; a file-based copy is written as fallback.
 
-### Handoff Document Structure
+### CozoDB Handoff Record
+
+```bash
+curl -X POST "$AIMAESTRO_API/api/memory/store" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": "'$SESSION_NAME'",
+    "relation": "session_handoffs",
+    "data": {
+      "session_id": "amama-20250130-001",
+      "summary": "User active on auth-module. PostgreSQL approved. 3 pending items.",
+      "resume_instructions": "Check pending DB schema choice. Maintain concise style. User prefers LGTM for approvals.",
+      "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+    }
+  }'
+```
+
+### Fallback Handoff Document Structure
 
 **File**: `thoughts/shared/handoffs/amama/current.md`
 
@@ -278,6 +402,7 @@ When AMAMA session ends or context compacts, a handoff document ensures continui
 - Session ID: amama-20250130-001
 - Last Updated: 2025-01-30
 - Previous Session: amama-20250129-003
+- Storage Backend: CozoDB (synced) | File-only (fallback)
 
 ## User State
 - Availability: monitoring
@@ -295,8 +420,8 @@ When AMAMA session ends or context compacts, a handoff document ensures continui
 3. PR #47 review - submitted, no response yet
 
 ## Recent Decisions
-- 2025-01-30: Approved PostgreSQL for user data (see decision-log.md)
-- 2025-01-29: Approved microservices pattern (see decision-log.md)
+- 2025-01-30: Approved PostgreSQL for user data (CozoDB decision ID: abc-123)
+- 2025-01-29: Approved microservices pattern (CozoDB decision ID: def-456)
 
 ## Communication Notes
 - User prefers concise responses
@@ -306,90 +431,135 @@ When AMAMA session ends or context compacts, a handoff document ensures continui
 
 ## Resume Instructions
 When resuming:
-1. Check pending-items.md for items that may need attention
-2. Reference recent decisions before proposing alternatives
-3. Maintain concise communication style
-4. Check if user availability has changed
+1. Connect to CozoDB and query latest state
+2. If CozoDB unavailable, use this file as fallback
+3. Check pending_items for items that may need attention
+4. Reference recent decisions before proposing alternatives
+5. Maintain concise communication style
+6. Check if user availability has changed
 ```
 
-### Handoff Document Best Practices
+### Handoff Best Practices
 
-1. **Be Specific**: Include issue numbers, file paths, decision IDs
-2. **Be Current**: Update before every potential compaction
+1. **Be Specific**: Include issue numbers, file paths, CozoDB record IDs
+2. **Be Current**: Write to CozoDB before every potential compaction
 3. **Be Minimal**: Only essential context, not full history
 4. **Be Actionable**: Include "Resume Instructions" section
-5. **Be Linked**: Reference other files for details
+5. **Be Linked**: Reference CozoDB relations for details
+6. **Be Redundant**: Always write fallback files alongside CozoDB
 
 ## Instructions
 
 Follow these steps to maintain session memory:
 
-1. **Initialize memory structure** - Create handoff directory structure on first use
-2. **Load context on session start** - Read handoff documents and restore user preferences
-3. **Detect user preferences** - Listen for preference expressions and communication patterns
-4. **Record decisions** - Log all user approvals, rejections, and deferrals
-5. **Track pending items** - Maintain list of items awaiting user attention
-6. **Monitor availability state** - Detect and respond to user availability changes
-7. **Update handoff documents** - Write memory to disk before session end or compaction
-8. **Validate continuity** - Ensure next session can resume seamlessly
+1. **Check AI Maestro CozoDB availability** - Verify `~/.aimaestro/agents/<agent-id>/` exists and is accessible
+2. **Initialize memory structure** - Create CozoDB relations if first use; create fallback handoff directory
+3. **Load context on session start** - Query CozoDB (primary) or read handoff documents (fallback)
+4. **Run semantic search** - Query subconscious memory for implicit preferences from conversation history
+5. **Detect user preferences** - Listen for preference expressions and communication patterns
+6. **Record decisions** - Log all user approvals, rejections, and deferrals to CozoDB and fallback
+7. **Track pending items** - Maintain list of items awaiting user attention in CozoDB and fallback
+8. **Monitor availability state** - Detect and respond to user availability changes
+9. **Update handoff records** - Write to CozoDB and fallback files before session end or compaction
+10. **Trigger memory consolidation** - Request long-term consolidation for stable preferences
+11. **Sync fallback on recovery** - When CozoDB returns after outage, sync file-based state back
+12. **Validate continuity** - Ensure next session can resume seamlessly from either storage tier
 
 **Checklist for session memory management**:
 
 Copy this checklist and track your progress:
 
-- [ ] Create `thoughts/shared/handoffs/amama/` directory structure
-- [ ] Initialize `current.md` with session metadata
-- [ ] Initialize `user-preferences.md` with empty sections
-- [ ] Initialize `decision-log.md` with header
-- [ ] Initialize `pending-items.md` with empty sections
-- [ ] Implement session start retrieval trigger
-- [ ] Implement preference detection and recording
-- [ ] Implement decision logging
+- [ ] Verify CozoDB agent database at `~/.aimaestro/agents/<agent-id>/`
+- [ ] Initialize CozoDB relations (user_preferences, decisions, pending_items, availability_state, session_handoffs)
+- [ ] Create fallback `thoughts/shared/handoffs/amama/` directory structure
+- [ ] Initialize fallback files (current.md, user-preferences.md, decision-log.md, pending-items.md)
+- [ ] Implement CozoDB-first session start retrieval with file fallback
+- [ ] Implement subconscious memory semantic search on session start
+- [ ] Implement preference detection and dual-write (CozoDB + fallback)
+- [ ] Implement decision logging with CozoDB + fallback
 - [ ] Implement availability state tracking
 - [ ] Implement pending item management
-- [ ] Implement handoff document creation
+- [ ] Implement handoff document creation (CozoDB + fallback)
+- [ ] Implement long-term memory consolidation trigger
+- [ ] Implement fallback-to-CozoDB sync on recovery
 - [ ] Test session continuity across compaction
+- [ ] Test CozoDB failure and fallback path
+- [ ] Test semantic search retrieval of implicit preferences
+- [ ] Test cross-agent memory (preferences from EIA/EAA/EOA)
 - [ ] Test GitHub issue context integration
 
 ## Output
 
 | Output Type | Format | When Generated |
 |-------------|--------|----------------|
-| Session restored message | Markdown summary of loaded context | At session start |
+| Session restored message | Markdown summary of loaded context (indicates storage tier) | At session start |
 | Preference recorded confirmation | "Noted: brief responses preferred" | When preference detected |
-| Decision logged confirmation | "Recorded: PostgreSQL approved" | When user makes decision |
+| Decision logged confirmation | "Recorded: PostgreSQL approved (CozoDB ID: abc-123)" | When user makes decision |
 | Availability state change | "Understood - I'll queue items" | When user indicates away/DND |
-| Handoff document | Structured markdown file | At session end or compaction |
+| Handoff record | CozoDB session_handoffs entry + fallback markdown file | At session end or compaction |
 | Pending items reminder | List of items needing attention | When resuming or user asks |
+| Memory consolidation report | Summary of stabilized preferences | After long-term consolidation |
+| Fallback sync status | "CozoDB restored - synced N file-based records" | After recovery from outage |
 
 ## Task Checklist
 
 Copy this checklist to track implementation:
 
-- [ ] Create `thoughts/shared/handoffs/amama/` directory structure
-- [ ] Initialize `current.md` with session metadata
-- [ ] Initialize `user-preferences.md` with empty sections
-- [ ] Initialize `decision-log.md` with header
-- [ ] Initialize `pending-items.md` with empty sections
-- [ ] Implement session start retrieval trigger
-- [ ] Implement preference detection and recording
-- [ ] Implement decision logging
+- [ ] Verify CozoDB agent database at `~/.aimaestro/agents/<agent-id>/`
+- [ ] Initialize CozoDB relations
+- [ ] Create fallback `thoughts/shared/handoffs/amama/` directory structure
+- [ ] Initialize fallback files with empty sections
+- [ ] Implement CozoDB-first retrieval with file fallback
+- [ ] Implement subconscious memory semantic search
+- [ ] Implement preference detection and dual-write
+- [ ] Implement decision logging (CozoDB + fallback)
 - [ ] Implement availability state tracking
 - [ ] Implement pending item management
-- [ ] Implement handoff document creation
+- [ ] Implement handoff creation (CozoDB + fallback)
+- [ ] Implement long-term consolidation trigger
+- [ ] Implement fallback-to-CozoDB sync
 - [ ] Test session continuity across compaction
+- [ ] Test CozoDB failure and fallback path
+- [ ] Test semantic search and cross-agent memory
 - [ ] Test GitHub issue context integration
 
 ## Examples
 
-### Example 1: Session Start with Restored Context
+### Example 1: Session Start with AI Maestro Memory
 
-**Scenario**: AMAMA starts and finds previous session data.
+**Scenario**: AMAMA starts and CozoDB is available with previous session data.
 
 ```markdown
-## Session Restored
+## Session Restored (via AI Maestro Memory)
 
-I've loaded your context from our previous session:
+I've loaded your context from AI Maestro's agent database:
+
+**Your Preferences** (from CozoDB):
+- Concise responses preferred (stable - 5 sessions)
+- High technical detail (stable - 3 sessions)
+
+**Cross-Agent Insights** (from subconscious memory):
+- EAA noted you prefer modular architecture patterns
+- EOA recorded you like task breakdowns in checklists
+
+**Pending Items**:
+- Database schema choice (deferred)
+- PR #47 awaiting your review
+
+**Recent Decisions**:
+- PostgreSQL approved for user data (ID: abc-123)
+
+Would you like to address the pending items, or continue with something else?
+```
+
+### Example 2: Session Start with Fallback
+
+**Scenario**: AMAMA starts but CozoDB is unavailable.
+
+```markdown
+## Session Restored (file fallback - CozoDB unavailable)
+
+I've loaded your context from handoff documents:
 
 **Your Preferences**:
 - Concise responses preferred
@@ -399,77 +569,92 @@ I've loaded your context from our previous session:
 - Database schema choice (deferred)
 - PR #47 awaiting your review
 
-**Recent Decisions**:
-- PostgreSQL approved for user data
-
-Would you like to address the pending items, or continue with something else?
+Note: AI Maestro memory is currently unavailable. Using file-based fallback.
+I'll sync back to CozoDB when it becomes available.
 ```
 
-### Example 2: Detecting and Recording Preference
+### Example 3: Detecting and Recording Preference
 
 **User Input**: "Can you be more brief? I don't need all the explanation."
 
 **AMAMA Actions**:
 1. Detect preference expression
-2. Update user-preferences.md:
+2. Write to CozoDB:
+   ```bash
+   curl -X POST "$AIMAESTRO_API/api/memory/store" \
+     -d '{"agent": "amama-main", "relation": "user_preferences", "data": {"key": "response_length", "value": "concise", "source": "explicit"}}'
+   ```
+3. Write fallback to `user-preferences.md`:
    ```markdown
    ### Communication Style
    - Response length: brief/concise (expressed 2025-01-30)
    ```
-3. Respond briefly:
+4. Respond briefly:
    ```markdown
    Got it - keeping responses brief from now on.
    ```
 
-### Example 3: Recording Decision with Context
+### Example 4: Recording Decision with Context
 
 **User Input**: "Let's go with PostgreSQL. We need the JSON support."
 
 **AMAMA Actions**:
-1. Record in decision-log.md:
+1. Record in CozoDB `decisions` relation with full context
+2. Write fallback to `decision-log.md`
+3. Remove from CozoDB `pending_items` if it was pending
+4. Index via subconscious memory
+5. Acknowledge:
    ```markdown
-   ## Decision: Database Selection - 2025-01-30
-
-   **Decision**: APPROVED PostgreSQL
-   **Reason**: "We need the JSON support"
-   **Context**: User data storage for authentication module
-   **Related Issues**: #45
-   ```
-2. Remove from pending-items.md if it was pending
-3. Acknowledge:
-   ```markdown
-   Noted: PostgreSQL selected for user data (JSON support).
+   Noted: PostgreSQL selected for user data (JSON support). Decision ID: abc-123.
    ```
 
-### Example 4: Availability State Change
+### Example 5: Availability State Change
 
 **User Input**: "I need to step away for a while. Don't wait for me on the PR reviews."
 
 **AMAMA Actions**:
-1. Update current.md:
-   ```markdown
-   ## User State
-   - Availability: away
-   - Last Interaction: indicated stepping away
+1. Update CozoDB `availability_state`:
+   ```bash
+   curl -X POST "$AIMAESTRO_API/api/memory/store" \
+     -d '{"agent": "amama-main", "relation": "availability_state", "data": {"state": "away", "since": "2025-01-30T15:00:00Z", "notes": "Stepping away, do not wait on PR reviews"}}'
    ```
-2. Adjust behavior:
+2. Update fallback `current.md`
+3. Adjust behavior:
    - Queue non-critical items
    - Proceed with autonomous work where possible
-3. Acknowledge:
+4. Acknowledge:
    ```markdown
    Understood - I'll continue with autonomous work and queue items for your return.
    ```
+
+### Example 6: Semantic Search for Implicit Preferences
+
+**Scenario**: User never explicitly stated a preference, but AMAMA needs to know.
+
+```bash
+# Query subconscious memory for format preferences
+curl -s "$AIMAESTRO_API/api/memory/search" \
+  -d '{"agent": "amama-main", "query": "user preferred output format for status reports", "limit": 3}'
+
+# Returns conversation snippets where user reacted to different formats
+# AMAMA infers: user consistently engaged more with tabular formats
+```
 
 ## Error Handling
 
 | Error | Cause | Resolution |
 |-------|-------|------------|
-| Handoff directory not found | First session or deleted | Create directory structure |
-| Handoff file corrupted | Write failure or manual edit | Use backup or reinitialize |
-| Conflicting preferences | User changed mind | Most recent preference wins |
-| Stale pending items | Items no longer relevant | Prompt user to confirm or remove |
-| GitHub context unavailable | API failure or private repo | Rely on handoff documents only |
-| Memory files too large | Too much history | Archive old decisions, keep recent |
+| CozoDB unavailable | Service down or first-time setup | Switch to file-based fallback, log warning |
+| CozoDB write failure | Disk full or corruption | Retry once, then fall back to file-based |
+| Fallback directory not found | First session or deleted | Create directory structure |
+| Fallback file corrupted | Write failure or manual edit | Use CozoDB as source of truth, regenerate files |
+| Semantic search timeout | Subconscious indexing lagging | Proceed without semantic results, use CozoDB structured data |
+| Conflicting preferences | User changed mind | Most recent preference wins; consolidation resolves conflicts |
+| CozoDB/file state divergence | Outage caused split-brain | CozoDB is authoritative; sync file state to match CozoDB |
+| Stale pending items | Items no longer relevant | Long-term consolidation flags these; prompt user to confirm or remove |
+| GitHub context unavailable | API failure or private repo | Rely on CozoDB and fallback documents only |
+| Memory too large | Too much history | Long-term consolidation archives old entries, keeps summaries |
+| Cross-agent memory conflict | Different agents recorded contradictory preferences | Most recent timestamp wins; flag for user confirmation |
 
 ## Resources
 
@@ -478,6 +663,8 @@ Would you like to address the pending items, or continue with something else?
 - **amama-user-communication** - Communication patterns
 - **amama-role-routing** - Role handoff patterns
 - **amama-status-reporting** - Status report generation
+- **AI Maestro CozoDB documentation** - `~/.aimaestro/docs/memory-system.md`
+- **Subconscious memory API** - `$AIMAESTRO_API/api/memory/` endpoints
 
 ### Reference Documents
 
@@ -485,7 +672,7 @@ Would you like to address the pending items, or continue with something else?
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: 2025-02-04
+**Version**: 2.0.0
+**Last Updated**: 2026-02-27
 **Target Audience**: AI Maestro Assistant Manager Agent
 **Difficulty Level**: Intermediate
