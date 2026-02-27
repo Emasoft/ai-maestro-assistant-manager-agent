@@ -112,7 +112,7 @@ In v1, AMAMA spawned dedicated AMCOS instances. In v2, AMAMA assigns the COS rol
 
 AMAMA is the ONLY agent authorized to assign the COS role, ensuring single point of authority and role constraint enforcement.
 
-See [creating-ecos-instance.md](references/creating-ecos-instance.md):
+See [creating-amcos-instance.md](references/creating-amcos-instance.md):
 - Why only AMAMA can assign the COS role -> Section 1
 - How to assign the COS role to an existing agent -> Section 2
 - When to assign the COS role -> Section 3
@@ -167,7 +167,7 @@ curl -X POST "$AIMAESTRO_API/api/teams" \
 
 Teams are stored in `~/.aimaestro/teams/registry.json`.
 
-See [creating-ecos-procedure.md](references/creating-ecos-procedure.md) for the full step-by-step procedure.
+See [creating-amcos-procedure.md](references/creating-amcos-procedure.md) for the full step-by-step procedure.
 
 ---
 
@@ -402,7 +402,7 @@ If no ACK after retry:
 - [references/ai-maestro-message-templates.md](references/ai-maestro-message-templates.md) - AI Maestro inter-agent message templates
 - [references/success-criteria.md](references/success-criteria.md) - COS coordination success criteria
 - [references/workflow-checklists.md](references/workflow-checklists.md) - COS coordination checklists
-- [references/creating-ecos-instance.md](references/creating-ecos-instance.md) - Assigning COS role procedure
-- [references/creating-ecos-procedure.md](references/creating-ecos-procedure.md) - Team creation and agent registration procedure
+- [references/creating-amcos-instance.md](references/creating-amcos-instance.md) - Assigning COS role procedure
+- [references/creating-amcos-procedure.md](references/creating-amcos-procedure.md) - Team creation and agent registration procedure
 - [references/workflow-examples.md](references/workflow-examples.md) - End-to-end workflow examples
 - [references/spawn-failure-recovery.md](references/spawn-failure-recovery.md) - Agent and COS assignment failure recovery

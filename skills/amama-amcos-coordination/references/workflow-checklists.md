@@ -4,9 +4,9 @@
 ## Contents
 
 - [Checklist: Creating New Project](#checklist-creating-new-project)
-- [Checklist: Spawning AMCOS](#checklist-spawning-ecos)
+- [Checklist: Spawning AMCOS](#checklist-spawning-amcos)
 - [Checklist: Processing AMCOS Approval Request](#checklist-processing-amcos-approval-request)
-- [Checklist: Routing User Request to AMCOS](#checklist-routing-user-request-to-ecos)
+- [Checklist: Routing User Request to AMCOS](#checklist-routing-user-request-to-amcos)
 - [Checklist: Providing Status to User](#checklist-providing-status-to-user)
 
 Use these checklists to ensure complete execution of each workflow. Check off items as you complete them.

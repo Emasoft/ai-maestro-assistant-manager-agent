@@ -53,12 +53,12 @@ status: "pending" | "acknowledged" | "completed" | "rejected"
 ## Communication Hierarchy
 
 ```
-USER <-> AMAMA (Assistant Manager) <-> EAA (Architect)
-                                  <-> EOA (Orchestrator)
-                                  <-> EIA (Integrator)
+USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> EAA (architect, role: member)
+                                                    <-> EOA (orchestrator, role: member)
+                                                    <-> EIA (integrator, role: member)
 ```
 
-**CRITICAL**: Architect (amaa-), Orchestrator (amoa-), and Integrator (amia-) do NOT communicate directly with each other. All communication flows through Assistant Manager (amama-).
+**CRITICAL**: All specialist agents (amaa-, amoa-, amia-) communicate through AMCOS (chief-of-staff), NOT directly with AMAMA. AMAMA communicates only with AMCOS. Specialists do NOT communicate directly with each other.
 
 ## Handoff Types
 

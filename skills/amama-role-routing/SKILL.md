@@ -73,7 +73,7 @@ Specialist agents routed to:
 
 | Routing Decision | Action Taken | Handoff File | Message Sent |
 |------------------|--------------|--------------|--------------|
-| Route to AMCOS | Create handoff document | `handoff-{uuid}-amama-to-ecos.md` | AI Maestro message to Chief of Staff |
+| Route to AMCOS | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to Chief of Staff |
 | Route to EAA | Create handoff document | `handoff-{uuid}-amama-to-eaa.md` | AI Maestro message to Architect agent |
 | Route to EOA | Create handoff document | `handoff-{uuid}-amama-to-eoa.md` | AI Maestro message to Orchestrator agent |
 | Route to EIA | Create handoff document | `handoff-{uuid}-amama-to-eia.md` | AI Maestro message to Integrator agent |

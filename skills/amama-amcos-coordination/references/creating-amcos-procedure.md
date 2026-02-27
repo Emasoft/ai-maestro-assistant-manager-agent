@@ -147,7 +147,7 @@ curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
   }"
 ```
 
-See [creating-ecos-instance.md](creating-ecos-instance.md) for full COS assignment details including cross-host scenarios.
+See [creating-amcos-instance.md](creating-amcos-instance.md) for full COS assignment details including cross-host scenarios.
 
 ---
 
@@ -319,7 +319,7 @@ A successful team setup with COS assignment meets ALL of the following:
 
 ## Related Documents
 
-- [creating-ecos-instance.md](creating-ecos-instance.md) - COS role assignment details and cross-host scenarios
+- [creating-amcos-instance.md](creating-amcos-instance.md) - COS role assignment details and cross-host scenarios
 - [approval-response-workflow.md](approval-response-workflow.md) - COS approval workflow
 - [delegation-rules.md](delegation-rules.md) - COS delegation rules
 - [workflow-checklists.md](workflow-checklists.md) - Coordination checklists

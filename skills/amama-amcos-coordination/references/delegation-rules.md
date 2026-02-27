@@ -30,7 +30,7 @@ Autonomous mode allows AMCOS to proceed with certain operation types without req
 AMAMA can configure delegation rules stored in state file:
 
 ```yaml
-ecos_delegation:
+amcos_delegation:
   autonomous_mode: true|false
   granted_at: "ISO-8601"
   expires_at: "ISO-8601|never"

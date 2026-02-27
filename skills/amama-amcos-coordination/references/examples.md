@@ -118,13 +118,13 @@ AMCOS sends the following message using the `agent-messaging` skill:
 ### AMAMA processes the notification
 
 1. **Verify scope**: Implementation was within granted `routine-operation` scope
-2. **Log for audit**: Record in `ecos_audit_log`
+2. **Log for audit**: Record in `amcos_audit_log`
 3. **User notification**: Since `notification_level` is `important` and this is a success, aggregate for status report rather than immediate notification
 
 ### State update
 
 ```yaml
-ecos_audit_log:
+amcos_audit_log:
   - timestamp: "2025-02-02T16:45:00Z"
     event_type: "complete"
     request_id: "autonomous-x1y2z3"

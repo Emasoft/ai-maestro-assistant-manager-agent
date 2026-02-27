@@ -1,5 +1,5 @@
 ---
-name: amama-respond-to-ecos
+name: amama-respond-to-amcos
 description: "Respond to pending AMCOS approval requests with approve, reject, or needs-revision decision"
 argument-hint: "--request-id <id> --decision <approved|rejected|needs-revision> [--comment <text>]"
 allowed-tools: ["Read", "Write"]
@@ -12,7 +12,7 @@ Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 ## Usage
 
 ```
-/amama-respond-to-ecos --request-id <request_id> --decision <decision> [--comment <text>]
+/amama-respond-to-amcos --request-id <request_id> --decision <decision> [--comment <text>]
 ```
 
 ## Parameters
@@ -58,7 +58,7 @@ Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 ### Approve an Operation
 
 ```
-/amama-respond-to-ecos --request-id amcos-req-a1b2c3d4 --decision approved --comment "Proceed with staging deployment"
+/amama-respond-to-amcos --request-id amcos-req-a1b2c3d4 --decision approved --comment "Proceed with staging deployment"
 ```
 
 Output:
@@ -76,7 +76,7 @@ AMCOS will now proceed with the operation.
 ### Reject an Operation
 
 ```
-/amama-respond-to-ecos --request-id amcos-req-x9y8z7 --decision rejected --comment "Too risky before weekend - defer to Monday"
+/amama-respond-to-amcos --request-id amcos-req-x9y8z7 --decision rejected --comment "Too risky before weekend - defer to Monday"
 ```
 
 Output:
@@ -94,7 +94,7 @@ AMCOS will cancel the operation.
 ### Request Revision
 
 ```
-/amama-respond-to-ecos --request-id amcos-req-m4n5o6 --decision needs-revision --comment "Reduce scope to only feature/* branches, exclude main"
+/amama-respond-to-amcos --request-id amcos-req-m4n5o6 --decision needs-revision --comment "Reduce scope to only feature/* branches, exclude main"
 ```
 
 Output:

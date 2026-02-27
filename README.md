@@ -60,7 +60,7 @@ USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (membe
 | `amama-status-reporting` | Status report generation (AI Maestro APIs) | When user requests status updates |
 | `amama-approval-workflows` | GovernanceRequest approval workflows | When sensitive operations require user approval |
 | `amama-role-routing` | Route requests to correct specialist agent | When delegating work to specialist agents |
-| `amama-ecos-coordination` | Coordinate with AMCOS for approvals and agent lifecycle | When AMCOS requests approval or reports agent status |
+| `amama-amcos-coordination` | Coordinate with AMCOS for approvals and agent lifecycle | When AMCOS requests approval or reports agent status |
 | `amama-github-routing` | Route GitHub operations with team boundary awareness | When handling GitHub issues, PRs, projects, or releases |
 | `amama-label-taxonomy` | GitHub label taxonomy and management | When creating or organizing GitHub labels |
 | `amama-session-memory` | CozoDB-backed session memory and handoff tracking | When persisting session state or tracking handoffs |
