@@ -74,9 +74,9 @@ Specialist agents routed to:
 | Routing Decision | Action Taken | Handoff File | Message Sent |
 |------------------|--------------|--------------|--------------|
 | Route to AMCOS | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to Chief of Staff |
-| Route to EAA | Create handoff document | `handoff-{uuid}-amama-to-eaa.md` | AI Maestro message to Architect agent |
-| Route to EOA | Create handoff document | `handoff-{uuid}-amama-to-eoa.md` | AI Maestro message to Orchestrator agent |
-| Route to EIA | Create handoff document | `handoff-{uuid}-amama-to-eia.md` | AI Maestro message to Integrator agent |
+| Route to EAA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Architect delegation |
+| Route to EOA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Orchestrator delegation |
+| Route to EIA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Integrator delegation |
 | Handle Directly | Respond to user | None | None |
 | Ambiguous Intent | Request clarification | None | None |
 
@@ -96,68 +96,70 @@ Routing is based on **agent specialization/skills**, not governance role. The go
 
 | User Intent Pattern | Route To | Agent Specialization | Handoff Type |
 |---------------------|----------|----------------------|--------------|
-| "design", "plan", "architect", "spec", "requirements" | EAA | architect | task_assignment |
-| "build", "implement", "create", "develop", "code" | EOA | orchestrator | task_assignment |
-| "review", "test", "merge", "release", "deploy", "quality" | EIA | integrator | task_assignment |
+| "design", "plan", "architect", "spec", "requirements" | AMCOS (for EAA) | architect | task_assignment |
+| "build", "implement", "create", "develop", "code" | AMCOS (for EOA) | orchestrator | task_assignment |
+| "review", "test", "merge", "release", "deploy", "quality" | AMCOS (for EIA) | integrator | task_assignment |
 | "spawn agent", "terminate agent", "restart session", "agent health" | AMCOS | chief-of-staff (governance) | agent_lifecycle |
 | "status", "progress", "update" | Handle directly | — | none |
 | "approve", "reject", "confirm" | Handle directly | — | approval_response |
 
 ## Detailed Routing Rules
 
+**IMPORTANT**: All specialist routing goes through AMCOS (chief-of-staff). AMAMA never communicates directly with specialist agents. When a routing rule says "route to EAA/EOA/EIA", it means: create a handoff, send it to AMCOS, and AMCOS delegates to the appropriate specialist.
+
 ### Route to EAA (Architect specialization, `role: member`) when:
 
 1. **New project/feature design needed**
    - User says: "Design a...", "Plan how to...", "Create architecture for..."
-   - Action: Create handoff with requirements, route to EAA agent session
+   - Action: Create handoff with requirements, send to AMCOS for EAA delegation
 
 2. **Requirements analysis required**
    - User says: "What do we need for...", "Analyze requirements for..."
-   - Action: Create handoff with context, route to EAA agent session
+   - Action: Create handoff with context, send to AMCOS for EAA delegation
 
 3. **Technical specification needed**
    - User says: "Spec out...", "Document how...", "Define the API for..."
-   - Action: Create handoff, route to EAA agent session
+   - Action: Create handoff, send to AMCOS for EAA delegation
 
 4. **Module planning required**
    - User says: "Break down...", "Modularize...", "Plan implementation of..."
-   - Action: Create handoff, route to EAA agent session
+   - Action: Create handoff, send to AMCOS for EAA delegation
 
 ### Route to EOA (Orchestrator specialization, `role: member`) when:
 
 1. **Implementation ready to start**
    - Condition: Approved design/plan exists
-   - Action: Create handoff with design docs, route to EOA agent session
+   - Action: Create handoff with design docs, send to AMCOS for EOA delegation
 
 2. **Task coordination needed**
    - User says: "Build...", "Implement...", "Start development..."
-   - Action: Create handoff with requirements, route to EOA agent session
+   - Action: Create handoff with requirements, send to AMCOS for EOA delegation
 
 3. **Multi-agent work coordination**
    - Condition: Work requires multiple parallel agents
-   - Action: Create handoff with task breakdown, route to EOA agent session
+   - Action: Create handoff with task breakdown, send to AMCOS for EOA delegation
 
 4. **Progress monitoring required**
    - Condition: Orchestration in progress, need intervention
-   - Action: Forward message to EOA agent session
+   - Action: Forward message to AMCOS for EOA
 
 ### Route to EIA (Integrator specialization, `role: member`) when:
 
 1. **Work ready for integration**
    - Condition: Orchestrator agent signals completion
-   - Action: Create handoff with completion report, route to EIA agent session
+   - Action: Create handoff with completion report, send to AMCOS for EIA delegation
 
 2. **Code review requested**
    - User says: "Review...", "Check the PR...", "Evaluate changes..."
-   - Action: Create handoff with PR details, route to EIA agent session
+   - Action: Create handoff with PR details, send to AMCOS for EIA delegation
 
 3. **Quality gates needed**
    - User says: "Test...", "Validate...", "Run quality checks..."
-   - Action: Create handoff, route to EIA agent session
+   - Action: Create handoff, send to AMCOS for EIA delegation
 
 4. **Release preparation**
    - User says: "Prepare release...", "Merge...", "Deploy..."
-   - Action: Create handoff, route to EIA agent session
+   - Action: Create handoff, send to AMCOS for EIA delegation
 
 ### Route to AMCOS (Chief of Staff — governance role: `chief-of-staff`) when:
 
@@ -297,11 +299,11 @@ Confirm routing -> Provide tracking info -> Set expectation for response
 handoff-{uuid}-{from}-to-{to}.md
 
 Examples:
-- handoff-a1b2c3d4-amama-to-eaa.md    # AM assigns to Architect agent
-- handoff-e5f6g7h8-amaa-to-amama.md    # Architect agent reports to AM
-- handoff-i9j0k1l2-amama-to-eoa.md    # AM assigns to Orchestrator agent
-- handoff-m3n4o5p6-amoa-to-amama.md    # Orchestrator agent reports to AM
-- handoff-q7r8s9t0-amama-to-eia.md    # AM assigns to Integrator agent
+- handoff-a1b2c3d4-amama-to-amcos.md   # AM delegates to AMCOS
+- handoff-e5f6g7h8-amcos-to-amama.md   # AMCOS reports to AM
+- handoff-i9j0k1l2-amcos-to-amaa.md    # AMCOS assigns to Architect agent
+- handoff-m3n4o5p6-amaa-to-amcos.md    # Architect agent reports to AMCOS
+- handoff-q7r8s9t0-amcos-to-amoa.md    # AMCOS assigns to Orchestrator agent
 ```
 
 ## Storage Location
@@ -409,13 +411,13 @@ Copy this checklist and track your progress:
 ```
 # User says: "Design a user authentication system"
 
-# AMAMA identifies intent: "design" -> Route to EAA (architect specialization, role: member)
+# AMAMA identifies intent: "design" -> Route to AMCOS for EAA delegation (architect specialization, role: member)
 
 # Creates handoff
-## Handoff: handoff-a1b2c3d4-amama-to-eaa.md
+## Handoff: handoff-a1b2c3d4-amama-to-amcos.md
 
 **From**: AMAMA (Assistant Manager)
-**To**: EAA (Architect agent, role: member)
+**To**: AMCOS (Chief of Staff) -> EAA (Architect agent, role: member)
 **Type**: task_assignment
 
 ### Request

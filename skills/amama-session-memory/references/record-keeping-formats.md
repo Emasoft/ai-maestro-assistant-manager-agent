@@ -79,7 +79,7 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 
 **When to update**:
 - After creating new project
-- After spawning AMCOS
+- After creating AMCOS agent
 - When project status changes (active → paused → archived)
 
 **Fields Explanation**:
@@ -366,7 +366,7 @@ These four record types form the complete session memory system for AMAMA:
 |-------------|------|---------|----------------|
 | Project Registry | `project-registry.md` | Track projects and AMCOS | Project creation, status change |
 | Approval Log | `approval-log.md` | Audit trail of decisions | Every approval request |
-| Active AMCOS Sessions | `active-amcos-sessions.md` | Monitor running instances | AMCOS spawn, health check, shutdown |
+| Active AMCOS Sessions | `active-amcos-sessions.md` | Monitor running instances | AMCOS creation, health check, shutdown |
 | User Interactions | `user-interactions.md` | Conversation continuity | Every user message |
 
 **All four files are mandatory for AMAMA to function correctly across sessions.**

@@ -7,8 +7,8 @@
 - [Example 2: AMCOS Requests Approval (Low Risk)](#example-2-amcos-requests-approval-low-risk)
 - [Example 3: AMCOS Requests Approval (High Risk)](#example-3-amcos-requests-approval-high-risk)
 - [Example 4: User Requests Status](#example-4-user-requests-status)
-- [Example 5: AMCOS Spawn Failure](#example-5-amcos-spawn-failure)
-- [AMCOS Spawn Failure Recovery Protocol](#amcos-spawn-failure-recovery-protocol)
+- [Example 5: AMCOS Agent Creation Failure](#example-5-amcos-agent-creation-failure)
+- [AMCOS Agent Creation Failure Recovery Protocol](#amcos-agent-creation-failure-recovery-protocol)
   - [Recovery Steps](#recovery-steps)
   - [Recovery Decision Tree](#recovery-decision-tree)
 - [Handoff Pattern](#handoff-pattern)
@@ -37,7 +37,7 @@ The EOA will coordinate the implementation. I'll keep you updated on progress. Y
 **Actions Taken**:
 1. Created project directory
 2. Initialized git
-3. Spawned amcos-inventory-system
+3. Created amcos-inventory-system agent and assigned COS role
 4. Verified AMCOS alive
 5. Sent work request to AMCOS
 6. Logged to project-registry.md and user-interactions.md
@@ -154,7 +154,7 @@ Health: Yellow (blocked on external dependency)
 
 ---
 
-## Example 5: AMCOS Spawn Failure
+## Example 5: AMCOS Agent Creation Failure
 
 **Scenario**: AMCOS agent creation fails
 
@@ -162,25 +162,25 @@ Health: Yellow (blocked on external dependency)
 
 **Your Response to User**:
 ```
-Issue encountered: AMCOS spawn failed
+Issue encountered: AMCOS agent creation failed
 
 Details: Agent creation command exited with error
 Impact: Cannot coordinate agents for inventory-system project
-Attempted: Spawned amcos-inventory-system with standard configuration
+Attempted: Created amcos-inventory-system with standard configuration
 
 Error output: [paste relevant error]
 
 I recommend: Verify AI Maestro is running by checking its health status
-using the `agent-messaging` skill. If down, restart it. Then I'll retry spawning AMCOS.
+using the `agent-messaging` skill. If down, restart it. Then I'll retry creating the AMCOS agent.
 
 Should I retry once AI Maestro is confirmed running?
 ```
 
 ---
 
-## AMCOS Spawn Failure Recovery Protocol
+## AMCOS Agent Creation Failure Recovery Protocol
 
-When AMCOS spawn fails, follow this recovery procedure systematically before escalating to the user.
+When AMCOS agent creation fails, follow this recovery procedure systematically before escalating to the user.
 
 ### Recovery Steps
 
@@ -190,7 +190,7 @@ Check AI Maestro health using the `agent-messaging` skill's health check feature
 
 If AI Maestro is down:
 - Alert user: "AI Maestro service is not responding. Please restart it."
-- Do NOT proceed with spawn retry until AI Maestro is confirmed running
+- Do NOT proceed with creation retry until AI Maestro is confirmed running
 
 **Step 2: Check tmux Sessions for Conflicts**
 ```bash
@@ -218,7 +218,7 @@ Use the `ai-maestro-agents-management` skill to create the agent with an increme
 
 **Step 4: If 3 Retries Fail**
 
-After 3 failed spawn attempts:
+After 3 failed creation attempts:
 
 1. **Create project WITHOUT AMCOS**
    - Project structure is still valid
@@ -227,7 +227,7 @@ After 3 failed spawn attempts:
 
 2. **Notify User**
    ```
-   AMCOS Spawn Failed After 3 Attempts
+   AMCOS Agent Creation Failed After 3 Attempts
 
    Project: <project-name>
    Location: <path>
@@ -248,13 +248,13 @@ After 3 failed spawn attempts:
    2. Check tmux for orphaned sessions: `tmux list-sessions`
    3. Restart AI Maestro if needed
 
-   Once fixed, I can retry AMCOS spawn. Say "retry AMCOS for <project-name>" when ready.
+   Once fixed, I can retry AMCOS agent creation. Say "retry AMCOS for <project-name>" when ready.
    ```
 
 3. **Log Failure**
    Record in `docs_dev/sessions/spawn-failures.md`:
    ```markdown
-   ## Spawn Failure: <timestamp>
+   ## Agent Creation Failure: <timestamp>
    - Project: <project-name>
    - Session Name: amcos-<project-name>
    - Attempts: 3
@@ -266,13 +266,13 @@ After 3 failed spawn attempts:
 
 When user says "retry AMCOS for <project-name>":
 1. Re-run verification steps (AI Maestro health, session conflicts)
-2. Attempt spawn with clean session name
+2. Attempt agent creation with clean session name
 3. Report success or escalate again if still failing
 
 ### Recovery Decision Tree
 
 ```
-AMCOS Spawn Fails
+AMCOS Agent Creation Fails
     |
     v
 Is AI Maestro running? ──NO──> Alert user, STOP
@@ -308,7 +308,7 @@ This agent does NOT hand off to other agents directly. You communicate with AMCO
 6. Return to step 1
 
 **Do NOT**:
-- Spawn task agents directly (that's AMCOS's job)
+- Create task agents directly (that's AMCOS's job)
 - Execute implementation work (that's specialists' job)
 - Wait indefinitely for responses (timeout and report to user)
 

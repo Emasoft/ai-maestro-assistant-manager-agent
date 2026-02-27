@@ -21,5 +21,8 @@ APPROVAL_REMINDER_INTERVAL_SECONDS = 60
 MAX_MESSAGE_LENGTH = 4000
 MAX_HANDOFF_SIZE_KB = 100
 
-# Role routing
-VALID_ROLES = frozenset(["architect", "orchestrator", "integrator"])
+# Governance roles (AI Maestro defines exactly 3)
+VALID_GOVERNANCE_ROLES = frozenset(["manager", "chief-of-staff", "member"])
+
+# Agent specializations (expressed via skills/tags, NOT via governance role)
+VALID_SPECIALIZATIONS = frozenset(["architect", "orchestrator", "integrator"])

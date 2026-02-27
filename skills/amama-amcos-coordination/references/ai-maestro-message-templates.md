@@ -217,7 +217,7 @@ Send a status query to AMCOS using the `agent-messaging` skill:
 
 ### 3.2 Sending health check pings to verify AMCOS is alive
 
-**Use this when**: Verifying AMCOS is responsive (after spawn, periodically, before delegating work)
+**Use this when**: Verifying AMCOS is responsive (after creation, periodically, before delegating work)
 
 Send a health check ping using the `agent-messaging` skill:
 - **Recipient**: `amcos-<project-name>`

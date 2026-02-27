@@ -4,14 +4,14 @@
 ## Contents
 
 - [Checklist: Creating New Project](#checklist-creating-new-project)
-- [Checklist: Spawning AMCOS](#checklist-spawning-amcos)
+- [Checklist: Creating AMCOS Agent](#checklist-creating-amcos-agent)
 - [Checklist: Processing AMCOS Approval Request](#checklist-processing-amcos-approval-request)
 - [Checklist: Routing User Request to AMCOS](#checklist-routing-user-request-to-amcos)
 - [Checklist: Providing Status to User](#checklist-providing-status-to-user)
 
 Use these checklists to ensure complete execution of each workflow. Check off items as you complete them.
 
-## Checklist: Creating New Project
+## Checklist: Creating New Project and Team
 
 When user requests a new project:
 
@@ -35,7 +35,9 @@ When user requests a new project:
   git add -A
   git commit -m "Initial project structure"
   ```
-- [ ] **Spawn AMCOS for this project** using the `ai-maestro-agents-management` skill
+- [ ] **Create AI Maestro team** for this project using the `team-governance` skill
+- [ ] **Create AMCOS agent for this project** using the `ai-maestro-agents-management` skill
+- [ ] **Assign COS role** to the AMCOS agent via the `team-governance` skill
 - [ ] **Verify AMCOS responding** via health check ping
 - [ ] **Register project** in `docs_dev/projects/project-registry.md`
 - [ ] **Report to user** with project path and AMCOS session name
@@ -43,9 +45,9 @@ When user requests a new project:
 
 **Success Criteria**: Project directory exists, git initialized, AMCOS alive and registered.
 
-## Checklist: Spawning AMCOS
+## Checklist: Creating AMCOS Agent
 
-When creating a new AMCOS instance:
+When creating a new AMCOS agent:
 
 - [ ] **Determine AMCOS session name** (format: `amcos-<project-name>`)
 - [ ] **Identify working directory** (project root)
@@ -57,6 +59,7 @@ When creating a new AMCOS instance:
   - **Plugin**: load `ai-maestro-chief-of-staff` (must be copied to agent's local plugins directory first)
   - **Main agent**: `amcos-chief-of-staff-main-agent`
 - [ ] **Execute agent creation** using the `ai-maestro-agents-management` skill
+- [ ] **Assign COS role** to the new agent via `team-governance` skill
 - [ ] **Verify creation success** (exit code 0)
 - [ ] **Wait 5 seconds** for AMCOS initialization
 - [ ] **Send health check ping** using the `agent-messaging` skill:
@@ -68,7 +71,7 @@ When creating a new AMCOS instance:
 - [ ] **Register AMCOS session** in active sessions log
 - [ ] **Report AMCOS ready** to user
 
-**Success Criteria**: AMCOS session exists, responds to ping, registered in logs.
+**Success Criteria**: AMCOS agent created, COS role assigned, responds to ping, registered in logs.
 
 ## Checklist: Processing AMCOS Approval Request
 
@@ -117,7 +120,7 @@ When user gives a work request:
 - [ ] **Verify AMCOS exists and is alive**
   - Check active sessions log
   - Send health ping if uncertain
-  - Create AMCOS if not exists
+  - Create AMCOS agent if not exists
 - [ ] **Format work request** for AMCOS
 - [ ] **Send request** to AMCOS using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project>`

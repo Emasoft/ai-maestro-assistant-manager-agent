@@ -1,10 +1,10 @@
-# Spawn Failure Recovery Procedures
+# Agent Creation Failure Recovery Procedures
 
 
 ## Contents
 
 - [Overview](#overview)
-- [1. AMCOS Spawn Failure Recovery Protocol](#1-amcos-spawn-failure-recovery-protocol)
+- [1. AMCOS Agent Creation Failure Recovery Protocol](#1-amcos-agent-creation-failure-recovery-protocol)
   - [Recovery Steps](#recovery-steps)
   - [Recovery Decision Tree](#recovery-decision-tree)
 - [2. Communication Breakdown Recovery](#2-communication-breakdown-recovery)
@@ -12,7 +12,7 @@
 - [3. Approval Request Handling Failures](#3-approval-request-handling-failures)
   - [When Approval Request Unclear](#when-approval-request-unclear)
   - [When Multiple Conflicting Requests](#when-multiple-conflicting-requests)
-- [4. Agent Spawning Failures (General)](#4-agent-spawning-failures-general)
+- [4. Agent Creation Failures (General)](#4-agent-creation-failures-general)
   - [Symptoms](#symptoms)
   - [Recovery Procedure](#recovery-procedure)
 - [5. Logging and Audit Trail](#5-logging-and-audit-trail)
@@ -21,20 +21,20 @@
 - [Failure: <timestamp>](#failure-timestamp)
 - [6. Timeliness Requirements](#6-timeliness-requirements)
 - [7. Example Scenarios](#7-example-scenarios)
-  - [Example 1: AMCOS Spawn Fails (AI Maestro Down)](#example-1-amcos-spawn-fails-ai-maestro-down)
+  - [Example 1: AMCOS Agent Creation Fails (AI Maestro Down)](#example-1-amcos-agent-creation-fails-ai-maestro-down)
   - [Example 2: AMCOS Not Responding to Routing Request](#example-2-amcos-not-responding-to-routing-request)
   - [Example 3: Conflicting Approval Requests](#example-3-conflicting-approval-requests)
 - [Summary](#summary)
 
 ## Overview
 
-This document provides recovery procedures for handling failures in AMCOS creation, agent spawning, and inter-agent communication within the AMAMA system.
+This document provides recovery procedures for handling failures in AMCOS creation, agent creation, and inter-agent communication within the AMAMA system.
 
 ---
 
-## 1. AMCOS Spawn Failure Recovery Protocol
+## 1. AMCOS Agent Creation Failure Recovery Protocol
 
-When AMCOS spawn fails, follow this recovery procedure systematically before escalating to the user.
+When AMCOS agent creation fails, follow this recovery procedure systematically before escalating to the user.
 
 ### Recovery Steps
 
@@ -44,7 +44,7 @@ Check AI Maestro health using the `agent-messaging` skill's health check feature
 
 If AI Maestro is down:
 - Alert user: "AI Maestro service is not responding. Please restart it."
-- Do NOT proceed with spawn retry until AI Maestro is confirmed running
+- Do NOT proceed with creation retry until AI Maestro is confirmed running
 
 #### Step 2: Check tmux Sessions for Conflicts
 
@@ -73,7 +73,7 @@ Use the `ai-maestro-agents-management` skill to create the agent with an increme
 
 #### Step 4: If 3 Retries Fail
 
-After 3 failed spawn attempts:
+After 3 failed creation attempts:
 
 1. **Create project WITHOUT AMCOS**
    - Project structure is still valid
@@ -82,7 +82,7 @@ After 3 failed spawn attempts:
 
 2. **Notify User**
    ```
-   AMCOS Spawn Failed After 3 Attempts
+   AMCOS Agent Creation Failed After 3 Attempts
 
    Project: <project-name>
    Location: <path>
@@ -103,13 +103,13 @@ After 3 failed spawn attempts:
    2. Check tmux for orphaned sessions: `tmux list-sessions`
    3. Restart AI Maestro if needed
 
-   Once fixed, I can retry AMCOS spawn. Say "retry AMCOS for <project-name>" when ready.
+   Once fixed, I can retry AMCOS agent creation. Say "retry AMCOS for <project-name>" when ready.
    ```
 
 3. **Log Failure**
    Record in `docs_dev/sessions/spawn-failures.md`:
    ```markdown
-   ## Spawn Failure: <timestamp>
+   ## Agent Creation Failure: <timestamp>
    - Project: <project-name>
    - Session Name: amcos-<project-name>
    - Attempts: 3
@@ -121,13 +121,13 @@ After 3 failed spawn attempts:
 
 When user says "retry AMCOS for <project-name>":
 1. Re-run verification steps (AI Maestro health, session conflicts)
-2. Attempt spawn with clean session name
+2. Attempt agent creation with clean session name
 3. Report success or escalate again if still failing
 
 ### Recovery Decision Tree
 
 ```
-AMCOS Spawn Fails
+AMCOS Agent Creation Fails
     |
     v
 Is AI Maestro running? ──NO──> Alert user, STOP
@@ -307,9 +307,9 @@ When approval workflow encounters errors.
 
 ---
 
-## 4. Agent Spawning Failures (General)
+## 4. Agent Creation Failures (General)
 
-When spawning specialist agents (EOA, EAA, EIA) fails.
+When creating specialist agents (EOA, EAA, EIA) fails.
 
 ### Symptoms
 
@@ -345,7 +345,7 @@ When spawning specialist agents (EOA, EAA, EIA) fails.
 
 5. **After 2 retries, escalate to user**
    ```
-   Agent Spawn Failed: <agent-type>
+   Agent Creation Failed: <agent-type>
 
    Session: <session-name>
    Attempts: 2
@@ -360,11 +360,11 @@ When spawning specialist agents (EOA, EAA, EIA) fails.
    Recommended actions:
    1. Check plugin installation
    2. Verify plugin compatibility
-   3. Review spawn logs: `cat ~/agents/<session>/spawn.log`
+   3. Review agent logs: `cat ~/agents/<session>/spawn.log`
 
    Should I:
    - Try alternate plugin version?
-   - Spawn without this plugin?
+   - Create without this plugin?
    - Abort and manual investigation?
    ```
 
@@ -378,16 +378,16 @@ All failures MUST be logged for debugging and audit purposes.
 
 | Failure Type | Log File | Format |
 |--------------|----------|--------|
-| AMCOS spawn failures | `docs_dev/sessions/spawn-failures.md` | Markdown |
+| AMCOS creation failures | `docs_dev/sessions/spawn-failures.md` | Markdown |
 | Communication failures | `docs_dev/sessions/communication-failures.md` | Markdown |
 | Approval conflicts | `docs_dev/sessions/approval-conflicts.md` | Markdown |
-| Agent spawn failures | `docs_dev/sessions/agent-spawn-failures.md` | Markdown |
+| Agent creation failures | `docs_dev/sessions/agent-spawn-failures.md` | Markdown |
 
 ### Log Entry Template
 
 ```markdown
 ## Failure: <timestamp>
-- Type: <spawn/communication/approval>
+- Type: <agent-creation/communication/approval>
 - Component: <AMCOS/agent/messaging>
 - Project: <project-name>
 - Session: <session-name>
@@ -404,11 +404,11 @@ All failures MUST be logged for debugging and audit purposes.
 
 **Response times for failure handling:**
 
-- AMCOS spawn failure detection: Immediate (exit code check)
+- AMCOS creation failure detection: Immediate (exit code check)
 - Communication timeout: 30 seconds before first retry
 - Approval request clarification: Within 60 seconds
 - User escalation: Within 2 minutes of detection
-- Retry intervals: 10 seconds between spawn retries
+- Retry intervals: 10 seconds between creation retries
 
 **Do NOT:**
 - Wait indefinitely for responses
@@ -426,7 +426,7 @@ All failures MUST be logged for debugging and audit purposes.
 
 ## 7. Example Scenarios
 
-### Example 1: AMCOS Spawn Fails (AI Maestro Down)
+### Example 1: AMCOS Agent Creation Fails (AI Maestro Down)
 
 **Scenario**: AMCOS agent creation fails with exit code 1
 
@@ -434,16 +434,16 @@ All failures MUST be logged for debugging and audit purposes.
 
 **Your Response to User**:
 ```
-Issue encountered: AMCOS spawn failed
+Issue encountered: AMCOS agent creation failed
 
 Details: Agent creation command exited with error code 1
 Impact: Cannot coordinate agents for inventory-system project
-Attempted: Spawned amcos-inventory-system with standard configuration
+Attempted: Created amcos-inventory-system with standard configuration
 
 Error output: [paste relevant error]
 
 I recommend: Verify AI Maestro is running by checking its health status
-using the `agent-messaging` skill. If down, restart it. Then I'll retry spawning AMCOS.
+using the `agent-messaging` skill. If down, restart it. Then I'll retry creating the AMCOS agent.
 
 Should I retry once AI Maestro is confirmed running?
 ```
@@ -516,7 +516,7 @@ What should I do?
 
 Recovery from failures requires:
 
-1. **Systematic diagnosis** - Check AI Maestro, tmux, plugins
+1. **Systematic diagnosis** - Check AI Maestro, sessions, plugins
 2. **Automatic retries** - Up to 3 attempts with delays
 3. **Clear user escalation** - Provide diagnostic info and options
 4. **Comprehensive logging** - Audit trail for all failures

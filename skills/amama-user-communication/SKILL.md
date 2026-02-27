@@ -299,14 +299,14 @@ If AMCOS fails to respond after the urgent ping (30 second timeout):
    Attempted recovery: <steps taken>
 
    Options:
-   - [Restart AMCOS] - Attempt to respawn AMCOS session
+   - [Restart AMCOS] - Attempt to recreate AMCOS agent
    - [Continue Without] - Proceed with reduced coordination
    - [Investigate] - Check logs for error details
    ```
 
 4. **Attempt Recovery**
    - If AI Maestro is down: Alert user to restart AI Maestro
-   - If AMCOS session crashed: Respawn AMCOS using standard spawn procedure
+   - If AMCOS session crashed: Recreate AMCOS agent using standard creation procedure
    - If network issue: Wait 5 minutes and retry
 
 5. **Log Incident**

@@ -750,16 +750,16 @@ Reference: design-uuid-abc123
 ### Example 4: Cross-Team Operation Blocked
 
 ```
-# Agent EOA-frontend attempts to close issue #45 (labeled team:backend)
+# Agent AMOA-frontend attempts to close issue #45 (labeled team:backend)
 
 # AMAMA enforcement
-1. Check: EOA-frontend team = frontend
+1. Check: AMOA-frontend team = frontend
 2. Check: Issue #45 team label = team:backend
 3. MISMATCH: Block operation
 
 # Output
 [BLOCKED] Cross-team operation denied
-Agent: EOA-frontend (team:frontend)
+Agent: AMOA-frontend (team:frontend)
 Target: Issue #45 (team:backend)
 Action required: AMAMA approval for cross-team operation
 ```

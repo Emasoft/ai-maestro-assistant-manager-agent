@@ -4,8 +4,8 @@
 ## Contents
 
 - [Success: User Request Understood](#success-user-request-understood)
-- [Success: Project Creation Complete](#success-project-creation-complete)
-- [Success: AMCOS Spawned and Ready](#success-amcos-spawned-and-ready)
+- [Success: Project and Team Creation Complete](#success-project-and-team-creation-complete)
+- [Success: AMCOS Agent Created and Ready](#success-amcos-agent-created-and-ready)
 - [Success: Approval Processed](#success-approval-processed)
 - [Success: Status Reported](#success-status-reported)
 - [General Success Verification Principles](#general-success-verification-principles)
@@ -45,14 +45,16 @@ User notified: "Routing your request to AMCOS, who will coordinate with EOA to i
 
 ---
 
-## Success: Project Creation Complete
+## Success: Project and Team Creation Complete
 
 **Completion Checklist:**
 
 - [ ] Project directory created at specified/clarified location
 - [ ] Git repository initialized
 - [ ] Initial project structure created (README.md, .gitignore)
-- [ ] AMCOS spawned for this project with correct working directory
+- [ ] AI Maestro team created for this project
+- [ ] AMCOS agent created for this project with correct working directory
+- [ ] COS role assigned to AMCOS agent via team governance
 - [ ] AMCOS responding to health check ping
 - [ ] Project registered in `docs_dev/projects/project-registry.md`
 - [ ] User notified of project creation and AMCOS readiness
@@ -76,11 +78,12 @@ Verify AMCOS is alive by sending a health check ping using the `agent-messaging`
 
 ---
 
-## Success: AMCOS Spawned and Ready
+## Success: AMCOS Agent Created and Ready
 
 **Completion Checklist:**
 
 - [ ] Agent creation command succeeded (exit code 0) via the `ai-maestro-agents-management` skill
+- [ ] COS role assigned via the `team-governance` skill
 - [ ] AMCOS session registered in AI Maestro (visible in agent list)
 - [ ] AMCOS main agent loaded with correct role constraints
 - [ ] AMCOS plugins loaded (verify via plugin list if possible)

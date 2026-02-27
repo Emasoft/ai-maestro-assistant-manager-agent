@@ -16,8 +16,8 @@ This template defines the standard format for handoff documents between roles in
 ```yaml
 ---
 uuid: "handoff-{uuid}"
-from_role: "amama" | "amaa" | "amoa" | "amia"
-to_role: "amama" | "amaa" | "amoa" | "amia"
+from_role: "amama" | "amcos" | "amaa" | "amoa" | "amia"
+to_role: "amama" | "amcos" | "amaa" | "amoa" | "amia"
 created: "ISO-8601 timestamp"
 github_issue: "#issue_number"  # Optional
 subject: "Brief description"
@@ -62,24 +62,24 @@ USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> EAA (architect, role: me
 
 ## Handoff Types
 
-### 1. User Request -> Role Assignment
+### 1. User Request -> AMCOS Delegation
 - From: amama (assistant-manager)
-- To: amaa | amoa | amia
-- Purpose: Route user request to appropriate specialist
+- To: amcos (chief-of-staff)
+- Purpose: Route user request to AMCOS for specialist delegation
 
 ### 2. Design Complete -> Orchestration
-- From: amaa (via amama)
-- To: amoa (via amama)
+- From: amaa -> amcos (chief-of-staff)
+- To: amoa (via amcos)
 - Purpose: Hand off approved design for implementation
 
 ### 3. Implementation Complete -> Integration
-- From: amoa (via amama)
-- To: amia (via amama)
+- From: amoa -> amcos (chief-of-staff)
+- To: amia (via amcos)
 - Purpose: Signal work ready for quality gates
 
 ### 4. Quality Gate Results -> User
-- From: amia (via amama)
-- To: user
+- From: amia -> amcos -> amama
+- To: user (via amama)
 - Purpose: Report integration status and request approvals
 
 ## File Naming Convention
@@ -88,12 +88,12 @@ USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> EAA (architect, role: me
 handoff-{uuid}-{from}-to-{to}.md
 
 Examples:
-- handoff-a1b2c3d4-amama-to-amaa.md    # AM assigns to Architect
-- handoff-e5f6g7h8-amaa-to-amama.md    # Architect reports to AM
-- handoff-i9j0k1l2-amama-to-amoa.md    # AM assigns to Orchestrator
-- handoff-m3n4o5p6-amoa-to-amama.md    # Orchestrator reports to AM
-- handoff-q7r8s9t0-amama-to-amia.md    # AM assigns to Integrator
-- handoff-u1v2w3x4-amia-to-amama.md    # Integrator reports to AM
+- handoff-a1b2c3d4-amama-to-amcos.md   # AM delegates to AMCOS
+- handoff-e5f6g7h8-amcos-to-amama.md   # AMCOS reports to AM
+- handoff-i9j0k1l2-amcos-to-amaa.md    # AMCOS assigns to Architect
+- handoff-m3n4o5p6-amaa-to-amcos.md    # Architect reports to AMCOS
+- handoff-q7r8s9t0-amcos-to-amoa.md    # AMCOS assigns to Orchestrator
+- handoff-u1v2w3x4-amoa-to-amcos.md    # Orchestrator reports to AMCOS
 ```
 
 ## Storage Location
