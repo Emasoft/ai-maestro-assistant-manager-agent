@@ -8,7 +8,6 @@
   },
   "repository": "https://github.com/Emasoft/ai-maestro-assistant-manager-agent",
   "license": "MIT",
-  "minMaestroVersion": "0.26.0",
   "agents": [
     "./agents/amama-assistant-manager-main-agent.md",
     "./agents/amama-report-generator.md"
