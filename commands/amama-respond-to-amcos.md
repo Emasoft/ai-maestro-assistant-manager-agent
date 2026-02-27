@@ -58,7 +58,7 @@ Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 ### Approve an Operation
 
 ```
-/amama-respond-to-amcos --request-id amcos-req-a1b2c3d4 --decision approved --comment "Proceed with staging deployment"
+/amama-respond-to-amcos --request-id amcos-req-a1b2c3d4 --decision approve --comment "Proceed with staging deployment"
 ```
 
 Output:
@@ -66,7 +66,7 @@ Output:
 Response sent to AMCOS
 
 Request ID: amcos-req-a1b2c3d4
-Decision: APPROVED
+Decision: APPROVE
 Comment: Proceed with staging deployment
 Sent at: 2025-02-02T14:32:00Z
 
@@ -76,7 +76,7 @@ AMCOS will now proceed with the operation.
 ### Reject an Operation
 
 ```
-/amama-respond-to-amcos --request-id amcos-req-x9y8z7 --decision rejected --comment "Too risky before weekend - defer to Monday"
+/amama-respond-to-amcos --request-id amcos-req-x9y8z7 --decision deny --comment "Too risky before weekend - defer to Monday"
 ```
 
 Output:
@@ -84,11 +84,11 @@ Output:
 Response sent to AMCOS
 
 Request ID: amcos-req-x9y8z7
-Decision: REJECTED
+Decision: DENY
 Comment: Too risky before weekend - defer to Monday
 Sent at: 2025-02-02T14:35:00Z
 
-AMCOS will cancel the operation.
+AMCOS will cancel the operation and log the denial.
 ```
 
 ### Defer for Revision

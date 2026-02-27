@@ -1,7 +1,7 @@
 ---
 name: amama-user-communication
 description: Use when communicating with users for clarification, presenting options, requesting approval, or reporting completion. Trigger with user requests or communication needs.
-version: 1.0.0
+version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent

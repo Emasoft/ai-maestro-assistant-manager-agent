@@ -5,7 +5,7 @@ agent: amama-assistant-manager-main-agent
 context: fork
 user-invocable: false
 compatibility: Requires AI Maestro installed.
-version: 1.0.0
+version: 2.0.0
 ---
 
 # AMAMA Label Taxonomy

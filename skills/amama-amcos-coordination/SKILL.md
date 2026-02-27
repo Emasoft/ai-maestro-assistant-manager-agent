@@ -315,7 +315,7 @@ All messages sent to a COS-assigned agent require acknowledgment (ACK) to ensure
 |--------------|-------------|----------------|------------|
 | Approval decisions | 30 seconds | Retry once after timeout | Escalate to user if no ACK after retry |
 | Work requests | 60 seconds | Retry once after timeout | Escalate to user if no ACK after retry |
-| Health check pings | 60 seconds | No retry | Log as unresponsive |
+| Health check pings | 30 seconds | No retry | Log as unresponsive |
 | Status queries | 30 seconds | Retry once after timeout | Report timeout to user |
 | Autonomy grant/revoke | 30 seconds | Retry once after timeout | Escalate to user if no ACK after retry |
 
@@ -405,4 +405,9 @@ If no ACK after retry:
 - [references/creating-amcos-instance.md](references/creating-amcos-instance.md) - Assigning COS role procedure
 - [references/creating-amcos-procedure.md](references/creating-amcos-procedure.md) - Team creation and agent registration procedure
 - [references/workflow-examples.md](references/workflow-examples.md) - End-to-end workflow examples
+- [references/approval-response-workflow.md](references/approval-response-workflow.md) - Approval response workflow and format
+- [references/completion-notifications.md](references/completion-notifications.md) - COS completion notification handling
+- [references/delegation-rules.md](references/delegation-rules.md) - Autonomy delegation rules and configuration
+- [references/examples.md](references/examples.md) - COS coordination flow examples
+- [references/message-formats.md](references/message-formats.md) - AI Maestro message formats for COS communication
 - [references/spawn-failure-recovery.md](references/spawn-failure-recovery.md) - Agent and COS assignment failure recovery

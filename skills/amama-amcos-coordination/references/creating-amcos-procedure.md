@@ -239,7 +239,7 @@ Expected response content:
 3. If the response still shows `constraints_loaded: false`, revoke the COS role and try assigning to a different agent
 4. Report to user if no agent can load constraints
 
-**Handling no response**: If no `cos-role-accepted` response arrives within 30 seconds, the assignment may have failed silently. Verify the COS assignment via `GET /api/teams/<team-id>` and check if `chief_of_staff` is set. If set but no response, send a health ping. If not set, retry the PATCH call.
+**Handling no response**: If no `cos-role-accepted` response arrives within 30 seconds, the assignment may have failed silently. Verify the COS assignment via `GET /api/teams/<team-id>` and check if `chiefOfStaff` is set. If set but no response, send a health ping. If not set, retry the PATCH call.
 
 ### Step 6: Log the Setup
 

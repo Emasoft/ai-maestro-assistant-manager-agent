@@ -2,7 +2,7 @@
 
 ## 1. Always Verify Before Reporting
 
-**Don't assume AMCOS is alive** - always send health check ping after spawning.
+**Don't assume AMCOS is alive** - always send health check ping after deploying.
 **Don't assume project created successfully** - verify directory exists and git initialized.
 **Don't assume message delivered** - check AI Maestro API response.
 
@@ -36,7 +36,7 @@ After EVERY operation:
 **You handle:**
 - User communication
 - Project creation
-- AMCOS spawning
+- AMCOS deployment
 - Approval decisions
 - Status aggregation
 

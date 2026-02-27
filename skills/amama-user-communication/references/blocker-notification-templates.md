@@ -131,7 +131,7 @@ Send a blocker resolution using the `agent-messaging` skill:
 - **Subject**: "RESOLUTION: Blocker for task <task-id> resolved by user"
 - **Priority**: `high`
 - **Content**: Include the following fields:
-  - `type`: `blocker-resolution`
+  - `type`: `blocker_resolution`
   - `message`: "User has provided the following decision for the blocked task."
   - `task_uuid`: The unique identifier of the blocked task
   - `issue_number`: The GitHub issue number tracking the blocker
@@ -227,7 +227,7 @@ I'll include the update in the next status report.
 
 Copy this checklist and track your progress:
 
-- [ ] Read the blocker-escalation message from AMOA or AMCOS
+- [ ] Read the blocker_escalation message from AMOA or AMCOS
 - [ ] Identify the blocked task (issue number) and the blocker issue (blocker issue number)
 - [ ] Determine the blocker category (Task Dependency, Problem Resolution, Missing Resource, Access/Credentials, Missing Approval, External Dependency)
 - [ ] Compose user notification using the appropriate template (section 2.1, 2.2, or 2.3)
@@ -241,7 +241,7 @@ Copy this checklist and track your progress:
 
 - [ ] Acknowledge the user's response immediately
 - [ ] Determine who escalated the blocker (AMOA or AMCOS)
-- [ ] Compose blocker-resolution AI Maestro message (section 3.2 template)
+- [ ] Compose blocker_resolution AI Maestro message (section 3.2 template)
 - [ ] Include the user's exact words (do NOT paraphrase — RULE 14)
 - [ ] Include the selected option if options were presented
 - [ ] Send the resolution message to the original escalator (AMOA or AMCOS)

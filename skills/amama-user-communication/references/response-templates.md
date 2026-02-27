@@ -33,7 +33,7 @@ I'll keep you updated on progress. You can ask me for status anytime.
 ### When to Use
 
 - User submits a new work request
-- You're creating a project and spawning an AMCOS
+- You're creating a project and creating an AMCOS agent
 - You're delegating to a specialist agent
 
 ### Guidelines
@@ -147,7 +147,7 @@ Status: Active and responding
 ### When to Use
 
 - Project creation completed successfully
-- AMCOS spawned and health check passed
+- AMCOS agent created and health check passed
 - Ready to start work
 
 ### Guidelines
