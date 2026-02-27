@@ -1,4 +1,4 @@
-# Creating ECOS Procedure
+# Creating AMCOS Procedure
 
 
 ## Contents
@@ -21,8 +21,8 @@
   - [Step 5: Wait for Initialization](#step-5-wait-for-initialization)
   - [Step 6: Health Check Ping](#step-6-health-check-ping)
   - [Step 7: Verify Response](#step-7-verify-response)
-  - [Step 9: Register ECOS](#step-9-register-ecos)
-- [Session: ecos-chief-of-staff-one](#session-ecos-chief-of-staff-one)
+  - [Step 9: Register AMCOS](#step-9-register-ecos)
+- [Session: amcos-chief-of-staff-one](#session-amcos-chief-of-staff-one)
   - [Step 10: Report to User](#step-10-report-to-user)
 - [Success Criteria](#success-criteria)
 - [Troubleshooting](#troubleshooting)
@@ -33,41 +33,41 @@
 
 ## Overview
 
-EAMA (Assistant Manager) is the ONLY agent authorized to create ECOS (Chief of Staff) instances. This document describes the step-by-step procedure for spawning a new ECOS agent.
+AMAMA (Assistant Manager) is the ONLY agent authorized to create AMCOS (Chief of Staff) instances. This document describes the step-by-step procedure for spawning a new AMCOS agent.
 
 ## Key Principles
 
-1. **EAMA chooses the session name** - To avoid collisions and maintain naming consistency
+1. **AMAMA chooses the session name** - To avoid collisions and maintain naming consistency
 2. **Session name = AI Maestro registry name** - The session name becomes the agent's identifier in AI Maestro
 3. **Plugin must be pre-copied** - Plugin files must exist in the target directory BEFORE spawning
-4. **Main agent injection** - The `--agent` flag ensures ECOS receives its role-specific system prompt
+4. **Main agent injection** - The `--agent` flag ensures AMCOS receives its role-specific system prompt
 
 ## Session Naming Convention
 
-Use this format for ECOS session names:
+Use this format for AMCOS session names:
 
 ```
 <role-prefix>-<descriptive>[-number]
 ```
 
 **Examples:**
-- `ecos-chief-of-staff-one` - Primary ECOS instance
-- `ecos-project-alpha` - ECOS for specific project "alpha"
-- `ecos-inventory-system` - ECOS for inventory-system project
+- `amcos-chief-of-staff-one` - Primary AMCOS instance
+- `amcos-project-alpha` - AMCOS for specific project "alpha"
+- `amcos-inventory-system` - AMCOS for inventory-system project
 
-**Subordinate agents** spawned by ECOS follow their own naming:
-- `eoa-svgbbox-orchestrator` (Orchestrator for svgbbox project)
-- `eia-inventory-review` (Integrator for inventory review)
+**Subordinate agents** spawned by AMCOS follow their own naming:
+- `amoa-svgbbox-orchestrator` (Orchestrator for svgbbox project)
+- `amia-inventory-review` (Integrator for inventory review)
 
 ## Agent Creation Template
 
-Use the `ai-maestro-agents-management` skill to create the ECOS agent with the following parameters:
+Use the `ai-maestro-agents-management` skill to create the AMCOS agent with the following parameters:
 
-- **Agent name**: `ecos-chief-of-staff-one` (EAMA picks a unique name; this becomes the AI Maestro registry name)
-- **Working directory**: `~/agents/ecos-chief-of-staff-one/`
+- **Agent name**: `amcos-chief-of-staff-one` (AMAMA picks a unique name; this becomes the AI Maestro registry name)
+- **Working directory**: `~/agents/amcos-chief-of-staff-one/`
 - **Task**: "Coordinate agents across all projects"
-- **Plugin**: load `emasoft-chief-of-staff` using the skill's plugin management features
-- **Main agent**: `ecos-chief-of-staff-main-agent`
+- **Plugin**: load `ai-maestro-chief-of-staff` using the skill's plugin management features
+- **Main agent**: `amcos-chief-of-staff-main-agent`
 
 **Verify**: confirm the agent appears in the agent list with correct status.
 
@@ -75,11 +75,11 @@ Use the `ai-maestro-agents-management` skill to create the ECOS agent with the f
 
 | Parameter | Purpose | Example Value |
 |-----------|---------|---------------|
-| Agent name | AI Maestro registry identifier | `ecos-chief-of-staff-one` |
-| Working directory | Working directory (flat structure) | `~/agents/ecos-chief-of-staff-one/` |
+| Agent name | AI Maestro registry identifier | `amcos-chief-of-staff-one` |
+| Working directory | Working directory (flat structure) | `~/agents/amcos-chief-of-staff-one/` |
 | Task | Task description (for context) | `"Coordinate agents across all projects"` |
-| Plugin | Plugin to load for the agent | `emasoft-chief-of-staff` |
-| Main agent | Main agent prompt file | `ecos-chief-of-staff-main-agent` |
+| Plugin | Plugin to load for the agent | `ai-maestro-chief-of-staff` |
+| Main agent | Main agent prompt file | `amcos-chief-of-staff-main-agent` |
 
 ## Critical Notes
 
@@ -91,7 +91,7 @@ Use the `ai-maestro-agents-management` skill to create the ECOS agent with the f
 ### Plugin Path
 
 - Use **LOCAL agent folder path**: `~/agents/<session-name>/.claude/plugins/`
-- NOT development path: `./OUTPUT_SKILLS/emasoft-chief-of-staff/`
+- NOT development path: `./OUTPUT_SKILLS/ai-maestro-chief-of-staff/`
 
 ### Create vs Wake
 
@@ -106,7 +106,7 @@ Prepare the agent's plugin directory:
 ```bash
 # Copy plugin to agent's local directory
 mkdir -p ~/agents/$SESSION_NAME/.claude/plugins/
-cp -r /path/to/emasoft-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
+cp -r /path/to/ai-maestro-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
 ```
 
 ## Step-by-Step Procedure
@@ -116,7 +116,7 @@ cp -r /path/to/emasoft-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
 Pick a unique session name following the naming convention:
 
 ```bash
-SESSION_NAME="ecos-chief-of-staff-one"
+SESSION_NAME="amcos-chief-of-staff-one"
 ```
 
 ### Step 2: Prepare Agent Directory
@@ -129,11 +129,11 @@ mkdir -p ~/agents/$SESSION_NAME
 
 ### Step 3: Copy Plugin
 
-Copy the ECOS plugin to the agent's local plugins directory:
+Copy the AMCOS plugin to the agent's local plugins directory:
 
 ```bash
 mkdir -p ~/agents/$SESSION_NAME/.claude/plugins/
-cp -r /path/to/emasoft-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
+cp -r /path/to/ai-maestro-chief-of-staff ~/agents/$SESSION_NAME/.claude/plugins/
 ```
 
 ### Step 4: Execute Agent Creation
@@ -144,20 +144,20 @@ Use the `ai-maestro-agents-management` skill to create the agent with the parame
 
 ### Step 5: Wait for Initialization
 
-Wait 5 seconds for ECOS to initialize.
+Wait 5 seconds for AMCOS to initialize.
 
 ### Step 6: Health Check Ping
 
 Send a health check message using the `agent-messaging` skill:
-- **Recipient**: The ECOS session name chosen in Step 1
+- **Recipient**: The AMCOS session name chosen in Step 1
 - **Subject**: "Health Check"
-- **Content**: ping type, message "Verify ECOS alive", expect_reply true, timeout 10
+- **Content**: ping type, message "Verify AMCOS alive", expect_reply true, timeout 10
 - **Type**: `ping`
 - **Priority**: `normal`
 
 ### Step 7: Verify Response
 
-Check your inbox using the `agent-messaging` skill for a `pong` response from ECOS within 30 seconds.
+Check your inbox using the `agent-messaging` skill for a `pong` response from AMCOS within 30 seconds.
 
 Expected response content:
 ```json
@@ -169,17 +169,17 @@ Expected response content:
 }
 ```
 
-### Step 9: Register ECOS
+### Step 9: Register AMCOS
 
-Record the new ECOS instance in the active sessions log:
+Record the new AMCOS instance in the active sessions log:
 
-File: `docs_dev/sessions/active-ecos-sessions.md`
+File: `docs_dev/sessions/active-amcos-sessions.md`
 
 ```markdown
-## Session: ecos-chief-of-staff-one
+## Session: amcos-chief-of-staff-one
 - **Spawned**: 2026-02-05 16:30:22
-- **Plugins**: emasoft-chief-of-staff
-- **Working Dir**: ~/agents/ecos-chief-of-staff-one
+- **Plugins**: ai-maestro-chief-of-staff
+- **Working Dir**: ~/agents/amcos-chief-of-staff-one
 - **Last Health Check**: 2026-02-05 16:30:30 (ALIVE)
 - **Active Specialists**: (none yet)
 - **Current Tasks**: Awaiting work requests
@@ -187,29 +187,29 @@ File: `docs_dev/sessions/active-ecos-sessions.md`
 
 ### Step 10: Report to User
 
-Notify the user that ECOS is ready:
+Notify the user that AMCOS is ready:
 
 ```
-✅ ECOS ready!
+✅ AMCOS ready!
 
-Session: ecos-chief-of-staff-one
+Session: amcos-chief-of-staff-one
 Status: Active and responding
-Working Dir: ~/agents/ecos-chief-of-staff-one
+Working Dir: ~/agents/amcos-chief-of-staff-one
 
-ECOS is now available to coordinate specialist agents (EOA, EAA, EIA).
+AMCOS is now available to coordinate specialist agents (EOA, EAA, EIA).
 ```
 
 ## Success Criteria
 
-A successful ECOS spawn meets ALL of the following criteria:
+A successful AMCOS spawn meets ALL of the following criteria:
 
 - [ ] Agent creation via `ai-maestro-agents-management` skill succeeded (exit code 0)
-- [ ] ECOS session registered in AI Maestro (visible in agent list)
-- [ ] ECOS main agent loaded with correct role constraints
-- [ ] ECOS plugins loaded correctly
-- [ ] ECOS working directory set correctly
-- [ ] ECOS health check ping successful (pong received)
-- [ ] ECOS added to active sessions log in `docs_dev/sessions/active-ecos-sessions.md`
+- [ ] AMCOS session registered in AI Maestro (visible in agent list)
+- [ ] AMCOS main agent loaded with correct role constraints
+- [ ] AMCOS plugins loaded correctly
+- [ ] AMCOS working directory set correctly
+- [ ] AMCOS health check ping successful (pong received)
+- [ ] AMCOS added to active sessions log in `docs_dev/sessions/active-amcos-sessions.md`
 
 ## Troubleshooting
 
@@ -220,11 +220,11 @@ A successful ECOS spawn meets ALL of the following criteria:
 **Solution**:
 1. Check AI Maestro health using the `agent-messaging` skill's health check feature
 2. Use the `ai-maestro-agents-management` skill to list agents and check for name collisions
-3. If collision, use different session name with suffix: `ecos-chief-of-staff-two`
+3. If collision, use different session name with suffix: `amcos-chief-of-staff-two`
 
 ### No Response to Health Ping
 
-**Cause**: ECOS may not have finished initializing
+**Cause**: AMCOS may not have finished initializing
 
 **Solution**:
 1. Wait additional 10 seconds
@@ -236,12 +236,12 @@ A successful ECOS spawn meets ALL of the following criteria:
 **Cause**: Plugin not copied to local directory before spawn
 
 **Solution**:
-1. Verify plugin exists: `ls ~/agents/$SESSION_NAME/.claude/plugins/emasoft-chief-of-staff/`
+1. Verify plugin exists: `ls ~/agents/$SESSION_NAME/.claude/plugins/ai-maestro-chief-of-staff/`
 2. Copy plugin if missing
 3. Re-run spawn command
 
 ## Related Documents
 
-- [ECOS Communication Protocol](./ecos-communication-protocol.md)
-- [ECOS Approval Workflow](./ecos-approval-workflow.md)
-- [Active ECOS Sessions Management](./managing-active-sessions.md)
+- [AMCOS Communication Protocol](./amcos-communication-protocol.md)
+- [AMCOS Approval Workflow](./amcos-approval-workflow.md)
+- [Active AMCOS Sessions Management](./managing-active-sessions.md)

@@ -1,5 +1,5 @@
 ---
-name: eama-session-memory
+name: amama-session-memory
 description: User preference and communication style persistence. Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start.
 version: 1.0.0
 license: MIT
@@ -7,7 +7,7 @@ compatibility: Requires file system access to handoff documents and GitHub issue
 metadata:
   author: Emasoft
 context: fork
-agent: eama-main
+agent: amama-main
 user-invocable: false
 triggers:
   - when session starts and user context must be restored
@@ -17,30 +17,30 @@ triggers:
   - when session ends and handoff document must be created
 ---
 
-# EAMA Session Memory Skill
+# AMAMA Session Memory Skill
 
 ## Overview
 
-Session memory for the Emasoft Assistant Manager Agent (EAMA) serves a unique purpose: maintaining continuity in the user relationship across sessions. Unlike orchestration memory that tracks tasks and patterns, EAMA session memory focuses on user-centric data that enables the assistant to communicate effectively with the user regardless of context compaction or session interruptions.
+Session memory for the AI Maestro Assistant Manager Agent (AMAMA) serves a unique purpose: maintaining continuity in the user relationship across sessions. Unlike orchestration memory that tracks tasks and patterns, AMAMA session memory focuses on user-centric data that enables the assistant to communicate effectively with the user regardless of context compaction or session interruptions.
 
-**Purpose**: Enable EAMA to remember the user across sessions, maintaining relationship continuity and avoiding repetitive clarification requests.
+**Purpose**: Enable AMAMA to remember the user across sessions, maintaining relationship continuity and avoiding repetitive clarification requests.
 
 **Scope**: User preferences, communication style, approval history, pending items, and availability states.
 
 ## Prerequisites
 
-1. File system access to create and maintain handoff documents directory (`thoughts/shared/handoffs/eama/`)
+1. File system access to create and maintain handoff documents directory (`thoughts/shared/handoffs/amama/`)
 2. GitHub API access for issue comment persistence (optional but recommended)
-3. Understanding of EAMA role as user-facing communication agent
+3. Understanding of AMAMA role as user-facing communication agent
 4. Familiarity with context compaction and session continuity concepts
 
-## What EAMA Session Memory Stores
+## What AMAMA Session Memory Stores
 
-EAMA session memory is structured around the user relationship, not technical task state.
+AMAMA session memory is structured around the user relationship, not technical task state.
 
 ### 1. User Preferences and Communication Style
 
-Data that helps EAMA communicate in ways the user prefers:
+Data that helps AMAMA communicate in ways the user prefers:
 
 | Preference Type | Example Data | Why Stored |
 |-----------------|--------------|------------|
@@ -78,7 +78,7 @@ Items waiting for user input or action:
 
 State-based availability tracking (not time-based):
 
-| State | Description | EAMA Behavior |
+| State | Description | AMAMA Behavior |
 |-------|-------------|---------------|
 | `active` | User is actively engaged | Full interaction, ask questions freely |
 | `monitoring` | User is available but not actively working | Batch non-urgent items, summarize |
@@ -88,32 +88,32 @@ State-based availability tracking (not time-based):
 
 ## Memory Storage Locations
 
-EAMA stores session memory in two persistent locations.
+AMAMA stores session memory in two persistent locations.
 
 ### Primary: Handoff Documents
 
-**Location**: `thoughts/shared/handoffs/eama/`
+**Location**: `thoughts/shared/handoffs/amama/`
 
 **Structure**:
 ```
-thoughts/shared/handoffs/eama/
+thoughts/shared/handoffs/amama/
   current.md              # Current session state
   user-preferences.md     # Accumulated user preferences
   decision-log.md         # Historical decisions
   pending-items.md        # Items awaiting user action
 ```
 
-**Why Handoff Documents**: They survive context compaction, are human-readable, and can be shared across EAMA sessions.
+**Why Handoff Documents**: They survive context compaction, are human-readable, and can be shared across AMAMA sessions.
 
 ### Secondary: GitHub Issue Comments
 
-**Location**: Comments on open issues with `eama-context` label.
+**Location**: Comments on open issues with `amama-context` label.
 
-**Use Case**: When working on a specific issue, EAMA records user decisions and preferences as issue comments to preserve context within the GitHub thread.
+**Use Case**: When working on a specific issue, AMAMA records user decisions and preferences as issue comments to preserve context within the GitHub thread.
 
 **Format in Issue Comments**:
 ```markdown
-<!-- EAMA-CONTEXT
+<!-- AMAMA-CONTEXT
 user_preference: prefers detailed error messages
 decision: approved retry logic with exponential backoff
 pending: awaiting input on max retry count
@@ -123,14 +123,14 @@ availability_state: active
 
 ## Memory Retrieval Triggers
 
-EAMA retrieves session memory based on state changes, not time intervals.
+AMAMA retrieves session memory based on state changes, not time intervals.
 
 ### Trigger 1: Session Start
 
-**Condition**: EAMA agent initializes or resumes after compaction.
+**Condition**: AMAMA agent initializes or resumes after compaction.
 
 **Actions**:
-1. Read `thoughts/shared/handoffs/eama/current.md`
+1. Read `thoughts/shared/handoffs/amama/current.md`
 2. Load user preferences from `user-preferences.md`
 3. Check `pending-items.md` for items needing attention
 4. Restore user availability state
@@ -150,7 +150,7 @@ Would you like to continue where we left off?
 
 ### Trigger 2: Role Routing Request
 
-**Condition**: User sends a request that EAMA must route to another role.
+**Condition**: User sends a request that AMAMA must route to another role.
 
 **Actions**:
 1. Check decision-log.md for relevant prior decisions
@@ -163,14 +163,14 @@ Would you like to continue where we left off?
 **Condition**: User references a GitHub issue number.
 
 **Actions**:
-1. Query issue for EAMA-CONTEXT comments
+1. Query issue for AMAMA-CONTEXT comments
 2. Extract user preferences and decisions
 3. Merge with session preferences (issue-specific takes precedence)
 4. Apply context to current interaction
 
 ### Trigger 4: Approval Request
 
-**Condition**: EAMA needs to request user approval.
+**Condition**: AMAMA needs to request user approval.
 
 **Actions**:
 1. Check decision-log.md for similar past decisions
@@ -180,7 +180,7 @@ Would you like to continue where we left off?
 
 ## Memory Update Triggers
 
-EAMA updates session memory based on user actions, not time intervals.
+AMAMA updates session memory based on user actions, not time intervals.
 
 ### Trigger 1: User Expresses Preference
 
@@ -188,7 +188,7 @@ EAMA updates session memory based on user actions, not time intervals.
 
 **Detection Signals**:
 - "I prefer..." statements
-- Corrections to EAMA behavior ("don't ask me every time")
+- Corrections to AMAMA behavior ("don't ask me every time")
 - Repeated patterns in responses (always choosing same option)
 
 **Actions**:
@@ -240,7 +240,7 @@ EAMA updates session memory based on user actions, not time intervals.
 
 **Actions**:
 1. Update availability state in current.md
-2. Adjust EAMA behavior accordingly
+2. Adjust AMAMA behavior accordingly
 3. Queue or release pending items based on state
 
 ### Trigger 4: Pending Item Resolution
@@ -265,19 +265,19 @@ EAMA updates session memory based on user actions, not time intervals.
 
 ## Handoff Document Creation
 
-When EAMA session ends or context compacts, a handoff document ensures continuity.
+When AMAMA session ends or context compacts, a handoff document ensures continuity.
 
 ### Handoff Document Structure
 
-**File**: `thoughts/shared/handoffs/eama/current.md`
+**File**: `thoughts/shared/handoffs/amama/current.md`
 
 ```markdown
-# EAMA Session Handoff
+# AMAMA Session Handoff
 
 ## Session Metadata
-- Session ID: eama-20250130-001
+- Session ID: amama-20250130-001
 - Last Updated: 2025-01-30
-- Previous Session: eama-20250129-003
+- Previous Session: amama-20250129-003
 
 ## User State
 - Availability: monitoring
@@ -337,7 +337,7 @@ Follow these steps to maintain session memory:
 
 Copy this checklist and track your progress:
 
-- [ ] Create `thoughts/shared/handoffs/eama/` directory structure
+- [ ] Create `thoughts/shared/handoffs/amama/` directory structure
 - [ ] Initialize `current.md` with session metadata
 - [ ] Initialize `user-preferences.md` with empty sections
 - [ ] Initialize `decision-log.md` with header
@@ -366,7 +366,7 @@ Copy this checklist and track your progress:
 
 Copy this checklist to track implementation:
 
-- [ ] Create `thoughts/shared/handoffs/eama/` directory structure
+- [ ] Create `thoughts/shared/handoffs/amama/` directory structure
 - [ ] Initialize `current.md` with session metadata
 - [ ] Initialize `user-preferences.md` with empty sections
 - [ ] Initialize `decision-log.md` with header
@@ -384,7 +384,7 @@ Copy this checklist to track implementation:
 
 ### Example 1: Session Start with Restored Context
 
-**Scenario**: EAMA starts and finds previous session data.
+**Scenario**: AMAMA starts and finds previous session data.
 
 ```markdown
 ## Session Restored
@@ -409,7 +409,7 @@ Would you like to address the pending items, or continue with something else?
 
 **User Input**: "Can you be more brief? I don't need all the explanation."
 
-**EAMA Actions**:
+**AMAMA Actions**:
 1. Detect preference expression
 2. Update user-preferences.md:
    ```markdown
@@ -425,7 +425,7 @@ Would you like to address the pending items, or continue with something else?
 
 **User Input**: "Let's go with PostgreSQL. We need the JSON support."
 
-**EAMA Actions**:
+**AMAMA Actions**:
 1. Record in decision-log.md:
    ```markdown
    ## Decision: Database Selection - 2025-01-30
@@ -445,7 +445,7 @@ Would you like to address the pending items, or continue with something else?
 
 **User Input**: "I need to step away for a while. Don't wait for me on the PR reviews."
 
-**EAMA Actions**:
+**AMAMA Actions**:
 1. Update current.md:
    ```markdown
    ## User State
@@ -474,10 +474,10 @@ Would you like to address the pending items, or continue with something else?
 ## Resources
 
 - **AGENT_OPERATIONS.md** - Core agent operational patterns
-- **eama-approval-workflows** - Approval decision patterns
-- **eama-user-communication** - Communication patterns
-- **eama-role-routing** - Role handoff patterns
-- **eama-status-reporting** - Status report generation
+- **amama-approval-workflows** - Approval decision patterns
+- **amama-user-communication** - Communication patterns
+- **amama-role-routing** - Role handoff patterns
+- **amama-status-reporting** - Status report generation
 
 ### Reference Documents
 
@@ -487,5 +487,5 @@ Would you like to address the pending items, or continue with something else?
 
 **Version**: 1.0.0
 **Last Updated**: 2025-02-04
-**Target Audience**: Emasoft Assistant Manager Agent
+**Target Audience**: AI Maestro Assistant Manager Agent
 **Difficulty Level**: Intermediate

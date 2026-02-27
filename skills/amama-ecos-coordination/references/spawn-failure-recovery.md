@@ -4,11 +4,11 @@
 ## Contents
 
 - [Overview](#overview)
-- [1. ECOS Spawn Failure Recovery Protocol](#1-ecos-spawn-failure-recovery-protocol)
+- [1. AMCOS Spawn Failure Recovery Protocol](#1-amcos-spawn-failure-recovery-protocol)
   - [Recovery Steps](#recovery-steps)
   - [Recovery Decision Tree](#recovery-decision-tree)
 - [2. Communication Breakdown Recovery](#2-communication-breakdown-recovery)
-  - [When ECOS Doesn't Respond](#when-ecos-doesnt-respond)
+  - [When AMCOS Doesn't Respond](#when-amcos-doesnt-respond)
 - [3. Approval Request Handling Failures](#3-approval-request-handling-failures)
   - [When Approval Request Unclear](#when-approval-request-unclear)
   - [When Multiple Conflicting Requests](#when-multiple-conflicting-requests)
@@ -21,20 +21,20 @@
 - [Failure: <timestamp>](#failure-timestamp)
 - [6. Timeliness Requirements](#6-timeliness-requirements)
 - [7. Example Scenarios](#7-example-scenarios)
-  - [Example 1: ECOS Spawn Fails (AI Maestro Down)](#example-1-ecos-spawn-fails-ai-maestro-down)
-  - [Example 2: ECOS Not Responding to Routing Request](#example-2-ecos-not-responding-to-routing-request)
+  - [Example 1: AMCOS Spawn Fails (AI Maestro Down)](#example-1-amcos-spawn-fails-ai-maestro-down)
+  - [Example 2: AMCOS Not Responding to Routing Request](#example-2-amcos-not-responding-to-routing-request)
   - [Example 3: Conflicting Approval Requests](#example-3-conflicting-approval-requests)
 - [Summary](#summary)
 
 ## Overview
 
-This document provides recovery procedures for handling failures in ECOS creation, agent spawning, and inter-agent communication within the EAMA system.
+This document provides recovery procedures for handling failures in AMCOS creation, agent spawning, and inter-agent communication within the AMAMA system.
 
 ---
 
-## 1. ECOS Spawn Failure Recovery Protocol
+## 1. AMCOS Spawn Failure Recovery Protocol
 
-When ECOS spawn fails, follow this recovery procedure systematically before escalating to the user.
+When AMCOS spawn fails, follow this recovery procedure systematically before escalating to the user.
 
 ### Recovery Steps
 
@@ -53,21 +53,21 @@ If AI Maestro is down:
 tmux list-sessions
 
 # Check if session name already exists
-tmux list-sessions | grep "ecos-<project-name>"
+tmux list-sessions | grep "amcos-<project-name>"
 ```
 
 If session name collision detected:
-- Use alternative session name with numeric suffix: `ecos-<project-name>-2`
+- Use alternative session name with numeric suffix: `amcos-<project-name>-2`
 - Document the collision in session log
 
 #### Step 3: Retry with Different Session Name
 
 Use the `ai-maestro-agents-management` skill to create the agent with an incremented session name:
-- **Agent name**: `ecos-<project-name>-<timestamp>` (use timestamp to ensure uniqueness)
+- **Agent name**: `amcos-<project-name>-<timestamp>` (use timestamp to ensure uniqueness)
 - **Working directory**: `~/agents/<new-session-name>/`
 - **Task**: "Coordinate agents for <project-name>"
-- **Plugin**: load `emasoft-chief-of-staff` using the skill's plugin management features
-- **Main agent**: `ecos-chief-of-staff-main-agent`
+- **Plugin**: load `ai-maestro-chief-of-staff` using the skill's plugin management features
+- **Main agent**: `amcos-chief-of-staff-main-agent`
 
 **Verify**: confirm the agent appears in the agent list with correct status.
 
@@ -75,18 +75,18 @@ Use the `ai-maestro-agents-management` skill to create the agent with an increme
 
 After 3 failed spawn attempts:
 
-1. **Create project WITHOUT ECOS**
+1. **Create project WITHOUT AMCOS**
    - Project structure is still valid
-   - EAMA can receive user requests
+   - AMAMA can receive user requests
    - Work cannot be routed to specialists
 
 2. **Notify User**
    ```
-   ECOS Spawn Failed After 3 Attempts
+   AMCOS Spawn Failed After 3 Attempts
 
    Project: <project-name>
    Location: <path>
-   Status: Created WITHOUT ECOS coordination
+   Status: Created WITHOUT AMCOS coordination
 
    Attempted:
    - Attempt 1: <error>
@@ -103,7 +103,7 @@ After 3 failed spawn attempts:
    2. Check tmux for orphaned sessions: `tmux list-sessions`
    3. Restart AI Maestro if needed
 
-   Once fixed, I can retry ECOS spawn. Say "retry ECOS for <project-name>" when ready.
+   Once fixed, I can retry AMCOS spawn. Say "retry AMCOS for <project-name>" when ready.
    ```
 
 3. **Log Failure**
@@ -111,7 +111,7 @@ After 3 failed spawn attempts:
    ```markdown
    ## Spawn Failure: <timestamp>
    - Project: <project-name>
-   - Session Name: ecos-<project-name>
+   - Session Name: amcos-<project-name>
    - Attempts: 3
    - Errors: <error details>
    - Resolution: Awaiting user intervention
@@ -119,7 +119,7 @@ After 3 failed spawn attempts:
 
 #### Step 5: Allow User Manual Fix and Retry
 
-When user says "retry ECOS for <project-name>":
+When user says "retry AMCOS for <project-name>":
 1. Re-run verification steps (AI Maestro health, session conflicts)
 2. Attempt spawn with clean session name
 3. Report success or escalate again if still failing
@@ -127,7 +127,7 @@ When user says "retry ECOS for <project-name>":
 ### Recovery Decision Tree
 
 ```
-ECOS Spawn Fails
+AMCOS Spawn Fails
     |
     v
 Is AI Maestro running? ──NO──> Alert user, STOP
@@ -142,7 +142,7 @@ Retry count < 3? ──YES──> Wait 10 seconds, RETRY
     |
    NO
     v
-Create project WITHOUT ECOS
+Create project WITHOUT AMCOS
 Notify user with diagnostic info
 Log failure
 Wait for user to fix and request retry
@@ -152,9 +152,9 @@ Wait for user to fix and request retry
 
 ## 2. Communication Breakdown Recovery
 
-When ECOS or other agents fail to respond to messages.
+When AMCOS or other agents fail to respond to messages.
 
-### When ECOS Doesn't Respond
+### When AMCOS Doesn't Respond
 
 **Symptoms:**
 - No response to health ping
@@ -164,12 +164,12 @@ When ECOS or other agents fail to respond to messages.
 **Recovery Procedure:**
 
 1. **Wait 30 seconds**
-   - Allow time for ECOS to process message
-   - ECOS may be busy with approval workflow
+   - Allow time for AMCOS to process message
+   - AMCOS may be busy with approval workflow
 
 2. **Retry health ping once**
    Send a health check message using the `agent-messaging` skill:
-   - **Recipient**: `ecos-<project-name>`
+   - **Recipient**: `amcos-<project-name>`
    - **Subject**: "Health Check"
    - **Type**: `health_check`
    - **Priority**: `normal`
@@ -178,10 +178,10 @@ When ECOS or other agents fail to respond to messages.
 
 3. **If still no response, report to user**
    ```
-   Communication Issue: ECOS Not Responding
+   Communication Issue: AMCOS Not Responding
 
    Project: <project-name>
-   Session: ecos-<project-name>
+   Session: amcos-<project-name>
    Issue: No response to messages after 30s + 1 retry
 
    Checked:
@@ -190,24 +190,24 @@ When ECOS or other agents fail to respond to messages.
    - Response received: No
 
    Possible causes:
-   1. ECOS session crashed
-   2. ECOS overloaded or stuck
+   1. AMCOS session crashed
+   2. AMCOS overloaded or stuck
    3. AI Maestro routing issue
 
    Actions you can take:
-   1. Check ECOS session: `tmux attach -t ecos-<project-name>`
-   2. Check ECOS logs (if available)
-   3. Restart ECOS if needed
+   1. Check AMCOS session: `tmux attach -t amcos-<project-name>`
+   2. Check AMCOS logs (if available)
+   3. Restart AMCOS if needed
 
-   I can retry routing once ECOS is confirmed working.
+   I can retry routing once AMCOS is confirmed working.
    ```
 
 4. **Log the communication failure**
    Record in `docs_dev/sessions/communication-failures.md`:
    ```markdown
    ## Communication Failure: <timestamp>
-   - From: EAMA
-   - To: ecos-<project-name>
+   - From: AMAMA
+   - To: amcos-<project-name>
    - Message: <subject>
    - Attempts: 2 (initial + 1 retry)
    - Timeout: 30s + 30s
@@ -224,7 +224,7 @@ When approval workflow encounters errors.
 ### When Approval Request Unclear
 
 **Symptoms:**
-- ECOS approval request lacks required fields
+- AMCOS approval request lacks required fields
 - Risk level ambiguous or missing
 - Proposed action description incomplete
 
@@ -234,9 +234,9 @@ When approval workflow encounters errors.
    - Missing information = deny by default
    - Never guess user intent
 
-2. **Request clarification from ECOS**
+2. **Request clarification from AMCOS**
    Send a clarification request using the `agent-messaging` skill:
-   - **Recipient**: `ecos-<project-name>`
+   - **Recipient**: `amcos-<project-name>`
    - **Subject**: "Approval Clarification Needed"
    - **Content**: clarification_request type, message "Approval request incomplete. Missing: <field1>, <field2>. Please resend with full context."
    - **Type**: `clarification_request`
@@ -249,7 +249,7 @@ When approval workflow encounters errors.
    Approval Blocked: Unclear Request
 
    Project: <project-name>
-   Request from: ECOS
+   Request from: AMCOS
    Issue: Missing required approval information
 
    Details:
@@ -260,7 +260,7 @@ When approval workflow encounters errors.
    I need your decision:
    - Approve anyway? (not recommended)
    - Deny and request more info?
-   - Let me ask ECOS for clarification?
+   - Let me ask AMCOS for clarification?
    ```
 
 ### When Multiple Conflicting Requests
@@ -283,12 +283,12 @@ When approval workflow encounters errors.
    Project: <project-name>
 
    Request A:
-   - From: <agent/ECOS>
+   - From: <agent/AMCOS>
    - Action: <action1>
    - Risk: <level>
 
    Request B:
-   - From: <agent/ECOS>
+   - From: <agent/AMCOS>
    - Action: <action2>
    - Risk: <level>
 
@@ -319,14 +319,14 @@ When spawning specialist agents (EOA, EAA, EIA) fails.
 
 ### Recovery Procedure
 
-1. **Check AI Maestro health** (same as Step 1 for ECOS)
+1. **Check AI Maestro health** (same as Step 1 for AMCOS)
 
 2. **Verify plugin availability**
    ```bash
    # Check if specialist plugin exists
-   ls -la ~/agents/<session-name>/.claude/plugins/emasoft-orchestrator-agent
-   ls -la ~/agents/<session-name>/.claude/plugins/emasoft-architect-agent
-   ls -la ~/agents/<session-name>/.claude/plugins/emasoft-integrator-agent
+   ls -la ~/agents/<session-name>/.claude/plugins/ai-maestro-orchestrator-agent
+   ls -la ~/agents/<session-name>/.claude/plugins/ai-maestro-architect-agent
+   ls -la ~/agents/<session-name>/.claude/plugins/ai-maestro-integrator-agent
    ```
 
 3. **Check for tmux session zombie processes**
@@ -378,7 +378,7 @@ All failures MUST be logged for debugging and audit purposes.
 
 | Failure Type | Log File | Format |
 |--------------|----------|--------|
-| ECOS spawn failures | `docs_dev/sessions/spawn-failures.md` | Markdown |
+| AMCOS spawn failures | `docs_dev/sessions/spawn-failures.md` | Markdown |
 | Communication failures | `docs_dev/sessions/communication-failures.md` | Markdown |
 | Approval conflicts | `docs_dev/sessions/approval-conflicts.md` | Markdown |
 | Agent spawn failures | `docs_dev/sessions/agent-spawn-failures.md` | Markdown |
@@ -388,7 +388,7 @@ All failures MUST be logged for debugging and audit purposes.
 ```markdown
 ## Failure: <timestamp>
 - Type: <spawn/communication/approval>
-- Component: <ECOS/agent/messaging>
+- Component: <AMCOS/agent/messaging>
 - Project: <project-name>
 - Session: <session-name>
 - Attempts: <count>
@@ -404,7 +404,7 @@ All failures MUST be logged for debugging and audit purposes.
 
 **Response times for failure handling:**
 
-- ECOS spawn failure detection: Immediate (exit code check)
+- AMCOS spawn failure detection: Immediate (exit code check)
 - Communication timeout: 30 seconds before first retry
 - Approval request clarification: Within 60 seconds
 - User escalation: Within 2 minutes of detection
@@ -426,29 +426,29 @@ All failures MUST be logged for debugging and audit purposes.
 
 ## 7. Example Scenarios
 
-### Example 1: ECOS Spawn Fails (AI Maestro Down)
+### Example 1: AMCOS Spawn Fails (AI Maestro Down)
 
-**Scenario**: ECOS agent creation fails with exit code 1
+**Scenario**: AMCOS agent creation fails with exit code 1
 
 **Your Action**: Diagnose and report to user
 
 **Your Response to User**:
 ```
-Issue encountered: ECOS spawn failed
+Issue encountered: AMCOS spawn failed
 
 Details: Agent creation command exited with error code 1
 Impact: Cannot coordinate agents for inventory-system project
-Attempted: Spawned ecos-inventory-system with standard configuration
+Attempted: Spawned amcos-inventory-system with standard configuration
 
 Error output: [paste relevant error]
 
 I recommend: Verify AI Maestro is running by checking its health status
-using the `agent-messaging` skill. If down, restart it. Then I'll retry spawning ECOS.
+using the `agent-messaging` skill. If down, restart it. Then I'll retry spawning AMCOS.
 
 Should I retry once AI Maestro is confirmed running?
 ```
 
-### Example 2: ECOS Not Responding to Routing Request
+### Example 2: AMCOS Not Responding to Routing Request
 
 **Scenario**: Sent routing request 30s ago, no response
 
@@ -460,23 +460,23 @@ Should I retry once AI Maestro is confirmed running?
 
 **Your Response to User**:
 ```
-Communication issue detected with ECOS for inventory-system.
+Communication issue detected with AMCOS for inventory-system.
 
 I sent a work routing request 60 seconds ago but received no response.
 
 Status:
 - AI Maestro API: Running ✅
 - Message delivered: Yes ✅
-- ECOS response: None ❌
+- AMCOS response: None ❌
 
 This could mean:
-- ECOS session crashed
-- ECOS is stuck processing another request
+- AMCOS session crashed
+- AMCOS is stuck processing another request
 - Messaging route is broken
 
-Can you check the ECOS session? `tmux attach -t ecos-inventory-system`
+Can you check the AMCOS session? `tmux attach -t amcos-inventory-system`
 
-Once you confirm ECOS status, I can retry routing your request.
+Once you confirm AMCOS status, I can retry routing your request.
 ```
 
 ### Example 3: Conflicting Approval Requests
@@ -493,11 +493,11 @@ Once you confirm ECOS status, I can retry routing your request.
 
 Project: inventory-system
 
-Request A (from EOA via ECOS):
+Request A (from EOA via AMCOS):
 - Action: Deploy to staging
 - Risk: Medium (database migration included)
 
-Request B (from EIA via ECOS):
+Request B (from EIA via AMCOS):
 - Action: Rollback staging (critical bug found)
 - Risk: High (data loss possible)
 

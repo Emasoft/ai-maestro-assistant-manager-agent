@@ -1,22 +1,22 @@
-# Completion Notifications from ECOS
+# Completion Notifications from AMCOS
 
 ## Use-Case TOC
 
-- When ECOS sends completion notifications -> Section 1
+- When AMCOS sends completion notifications -> Section 1
 - How to process completion notifications -> Section 2
 - When to notify the user about completions -> Section 3
 
 ## Table of Contents
 
-1. When ECOS Sends Completion Notifications
+1. When AMCOS Sends Completion Notifications
 2. Processing Completion Notifications
 3. User Notification Rules
 
 ---
 
-## 1. When ECOS Sends Completion Notifications
+## 1. When AMCOS Sends Completion Notifications
 
-ECOS notifies EAMA when:
+AMCOS notifies AMAMA when:
 
 1. An approved operation completes (success or failure)
 2. An autonomous operation completes (based on notification_level)
@@ -34,7 +34,7 @@ ECOS notifies EAMA when:
 
 ## 2. Processing Completion Notifications
 
-When EAMA receives a completion notification:
+When AMAMA receives a completion notification:
 
 ### Step 1: Parse the notification
 - Extract `request_id`, `result`, and `autonomous_mode`
@@ -53,7 +53,7 @@ When EAMA receives a completion notification:
 **If `result` is `partial`:**
 1. Review what completed and what didn't
 2. Decide if additional action needed
-3. May need to request clarification from ECOS
+3. May need to request clarification from AMCOS
 
 ### Step 3: Handle autonomous mode operations
 
@@ -89,7 +89,7 @@ user_notification_preferences:
 
 ### Aggregation for Status Reports
 
-When `notification_level` is not `all`, EAMA aggregates autonomous operation completions:
+When `notification_level` is not `all`, AMAMA aggregates autonomous operation completions:
 
 ```yaml
 status_report:

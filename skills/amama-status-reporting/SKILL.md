@@ -1,10 +1,10 @@
 ---
-name: eama-status-reporting
+name: amama-status-reporting
 description: Use when generating status reports showing progress across all roles (Architect, Orchestrator, Integrator). Trigger with status report requests.
 version: 1.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: eama-main
+agent: amama-main
 user-invocable: true
 triggers:
   - when user asks for status
@@ -134,9 +134,9 @@ Reports saved to: `docs_dev/reports/status-{date}.md`
 
 ## Resources
 
-- **eama-role-routing SKILL** - Role status queries
-- **eama-approval-workflows SKILL** - Approval status
-- **eama-session-memory SKILL** - Session memory access
+- **amama-role-routing SKILL** - Role status queries
+- **amama-approval-workflows SKILL** - Approval status
+- **amama-session-memory SKILL** - Session memory access
 
 ## Checklist
 

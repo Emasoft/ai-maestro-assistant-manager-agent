@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-EAMA Document Download and Storage Manager
+AMAMA Document Download and Storage Manager
 
 Downloads .md files from GitHub issue comments and stores them in the
-standardized EAMA folder structure with read-only enforcement.
+standardized AMAMA folder structure with read-only enforcement.
 
 Usage:
-    python eama_download.py download --url URL --task-id TASK_ID --category CATEGORY
-    python eama_download.py init --project-root PATH
-    python eama_download.py lookup --task-id TASK_ID
-    python eama_download.py verify --project-root PATH
+    python amama_download.py download --url URL --task-id TASK_ID --category CATEGORY
+    python amama_download.py init --project-root PATH
+    python amama_download.py lookup --task-id TASK_ID
+    python amama_download.py verify --project-root PATH
 """
 
 from __future__ import annotations
@@ -88,23 +88,23 @@ DOCUMENT_TYPE_MAP: dict[str, tuple[str, str | None]] = {
 
 
 def get_storage_root(project_root: Path | None = None) -> Path:
-    """Get the EAMA storage root directory."""
+    """Get the AMAMA storage root directory."""
     if project_root:
-        return project_root / ".eama" / "received"
+        return project_root / ".aimaestro" / "received"
 
-    env_root = os.environ.get("EAMA_STORAGE_ROOT")
+    env_root = os.environ.get("AMAMA_STORAGE_ROOT")
     if env_root:
         return Path(env_root)
 
     cwd = Path.cwd()
-    return cwd / ".eama" / "received"
+    return cwd / ".aimaestro" / "received"
 
 
 def init_storage(project_root: Path) -> None:
-    """Initialize the EAMA storage directory structure."""
+    """Initialize the AMAMA storage directory structure."""
     storage_root = get_storage_root(project_root)
 
-    print(f"Initializing EAMA storage at: {storage_root}")
+    print(f"Initializing AMAMA storage at: {storage_root}")
 
     # Create root
     storage_root.mkdir(parents=True, exist_ok=True)
@@ -122,15 +122,15 @@ def init_storage(project_root: Path) -> None:
 
     # Create .gitkeep
     gitkeep = storage_root.parent / ".gitkeep"
-    gitkeep.write_text("# EAMA document storage - do not delete this folder\n", encoding="utf-8")
+    gitkeep.write_text("# AMAMA document storage - do not delete this folder\n", encoding="utf-8")
 
     # Update .gitignore if in git repo
     gitignore_path = project_root / ".gitignore"
-    gitignore_entry = "\n# EAMA Document Storage (local cache)\n.eama/\n!.eama/.gitkeep\n"
+    gitignore_entry = "\n# AMAMA Document Storage (local cache)\n.aimaestro/\n!.aimaestro/.gitkeep\n"
 
     if gitignore_path.exists():
         content = gitignore_path.read_text(encoding="utf-8")
-        if ".eama/" not in content:
+        if ".aimaestro/" not in content:
             with gitignore_path.open("a", encoding="utf-8") as f:
                 f.write(gitignore_entry)
             print(f"Updated {gitignore_path}")
@@ -138,7 +138,7 @@ def init_storage(project_root: Path) -> None:
         gitignore_path.write_text(gitignore_entry, encoding="utf-8")
         print(f"Created {gitignore_path}")
 
-    print("EAMA storage initialized successfully")
+    print("AMAMA storage initialized successfully")
 
 
 def compute_sha256(file_path: Path) -> str:
@@ -308,7 +308,7 @@ def download_document(
         },
         "download": {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "agent": os.environ.get("EAMA_AGENT_NAME", "unknown"),
+            "agent": os.environ.get("AMAMA_AGENT_NAME", "unknown"),
             "sha256": sha256,
             "file_size_bytes": file_path.stat().st_size,
         },
@@ -456,7 +456,7 @@ def verify_storage(project_root: Path | None = None) -> dict[str, Any]:
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="EAMA Document Download and Storage Manager",
+        description="AMAMA Document Download and Storage Manager",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -545,7 +545,7 @@ def main() -> int:
         if args.json:
             print(json.dumps(report, indent=2))
         else:
-            print("\n=== EAMA Storage Verification Report ===\n")
+            print("\n=== AMAMA Storage Verification Report ===\n")
             print(f"Storage Root: {report['storage_root']}")
             print(f"Total Files: {report['stats']['total_files']}")
             print(f"Total Size: {report['stats']['total_size_bytes']} bytes")

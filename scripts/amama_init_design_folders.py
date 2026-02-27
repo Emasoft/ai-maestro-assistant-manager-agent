@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-EAMA Initialize Design Folders Script
+AMAMA Initialize Design Folders Script
 
-Creates the standardized design folder structure for the emasoft-assistant-manager-agent.
+Creates the standardized design folder structure for the ai-maestro-assistant-manager-agent.
 Includes design/memory/, design/handoffs/, design/requirements/ with templates.
 
 Usage:
-    python3 eama_init_design_folders.py
-    python3 eama_init_design_folders.py --platforms web ios android
-    python3 eama_init_design_folders.py --root design --platforms web
+    python3 amama_init_design_folders.py
+    python3 amama_init_design_folders.py --platforms web ios android
+    python3 amama_init_design_folders.py --root design --platforms web
 """
 
 import argparse

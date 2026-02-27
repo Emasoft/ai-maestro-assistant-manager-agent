@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-eama_stop_check.py - Stop hook to block exit until coordination work is complete.
+amama_stop_check.py - Stop hook to block exit until coordination work is complete.
 
 Stop hook that prevents assistant-manager from exiting with incomplete work:
 1. Pending user approvals not yet obtained
@@ -31,8 +31,8 @@ from typing import Any
 
 
 def get_memory_root(cwd: str) -> Path:
-    """Get the Emasoft Assistant Manager memory root directory."""
-    return Path(cwd) / ".claude" / "eama"
+    """Get the AI Maestro Assistant Manager memory root directory."""
+    return Path(cwd) / ".claude" / "amama"
 
 
 def check_ai_maestro_inbox() -> tuple[int, list[str]]:

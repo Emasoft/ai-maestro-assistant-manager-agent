@@ -2,7 +2,7 @@
 
 ## Use-Case TOC
 
-- When to grant autonomous mode to ECOS -> Section 2
+- When to grant autonomous mode to AMCOS -> Section 2
 - How to configure delegation rules -> Section 2
 - When to revoke autonomous mode -> Section 3
 - What operations always require approval -> Section 4
@@ -12,13 +12,13 @@
 1. What is Autonomous Mode
 2. Granting Autonomous Mode
 3. Revoking Autonomous Mode
-4. Operations That ALWAYS Require EAMA Approval
+4. Operations That ALWAYS Require AMAMA Approval
 
 ---
 
 ## 1. What is Autonomous Mode
 
-Autonomous mode allows ECOS to proceed with certain operation types without requesting approval for each one. EAMA grants autonomous mode based on:
+Autonomous mode allows AMCOS to proceed with certain operation types without requesting approval for each one. AMAMA grants autonomous mode based on:
 
 - Operation type
 - Risk level
@@ -27,7 +27,7 @@ Autonomous mode allows ECOS to proceed with certain operation types without requ
 
 ### Delegation Configuration
 
-EAMA can configure delegation rules stored in state file:
+AMAMA can configure delegation rules stored in state file:
 
 ```yaml
 ecos_delegation:
@@ -50,15 +50,15 @@ ecos_delegation:
 
 ## 2. Granting Autonomous Mode
 
-EAMA grants autonomy via command or AI Maestro message.
+AMAMA grants autonomy via command or AI Maestro message.
 
 Send an autonomy grant using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
-- **Subject**: "EAMA Autonomous Mode Grant"
+- **Recipient**: `amcos-<project-name>`
+- **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
 - **Content**: Include the following fields:
   - `type`: `autonomy-grant`
-  - `operation_types`: List of operation types ECOS can perform autonomously (e.g., `routine-operation`, `minor-decision`)
+  - `operation_types`: List of operation types AMCOS can perform autonomously (e.g., `routine-operation`, `minor-decision`)
   - `expires_at`: ISO-8601 timestamp when autonomous mode ends (e.g., `2025-02-02T18:00:00Z`)
   - `scope_limits`: A nested structure containing:
     - `max_files_per_operation`: Maximum files per operation (e.g., 50)
@@ -71,28 +71,28 @@ Send an autonomy grant using the `agent-messaging` skill:
 
 | Parameter | Description | Example |
 |-----------|-------------|---------|
-| `operation_types` | Types of operations ECOS can do autonomously | `["routine-operation", "minor-decision"]` |
+| `operation_types` | Types of operations AMCOS can do autonomously | `["routine-operation", "minor-decision"]` |
 | `expires_at` | When autonomous mode ends | ISO-8601 timestamp or `"never"` |
 | `scope_limits` | Boundaries for autonomous operations | See configuration above |
-| `notification_level` | How often ECOS reports to EAMA | `"all"`, `"important"`, `"critical-only"` |
+| `notification_level` | How often AMCOS reports to AMAMA | `"all"`, `"important"`, `"critical-only"` |
 
 ---
 
 ## 3. Revoking Autonomous Mode
 
-EAMA revokes autonomy when:
+AMAMA revokes autonomy when:
 
 1. User explicitly requests revocation
 2. Time boundary expires
-3. ECOS exceeds scope limits
+3. AMCOS exceeds scope limits
 4. Security concern detected
 5. User unavailable for extended period
 
 ### Revocation Message
 
 Send an autonomy revocation using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
-- **Subject**: "EAMA Autonomous Mode Revoked"
+- **Recipient**: `amcos-<project-name>`
+- **Subject**: "AMAMA Autonomous Mode Revoked"
 - **Priority**: `urgent`
 - **Content**: Include the following fields:
   - `type`: `autonomy-revoke`
@@ -107,15 +107,15 @@ Send an autonomy revocation using the `agent-messaging` skill:
 | Reason | Description |
 |--------|-------------|
 | `User request` | User explicitly asked to revoke |
-| `Scope exceeded` | ECOS attempted unauthorized operation |
+| `Scope exceeded` | AMCOS attempted unauthorized operation |
 | `Security concern` | Suspicious activity detected |
 | `Timeout` | Autonomy period expired |
 
 ---
 
-## 4. Operations That ALWAYS Require EAMA Approval
+## 4. Operations That ALWAYS Require AMAMA Approval
 
-No matter what delegation is granted, these operations ALWAYS require EAMA approval:
+No matter what delegation is granted, these operations ALWAYS require AMAMA approval:
 
 | Operation | Reason |
 |-----------|--------|
@@ -127,4 +127,4 @@ No matter what delegation is granted, these operations ALWAYS require EAMA appro
 | **Breaking changes** | API changes that break backward compatibility |
 | **Access changes** | Modifying permissions or credentials |
 
-These restrictions cannot be overridden by delegation configuration. ECOS must always request approval for these operation types regardless of autonomous mode status.
+These restrictions cannot be overridden by delegation configuration. AMCOS must always request approval for these operation types regardless of autonomous mode status.

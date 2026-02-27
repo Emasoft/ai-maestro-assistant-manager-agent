@@ -2,7 +2,7 @@
 name: proactive-kanban-monitoring
 description: Detailed procedures for proactive GitHub Project board monitoring, change detection, and notification routing.
 version: 1.0.0
-parent-skill: eama-github-routing
+parent-skill: amama-github-routing
 ---
 
 ## Contents
@@ -22,7 +22,7 @@ parent-skill: eama-github-routing
 
 ## Proactive Kanban Monitoring
 
-EAMA must proactively monitor GitHub Project boards to detect changes that may require action or notification to ECOS and the user.
+AMAMA must proactively monitor GitHub Project boards to detect changes that may require action or notification to AMCOS and the user.
 
 ### Monitoring Schedule
 
@@ -45,10 +45,10 @@ gh project item-list <PROJECT_NUMBER> --owner Emasoft --format json | jq '
 
 | Change Type | Detection Method | Action |
 |-------------|------------------|--------|
-| Status changes | Compare `status` field against previous snapshot | Notify ECOS of card movement |
+| Status changes | Compare `status` field against previous snapshot | Notify AMCOS of card movement |
 | New assignees | Compare `assignees` array against previous snapshot | Notify relevant specialist |
 | New comments | Check `comments` count increase | Fetch new comments, route to appropriate agent |
-| Card created | New `id` not in previous snapshot | Route to ECOS for triage |
+| Card created | New `id` not in previous snapshot | Route to AMCOS for triage |
 | Card archived | `id` missing from current snapshot | Update internal tracking state |
 
 ### Monitoring Procedure
@@ -71,8 +71,8 @@ diff <(jq -S '.items' /tmp/kanban-snapshot-previous.json) \
 For each detected change:
 
 1. **Status Change Detected**
-   Send a kanban update notification to ECOS using the `agent-messaging` skill:
-   - **Recipient**: `ecos-<project>`
+   Send a kanban update notification to AMCOS using the `agent-messaging` skill:
+   - **Recipient**: `amcos-<project>`
    - **Subject**: "Kanban Card Status Changed"
    - **Content**: kanban_update type with card_id, card_title, old_status, new_status, changed_at
    - **Type**: `kanban_update`
@@ -102,7 +102,7 @@ mv /tmp/kanban-snapshot-current.json /tmp/kanban-snapshot-previous.json
 - [ ] Previous snapshot exists for comparison
 - [ ] Current snapshot captured successfully
 - [ ] Changes detected and categorized
-- [ ] ECOS notified of relevant changes
+- [ ] AMCOS notified of relevant changes
 - [ ] Internal state updated
 - [ ] Sync log updated with timestamp
 

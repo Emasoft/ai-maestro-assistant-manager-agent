@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-eama_memory_manager.py - Automated Memory File Management for Emasoft Assistant Manager.
+amama_memory_manager.py - Automated Memory File Management for AI Maestro Assistant Manager.
 
-Automates updates to Emasoft Assistant Manager memory files (activeContext.md, progress.md, patterns.md).
+Automates updates to AI Maestro Assistant Manager memory files (activeContext.md, progress.md, patterns.md).
 Dependencies: Python 3.8+ stdlib only
 """
 
@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from eama_memory_operations import (
+from amama_memory_operations import (
     add_decision,
     add_pattern,
     add_progress,
@@ -243,7 +243,7 @@ Always log errors immediately to In-Flight Errors.
 
 def _create_parser() -> argparse.ArgumentParser:
     """Create argument parser for CLI."""
-    parser = argparse.ArgumentParser(description="Emasoft Assistant Manager Memory File Management")
+    parser = argparse.ArgumentParser(description="AI Maestro Assistant Manager Memory File Management")
     parser.add_argument("--memory-root", type=Path, default=Path("design/memory"))
     sub = parser.add_subparsers(dest="command", required=True)
 

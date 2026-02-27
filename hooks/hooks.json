@@ -4,36 +4,36 @@
   "hooks": {
     "SessionStart": [
       {
-        "_id": "eama-memory-load",
+        "_id": "amama-memory-load",
         "_description": "Load session memory and context at startup",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/eama_session_start.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/amama_session_start.py"
           }
         ]
       }
     ],
     "SessionEnd": [
       {
-        "_id": "eama-memory-save",
+        "_id": "amama-memory-save",
         "_description": "Save session memory and context on exit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/eama_session_end.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/amama_session_end.py"
           }
         ]
       }
     ],
     "Stop": [
       {
-        "_id": "eama-stop-check",
+        "_id": "amama-stop-check",
         "_description": "Blocks exit until all coordination work is complete",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/eama_stop_check.py"
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/amama_stop_check.py"
           }
         ]
       }

@@ -15,7 +15,7 @@
 ### 1.1 ALL blockers require IMMEDIATE user notification
 
 **IRON RULE**: Every blocker must be communicated to the user IMMEDIATELY upon receipt
-from EOA or ECOS. There are no blockers that should be "batched" or "held" for the next
+from EOA or AMCOS. There are no blockers that should be "batched" or "held" for the next
 status report. The user may have the solution ready in minutes — but only if they know
 about the problem.
 
@@ -120,14 +120,14 @@ When multiple tasks are blocked by the same issue:
 1. Acknowledge the user's response immediately
 2. Route the decision to the appropriate agent:
    - If the blocker originated from EOA → Send AI Maestro message to EOA
-   - If the blocker originated from ECOS → Send AI Maestro message to ECOS
+   - If the blocker originated from AMCOS → Send AI Maestro message to AMCOS
 3. Include the user's exact words in the routing message (do NOT paraphrase requirements — RULE 14)
 4. Confirm to the user that the resolution has been routed
 
 ### 3.2 AI Maestro message template for routing resolution
 
 Send a blocker resolution using the `agent-messaging` skill:
-- **Recipient**: The agent that originally escalated the blocker (EOA or ECOS session name)
+- **Recipient**: The agent that originally escalated the blocker (EOA or AMCOS session name)
 - **Subject**: "RESOLUTION: Blocker for task <task-id> resolved by user"
 - **Priority**: `high`
 - **Content**: Include the following fields:
@@ -145,7 +145,7 @@ Send a blocker resolution using the `agent-messaging` skill:
 ### 3.3 When user asks for more information
 
 If the user needs more details before deciding:
-1. Route the question to the originating agent (EOA or ECOS) via AI Maestro
+1. Route the question to the originating agent (EOA or AMCOS) via AI Maestro
 2. Await their response
 3. Relay the additional information to the user
 4. Do NOT make decisions on behalf of the user
@@ -201,11 +201,11 @@ User provides blocker resolution
   ├─ Was the blocker escalated by EOA?
   │   └─ YES → Route resolution to EOA via AI Maestro
   │
-  ├─ Was the blocker escalated by ECOS?
-  │   └─ YES → Route resolution to ECOS via AI Maestro
+  ├─ Was the blocker escalated by AMCOS?
+  │   └─ YES → Route resolution to AMCOS via AI Maestro
   │
   └─ Was the blocker detected in status report?
-      └─ YES → Route to the relevant role agent via ECOS
+      └─ YES → Route to the relevant role agent via AMCOS
 ```
 
 **Verify**: after routing the resolution via the `agent-messaging` skill, confirm message delivery via the skill's sent messages feature.
@@ -223,11 +223,11 @@ I'll include the update in the next status report.
 
 ## 6. Checklists
 
-### 6.1 Checklist: Receiving a Blocker Escalation from EOA or ECOS
+### 6.1 Checklist: Receiving a Blocker Escalation from EOA or AMCOS
 
 Copy this checklist and track your progress:
 
-- [ ] Read the blocker-escalation message from EOA or ECOS
+- [ ] Read the blocker-escalation message from EOA or AMCOS
 - [ ] Identify the blocked task (issue number) and the blocker issue (blocker issue number)
 - [ ] Determine the blocker category (Task Dependency, Problem Resolution, Missing Resource, Access/Credentials, Missing Approval, External Dependency)
 - [ ] Compose user notification using the appropriate template (section 2.1, 2.2, or 2.3)
@@ -240,11 +240,11 @@ Copy this checklist and track your progress:
 Copy this checklist and track your progress:
 
 - [ ] Acknowledge the user's response immediately
-- [ ] Determine who escalated the blocker (EOA or ECOS)
+- [ ] Determine who escalated the blocker (EOA or AMCOS)
 - [ ] Compose blocker-resolution AI Maestro message (section 3.2 template)
 - [ ] Include the user's exact words (do NOT paraphrase — RULE 14)
 - [ ] Include the selected option if options were presented
-- [ ] Send the resolution message to the original escalator (EOA or ECOS)
+- [ ] Send the resolution message to the original escalator (EOA or AMCOS)
 - [ ] Confirm to the user that the resolution has been routed
 - [ ] Note: EOA will close the blocker issue and restore the task to its previous column
 
@@ -262,5 +262,5 @@ Copy this checklist and track your progress:
 
 ## See Also
 
-- [ai-maestro-message-templates.md](../../eama-ecos-coordination/references/ai-maestro-message-templates.md) - Inter-agent message templates
+- [ai-maestro-message-templates.md](../../amama-amcos-coordination/references/ai-maestro-message-templates.md) - Inter-agent message templates
 - [response-templates.md](response-templates.md) - Standard response templates

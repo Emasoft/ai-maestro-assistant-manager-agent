@@ -1,10 +1,10 @@
 ---
-name: eama-github-routing
+name: amama-github-routing
 description: Use when routing GitHub operations (issues, PRs, projects, releases) to the appropriate specialist agent. Trigger with GitHub-related requests.
 version: 1.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: eama-main
+agent: amama-main
 user-invocable: false
 triggers:
   - User requests GitHub operation (issues, PRs, projects, Kanban)
@@ -35,7 +35,7 @@ Copy this checklist and track your progress:
 - [ ] Identify GitHub operation type (issue/PR/kanban/release)
 - [ ] Check for design or module context
 - [ ] Consult appropriate decision tree (issue/PR/kanban/release)
-- [ ] Determine target agent (EIA/EAA/EOA/EAMA)
+- [ ] Determine target agent (EIA/EAA/EOA/AMAMA)
 - [ ] Prepare handoff document with required fields
 - [ ] Include UUID tracking if design/module linked
 - [ ] Send handoff via AI Maestro
@@ -205,7 +205,7 @@ LINK     LINK     │ Route to │   │ Route to │
 ┌────────┐ ┌─────────────────────┐   ┌──────────┐
 │ Route  │ │ Is item a design    │   │ Handle   │
 │ to EIA │ │ or module?          │   │ locally  │
-└────────┘ └──────────┬──────────┘   │ (EAMA)   │
+└────────┘ └──────────┬──────────┘   │ (AMAMA)   │
                       │              └──────────┘
               ┌───────┴───────┐
               │ DESIGN        │ MODULE
@@ -226,7 +226,7 @@ LINK     LINK     │ Route to │   │ Route to │
 | Move card (non-specific) | EIA | Card ID, target column |
 | Move design card | EAA | Card ID, design context |
 | Move module card | EOA | Card ID, module context |
-| Query board status | EAMA (local) | Project ID |
+| Query board status | AMAMA (local) | Project ID |
 | Archive completed items | EIA | Project ID, archive criteria |
 
 ## Release Operations Decision Tree
@@ -322,8 +322,8 @@ When creating GitHub items linked to designs/modules, include UUID reference:
 
 **In Issue Body**:
 ```markdown
-<!-- EAMA-LINK: design-uuid=abc123 -->
-<!-- EAMA-LINK: module-uuid=def456 -->
+<!-- AMAMA-LINK: design-uuid=abc123 -->
+<!-- AMAMA-LINK: module-uuid=def456 -->
 ```
 
 **In PR Description**:
@@ -344,9 +344,9 @@ MODULE: def456
 
 ### Searching by UUID
 
-EAMA can find GitHub items by UUID using:
+AMAMA can find GitHub items by UUID using:
 ```bash
-gh issue list --search "EAMA-LINK: design-uuid=abc123"
+gh issue list --search "AMAMA-LINK: design-uuid=abc123"
 gh pr list --search "Design UUID: abc123"
 ```
 
@@ -376,11 +376,11 @@ If target agent is not responding:
 
 ## Output
 
-After routing a GitHub operation, EAMA should produce:
+After routing a GitHub operation, AMAMA should produce:
 
 | Output Element | Content |
 |----------------|---------|
-| **Routing Decision** | Which agent (EIA/EAA/EOA/EAMA) received the operation |
+| **Routing Decision** | Which agent (EIA/EAA/EOA/AMAMA) received the operation |
 | **Operation Type** | Issue/PR/Kanban/Release |
 | **Handoff Status** | Sent/Queued/Failed |
 | **Tracking Reference** | UUID or GitHub item number for follow-up |
@@ -400,7 +400,7 @@ Reference: {tracking_id}
 # User request
 "Create an issue for the login timeout bug"
 
-# EAMA decision process
+# AMAMA decision process
 1. Operation type: ISSUE
 2. Is linked to design doc? NO
 3. Is module implementation task? NO
@@ -429,7 +429,7 @@ Reference: {tracking_id}
 # User request
 "Create a kanban card for the authentication design"
 
-# EAMA decision process
+# AMAMA decision process
 1. Operation type: KANBAN
 2. Is item design or module? DESIGN
 3. Route to: EAA
@@ -446,6 +446,6 @@ Reference: {tracking_id}
 
 ## Resources
 
-- Role Routing SKILL (see eama-role-routing skill)
-- Proactive Handoff Protocol (see eama-session-memory references)
+- Role Routing SKILL (see amama-role-routing skill)
+- Proactive Handoff Protocol (see amama-session-memory references)
 - Handoff Template (see shared templates directory)

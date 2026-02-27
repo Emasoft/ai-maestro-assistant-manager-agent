@@ -1,25 +1,25 @@
 ---
-name: eama-respond-to-ecos
-description: "Respond to pending ECOS approval requests with approve, reject, or needs-revision decision"
+name: amama-respond-to-ecos
+description: "Respond to pending AMCOS approval requests with approve, reject, or needs-revision decision"
 argument-hint: "--request-id <id> --decision <approved|rejected|needs-revision> [--comment <text>]"
 allowed-tools: ["Read", "Write"]
 ---
 
-# Respond to ECOS Command
+# Respond to AMCOS Command
 
-Respond to pending Chief of Staff (ECOS) approval requests with a decision.
+Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 
 ## Usage
 
 ```
-/eama-respond-to-ecos --request-id <request_id> --decision <decision> [--comment <text>]
+/amama-respond-to-ecos --request-id <request_id> --decision <decision> [--comment <text>]
 ```
 
 ## Parameters
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `--request-id` | Yes | The ECOS request ID to respond to (format: `ecos-req-{uuid}`) |
+| `--request-id` | Yes | The AMCOS request ID to respond to (format: `amcos-req-{uuid}`) |
 | `--decision` | Yes | Decision: `approved`, `rejected`, or `needs-revision` |
 | `--comment` | No | Optional explanation or conditions for the decision |
 
@@ -27,9 +27,9 @@ Respond to pending Chief of Staff (ECOS) approval requests with a decision.
 
 | Decision | Effect | When to Use |
 |----------|--------|-------------|
-| `approved` | ECOS proceeds with the operation | Operation is safe and aligned with goals |
-| `rejected` | ECOS cancels the operation | Operation is inappropriate or risky |
-| `needs-revision` | ECOS must modify and resubmit | Operation concept is okay but details need adjustment |
+| `approved` | AMCOS proceeds with the operation | Operation is safe and aligned with goals |
+| `rejected` | AMCOS cancels the operation | Operation is inappropriate or risky |
+| `needs-revision` | AMCOS must modify and resubmit | Operation concept is okay but details need adjustment |
 
 ## What This Command Does
 
@@ -42,8 +42,8 @@ Respond to pending Chief of Staff (ECOS) approval requests with a decision.
    - For `needs-revision`, requires comment explaining what to change
 
 3. **Sends Response via AI Maestro**
-   - Formats response message according to ECOS protocol
-   - Sends to ECOS via AI Maestro messaging
+   - Formats response message according to AMCOS protocol
+   - Sends to AMCOS via AI Maestro messaging
 
 4. **Updates State Tracking**
    - Records decision with timestamp
@@ -58,71 +58,71 @@ Respond to pending Chief of Staff (ECOS) approval requests with a decision.
 ### Approve an Operation
 
 ```
-/eama-respond-to-ecos --request-id ecos-req-a1b2c3d4 --decision approved --comment "Proceed with staging deployment"
+/amama-respond-to-ecos --request-id amcos-req-a1b2c3d4 --decision approved --comment "Proceed with staging deployment"
 ```
 
 Output:
 ```
-Response sent to ECOS
+Response sent to AMCOS
 
-Request ID: ecos-req-a1b2c3d4
+Request ID: amcos-req-a1b2c3d4
 Decision: APPROVED
 Comment: Proceed with staging deployment
 Sent at: 2025-02-02T14:32:00Z
 
-ECOS will now proceed with the operation.
+AMCOS will now proceed with the operation.
 ```
 
 ### Reject an Operation
 
 ```
-/eama-respond-to-ecos --request-id ecos-req-x9y8z7 --decision rejected --comment "Too risky before weekend - defer to Monday"
+/amama-respond-to-ecos --request-id amcos-req-x9y8z7 --decision rejected --comment "Too risky before weekend - defer to Monday"
 ```
 
 Output:
 ```
-Response sent to ECOS
+Response sent to AMCOS
 
-Request ID: ecos-req-x9y8z7
+Request ID: amcos-req-x9y8z7
 Decision: REJECTED
 Comment: Too risky before weekend - defer to Monday
 Sent at: 2025-02-02T14:35:00Z
 
-ECOS will cancel the operation.
+AMCOS will cancel the operation.
 ```
 
 ### Request Revision
 
 ```
-/eama-respond-to-ecos --request-id ecos-req-m4n5o6 --decision needs-revision --comment "Reduce scope to only feature/* branches, exclude main"
+/amama-respond-to-ecos --request-id amcos-req-m4n5o6 --decision needs-revision --comment "Reduce scope to only feature/* branches, exclude main"
 ```
 
 Output:
 ```
-Response sent to ECOS
+Response sent to AMCOS
 
-Request ID: ecos-req-m4n5o6
+Request ID: amcos-req-m4n5o6
 Decision: NEEDS REVISION
 Comment: Reduce scope to only feature/* branches, exclude main
 Sent at: 2025-02-02T14:40:00Z
 
-ECOS will revise the request and resubmit.
+AMCOS will revise the request and resubmit.
 ```
 
 ## Listing Pending Requests
 
 Before responding, you may want to see pending requests.
 
-Check your inbox using the `agent-messaging` skill. Filter for messages from ECOS-prefixed senders to find approval requests.
+Check your inbox using the `agent-messaging` skill. Filter for messages from AMCOS-prefixed senders to find approval requests.
 
-**Verify**: confirm you have reviewed all unread ECOS messages before proceeding.
+**Verify**: confirm you have reviewed all unread AMCOS messages before proceeding.
 
 ## Message Format Sent
 
-The command sends an approval response to ECOS using the `agent-messaging` skill:
+The command sends an approval response to AMCOS using the `agent-messaging` skill:
 
-- **Recipient**: `ecos-<project-name>`
-- **Subject**: "EAMA Approval Response: <request_id>"
+- **Recipient**: `amcos-<project-name>`
+- **Subject**: "AMAMA Approval Response: <request_id>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
   - `type`: `approval-response`
@@ -142,26 +142,26 @@ The command sends an approval response to ECOS using the `agent-messaging` skill
 | `Invalid decision value` | Decision not one of allowed values | Use: approved, rejected, needs-revision |
 | `needs-revision requires comment` | Missing comment for revision request | Add --comment explaining what to change |
 | `AI Maestro unavailable` | Messaging system not running | Start AI Maestro service |
-| `ECOS not registered` | ECOS agent not in AI Maestro registry | Register ECOS agent |
+| `AMCOS not registered` | AMCOS agent not in AI Maestro registry | Register AMCOS agent |
 
 ## Prerequisites
 
 1. **AI Maestro must be running**
    Verify AI Maestro health using the `agent-messaging` skill's health check feature.
 
-2. **ECOS must be registered**
-   Use the `ai-maestro-agents-management` skill to list agents and confirm an ECOS agent is registered and active.
+2. **AMCOS must be registered**
+   Use the `ai-maestro-agents-management` skill to list agents and confirm an AMCOS agent is registered and active.
 
 3. **Pending request must exist**
-   Check your inbox using the `agent-messaging` skill and filter for unread ECOS messages.
+   Check your inbox using the `agent-messaging` skill and filter for unread AMCOS messages.
 
 ## Related Commands
 
-- `/eama-orchestration-status` - View pending ECOS requests in status report
-- `/eama-configure-ecos-delegation` - Configure autonomous operation rules
-- `/eama-approve-plan` - Approve plans (separate from ECOS approval flow)
+- `/amama-orchestration-status` - View pending AMCOS requests in status report
+- `/amama-configure-amcos-delegation` - Configure autonomous operation rules
+- `/amama-approve-plan` - Approve plans (separate from AMCOS approval flow)
 
 ## Related Skills
 
-- **eama-ecos-coordination**
-- **eama-approval-workflows**
+- **amama-amcos-coordination**
+- **amama-approval-workflows**

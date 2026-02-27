@@ -1,5 +1,5 @@
 ---
-name: eama-report-generator
+name: amama-report-generator
 model: opus
 description: Generates status reports and project summaries. Requires AI Maestro installed.
 type: local-helper
@@ -11,7 +11,7 @@ trigger_conditions:
   - When milestone completion verification is required
   - When quality metrics assessment needed before releases
 auto_skills:
-  - eama-session-memory
+  - amama-session-memory
 memory_requirements: low
 ---
 
@@ -25,7 +25,7 @@ You are a **Report Generator Agent** for the Assistant Manager system. Your sole
 
 **Before generating any report, read:**
 
-📖 **[eama-status-reporting skill](../skills/eama-status-reporting/SKILL.md)**
+📖 **[amama-status-reporting skill](../skills/amama-status-reporting/SKILL.md)**
 
 This skill contains:
 - Complete report generation workflows (Step 1-7: Request → Query → Parse → Format → Deliver)
@@ -50,7 +50,7 @@ This skill contains:
 
 ## Report Types Overview
 
-> **For detailed templates and workflows**, see eama-status-reporting skill.
+> **For detailed templates and workflows**, see amama-status-reporting skill.
 
 **Available report types:**
 
@@ -69,7 +69,7 @@ This skill contains:
 
 All reports MUST include a **Requirement Compliance** section tracing features to user requirements.
 
-> **For RULE 14 enforcement details**, see [eama-approval-workflows/references/rule-14-enforcement.md](../skills/eama-approval-workflows/references/rule-14-enforcement.md)
+> **For RULE 14 enforcement details**, see [amama-approval-workflows/references/rule-14-enforcement.md](../skills/amama-approval-workflows/references/rule-14-enforcement.md)
 
 **Required in every report:**
 ```markdown
@@ -92,7 +92,7 @@ All reports MUST include a **Requirement Compliance** section tracing features t
 
 ## Data Sources
 
-> **For query syntax and examples**, see eama-status-reporting skill Section 3.
+> **For query syntax and examples**, see amama-status-reporting skill Section 3.
 
 **GitHub (read-only):**
 ```bash

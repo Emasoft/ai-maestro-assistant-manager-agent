@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EAMA Design Search Script
+AMAMA Design Search Script
 
 Search design documents in the project for:
 - UUID matches
@@ -8,11 +8,11 @@ Search design documents in the project for:
 - Status filtering (draft, approved, deprecated)
 
 Usage:
-    python eama_design_search.py --uuid abc123
-    python eama_design_search.py --keyword "authentication"
-    python eama_design_search.py --status approved
-    python eama_design_search.py --list
-    python eama_design_search.py --keyword "auth" --status draft
+    python amama_design_search.py --uuid abc123
+    python amama_design_search.py --keyword "authentication"
+    python amama_design_search.py --status approved
+    python amama_design_search.py --list
+    python amama_design_search.py --keyword "auth" --status draft
 
 Output: JSON for programmatic use, human-readable summary to stderr
 """
@@ -82,8 +82,8 @@ def extract_uuid_from_content(content: str) -> Optional[str]:
         if uuid_match:
             return uuid_match.group(1)
 
-    # Check for UUID in document body (EAMA-UUID: format)
-    body_uuid_match = re.search(r"EAMA-UUID:\s*([a-f0-9-]+)", content, re.IGNORECASE)
+    # Check for UUID in document body (AMAMA-UUID: format)
+    body_uuid_match = re.search(r"AMAMA-UUID:\s*([a-f0-9-]+)", content, re.IGNORECASE)
     if body_uuid_match:
         return body_uuid_match.group(1)
 

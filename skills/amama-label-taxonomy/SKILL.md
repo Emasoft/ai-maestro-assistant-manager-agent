@@ -1,29 +1,29 @@
 ---
-name: eama-label-taxonomy
-description: Use when managing GitHub issue labels for user requests, setting priorities, or reporting status to users. Covers priority and status label taxonomy. Trigger with `/eama-label-taxonomy`.
-agent: eama-main
+name: amama-label-taxonomy
+description: Use when managing GitHub issue labels for user requests, setting priorities, or reporting status to users. Covers priority and status label taxonomy. Trigger with `/amama-label-taxonomy`.
+agent: amama-main
 context: fork
 user-invocable: false
 compatibility: Requires AI Maestro installed.
 version: 1.0.0
 ---
 
-# EAMA Label Taxonomy
+# AMAMA Label Taxonomy
 
 ## Overview
 
-This skill provides the label taxonomy relevant to the Assistant Manager Agent (EAMA) role. Each role plugin has its own label-taxonomy skill covering the labels that role manages.
+This skill provides the label taxonomy relevant to the Assistant Manager Agent (AMAMA) role. Each role plugin has its own label-taxonomy skill covering the labels that role manages.
 
 ## Prerequisites
 
 1. Access to GitHub CLI (`gh`) command
 2. Repository with GitHub issue tracking enabled
-3. Understanding of EAMA role responsibilities (user communication and role routing)
+3. Understanding of AMAMA role responsibilities (user communication and role routing)
 4. Familiarity with GitHub issue label syntax
 
 ## Instructions
 
-Follow these steps to manage labels as EAMA:
+Follow these steps to manage labels as AMAMA:
 
 1. **Analyze user request** to determine appropriate priority and type labels
 2. **Create issue** with initial labels (`status:backlog`, `priority:*`, `type:*`)
@@ -48,20 +48,20 @@ Copy this checklist and track your progress:
 
 ---
 
-## Labels EAMA Manages
+## Labels AMAMA Manages
 
 ### Priority Labels (`priority:*`)
 
-**EAMA has authority to set and change priorities based on user input.**
+**AMAMA has authority to set and change priorities based on user input.**
 
-| Label | Description | When EAMA Sets It |
+| Label | Description | When AMAMA Sets It |
 |-------|-------------|-------------------|
 | `priority:critical` | Must fix immediately | User reports production issue |
 | `priority:high` | High priority | User emphasizes importance |
 | `priority:normal` | Standard priority | Default for new issues |
 | `priority:low` | Nice to have | User indicates low urgency |
 
-**EAMA Priority Responsibilities:**
+**AMAMA Priority Responsibilities:**
 - Set initial priority based on user request
 - Escalate priority when user expresses urgency
 - De-escalate when user indicates reduced urgency
@@ -76,7 +76,7 @@ The full workflow uses these 8 status columns:
 | 2 | `todo` | Todo | `status:todo` | Ready to start |
 | 3 | `in-progress` | In Progress | `status:in-progress` | Active work |
 | 4 | `ai-review` | AI Review | `status:ai-review` | Integrator agent reviews ALL tasks |
-| 5 | `human-review` | Human Review | `status:human-review` | User reviews BIG tasks only (via EAMA) |
+| 5 | `human-review` | Human Review | `status:human-review` | User reviews BIG tasks only (via AMAMA) |
 | 6 | `merge-release` | Merge/Release | `status:merge-release` | Ready to merge |
 | 7 | `done` | Done | `status:done` | Completed |
 | 8 | `blocked` | Blocked | `status:blocked` | Blocked at any stage |
@@ -84,12 +84,12 @@ The full workflow uses these 8 status columns:
 **Task Routing Rules:**
 - **Small tasks**: In Progress -> AI Review -> Merge/Release -> Done
 - **Big tasks**: In Progress -> AI Review -> Human Review -> Merge/Release -> Done
-- **Human Review** is requested via EAMA (Assistant Manager asks user to test/review)
+- **Human Review** is requested via AMAMA (Assistant Manager asks user to test/review)
 - Not all tasks go through Human Review -- only significant changes requiring human judgment
 
-### Status Labels EAMA Updates
+### Status Labels AMAMA Updates
 
-| Label | When EAMA Sets It |
+| Label | When AMAMA Sets It |
 |-------|------------------|
 | `status:backlog` | When creating new issue from user request |
 | `status:human-review` | When EIA escalates a significant task for user review |
@@ -97,11 +97,11 @@ The full workflow uses these 8 status columns:
 
 ---
 
-## Labels EAMA Monitors
+## Labels AMAMA Monitors
 
 ### Status Labels (`status:*`)
 
-EAMA reports status to user:
+AMAMA reports status to user:
 - `status:backlog` - "Your request has been logged"
 - `status:todo` - "Your request is queued and ready to start"
 - `status:in-progress` - "Work has started on your request"
@@ -113,14 +113,14 @@ EAMA reports status to user:
 
 ### Assignment Labels (`assign:*`)
 
-EAMA explains assignments to user:
+AMAMA explains assignments to user:
 - `assign:implementer-*` - "An AI agent is working on this"
 - `assign:human` - "This needs human attention"
 - `assign:orchestrator` - "The orchestrator is handling this"
 
 ---
 
-## EAMA Label Commands
+## AMAMA Label Commands
 
 ### When User Creates Request
 
@@ -212,7 +212,7 @@ The implementation agent is actively working on this task.
 
 ## Quick Reference
 
-### EAMA Label Responsibilities
+### AMAMA Label Responsibilities
 
 | Action | Labels Involved |
 |--------|-----------------|
@@ -223,21 +223,21 @@ The implementation agent is actively working on this task.
 | Facilitate human review | Manage `status:human-review` transitions |
 | Report to user | Read all labels for status |
 
-### Labels EAMA Never Sets
+### Labels AMAMA Never Sets
 
-- `assign:*` - Set by EOA/ECOS
+- `assign:*` - Set by EOA/AMCOS
 - `review:*` - Managed by EIA
 - `effort:*` - Set by EOA during triage
 - `component:*` - Set by EOA/EAA
 
-### EAMA's Approval Authority
+### AMAMA's Approval Authority
 
-EAMA can approve:
+AMAMA can approve:
 - Priority changes requested by other agents
 - Scope changes that affect user expectations
 - Deadline/milestone changes
 
-EAMA must approve:
+AMAMA must approve:
 - Any change to `priority:critical`
 - Reassignment to `assign:human`
 - Project-level decisions
@@ -269,7 +269,7 @@ EAMA must approve:
 
 **User request**: "The login page is broken, fix it urgently!"
 
-**EAMA actions**:
+**AMAMA actions**:
 ```bash
 gh issue create \
   --title "Login page broken" \
@@ -285,7 +285,7 @@ gh issue create \
 
 **User request**: "What's the status of my authentication work?"
 
-**EAMA actions**:
+**AMAMA actions**:
 ```bash
 gh issue list --label "component:auth" --json number,title,labels
 ```
@@ -309,7 +309,7 @@ gh issue list --label "component:auth" --json number,title,labels
 
 **User request**: "Actually, make that password reset high priority too."
 
-**EAMA actions**:
+**AMAMA actions**:
 ```bash
 gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
 ```
@@ -321,6 +321,6 @@ gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
 ## Resources
 
 - **AGENT_OPERATIONS.md** - Core agent operational patterns
-- **eama-status-reporting** - User communication patterns
-- **eama-user-communication** - Communication style guidelines
-- **eama-role-routing** - Role delegation patterns
+- **amama-status-reporting** - User communication patterns
+- **amama-user-communication** - Communication style guidelines
+- **amama-role-routing** - Role delegation patterns

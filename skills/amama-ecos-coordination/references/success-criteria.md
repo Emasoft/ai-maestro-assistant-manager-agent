@@ -5,7 +5,7 @@
 
 - [Success: User Request Understood](#success-user-request-understood)
 - [Success: Project Creation Complete](#success-project-creation-complete)
-- [Success: ECOS Spawned and Ready](#success-ecos-spawned-and-ready)
+- [Success: AMCOS Spawned and Ready](#success-amcos-spawned-and-ready)
 - [Success: Approval Processed](#success-approval-processed)
 - [Success: Status Reported](#success-status-reported)
 - [General Success Verification Principles](#general-success-verification-principles)
@@ -24,8 +24,8 @@ Each operation has clear success criteria. Verify these before reporting complet
 
 - [ ] User request parsed into structured intent (action, target, constraints)
 - [ ] Ambiguities identified and clarified with user
-- [ ] Routing decision made (handle directly vs. delegate to ECOS)
-- [ ] If delegation: ECOS session name identified or created
+- [ ] Routing decision made (handle directly vs. delegate to AMCOS)
+- [ ] If delegation: AMCOS session name identified or created
 - [ ] User acknowledged receipt of routing decision
 
 **Verification Evidence:**
@@ -33,8 +33,8 @@ Each operation has clear success criteria. Verify these before reporting complet
 ```
 User request: "Build a REST API for the inventory system"
 Parsed intent: {action: "build", target: "REST API", project: "inventory-system"}
-Routing: ORCHESTRATOR (via ECOS)
-User notified: "Routing your request to ECOS, who will coordinate with EOA to implement the REST API..."
+Routing: ORCHESTRATOR (via AMCOS)
+User notified: "Routing your request to AMCOS, who will coordinate with EOA to implement the REST API..."
 ```
 
 **Self-Check Questions:**
@@ -52,10 +52,10 @@ User notified: "Routing your request to ECOS, who will coordinate with EOA to im
 - [ ] Project directory created at specified/clarified location
 - [ ] Git repository initialized
 - [ ] Initial project structure created (README.md, .gitignore)
-- [ ] ECOS spawned for this project with correct working directory
-- [ ] ECOS responding to health check ping
+- [ ] AMCOS spawned for this project with correct working directory
+- [ ] AMCOS responding to health check ping
 - [ ] Project registered in `docs_dev/projects/project-registry.md`
-- [ ] User notified of project creation and ECOS readiness
+- [ ] User notified of project creation and AMCOS readiness
 
 **Verification Evidence:**
 
@@ -64,41 +64,41 @@ ls -la /path/to/new-project  # Directory exists
 cd /path/to/new-project && git status  # Git initialized
 ```
 
-Verify ECOS is alive by sending a health check ping using the `agent-messaging` skill and confirming a `pong` response.
+Verify AMCOS is alive by sending a health check ping using the `agent-messaging` skill and confirming a `pong` response.
 
 **Self-Check Questions:**
 - Does the project directory exist at the agreed location?
 - Is git initialized with correct user config?
 - Does the initial structure include all required files?
-- Did ECOS respond to the health check ping?
+- Did AMCOS respond to the health check ping?
 - Is the project registered in the registry file?
 - Did I notify the user with all relevant details?
 
 ---
 
-## Success: ECOS Spawned and Ready
+## Success: AMCOS Spawned and Ready
 
 **Completion Checklist:**
 
 - [ ] Agent creation command succeeded (exit code 0) via the `ai-maestro-agents-management` skill
-- [ ] ECOS session registered in AI Maestro (visible in agent list)
-- [ ] ECOS main agent loaded with correct role constraints
-- [ ] ECOS plugins loaded (verify via plugin list if possible)
-- [ ] ECOS working directory set correctly
-- [ ] ECOS health check ping successful
-- [ ] ECOS added to active sessions log in `docs_dev/sessions/active-ecos-sessions.md`
+- [ ] AMCOS session registered in AI Maestro (visible in agent list)
+- [ ] AMCOS main agent loaded with correct role constraints
+- [ ] AMCOS plugins loaded (verify via plugin list if possible)
+- [ ] AMCOS working directory set correctly
+- [ ] AMCOS health check ping successful
+- [ ] AMCOS added to active sessions log in `docs_dev/sessions/active-amcos-sessions.md`
 
 **Verification Evidence:**
 
 Verify session exists using the `ai-maestro-agents-management` skill's agent listing feature.
-Verify ECOS responds by sending a health check ping using the `agent-messaging` skill.
+Verify AMCOS responds by sending a health check ping using the `agent-messaging` skill.
 
 **Self-Check Questions:**
 - Did the agent creation succeed (exit code 0)?
-- Is the ECOS session visible in the agent list via the `ai-maestro-agents-management` skill?
+- Is the AMCOS session visible in the agent list via the `ai-maestro-agents-management` skill?
 - Are all required plugins loaded?
 - Is the working directory correctly set?
-- Did ECOS respond to the health check ping within 30 seconds?
+- Did AMCOS respond to the health check ping within 30 seconds?
 - Is the session logged in the active sessions file?
 
 ---
@@ -107,19 +107,19 @@ Verify ECOS responds by sending a health check ping using the `agent-messaging` 
 
 **Completion Checklist:**
 
-- [ ] ECOS approval request read and parsed
+- [ ] AMCOS approval request read and parsed
 - [ ] Risk assessment completed (destructive? irreversible? in-scope?)
 - [ ] Decision made (approve, deny, escalate to user)
 - [ ] If escalated: User decision received
-- [ ] Response sent to ECOS via AI Maestro
+- [ ] Response sent to AMCOS via AI Maestro
 - [ ] Approval logged in `docs_dev/approvals/approval-log.md`
-- [ ] ECOS acknowledgment received (if expected)
+- [ ] AMCOS acknowledgment received (if expected)
 
 **Verification Evidence:**
 
 ```bash
 # Check approval log contains this approval
-grep "ECOS-REQUEST-12345" docs_dev/approvals/approval-log.md
+grep "AMCOS-REQUEST-12345" docs_dev/approvals/approval-log.md
 ```
 
 Verify the response was sent by checking sent messages using the `agent-messaging` skill, filtering for subjects containing the request ID.
@@ -128,9 +128,9 @@ Verify the response was sent by checking sent messages using the `agent-messagin
 - Did I correctly assess the risk level of the operation?
 - Did I apply the approval decision tree correctly?
 - If escalated, did I present sufficient context to the user?
-- Was the response sent successfully to ECOS?
+- Was the response sent successfully to AMCOS?
 - Is the approval logged with all required details?
-- Did ECOS acknowledge the approval decision?
+- Did AMCOS acknowledge the approval decision?
 
 ---
 
@@ -139,7 +139,7 @@ Verify the response was sent by checking sent messages using the `agent-messagin
 **Completion Checklist:**
 
 - [ ] Status request from user parsed
-- [ ] Relevant agents identified (which ECOS? which specialists?)
+- [ ] Relevant agents identified (which AMCOS? which specialists?)
 - [ ] Status query sent via AI Maestro
 - [ ] Responses collected (with timeout if no response)
 - [ ] Status aggregated into human-readable summary
@@ -150,7 +150,7 @@ Verify the response was sent by checking sent messages using the `agent-messagin
 
 ```
 User: "What's the status of the API implementation?"
-Status query sent to: ecos-inventory-system
+Status query sent to: amcos-inventory-system
 Response: "EOA reports 8/12 tasks complete, EIA completed code review, tests passing"
 User notified: "API implementation is 67% complete. 8 of 12 tasks done. Code review passed. All tests passing."
 ```

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-eama_session_end.py - Save Emasoft Assistant Manager memory context at session end.
+amama_session_end.py - Save AI Maestro Assistant Manager memory context at session end.
 
-SessionEnd hook that saves/updates Emasoft Assistant Manager memory files to preserve context
+SessionEnd hook that saves/updates AI Maestro Assistant Manager memory files to preserve context
 for future sessions.
 
 Memory files managed:
@@ -30,7 +30,7 @@ from pathlib import Path
 
 
 def get_memory_root(cwd: str) -> Path:
-    """Get the Emasoft Assistant Manager memory root directory.
+    """Get the AI Maestro Assistant Manager memory root directory.
 
     Args:
         cwd: Current working directory
@@ -38,7 +38,7 @@ def get_memory_root(cwd: str) -> Path:
     Returns:
         Path to design/memory directory
     """
-    return Path(cwd) / ".claude" / "eama"
+    return Path(cwd) / ".claude" / "amama"
 
 
 def get_timestamp() -> str:

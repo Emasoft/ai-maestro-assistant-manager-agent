@@ -1,8 +1,8 @@
-# Responding to ECOS Approval Requests
+# Responding to AMCOS Approval Requests
 
 ## Use-Case TOC
 
-- When ECOS sends an approval request -> Section 1
+- When AMCOS sends an approval request -> Section 1
 - How to format the response message -> Section 2
 - What evaluation criteria to use -> Section 3
 - When to escalate to user -> Section 3
@@ -17,13 +17,13 @@
 
 ## 1. Decision Options
 
-When ECOS sends an approval request, EAMA responds with one of:
+When AMCOS sends an approval request, AMAMA responds with one of:
 
 | Decision | Code | Effect |
 |----------|------|--------|
-| **Approved** | `approved` | ECOS proceeds with the operation |
-| **Rejected** | `rejected` | ECOS cancels the operation |
-| **Needs Revision** | `needs-revision` | ECOS must modify and resubmit |
+| **Approved** | `approved` | AMCOS proceeds with the operation |
+| **Rejected** | `rejected` | AMCOS cancels the operation |
+| **Needs Revision** | `needs-revision` | AMCOS must modify and resubmit |
 
 ### When to Use Each Decision
 
@@ -46,17 +46,17 @@ When ECOS sends an approval request, EAMA responds with one of:
 
 ## 2. Response Format
 
-EAMA sends responses using the `agent-messaging` skill:
+AMAMA sends responses using the `agent-messaging` skill:
 
-- **Recipient**: `ecos-<project-name>`
-- **Subject**: "EAMA Approval Response: <request_id>"
+- **Recipient**: `amcos-<project-name>`
+- **Subject**: "AMAMA Approval Response: <request_id>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
   - `type`: `approval-response`
-  - `request_id`: Must match the original request ID from ECOS
+  - `request_id`: Must match the original request ID from AMCOS
   - `decision`: One of `approved`, `rejected`, or `needs-revision`
   - `comment`: Optional explanation for the decision
-  - `conditions`: Optional list of conditions ECOS must follow if approved
+  - `conditions`: Optional list of conditions AMCOS must follow if approved
   - `responded_at`: ISO-8601 timestamp of the response
 
 **Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
@@ -65,17 +65,17 @@ EAMA sends responses using the `agent-messaging` skill:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `request_id` | Yes | Must match the original request ID from ECOS |
+| `request_id` | Yes | Must match the original request ID from AMCOS |
 | `decision` | Yes | One of: `approved`, `rejected`, `needs-revision` |
 | `comment` | No | Explanation for the decision |
-| `conditions` | No | Array of conditions ECOS must follow if approved |
+| `conditions` | No | Array of conditions AMCOS must follow if approved |
 | `responded_at` | Yes | ISO-8601 timestamp of the response |
 
 ---
 
 ## 3. Response Workflow
 
-1. **Receive ECOS approval request**
+1. **Receive AMCOS approval request**
    - Parse the incoming AI Maestro message
    - Extract request_id, category, and operation details
 
@@ -91,13 +91,13 @@ EAMA sends responses using the `agent-messaging` skill:
    - Wait for user decision
 
 4. **Record decision in state tracking**
-   - Update EAMA state file
+   - Update AMAMA state file
    - Log for audit trail
 
-5. **Send response to ECOS**
+5. **Send response to AMCOS**
    - Use the response format above
    - Include conditions if applicable
 
 6. **Log decision for audit trail**
    - Record timestamp, decision, and reasoning
-   - Track who made the decision (EAMA or user)
+   - Track who made the decision (AMAMA or user)

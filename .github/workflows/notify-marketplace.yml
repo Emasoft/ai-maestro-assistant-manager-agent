@@ -41,7 +41,7 @@ env:
   #   MARKETPLACE_OWNER: 'johndoe'
   #   MARKETPLACE_REPO: 'my-claude-plugins'
   MARKETPLACE_OWNER: 'Emasoft'
-  MARKETPLACE_REPO: 'emasoft-plugins'
+  MARKETPLACE_REPO: 'ai-maestro-plugins'
 
 jobs:
   notify:

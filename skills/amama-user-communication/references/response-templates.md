@@ -1,6 +1,6 @@
 # Response Templates
 
-This document provides standardized response templates for the EAMA Assistant Manager when communicating with users.
+This document provides standardized response templates for the AMAMA Assistant Manager when communicating with users.
 
 ## Table of Contents
 
@@ -23,9 +23,9 @@ Understood! I'll <action summary>.
 
 Creating project: <project-name>
 Location: <full-path>
-ECOS session: ecos-<project-name>
+AMCOS session: amcos-<project-name>
 
-Routing to: <SPECIALIST> (via ECOS)
+Routing to: <SPECIALIST> (via AMCOS)
 
 I'll keep you updated on progress. You can ask me for status anytime.
 ```
@@ -33,14 +33,14 @@ I'll keep you updated on progress. You can ask me for status anytime.
 ### When to Use
 
 - User submits a new work request
-- You're creating a project and spawning an ECOS
+- You're creating a project and spawning an AMCOS
 - You're delegating to a specialist agent
 
 ### Guidelines
 
 - **Be specific** about the action summary (e.g., "set up the inventory management system")
 - **Always include** the full project path
-- **State the ECOS session name** explicitly
+- **State the AMCOS session name** explicitly
 - **Name the specialist** you're routing to
 - **Offer proactive updates** to set expectations
 
@@ -88,14 +88,14 @@ Health: <Green/Yellow/Red>
 
 ## Approval Requests
 
-Use this template when an ECOS escalates a user approval request to you.
+Use this template when an AMCOS escalates a user approval request to you.
 
 ### Template
 
 ```
 🚨 APPROVAL REQUIRED
 
-ECOS (<project-name>) is requesting approval for:
+AMCOS (<project-name>) is requesting approval for:
 
 Operation: <operation description>
 Risk Level: <High/Medium/Low>
@@ -109,7 +109,7 @@ Your decision? (approve/deny)
 
 ### When to Use
 
-- ECOS sends a message with type "user_approval"
+- AMCOS sends a message with type "user_approval"
 - Operation requires user permission per your risk assessment
 - Destructive or high-impact action requested
 
@@ -129,45 +129,45 @@ Your decision? (approve/deny)
 
 ## Completion Reports
 
-Use this template when reporting that a project or ECOS has been successfully created.
+Use this template when reporting that a project or AMCOS has been successfully created.
 
 ### Template
 
 ```
-✅ Project and ECOS ready!
+✅ Project and AMCOS ready!
 
 Project: <project-name>
 Path: <full-path>
-ECOS Session: ecos-<project-name>
+AMCOS Session: amcos-<project-name>
 Status: Active and responding
 
-<Next steps or what ECOS will do next>
+<Next steps or what AMCOS will do next>
 ```
 
 ### When to Use
 
 - Project creation completed successfully
-- ECOS spawned and health check passed
+- AMCOS spawned and health check passed
 - Ready to start work
 
 ### Guidelines
 
 - **Always use ✅** for successful completion
 - **Include full path** for user reference
-- **Confirm ECOS status** (Active and responding)
+- **Confirm AMCOS status** (Active and responding)
 - **State next steps** so user knows what to expect
 
 ### Example
 
 ```
-✅ Project and ECOS ready!
+✅ Project and AMCOS ready!
 
 Project: inventory-system
 Path: /Users/user/Code/inventory-system
-ECOS Session: ecos-inventory-system
+AMCOS Session: amcos-inventory-system
 Status: Active and responding
 
-ECOS will now set up the development environment and implement the core inventory tracking module. Expected completion: 2 hours.
+AMCOS will now set up the development environment and implement the core inventory tracking module. Expected completion: 2 hours.
 ```
 
 ---
@@ -190,7 +190,7 @@ I recommend: <suggested fix or escalation>
 
 ### When to Use
 
-- ECOS reports an error or failure
+- AMCOS reports an error or failure
 - Project creation fails
 - Health check fails
 - AI Maestro message delivery fails
@@ -199,9 +199,9 @@ I recommend: <suggested fix or escalation>
 ### Guidelines
 
 - **Always use ❌** for errors
-- **Summarize the error** in one line (e.g., "ECOS health check timed out")
+- **Summarize the error** in one line (e.g., "AMCOS health check timed out")
 - **Provide specific details** (error messages, stack traces if relevant)
-- **State the impact** clearly (e.g., "Work cannot proceed until ECOS is responding")
+- **State the impact** clearly (e.g., "Work cannot proceed until AMCOS is responding")
 - **List what you tried** to resolve it
 - **Recommend next steps**:
   - Auto-fix if you can resolve it
@@ -211,15 +211,15 @@ I recommend: <suggested fix or escalation>
 ### Example
 
 ```
-❌ Issue encountered: ECOS health check timed out
+❌ Issue encountered: AMCOS health check timed out
 
-Details: Sent health check ping to ecos-inventory-system, no response after 30 seconds
-Impact: Cannot confirm ECOS is ready to receive work instructions
+Details: Sent health check ping to amcos-inventory-system, no response after 30 seconds
+Impact: Cannot confirm AMCOS is ready to receive work instructions
 Attempted: Retried health check 3 times with 10-second intervals
 
-I recommend: Restarting the ECOS session. This usually resolves health check issues caused by initialization delays.
+I recommend: Restarting the AMCOS session. This usually resolves health check issues caused by initialization delays.
 
-Should I restart the ECOS?
+Should I restart the AMCOS?
 ```
 
 ---
@@ -235,7 +235,7 @@ Should I restart the ECOS?
 ### Specificity
 
 - **Always include paths** for projects/files
-- **Always include session names** for ECOS references
+- **Always include session names** for AMCOS references
 - **Always include percentages** for progress
 - **Always include reasoning** for recommendations
 

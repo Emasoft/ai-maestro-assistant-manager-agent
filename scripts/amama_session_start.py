@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-eama_session_start.py - Load Emasoft Assistant Manager memory context at session start.
+amama_session_start.py - Load AI Maestro Assistant Manager memory context at session start.
 
-SessionStart hook that loads existing Emasoft Assistant Manager memory files and outputs a system
+SessionStart hook that loads existing AI Maestro Assistant Manager memory files and outputs a system
 message summarizing the loaded context to help Claude resume work seamlessly.
 
 Memory files loaded:
@@ -31,7 +31,7 @@ from pathlib import Path
 
 
 def get_memory_root(cwd: str) -> Path:
-    """Get the Emasoft Assistant Manager memory root directory.
+    """Get the AI Maestro Assistant Manager memory root directory.
 
     Args:
         cwd: Current working directory
@@ -39,7 +39,7 @@ def get_memory_root(cwd: str) -> Path:
     Returns:
         Path to design/memory directory
     """
-    return Path(cwd) / ".claude" / "eama"
+    return Path(cwd) / ".claude" / "amama"
 
 
 def read_file_safely(path: Path) -> str:
@@ -196,7 +196,7 @@ def format_context_summary(
     """
     lines = []
     lines.append("=" * 60)
-    lines.append("EMASOFT ASSISTANT MANAGER MEMORY CONTEXT LOADED")
+    lines.append("AI MAESTRO ASSISTANT MANAGER MEMORY CONTEXT LOADED")
     lines.append("=" * 60)
 
     if focus:
@@ -241,7 +241,7 @@ def format_context_summary(
 def main() -> int:
     """Main entry point for SessionStart hook.
 
-    Reads session info from stdin, loads Emasoft Assistant Manager memory files,
+    Reads session info from stdin, loads AI Maestro Assistant Manager memory files,
     and outputs a context summary to stdout.
 
     Returns:
@@ -263,7 +263,7 @@ def main() -> int:
 
     # Check if memory directory exists
     if not memory_root.exists():
-        # No Emasoft Assistant Manager memory initialized - exit silently
+        # No AI Maestro Assistant Manager memory initialized - exit silently
         return 0
 
     # Load memory files

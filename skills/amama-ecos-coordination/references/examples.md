@@ -1,4 +1,4 @@
-# ECOS Coordination Examples
+# AMCOS Coordination Examples
 
 ## Use-Case TOC
 
@@ -8,48 +8,48 @@
 
 ## Table of Contents
 
-1. Example 1: ECOS Requests Approval for Deployment
+1. Example 1: AMCOS Requests Approval for Deployment
 2. Example 2: Granting Autonomous Mode for Development Tasks
-3. Example 3: ECOS Reports Completion
+3. Example 3: AMCOS Reports Completion
 
 ---
 
-## Example 1: ECOS Requests Approval for Deployment
+## Example 1: AMCOS Requests Approval for Deployment
 
-This example shows the complete flow of ECOS requesting approval for a staging deployment.
+This example shows the complete flow of AMCOS requesting approval for a staging deployment.
 
-### ECOS sends approval request
+### AMCOS sends approval request
 
-ECOS sends the following message using the `agent-messaging` skill:
-- **Sender**: `ecos-<project-name>`
-- **Subject**: "ECOS Approval Request: Deploy v2.1.0 to staging"
+AMCOS sends the following message using the `agent-messaging` skill:
+- **Sender**: `amcos-<project-name>`
+- **Subject**: "AMCOS Approval Request: Deploy v2.1.0 to staging"
 - **Priority**: `high`
 - **Content**:
   - `type`: `approval-request`
-  - `request_id`: `ecos-req-a1b2c3d4`
+  - `request_id`: `amcos-req-a1b2c3d4`
   - `category`: `routine-operation`
   - `operation`: type `deployment`, description "Deploy version 2.1.0 to staging environment", affected resources are `staging-server` and `staging-db`, risk level `medium`, reversible `true`
   - `context`: triggered by `eoa`, related issues `#89` and `#92`
   - `recommendation`: `approve`
   - `requested_at`: `2025-02-02T14:30:00Z`
 
-### EAMA evaluates the request
+### AMAMA evaluates the request
 
-EAMA checks:
+AMAMA checks:
 - Category: `routine-operation` - delegatable but not currently delegated
 - Risk: `medium` - acceptable for staging
 - Reversible: `true` - can rollback if needed
-- ECOS recommendation: `approve`
+- AMCOS recommendation: `approve`
 
-### EAMA responds with approval
+### AMAMA responds with approval
 
 Send an approval response using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
-- **Subject**: "EAMA Approval Response: ecos-req-a1b2c3d4"
+- **Recipient**: `amcos-<project-name>`
+- **Subject**: "AMAMA Approval Response: amcos-req-a1b2c3d4"
 - **Priority**: `high`
 - **Content**:
   - `type`: `approval-response`
-  - `request_id`: `ecos-req-a1b2c3d4`
+  - `request_id`: `amcos-req-a1b2c3d4`
   - `decision`: `approved`
   - `comment`: "Proceed with staging deployment"
   - `responded_at`: `2025-02-02T14:32:00Z`
@@ -60,17 +60,17 @@ Send an approval response using the `agent-messaging` skill:
 
 ## Example 2: Granting Autonomous Mode for Development Tasks
 
-This example shows how to grant ECOS autonomous mode for a 4-hour development session.
+This example shows how to grant AMCOS autonomous mode for a 4-hour development session.
 
 ### User request
 
-User tells EAMA: "Let ECOS handle routine development tasks for the next 4 hours"
+User tells AMAMA: "Let AMCOS handle routine development tasks for the next 4 hours"
 
-### EAMA sends autonomy grant
+### AMAMA sends autonomy grant
 
 Send an autonomy grant using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
-- **Subject**: "EAMA Autonomous Mode Grant"
+- **Recipient**: `amcos-<project-name>`
+- **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
 - **Content**:
   - `type`: `autonomy-grant`
@@ -81,14 +81,14 @@ Send an autonomy grant using the `agent-messaging` skill:
 
 **Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
 
-### What ECOS can now do autonomously
+### What AMCOS can now do autonomously
 
 - Implement features on feature/* branches
 - Fix bugs on fix/* branches
 - Make minor decisions without asking
 - Modify up to 100 files per operation
 
-### What ECOS still needs approval for
+### What AMCOS still needs approval for
 
 - Production deployments
 - Security changes
@@ -98,15 +98,15 @@ Send an autonomy grant using the `agent-messaging` skill:
 
 ---
 
-## Example 3: ECOS Reports Completion
+## Example 3: AMCOS Reports Completion
 
 This example shows an autonomous operation completion notification.
 
-### ECOS sends completion notification
+### AMCOS sends completion notification
 
-ECOS sends the following message using the `agent-messaging` skill:
-- **Sender**: `ecos-<project-name>`
-- **Subject**: "ECOS Operation Complete: Feature implementation"
+AMCOS sends the following message using the `agent-messaging` skill:
+- **Sender**: `amcos-<project-name>`
+- **Subject**: "AMCOS Operation Complete: Feature implementation"
 - **Priority**: `normal`
 - **Content**:
   - `type`: `operation-complete`
@@ -115,7 +115,7 @@ ECOS sends the following message using the `agent-messaging` skill:
   - `autonomous_mode`: `true`
   - `completed_at`: `2025-02-02T16:45:00Z`
 
-### EAMA processes the notification
+### AMAMA processes the notification
 
 1. **Verify scope**: Implementation was within granted `routine-operation` scope
 2. **Log for audit**: Record in `ecos_audit_log`

@@ -1,28 +1,28 @@
-# AI Maestro Message Templates for EAMA
+# AI Maestro Message Templates for AMAMA
 
-**Reference for**: `eama-ecos-coordination` skill
+**Reference for**: `amama-amcos-coordination` skill
 
-This document provides all message templates and formats for AI Maestro inter-agent communication between EAMA and other agents (ECOS, EAA, EOA, EIA). Use the `agent-messaging` skill to send and receive all messages described here.
+This document provides all message templates and formats for AI Maestro inter-agent communication between AMAMA and other agents (AMCOS, EAA, EOA, EIA). Use the `agent-messaging` skill to send and receive all messages described here.
 
 ---
 
 ## Contents
 
 - [1. Receiving Messages](#1-receiving-messages)
-  - [1.1 Receiving approval requests from ECOS](#11-receiving-approval-requests-from-ecos)
-  - [1.2 Receiving status reports from ECOS](#12-receiving-status-reports-from-ecos)
+  - [1.1 Receiving approval requests from AMCOS](#11-receiving-approval-requests-from-ecos)
+  - [1.2 Receiving status reports from AMCOS](#12-receiving-status-reports-from-ecos)
   - [1.3 Receiving health check responses (pong)](#13-receiving-health-check-responses-pong)
 - [2. Sending Approval-Related Messages](#2-sending-approval-related-messages)
-  - [2.1 Sending approval decisions to ECOS (approve/deny/defer)](#21-sending-approval-decisions-to-ecos-approvedenydefer)
-  - [2.2 Notifying ECOS of user decisions after escalation](#22-notifying-ecos-of-user-decisions-after-escalation)
-- [3. Requesting Information from ECOS](#3-requesting-information-from-ecos)
-  - [3.1 Requesting status from ECOS](#31-requesting-status-from-ecos)
-  - [3.2 Sending health check pings to verify ECOS is alive](#32-sending-health-check-pings-to-verify-ecos-is-alive)
-- [4. Delegating Work to ECOS](#4-delegating-work-to-ecos)
-  - [4.1 Routing user work requests to ECOS for specialist delegation](#41-routing-user-work-requests-to-ecos-for-specialist-delegation)
-  - [4.2 Routing design work to EAA via ECOS](#42-routing-design-work-to-eaa-via-ecos)
-  - [4.3 Routing implementation work to EOA via ECOS](#43-routing-implementation-work-to-eoa-via-ecos)
-  - [4.4 Routing review/integration work to EIA via ECOS](#44-routing-reviewintegration-work-to-eia-via-ecos)
+  - [2.1 Sending approval decisions to AMCOS (approve/deny/defer)](#21-sending-approval-decisions-to-amcos-approvedenydefer)
+  - [2.2 Notifying AMCOS of user decisions after escalation](#22-notifying-amcos-of-user-decisions-after-escalation)
+- [3. Requesting Information from AMCOS](#3-requesting-information-from-ecos)
+  - [3.1 Requesting status from AMCOS](#31-requesting-status-from-ecos)
+  - [3.2 Sending health check pings to verify AMCOS is alive](#32-sending-health-check-pings-to-verify-amcos-is-alive)
+- [4. Delegating Work to AMCOS](#4-delegating-work-to-ecos)
+  - [4.1 Routing user work requests to AMCOS for specialist delegation](#41-routing-user-work-requests-to-amcos-for-specialist-delegation)
+  - [4.2 Routing design work to EAA via AMCOS](#42-routing-design-work-to-amaa-via-ecos)
+  - [4.3 Routing implementation work to EOA via AMCOS](#43-routing-implementation-work-to-amoa-via-ecos)
+  - [4.4 Routing review/integration work to EIA via AMCOS](#44-routing-reviewintegration-work-to-amia-via-ecos)
 - [5. Standard AI Maestro API Patterns](#5-standard-ai-maestro-api-patterns)
   - [5.1 Base API format and authentication](#51-base-api-format-and-authentication)
   - [5.2 Message content structure requirements](#52-message-content-structure-requirements)
@@ -32,22 +32,22 @@ This document provides all message templates and formats for AI Maestro inter-ag
 
 ## 1. Receiving Messages
 
-### 1.1 Receiving approval requests from ECOS
+### 1.1 Receiving approval requests from AMCOS
 
-**Use this when**: ECOS requests permission for a critical operation
+**Use this when**: AMCOS requests permission for a critical operation
 
-**Incoming message format** (what you receive from ECOS):
+**Incoming message format** (what you receive from AMCOS):
 
 The message will arrive with the following structure:
-- **Sender**: `ecos-<project-name>`
+- **Sender**: `amcos-<project-name>`
 - **Subject**: "Approval Request: <REQUEST-ID>"
 - **Priority**: `high`
 - **Content fields**:
   - `type`: `approval_request`
   - `request_id`: A unique identifier for this request
-  - `operation`: Description of the operation ECOS wants to perform
+  - `operation`: Description of the operation AMCOS wants to perform
   - `risk_level`: One of `low`, `medium`, or `high`
-  - `justification`: Why ECOS needs this approval
+  - `justification`: Why AMCOS needs this approval
   - `impact`: What will happen if the operation proceeds
   - `reversible`: Whether the operation can be undone (`true` or `false`)
 
@@ -57,18 +57,18 @@ Check your inbox using the `agent-messaging` skill. Filter for messages with con
 **Response actions**:
 - Assess risk level
 - Make approval decision (approve/deny/defer)
-- See section 2.1 for sending approval decision back to ECOS
+- See section 2.1 for sending approval decision back to AMCOS
 
 ---
 
-### 1.2 Receiving status reports from ECOS
+### 1.2 Receiving status reports from AMCOS
 
-**Use this when**: You requested status and ECOS responds
+**Use this when**: You requested status and AMCOS responds
 
 **Incoming message format** (what you receive):
 
 The message will arrive with the following structure:
-- **Sender**: `ecos-<project-name>`
+- **Sender**: `amcos-<project-name>`
 - **Subject**: "Status Report"
 - **Priority**: `normal`
 - **Content fields**:
@@ -91,17 +91,17 @@ Check your inbox using the `agent-messaging` skill. Filter for messages with con
 
 ### 1.3 Receiving health check responses (pong)
 
-**Use this when**: You sent a health check ping and ECOS responds
+**Use this when**: You sent a health check ping and AMCOS responds
 
 **Expected response format**:
 
 The response will arrive with the following structure:
-- **Sender**: `ecos-<project-name>`
+- **Sender**: `amcos-<project-name>`
 - **Subject**: "Re: Health Check"
 - **Content fields**:
   - `type`: `pong`
-  - `status`: `alive` (confirms ECOS is running)
-  - `uptime`: Number of seconds since ECOS was spawned
+  - `status`: `alive` (confirms AMCOS is running)
+  - `uptime`: Number of seconds since AMCOS was spawned
   - `active_specialists`: List of currently active specialist roles (e.g., "EOA", "EIA")
 
 **How to read it**:
@@ -116,12 +116,12 @@ Check your inbox using the `agent-messaging` skill. Filter for messages with con
 
 ## 2. Sending Approval-Related Messages
 
-### 2.1 Sending approval decisions to ECOS (approve/deny/defer)
+### 2.1 Sending approval decisions to AMCOS (approve/deny/defer)
 
-**Use this when**: Responding to ECOS approval request
+**Use this when**: Responding to AMCOS approval request
 
-Send an approval decision to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send an approval decision to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "Approval Decision: <REQUEST-ID>"
 - **Content**: Must include the fields below
 - **Type**: `approval_decision`
@@ -132,7 +132,7 @@ Send an approval decision to ECOS using the `agent-messaging` skill:
 - `decision`: `approve`, `deny`, or `defer`
 - `reason`: Explanation of the decision
 - `conditions`: Any conditions for approval (if applicable)
-- `approved_by`: `eama` (autonomous) or `user` (escalated)
+- `approved_by`: `amama` (autonomous) or `user` (escalated)
 - `user_quote`: Exact user statement (only when user approved/denied)
 
 **Verify**: confirm message delivery via the skill's sent messages feature.
@@ -143,25 +143,25 @@ Send an approval decision to ECOS using the `agent-messaging` skill:
 - `defer`: Need more information, request clarification
 
 **Example (autonomous approval)**: Send an approval decision using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "Approval Decision: RUN-TESTS-001"
-- **Content**: approval_decision type, request_id "RUN-TESTS-001", decision "approve", reason "Routine operation, low risk, aligns with testing workflow", approved_by "eama"
+- **Content**: approval_decision type, request_id "RUN-TESTS-001", decision "approve", reason "Routine operation, low risk, aligns with testing workflow", approved_by "amama"
 - **Priority**: `high`
 
 **Example (user-escalated denial)**: Send an approval decision using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "Approval Decision: DELETE-DATA-002"
 - **Content**: approval_decision type, request_id "DELETE-DATA-002", decision "deny", reason "User denied: operation is destructive and irreversible", approved_by "user", user_quote "No, do not delete. Archive instead."
 - **Priority**: `high`
 
 ---
 
-### 2.2 Notifying ECOS of user decisions after escalation
+### 2.2 Notifying AMCOS of user decisions after escalation
 
 **Use this when**: You escalated a request to the user and got their decision
 
-Send a user decision notification to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send a user decision notification to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Decision: <REQUEST-ID>"
 - **Content**: Must include the fields below
 - **Type**: `user_decision`
@@ -177,21 +177,21 @@ Send a user decision notification to ECOS using the `agent-messaging` skill:
 **Verify**: confirm message delivery via the skill's sent messages feature.
 
 **Example**: Send a user decision using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Decision: DEPLOY-PROD-001"
 - **Content**: user_decision type, request_id "DEPLOY-PROD-001", decision "approve", user_statement "Yes, deploy to production", timestamp "2026-02-05T14:30:00Z", context "User verified all tests passing and code review complete"
 - **Priority**: `urgent`
 
 ---
 
-## 3. Requesting Information from ECOS
+## 3. Requesting Information from AMCOS
 
-### 3.1 Requesting status from ECOS
+### 3.1 Requesting status from AMCOS
 
 **Use this when**: User asks for project status
 
-Send a status query to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send a status query to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "Status Query"
 - **Content**: Must include the fields below
 - **Type**: `status_query`
@@ -206,51 +206,51 @@ Send a status query to ECOS using the `agent-messaging` skill:
 **Verify**: confirm message delivery via the skill's sent messages feature.
 
 **Example**: Send a status query using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "Status Query"
 - **Content**: status_query type, scope "full", details "User asked: What is the status of the API implementation?", format "summary", timeout 30
 - **Priority**: `normal`
 
-**Expected response**: See section 1.2 (Receiving status reports from ECOS)
+**Expected response**: See section 1.2 (Receiving status reports from AMCOS)
 
 ---
 
-### 3.2 Sending health check pings to verify ECOS is alive
+### 3.2 Sending health check pings to verify AMCOS is alive
 
-**Use this when**: Verifying ECOS is responsive (after spawn, periodically, before delegating work)
+**Use this when**: Verifying AMCOS is responsive (after spawn, periodically, before delegating work)
 
 Send a health check ping using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "Health Check"
 - **Content**: ping type, requesting reply, with timeout
 - **Type**: `ping`
 - **Priority**: `normal`
 
 **Required content fields**:
-- `message`: "Verify ECOS alive"
+- `message`: "Verify AMCOS alive"
 - `expect_reply`: true
 - `timeout`: 10 (seconds)
 
 **Verify**: check inbox for a `pong` response within the timeout period using the `agent-messaging` skill.
 
 **Example**: Send a health check using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "Health Check"
-- **Content**: ping type, message "Verify ECOS alive", expect_reply true, timeout 10
+- **Content**: ping type, message "Verify AMCOS alive", expect_reply true, timeout 10
 - **Priority**: `normal`
 
 **Expected response**: See section 1.3 (Receiving health check responses)
 
 ---
 
-## 4. Delegating Work to ECOS
+## 4. Delegating Work to AMCOS
 
-### 4.1 Routing user work requests to ECOS for specialist delegation
+### 4.1 Routing user work requests to AMCOS for specialist delegation
 
-**Use this when**: User gives a work request that should be handled by a specialist (EOA, EAA, EIA) via ECOS
+**Use this when**: User gives a work request that should be handled by a specialist (EOA, EAA, EIA) via AMCOS
 
-Send a work request to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send a work request to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <brief summary>"
 - **Content**: Must include the fields below
 - **Type**: `work_request`
@@ -267,76 +267,76 @@ Send a work request to ECOS using the `agent-messaging` skill:
 **Verify**: confirm message delivery via the skill's sent messages feature.
 
 **Example**: Send a work request using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Implement REST API"
 - **Content**: work_request type, specialist "EOA", task "Build a REST API for inventory management with CRUD operations", user_context "User wants full inventory tracking system with authentication", priority "high", success_criteria "REST API with all CRUD endpoints, authentication, tests passing"
 - **Priority**: `normal`
 
 ---
 
-### 4.2 Routing design work to EAA via ECOS
+### 4.2 Routing design work to EAA via AMCOS
 
 **Use this when**: User requests architecture/design work
 
 **Specialist routing**: Set specialist to `EAA` (Architect)
 
-Send a design work request to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send a design work request to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <design task summary>"
 - **Content**: work_request type with specialist "EAA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal`
 
 **Example**: Send a design work request using the `agent-messaging` skill:
-- **Recipient**: `ecos-data-pipeline`
+- **Recipient**: `amcos-data-pipeline`
 - **Subject**: "User Request: Design data pipeline architecture"
 - **Content**: work_request type, specialist "EAA", task "Design architecture for real-time data pipeline processing 1M events/day", user_context "Need to process IoT sensor data from 10k devices, store in time-series DB, expose via API", priority "high", success_criteria "Architecture document with component diagrams, data flow, scalability plan"
 - **Priority**: `normal`
 
 ---
 
-### 4.3 Routing implementation work to EOA via ECOS
+### 4.3 Routing implementation work to EOA via AMCOS
 
 **Use this when**: User requests building/implementing features
 
 **Specialist routing**: Set specialist to `EOA` (Orchestrator)
 
-Send an implementation work request to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send an implementation work request to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <implementation task summary>"
 - **Content**: work_request type with specialist "EOA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal` (or `high` if urgent)
 
 **Example**: Send an implementation work request using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Build REST API"
 - **Content**: work_request type, specialist "EOA", task "Implement REST API with CRUD operations for inventory items", user_context "Database schema already designed. Need endpoints for: create item, update item, delete item, list items, search items.", priority "high", success_criteria "All endpoints working, tests passing, documented with OpenAPI spec"
 - **Priority**: `normal`
 
 ---
 
-### 4.4 Routing review/integration work to EIA via ECOS
+### 4.4 Routing review/integration work to EIA via AMCOS
 
 **Use this when**: User requests code review, testing, merging, or release
 
 **Specialist routing**: Set specialist to `EIA` (Integrator)
 
-Send a review/integration work request to ECOS using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send a review/integration work request to AMCOS using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <review/integration task summary>"
 - **Content**: work_request type with specialist "EIA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal`
 
 **Example (code review)**: Send a review work request using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Review API implementation"
 - **Content**: work_request type, specialist "EIA", task "Review REST API implementation for code quality, security, performance", user_context "EOA completed implementation. User wants thorough review before merging to main.", priority "high", success_criteria "Code review complete, all issues addressed, PR approved and merged"
 - **Priority**: `normal`
 
 **Example (release)**: Send a release work request using the `agent-messaging` skill:
-- **Recipient**: `ecos-inventory-system`
+- **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Release version 2.0"
 - **Content**: work_request type, specialist "EIA", task "Create release 2.0 with all new features, update changelog, tag release", user_context "All features complete, tests passing. User ready to release.", priority "normal", success_criteria "Release 2.0 tagged, changelog updated, release notes published"
 - **Priority**: `normal`
@@ -382,7 +382,7 @@ Use the `agent-messaging` skill for all messaging operations. The skill handles 
 
 **Examples**:
 - **urgent**: User approved production deployment (needs immediate action)
-- **high**: ECOS requests approval for destructive operation (needs quick decision)
+- **high**: AMCOS requests approval for destructive operation (needs quick decision)
 - **normal**: User asks for status update (no urgency)
 - **low**: Logging operational metrics (no action required)
 
@@ -406,6 +406,6 @@ Use the `agent-messaging` skill for all messaging operations. The skill handles 
 ---
 
 **See also**:
-- [eama-ecos-coordination/SKILL.md](../SKILL.md) - Main coordination workflow
-- [eama-approval-workflows/SKILL.md](../../eama-approval-workflows/SKILL.md) - Approval decision criteria
-- [eama-role-routing/SKILL.md](../../eama-role-routing/SKILL.md) - Specialist routing logic
+- [amama-amcos-coordination/SKILL.md](../SKILL.md) - Main coordination workflow
+- [amama-approval-workflows/SKILL.md](../../amama-approval-workflows/SKILL.md) - Approval decision criteria
+- [amama-role-routing/SKILL.md](../../amama-role-routing/SKILL.md) - Specialist routing logic

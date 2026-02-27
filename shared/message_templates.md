@@ -13,7 +13,7 @@ Send a task assignment using the `agent-messaging` skill:
 - **Content**: Include the following fields:
   - `type`: `task_assignment`
   - `message`: Detailed instructions for the task
-  - `handoff_file`: Path to the handoff file (format: `docs_dev/handoffs/handoff-<uuid>-eama-to-<role>.md`)
+  - `handoff_file`: Path to the handoff file (format: `docs_dev/handoffs/handoff-<uuid>-amama-to-<role>.md`)
   - `github_issue`: The associated GitHub issue number (format: `#<number>`)
   - `deadline`: ISO-8601 timestamp, or `null` if no deadline
 
@@ -35,7 +35,7 @@ Send a status request using the `agent-messaging` skill:
 ### 3. Status Update
 
 Send a status update using the `agent-messaging` skill:
-- **Recipient**: The EAMA session name (e.g., `eama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
 - **Subject**: "[UPDATE] <task name> - <status>"
 - **Priority**: `normal`
 - **Content**: Include the following fields:
@@ -52,13 +52,13 @@ Send a status update using the `agent-messaging` skill:
 ### 4. Completion Signal
 
 Send a completion signal using the `agent-messaging` skill:
-- **Recipient**: The EAMA session name (e.g., `eama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
 - **Subject**: "[COMPLETE] <task name>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
   - `type`: `completion`
   - `message`: Summary of what was delivered
-  - `handoff_file`: Path to the handoff file (format: `docs_dev/handoffs/handoff-<uuid>-<role>-to-eama.md`)
+  - `handoff_file`: Path to the handoff file (format: `docs_dev/handoffs/handoff-<uuid>-<role>-to-amama.md`)
   - `github_issue`: The associated GitHub issue number (format: `#<number>`)
   - `artifacts`: List of paths to deliverable artifacts
   - `verification_status`: One of `passed`, `failed`, or `partial`
@@ -68,7 +68,7 @@ Send a completion signal using the `agent-messaging` skill:
 ### 5. Approval Request
 
 Send an approval request using the `agent-messaging` skill:
-- **Recipient**: The EAMA session name (e.g., `eama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
 - **Subject**: "[APPROVAL] <approval type> for <item>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
@@ -99,7 +99,7 @@ Send an approval response using the `agent-messaging` skill:
 ### 7. Question / Clarification
 
 Send a question or clarification request using the `agent-messaging` skill:
-- **Recipient**: The EAMA session name (e.g., `eama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
 - **Subject**: "[QUESTION] <brief topic>"
 - **Priority**: `normal`
 - **Content**: Include the following fields:
@@ -114,7 +114,7 @@ Send a question or clarification request using the `agent-messaging` skill:
 ### 8. Error / Issue Report
 
 Send an error or issue report using the `agent-messaging` skill:
-- **Recipient**: The EAMA session name (e.g., `eama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
 - **Subject**: "[ERROR] <error type> in <component>"
 - **Priority**: `urgent`
 - **Content**: Include the following fields:
@@ -131,13 +131,13 @@ Send an error or issue report using the `agent-messaging` skill:
 
 | Role | Prefix | Session Name Pattern |
 |------|--------|---------------------|
-| Assistant Manager | `eama-` | `eama-{project}-session` |
-| Architect | `eaa-` | `eaa-{project}-session` |
-| Orchestrator | `eoa-` | `eoa-{project}-session` |
-| Integrator | `eia-` | `eia-{project}-session` |
+| Assistant Manager | `amama-` | `amama-{project}-session` |
+| Architect | `amaa-` | `amaa-{project}-session` |
+| Orchestrator | `amoa-` | `amoa-{project}-session` |
+| Integrator | `amia-` | `amia-{project}-session` |
 
 **Prefix Legend:**
-- `e` = Emasoft (author identifier)
+- `am` = AI Maestro (product identifier)
 - `ama` = Assistant Manager Agent
 - `aa` = Architect Agent
 - `oa` = Orchestrator Agent

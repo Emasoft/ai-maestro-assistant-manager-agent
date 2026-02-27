@@ -1,10 +1,10 @@
 ---
-name: eama-approval-workflows
-description: Use when handling approval requests from other roles that require user decisions on code, releases, or security gates. Trigger with approval requests from ECOS or other agents.
+name: amama-approval-workflows
+description: Use when handling approval requests from other roles that require user decisions on code, releases, or security gates. Trigger with approval requests from AMCOS or other agents.
 version: 1.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: eama-main
+agent: amama-main
 user-invocable: false
 triggers:
   - Any role sends an approval request via AI Maestro
@@ -16,12 +16,12 @@ triggers:
 
 ## Overview
 
-This skill provides the Assistant Manager (EAMA) with standard workflows for handling approval requests from other roles and presenting them to the user for decision.
+This skill provides the Assistant Manager (AMAMA) with standard workflows for handling approval requests from other roles and presenting them to the user for decision.
 
 ## Prerequisites
 
 - AI Maestro messaging system must be running
-- EAMA must have access to `docs_dev/handoffs/` directory
+- AMAMA must have access to `docs_dev/handoffs/` directory
 - State file must be writable for approval tracking
 
 ## Instructions
@@ -37,10 +37,10 @@ This skill provides the Assistant Manager (EAMA) with standard workflows for han
 
 | Role | Prefix | Plugin Name |
 |------|--------|-------------|
-| Assistant Manager | `eama-` | Emasoft Assistant Manager Agent |
-| Architect | `eaa-` | Emasoft Architect Agent |
-| Orchestrator | `eoa-` | Emasoft Orchestrator Agent |
-| Integrator | `eia-` | Emasoft Integrator Agent |
+| Assistant Manager | `amama-` | AI Maestro Assistant Manager Agent |
+| Architect | `amaa-` | AI Maestro Architect Agent |
+| Orchestrator | `amoa-` | AI Maestro Orchestrator Agent |
+| Integrator | `amia-` | AI Maestro Integrator Agent |
 
 ## Approval Types
 
@@ -312,7 +312,7 @@ Subject: Push Approval Requested
 Priority: high
 Content: Branch feature/user-auth ready for push. 5 files modified. All tests passed.
 
-# EAMA presents to user
+# AMAMA presents to user
 ## Push Approval Requested
 
 **Branch**: feature/user-auth
@@ -327,7 +327,7 @@ Do you approve pushing these changes?
 
 # User responds: "Approve"
 
-# EAMA sends response to EOA
+# AMAMA sends response to EOA
 Subject: Push Approved
 Content: User approved push for feature/user-auth at 2025-01-30T10:00:00Z
 ```
@@ -335,7 +335,7 @@ Content: User approved push for feature/user-auth at 2025-01-30T10:00:00Z
 ### Example 2: Security Approval with Critical Risk
 
 ```
-# EAMA receives security approval request
+# AMAMA receives security approval request
 ## Security Approval Required
 
 **Action**: Update production database schema

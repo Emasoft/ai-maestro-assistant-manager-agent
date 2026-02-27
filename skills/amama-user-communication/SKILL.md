@@ -1,10 +1,10 @@
 ---
-name: eama-user-communication
+name: amama-user-communication
 description: Use when communicating with users for clarification, presenting options, requesting approval, or reporting completion. Trigger with user requests or communication needs.
 version: 1.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: eama-main
+agent: amama-main
 user-invocable: false
 triggers:
   - when clarifying requirements
@@ -19,9 +19,9 @@ triggers:
 
 This skill teaches how to communicate with users effectively and consistently.
 
-## ECOS Coordination
+## AMCOS Coordination
 
-For ECOS coordination procedures (approval requests, autonomous mode, completions), see eama-ecos-coordination skill.
+For AMCOS coordination procedures (approval requests, autonomous mode, completions), see amama-amcos-coordination skill.
 
 ## Prerequisites
 
@@ -54,7 +54,7 @@ Copy this checklist and track your progress:
 | Option Presentation | Comparison table with pros/cons/effort estimates | When multiple approaches are viable |
 | Approval Request | Action/Impact/Reversibility statement | Before any significant or irreversible operation |
 | Completion Report | Summary with changes, verification steps, next actions | When task or subtask is finished |
-| ECOS Handoff | AI Maestro message with handoff file UUID | When routing work to specialist agents |
+| AMCOS Handoff | AI Maestro message with handoff file UUID | When routing work to specialist agents |
 | Status Update | Brief progress summary with blockers if any | During long-running operations |
 
 ## Communication Patterns
@@ -197,42 +197,42 @@ Next steps: Proceed with logout endpoint implementation
 ```
 User: "I need to implement a new authentication module for the project. It should support OAuth2 and JWT tokens."
 
-EAMA Response: "I understand you need a new authentication module with OAuth2 and JWT support. Let me route this to the Orchestrator for implementation.
+AMAMA Response: "I understand you need a new authentication module with OAuth2 and JWT support. Let me route this to the Orchestrator for implementation.
 
-Creating handoff file and routing to ECOS, which will coordinate with the Orchestrator agent to implement the authentication module with the specified requirements."
+Creating handoff file and routing to AMCOS, which will coordinate with the Orchestrator agent to implement the authentication module with the specified requirements."
 ```
 
-### Workflow 2: Granting ECOS Autonomous Mode
+### Workflow 2: Granting AMCOS Autonomous Mode
 
 ```
-User: "Let ECOS handle routine development tasks for the next 4 hours while I'm in a meeting."
+User: "Let AMCOS handle routine development tasks for the next 4 hours while I'm in a meeting."
 
-EAMA Response: "I'll grant ECOS autonomous mode for routine development operations with a 4-hour expiration.
+AMAMA Response: "I'll grant AMCOS autonomous mode for routine development operations with a 4-hour expiration.
 
-Sending autonomy grant to ECOS with scope limited to routine-operation and minor-decision types on feature/* branches. ECOS will operate autonomously for these tasks but will still notify you of important completions and request approval for any critical operations."
+Sending autonomy grant to AMCOS with scope limited to routine-operation and minor-decision types on feature/* branches. AMCOS will operate autonomously for these tasks but will still notify you of important completions and request approval for any critical operations."
 
 [Send AI Maestro message with autonomy-grant type]
 ```
 
-### Workflow 3: Presenting ECOS Approval Request to User
+### Workflow 3: Presenting AMCOS Approval Request to User
 
 ```
-[ECOS sends approval request for staging deployment]
+[AMCOS sends approval request for staging deployment]
 
-EAMA presents to user:
+AMAMA presents to user:
 
-## ECOS Approval Request
+## AMCOS Approval Request
 
 **Operation**: Deploy v2.1.0 to staging environment
 **Risk Level**: Medium (reversible)
 **Affected Resources**: staging-server, staging-db
 **Related Issues**: #89, #92
-**ECOS Recommendation**: Approve
+**AMCOS Recommendation**: Approve
 
 Do you approve this deployment?
-- [Approve] - ECOS will proceed
-- [Reject] - ECOS will cancel
-- [Needs Revision] - ECOS will modify request
+- [Approve] - AMCOS will proceed
+- [Reject] - AMCOS will cancel
+- [Needs Revision] - AMCOS will modify request
 ```
 
 ## Handoff Protocol
@@ -241,27 +241,27 @@ When routing work:
 
 1. Create handoff .md file with UUID
 2. Include all relevant context
-3. Send via AI Maestro message to ECOS
-4. ECOS routes to appropriate specialist
+3. Send via AI Maestro message to AMCOS
+4. AMCOS routes to appropriate specialist
 5. Track handoff status
 6. Report completion to user
 
-## Proactive ECOS Monitoring
+## Proactive AMCOS Monitoring
 
-EAMA must proactively monitor ECOS health and responsiveness to prevent communication failures and ensure timely approval processing.
+AMAMA must proactively monitor AMCOS health and responsiveness to prevent communication failures and ensure timely approval processing.
 
 ### Monitoring Schedule
 
 | Check Type | Frequency | Trigger |
 |------------|-----------|---------|
-| ECOS Health Check | Every 10 minutes | During active work sessions |
+| AMCOS Health Check | Every 10 minutes | During active work sessions |
 | AI Maestro Inbox | Every 2 minutes | For pending approval requests |
-| ECOS Responsiveness Ping | When 15 minutes without response | After sending any message to ECOS |
+| AMCOS Responsiveness Ping | When 15 minutes without response | After sending any message to AMCOS |
 
 ### Health Check Procedure
 
-Send a periodic ECOS health check every 10 minutes during active work using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+Send a periodic AMCOS health check every 10 minutes during active work using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "Periodic Health Check"
 - **Content**: ping type, message "Routine health check", expect_reply true, timeout 60
 - **Type**: `ping`
@@ -275,42 +275,42 @@ Check your inbox every 2 minutes for approval requests using the `agent-messagin
 
 ### Responsiveness Ping (15 Minute Timeout)
 
-If no response from ECOS after 15 minutes since last message sent, send an urgent ping using the `agent-messaging` skill:
-- **Recipient**: `ecos-<project-name>`
+If no response from AMCOS after 15 minutes since last message sent, send an urgent ping using the `agent-messaging` skill:
+- **Recipient**: `amcos-<project-name>`
 - **Subject**: "URGENT: Response Required"
 - **Content**: ping type, message "No response received for 15 minutes. Please acknowledge.", expect_reply true, timeout 30
 - **Type**: `ping`
 - **Priority**: `urgent`
 
-### Actions When ECOS Unresponsive
+### Actions When AMCOS Unresponsive
 
-If ECOS fails to respond after the urgent ping (30 second timeout):
+If AMCOS fails to respond after the urgent ping (30 second timeout):
 
-1. **Verify ECOS Session Exists**
-   Use the `ai-maestro-agents-management` skill to list agents and check if the ECOS session is still active.
+1. **Verify AMCOS Session Exists**
+   Use the `ai-maestro-agents-management` skill to list agents and check if the AMCOS session is still active.
 
 2. **Check AI Maestro Health**
    Use the `agent-messaging` skill's health check feature to verify AI Maestro is running.
 
 3. **Notify User**
    ```
-   ECOS (ecos-<project-name>) is unresponsive.
+   AMCOS (amcos-<project-name>) is unresponsive.
    Last successful contact: <timestamp>
    Attempted recovery: <steps taken>
 
    Options:
-   - [Restart ECOS] - Attempt to respawn ECOS session
+   - [Restart AMCOS] - Attempt to respawn AMCOS session
    - [Continue Without] - Proceed with reduced coordination
    - [Investigate] - Check logs for error details
    ```
 
 4. **Attempt Recovery**
    - If AI Maestro is down: Alert user to restart AI Maestro
-   - If ECOS session crashed: Respawn ECOS using standard spawn procedure
+   - If AMCOS session crashed: Respawn AMCOS using standard spawn procedure
    - If network issue: Wait 5 minutes and retry
 
 5. **Log Incident**
-   Record the unresponsive incident in `docs_dev/sessions/ecos-health-log.md`
+   Record the unresponsive incident in `docs_dev/sessions/amcos-health-log.md`
 
 ## Design Document Scripts
 
@@ -318,22 +318,22 @@ This script helps locate design documents when communicating with users:
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
-| `eama_design_search.py` | Search design documents for user queries | `python scripts/eama_design_search.py --type <TYPE> --status <STATUS>` |
+| `amama_design_search.py` | Search design documents for user queries | `python scripts/amama_design_search.py --type <TYPE> --status <STATUS>` |
 
-Use `eama_design_search.py` when:
+Use `amama_design_search.py` when:
 - A user asks about project status or design progress
 - Looking up design specifications to reference in responses
 - Finding related designs to provide context in user communication
 
 ### Script Location
 
-The script is located at `../../scripts/eama_design_search.py` relative to this skill.
+The script is located at `../../scripts/amama_design_search.py` relative to this skill.
 
 ## Resources
 
-- See eama-ecos-coordination skill - ECOS coordination and autonomous mode
-- See eama-approval-workflows skill - Approval communication patterns
-- See eama-role-routing skill - Routing communication patterns
+- See amama-amcos-coordination skill - AMCOS coordination and autonomous mode
+- See amama-approval-workflows skill - Approval communication patterns
+- See amama-role-routing skill - Routing communication patterns
 - See shared/message_templates.md in plugin root
 
 ### Reference Documents
