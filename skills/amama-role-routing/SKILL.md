@@ -1,6 +1,6 @@
 ---
 name: amama-role-routing
-description: Use when routing user requests to appropriate specialist agents based on their skills/specialization. Routing is a plugin-level concern; AI Maestro governance roles are limited to manager, chief-of-staff, and member.
+description: Use when routing user requests to specialist agents based on skills. Trigger with work delegation needs.
 version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
