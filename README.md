@@ -1,50 +1,38 @@
-# Emasoft Assistant Manager Agent (eama-)
+# AI Maestro Assistant Manager Agent (amama-)
 
-**Version**: 1.0.0
+**Version**: 1.1.6
 
 ## Overview
 
-The Emasoft Assistant Manager Agent (EAMA) is the **user's right hand** - the sole interlocutor with the user. It receives user requests, clarifies requirements, routes work to appropriate roles (Architect, Orchestrator, Integrator), and presents results back to the user.
+The AI Maestro Assistant Manager Agent (AMAMA) is the **user's right hand** - the sole interlocutor with the user. It receives user requests, clarifies requirements, routes work to appropriate specialist agents, and presents results back to the user.
+
+Requires **AI Maestro >= 0.26.0** for inter-agent messaging, governance APIs, and team management.
 
 ## Communication Hierarchy
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                          USER                                    │
-│   (provides requirements, approves, reports issues)              │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │ ONLY direct communication channel
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│      EMASOFT-ASSISTANT-MANAGER-AGENT (eama-)                     │
-│   - Receives user requests, clarifies requirements               │
-│   - Requests user approvals (push, merge, publish, security)     │
-│   - Reports status to user                                       │
-│   - Coordinates with ECOS for agent lifecycle                    │
-│   - Routes handoffs between roles                                │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│      EMASOFT-CHIEF-OF-STAFF (ecos-)                              │
-│   - Agent lifecycle management (create, terminate, restart)      │
-│   - Session management and health monitoring                     │
-│   - Permission management for sensitive operations               │
-│   - Failure recovery and escalation                              │
-└──────┬─────────────────────┬─────────────────────┬──────────────┘
-       │                     │                     │
-       ▼                     ▼                     ▼
-   ARCHITECT           ORCHESTRATOR           INTEGRATOR
-     (EAA)                (EOA)                  (EIA)
+USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (member)
+                                                    <-> EAA  (architect skills)
+                                                    <-> EOA  (orchestrator skills)
+                                                    <-> EIA  (integrator skills)
 ```
+
+**Governance Roles** (AI Maestro defines exactly 3):
+
+| Role | Agent | Purpose |
+|------|-------|---------|
+| `manager` | AMAMA | Team manager, sole user contact, full admin authority |
+| `chief-of-staff` | AMCOS | Agent lifecycle, permissions, failure recovery |
+| `member` | EAA, EOA, EIA | All specialist agents (specialization via skills/tags) |
 
 ## Core Responsibilities
 
-1. **User Communication**: Only role that communicates directly with user
-2. **Request Routing**: Directs requests to appropriate specialist role
-3. **Approval Workflows**: Manages approval requests for push, merge, publish, security
-4. **Status Reporting**: Presents status reports from other roles
-5. **Handoff Coordination**: Routes handoffs between architect, orchestrator, integrator
+1. **User Communication**: Only agent that communicates directly with user
+2. **Request Routing**: Directs requests to appropriate specialist agent via AMCOS
+3. **Approval Workflows**: Manages GovernanceRequest API (push, merge, publish, security)
+4. **Status Reporting**: Queries AI Maestro APIs, presents reports to user
+5. **Team Management**: Creates teams via `POST /api/teams`, assigns COS role
+6. **Governance Password**: Manages bcrypt-hashed password in `~/.aimaestro/governance.json`
 
 ## Components
 
@@ -52,77 +40,64 @@ The Emasoft Assistant Manager Agent (EAMA) is the **user's right hand** - the so
 
 | Agent | Description |
 |-------|-------------|
-| `eama-assistant-manager-main-agent.md` | Main assistant manager agent |
-| `eama-report-generator.md` | Generates status reports for user |
+| `amama-assistant-manager-main-agent.md` | Main assistant manager agent |
+| `amama-report-generator.md` | Generates status reports for user |
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
-| `eama-planning-status` | Show planning phase status |
-| `eama-orchestration-status` | Show orchestration phase status |
-| `eama-approve-plan` | Approve plan for orchestration |
-| `eama-respond-to-ecos` | Respond to pending ECOS approval requests |
+| `amama-planning-status` | Show planning phase status |
+| `amama-orchestration-status` | Show orchestration phase status |
+| `amama-approve-plan` | Approve plan for orchestration |
+| `amama-respond-to-amcos` | Respond to pending AMCOS approval requests |
 
 ### Skills
 
 | Skill | Description | When to Use |
 |-------|-------------|-------------|
-| `eama-user-communication` | User interaction patterns | When communicating with the user |
-| `eama-status-reporting` | Status report generation | When user requests status updates |
-| `eama-approval-workflows` | Approval request patterns | When sensitive operations require user approval |
-| `eama-role-routing` | Route requests to correct role | When delegating work to EAA, EOA, or EIA |
-| `eama-ecos-coordination` | Coordinate with ECOS for approvals and agent lifecycle | When ECOS requests approval or reports agent status |
-| `eama-github-routing` | Route GitHub operations to appropriate specialists | When handling GitHub issues, PRs, projects, or releases |
-| `eama-label-taxonomy` | GitHub label taxonomy and management | When creating or organizing GitHub labels |
-| `eama-session-memory` | Session memory management and handoff tracking | When persisting session state or tracking handoffs |
+| `amama-user-communication` | User interaction patterns | When communicating with the user |
+| `amama-status-reporting` | Status report generation (AI Maestro APIs) | When user requests status updates |
+| `amama-approval-workflows` | GovernanceRequest approval workflows | When sensitive operations require user approval |
+| `amama-role-routing` | Route requests to correct specialist agent | When delegating work to specialist agents |
+| `amama-ecos-coordination` | Coordinate with AMCOS for approvals and agent lifecycle | When AMCOS requests approval or reports agent status |
+| `amama-github-routing` | Route GitHub operations with team boundary awareness | When handling GitHub issues, PRs, projects, or releases |
+| `amama-label-taxonomy` | GitHub label taxonomy and management | When creating or organizing GitHub labels |
+| `amama-session-memory` | CozoDB-backed session memory and handoff tracking | When persisting session state or tracking handoffs |
 
 ### Hooks
 
 | Hook | Event | Description |
 |------|-------|-------------|
-| `eama-memory-load` | SessionStart | Load session memory at startup |
-| `eama-memory-save` | SessionEnd | Save session memory on exit |
+| `amama-memory-load` | SessionStart | Load session memory at startup |
+| `amama-memory-save` | SessionEnd | Save session memory on exit |
 
 ## Communication Methods
 
 1. **Handoff .md files** with UUIDs - for detailed specifications
-2. **AI Maestro messages** - for short exchanges (status updates, questions)
+2. **AI Maestro AMP messages** - for short exchanges (status updates, questions)
 3. **GitHub Issues** - as permanent record and discovery mechanism
 
-## Installation (Production)
+## Installation
 
-Install from the Emasoft marketplace. Use `--scope local` to install only for this agent's directory only, or `--scope global` for all projects.
-
-Role plugins are installed with `--scope local` inside the specific agent's working directory (`~/agents/<agent-name>/`). This ensures the plugin is only available to that agent.
+This plugin ships with AI Maestro. It is installed automatically when AI Maestro provisions an Assistant Manager agent.
 
 ```bash
-# Add Emasoft marketplace (first time only)
-claude plugin marketplace add emasoft-plugins --url https://github.com/Emasoft/emasoft-plugins
-
-# Install plugin (--scope local = this agent's directory only, recommended)
-claude plugin install emasoft-assistant-manager-agent@emasoft-plugins --scope local
-
-# RESTART Claude Code after installing (required!)
+# Start a session with the main agent
+claude --agent amama-assistant-manager-main-agent
 ```
 
-Once installed, start a session with the main agent:
+### Development Only (--plugin-dir)
+
+`--plugin-dir` loads a plugin directly from a local directory without installation. Use only during plugin development.
 
 ```bash
-claude --agent eama-assistant-manager-main-agent
-```
-
-## Development Only (--plugin-dir)
-
-`--plugin-dir` loads a plugin directly from a local directory without marketplace installation. Use only during plugin development.
-
-```bash
-claude --plugin-dir ./OUTPUT_SKILLS/emasoft-assistant-manager-agent
+claude --plugin-dir /path/to/ai-maestro-assistant-manager-agent
 ```
 
 ## Validation
 
 ```bash
-cd OUTPUT_SKILLS/emasoft-assistant-manager-agent
-uv run python scripts/validate_plugin.py . --verbose
+cd /path/to/ai-maestro-assistant-manager-agent
+uv run python scripts/amama_validate_plugin.py . --verbose
 ```
