@@ -3,7 +3,7 @@ name: amama-session-memory
 description: User preference and communication style persistence via AI Maestro memory system. Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start.
 version: 2.0.0
 license: MIT
-compatibility: Requires AI Maestro installed with CozoDB agent database. File system fallback available.
+compatibility: Requires AI Maestro installed.
 metadata:
   author: Emasoft
 context: fork

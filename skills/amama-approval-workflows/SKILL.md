@@ -2,7 +2,7 @@
 name: amama-approval-workflows
 description: Use when handling governance approval requests that require MANAGER authorization via the GovernanceRequest API. Covers team membership, agent lifecycle, COS assignment, and agent transfers.
 version: 2.0.0
-compatibility: Requires AI Maestro v2+ with Governance API enabled.
+compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-main
 user-invocable: false

@@ -178,16 +178,16 @@ Reports saved to: `docs_dev/reports/status-{date}.md`
 ### Agent Sessions
 | Agent | Status | Uptime |
 |-------|--------|--------|
-| eaa-architect | active | 2h 15m |
-| eoa-orchestrator | active | 1h 42m |
-| eia-integrator | inactive | — |
+| amaa-architect | active | 2h 15m |
+| amoa-orchestrator | active | 1h 42m |
+| amia-integrator | inactive | — |
 
 ### Agent Health
 | Agent | Health | Last Heartbeat |
 |-------|--------|----------------|
-| eaa-architect | alive | 30s ago |
-| eoa-orchestrator | alive | 15s ago |
-| eia-integrator | unresponsive | 45m ago |
+| amaa-architect | alive | 30s ago |
+| amoa-orchestrator | alive | 15s ago |
+| amia-integrator | unresponsive | 45m ago |
 
 ### Task Kanban
 | Status | Count | Tasks |

@@ -33,7 +33,7 @@ AI Maestro defines exactly **3 governance roles**:
 ```jsonc
 // CORRECT — specialization via skills/tags, governance role is 'member'
 {
-  "name": "eaa-architect",
+  "name": "amaa-architect",
   "role": "member",
   "skills": ["architecture", "design", "requirements-analysis"],
   "tags": ["specialization:architect"]
@@ -41,7 +41,7 @@ AI Maestro defines exactly **3 governance roles**:
 
 // WRONG — do NOT use specialization names as governance roles
 {
-  "name": "eaa-architect",
+  "name": "amaa-architect",
   "role": "architect"  // ← INVALID: not a governance role
 }
 ```

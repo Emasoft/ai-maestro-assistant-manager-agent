@@ -2,7 +2,7 @@
 name: amama-github-routing
 description: Use when routing GitHub operations (issues, PRs, projects, releases) to the appropriate specialist agent. Enforces team boundaries via labels and syncs Kanban with AI Maestro task system. Trigger with GitHub-related requests.
 version: 2.0.0
-compatibility: Requires AI Maestro installed with team task system at ~/.aimaestro/teams/.
+compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-main
 user-invocable: false
@@ -174,14 +174,14 @@ AI Maestro uses a 5-status pipeline for all tasks:
       "githubRepo": "owner/repo",
       "title": "Implement user auth",
       "status": "in_progress",
-      "assignedAgent": "eoa-backend-auth",
+      "assignedAgent": "amoa-backend-auth",
       "teamLabel": "team:backend",
       "designUuid": "abc-123",
       "moduleUuid": "def-456",
       "statusHistory": [
         {"status": "backlog", "timestamp": "2025-01-28T10:00:00Z", "actor": "amama-main"},
         {"status": "pending", "timestamp": "2025-01-29T09:00:00Z", "actor": "amama-main"},
-        {"status": "in_progress", "timestamp": "2025-01-30T14:00:00Z", "actor": "eoa-backend-auth"}
+        {"status": "in_progress", "timestamp": "2025-01-30T14:00:00Z", "actor": "amoa-backend-auth"}
       ],
       "createdAt": "2025-01-28T10:00:00Z",
       "updatedAt": "2025-01-30T14:00:00Z"
