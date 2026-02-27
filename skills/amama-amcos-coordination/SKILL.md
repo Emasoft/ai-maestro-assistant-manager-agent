@@ -4,7 +4,7 @@ description: Use when coordinating with the Chief of Staff (COS) for approval re
 version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: false
 triggers:
   - COS-assigned agent sends an approval request via AI Maestro
@@ -90,9 +90,9 @@ AMAMA (Assistant Manager) - User's direct interface
   |
 COS-assigned agent (Chief of Staff role) - Operational coordinator for a team
   |
-+-- EAA (Architect)
-+-- EOA (Orchestrator)
-+-- EIA (Integrator)
++-- AMAA (Architect)
++-- AMOA (Orchestrator)
++-- AMIA (Integrator)
 ```
 
 ### Responsibilities Split

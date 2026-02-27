@@ -94,7 +94,7 @@ After 3 failed creation attempts:
    - Attempt 3: <error>
 
    Impact:
-   - Cannot route work to specialist agents (EOA, EAA, EIA)
+   - Cannot route work to specialist agents (AMOA, AMAA, AMIA)
    - Project directory and git repo are ready
    - You can still interact with me for planning
 
@@ -309,7 +309,7 @@ When approval workflow encounters errors.
 
 ## 4. Agent Creation Failures (General)
 
-When creating specialist agents (EOA, EAA, EIA) fails.
+When creating specialist agents (AMOA, AMAA, AMIA) fails.
 
 ### Symptoms
 
@@ -493,11 +493,11 @@ Once you confirm AMCOS status, I can retry routing your request.
 
 Project: inventory-system
 
-Request A (from EOA via AMCOS):
+Request A (from AMOA via AMCOS):
 - Action: Deploy to staging
 - Risk: Medium (database migration included)
 
-Request B (from EIA via AMCOS):
+Request B (from AMIA via AMCOS):
 - Action: Rollback staging (critical bug found)
 - Risk: High (data loss possible)
 

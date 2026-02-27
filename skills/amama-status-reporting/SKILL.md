@@ -4,7 +4,7 @@ description: Use when generating status reports. Queries AI Maestro APIs (sessio
 version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: true
 triggers:
   - when user asks for status
@@ -198,7 +198,7 @@ Reports saved to: `docs_dev/reports/status-{date}.md`
 | review | 1 | DB schema |
 | completed | 4 | Setup, Config, Router, Models |
 
-**Blockers**: EIA integrator agent unresponsive — escalating to AMCOS
+**Blockers**: AMIA integrator agent unresponsive — escalating to AMCOS
 ```
 
 ### Example 2: Progress Report
@@ -211,13 +211,13 @@ Reports saved to: `docs_dev/reports/status-{date}.md`
 
 ### Task Kanban Summary (from AI Maestro)
 **Completed this period:**
-- DB schema design (EAA, completed 2025-01-28)
-- Login endpoint implementation (EOA, completed 2025-01-29)
-- Code review for login (EIA, completed 2025-01-30)
+- DB schema design (AMAA, completed 2025-01-28)
+- Login endpoint implementation (AMOA, completed 2025-01-29)
+- Code review for login (AMIA, completed 2025-01-30)
 
 **In Progress:**
-- Logout endpoint (EOA, started 2025-01-30)
-- Session management design (EAA, started 2025-01-29)
+- Logout endpoint (AMOA, started 2025-01-30)
+- Session management design (AMAA, started 2025-01-29)
 
 **Pending:**
 - Password reset endpoint (blocked by email service config)
@@ -227,9 +227,9 @@ Reports saved to: `docs_dev/reports/status-{date}.md`
 - Rate limiting
 
 ### Agent Health
-- EAA: alive, uptime 48h
-- EOA: alive, uptime 36h
-- EIA: alive, uptime 12h
+- AMAA: alive, uptime 48h
+- AMOA: alive, uptime 36h
+- AMIA: alive, uptime 12h
 
 ### GitHub Status
 - Issues closed: #45 (auth design), #46 (login impl)

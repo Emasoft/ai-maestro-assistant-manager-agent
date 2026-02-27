@@ -125,7 +125,7 @@ When user gives a work request:
 - [ ] **Send request** to AMCOS using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project>`
   - **Subject**: "User Request: <summary>"
-  - **Content**: work_request type with specialist (EOA/EAA/EIA), task description, and user_context
+  - **Content**: work_request type with specialist (AMOA/AMAA/AMIA), task description, and user_context
   - **Type**: `work_request`
   - **Priority**: `normal`
 - [ ] **Acknowledge to user** that request routed

@@ -167,7 +167,7 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 - **Plugins**: ai-maestro-chief-of-staff
 - **Working Dir**: /Users/user/Code/inventory-system
 - **Last Health Check**: 2026-02-04 16:15:44 (ALIVE)
-- **Active Specialists**: EOA, EIA
+- **Active Specialists**: AMOA, AMIA
 - **Current Tasks**: Implementing REST API (8/12 tasks complete)
 ```
 
@@ -184,7 +184,7 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 - **Last Ping**: Last successful health check response
 - **Status**: `alive`, `stale`, or `dead`
 - **Plugins**: Which plugins are loaded in this AMCOS
-- **Active Specialists**: Which specialist agents (EOA, EIA, etc.) are currently working
+- **Active Specialists**: Which specialist agents (AMOA, AMIA, etc.) are currently working
 - **Current Tasks**: Brief summary of work in progress
 
 **Status Values**:
@@ -208,11 +208,11 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 
 - **Timestamp**: 2026-02-04 14:28:15
 - **User Request**: "Build a REST API for inventory management"
-- **Your Response**: "I'll create a new project called 'inventory-system' and route this to EOA via AMCOS for implementation."
+- **Your Response**: "I'll create a new project called 'inventory-system' and route this to AMOA via AMCOS for implementation."
 - **Actions Taken**:
   - Created project at /Users/user/Code/inventory-system
   - Spawned amcos-inventory-system
-  - Routed work request to EOA
+  - Routed work request to AMOA
 - **User Acknowledgment**: "Great, keep me posted on progress"
 - **Follow-up**: Status update requested in 24 hours
 
@@ -220,7 +220,7 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 
 - **Timestamp**: 2026-02-04 15:45:30
 - **User Request**: "What's the status of the API?"
-- **Your Response**: "API implementation is 67% complete. 8 of 12 tasks done. Code review passed. All tests passing. EOA estimates completion by end of day."
+- **Your Response**: "API implementation is 67% complete. 8 of 12 tasks done. Code review passed. All tests passing. AMOA estimates completion by end of day."
 - **User Acknowledgment**: "Thanks"
 ```
 

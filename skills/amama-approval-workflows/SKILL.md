@@ -4,7 +4,7 @@ description: Use when handling governance approval requests that require MANAGER
 version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: false
 triggers:
   - A GovernanceRequest is created with status "pending"
@@ -373,7 +373,7 @@ The following approval types from v1 are still supported for backward compatibil
 **Trigger**: Code is ready to be pushed to remote repository
 
 **Workflow**:
-1. Receive approval request from EOA/EIA
+1. Receive approval request from AMOA/AMIA
 2. Present to user:
    ```
    ## Push Approval Requested
@@ -396,7 +396,7 @@ The following approval types from v1 are still supported for backward compatibil
 **Trigger**: PR is ready to be merged
 
 **Workflow**:
-1. Receive approval request from EIA
+1. Receive approval request from AMIA
 2. Present to user:
    ```
    ## Merge Approval Requested
@@ -413,14 +413,14 @@ The following approval types from v1 are still supported for backward compatibil
    - [Request Changes] - Add comments
    ```
 3. Record user decision
-4. Send approval response to EIA
+4. Send approval response to AMIA
 
 ### Publish Approval
 
 **Trigger**: Package/release is ready to be published
 
 **Workflow**:
-1. Receive approval request from EIA
+1. Receive approval request from AMIA
 2. Present to user:
    ```
    ## Publish Approval Requested
@@ -437,14 +437,14 @@ The following approval types from v1 are still supported for backward compatibil
    - [Review] - Show release notes
    ```
 3. Record user decision
-4. Send approval response to EIA
+4. Send approval response to AMIA
 
 ### Security Approval
 
 **Trigger**: Action with security implications requires authorization
 
 **Workflow**:
-1. Receive approval request from any role (EAA/EOA/EIA)
+1. Receive approval request from any role (AMAA/AMOA/AMIA)
 2. Present to user:
    ```
    ## Security Approval Required
@@ -465,10 +465,10 @@ The following approval types from v1 are still supported for backward compatibil
 
 ### Design Approval
 
-**Trigger**: EAA (Architect) has completed design document
+**Trigger**: AMAA (Architect) has completed design document
 
 **Workflow**:
-1. Receive completion signal from EAA
+1. Receive completion signal from AMAA
 2. Present to user:
    ```
    ## Design Approval Requested
@@ -480,11 +480,11 @@ The following approval types from v1 are still supported for backward compatibil
 
    Review the design document and approve to proceed with implementation.
    - [Approve] - Proceed to orchestration
-   - [Request Changes] - Send back to EAA
+   - [Request Changes] - Send back to AMAA
    - [Discuss] - I have questions
    ```
 3. Record user decision
-4. If approved, create handoff to EOA
+4. If approved, create handoff to AMOA
 
 ## Approval State Tracking
 

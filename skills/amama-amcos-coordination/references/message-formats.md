@@ -26,7 +26,7 @@ This is the format AMCOS uses when sending approval requests to AMAMA. The messa
 - **Subject**: "AMCOS Approval Request: <operation summary>"
 - **Priority**: `high` or `normal`
 - **Content fields**:
-  - `type`: `approval-request`
+  - `type`: `approval_request`
   - `request_id`: Unique request identifier (format: `amcos-req-<uuid>`)
   - `category`: Operation category (e.g., `critical-operation`, `policy-exception`, `routine-operation`, `minor-decision`)
   - `operation`: A nested structure containing:
@@ -71,7 +71,7 @@ Send an autonomy grant using the `agent-messaging` skill:
 - **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
 - **Content**: Include the following fields:
-  - `type`: `autonomy-grant`
+  - `type`: `autonomy_grant`
   - `operation_types`: List of operation types AMCOS can perform autonomously (e.g., `routine-operation`, `minor-decision`)
   - `expires_at`: ISO-8601 timestamp when autonomous mode ends
   - `scope_limits`: A nested structure containing:
@@ -88,7 +88,7 @@ Send an autonomy revocation using the `agent-messaging` skill:
 - **Subject**: "AMAMA Autonomous Mode Revoked"
 - **Priority**: `urgent`
 - **Content**: Include the following fields:
-  - `type`: `autonomy-revoke`
+  - `type`: `autonomy_revoke`
   - `reason`: One of `User request`, `Scope exceeded`, `Security concern`, or `Timeout`
   - `effective_immediately`: `true` (revocation always takes effect immediately)
   - `revoked_at`: ISO-8601 timestamp of revocation
@@ -107,7 +107,7 @@ This is the format AMCOS uses when reporting completed operations. The message a
 - **Subject**: "AMCOS Operation Complete: <operation summary>"
 - **Priority**: `normal`
 - **Content fields**:
-  - `type`: `operation-complete`
+  - `type`: `operation_complete`
   - `request_id`: The original request ID (format: `amcos-req-<uuid>`) or `autonomous-<uuid>` for autonomous operations
   - `operation`: A nested structure containing:
     - `type`: Kind of operation completed (`deployment`, `merge`, `publish`, etc.)

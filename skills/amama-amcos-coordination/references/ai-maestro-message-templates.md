@@ -2,7 +2,7 @@
 
 **Reference for**: `amama-amcos-coordination` skill
 
-This document provides all message templates and formats for AI Maestro inter-agent communication between AMAMA and other agents (AMCOS, EAA, EOA, EIA). Use the `agent-messaging` skill to send and receive all messages described here.
+This document provides all message templates and formats for AI Maestro inter-agent communication between AMAMA and other agents (AMCOS, AMAA, AMOA, AMIA). Use the `agent-messaging` skill to send and receive all messages described here.
 
 ---
 
@@ -20,9 +20,9 @@ This document provides all message templates and formats for AI Maestro inter-ag
   - [3.2 Sending health check pings to verify AMCOS is alive](#32-sending-health-check-pings-to-verify-amcos-is-alive)
 - [4. Delegating Work to AMCOS](#4-delegating-work-to-amcos)
   - [4.1 Routing user work requests to AMCOS for specialist delegation](#41-routing-user-work-requests-to-amcos-for-specialist-delegation)
-  - [4.2 Routing design work to EAA via AMCOS](#42-routing-design-work-to-amaa-via-amcos)
-  - [4.3 Routing implementation work to EOA via AMCOS](#43-routing-implementation-work-to-amoa-via-amcos)
-  - [4.4 Routing review/integration work to EIA via AMCOS](#44-routing-reviewintegration-work-to-amia-via-amcos)
+  - [4.2 Routing design work to AMAA via AMCOS](#42-routing-design-work-to-amaa-via-amcos)
+  - [4.3 Routing implementation work to AMOA via AMCOS](#43-routing-implementation-work-to-amoa-via-amcos)
+  - [4.4 Routing review/integration work to AMIA via AMCOS](#44-routing-reviewintegration-work-to-amia-via-amcos)
 - [5. Standard AI Maestro API Patterns](#5-standard-ai-maestro-api-patterns)
   - [5.1 Base API format and authentication](#51-base-api-format-and-authentication)
   - [5.2 Message content structure requirements](#52-message-content-structure-requirements)
@@ -74,7 +74,7 @@ The message will arrive with the following structure:
 - **Content fields**:
   - `type`: `status_report`
   - `overall_progress`: A percentage string (e.g., "67%")
-  - `active_tasks`: A list of tasks, each with `specialist` (EOA/EAA/EIA), `task` (description), and `status` (in-progress/completed/blocked)
+  - `active_tasks`: A list of tasks, each with `specialist` (AMOA/AMAA/AMIA), `task` (description), and `status` (in-progress/completed/blocked)
   - `blockers`: A list of blockers, each with `description` and `assigned_to`
   - `next_milestone`: Description of the next milestone
   - `health`: One of `green`, `yellow`, or `red`
@@ -102,7 +102,7 @@ The response will arrive with the following structure:
   - `type`: `pong`
   - `status`: `alive` (confirms AMCOS is running)
   - `uptime`: Number of seconds since AMCOS was spawned
-  - `active_specialists`: List of currently active specialist roles (e.g., "EOA", "EIA")
+  - `active_specialists`: List of currently active specialist roles (e.g., "AMOA", "AMIA")
 
 **How to read it**:
 Check your inbox using the `agent-messaging` skill. Filter for messages with content type `pong`.
@@ -247,7 +247,7 @@ Send a health check ping using the `agent-messaging` skill:
 
 ### 4.1 Routing user work requests to AMCOS for specialist delegation
 
-**Use this when**: User gives a work request that should be handled by a specialist (EOA, EAA, EIA) via AMCOS
+**Use this when**: User gives a work request that should be handled by a specialist (AMOA, AMAA, AMIA) via AMCOS
 
 Send a work request to AMCOS using the `agent-messaging` skill:
 - **Recipient**: `amcos-<project-name>`
@@ -257,7 +257,7 @@ Send a work request to AMCOS using the `agent-messaging` skill:
 - **Priority**: `normal` (or `high` for urgent requests)
 
 **Required content fields**:
-- `specialist`: `EOA`, `EAA`, or `EIA` (which specialist should handle the work)
+- `specialist`: `AMOA`, `AMAA`, or `AMIA` (which specialist should handle the work)
 - `task`: Detailed task description
 - `user_context`: Relevant background information
 - `priority`: `high`, `normal`, or `low`
@@ -269,76 +269,76 @@ Send a work request to AMCOS using the `agent-messaging` skill:
 **Example**: Send a work request using the `agent-messaging` skill:
 - **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Implement REST API"
-- **Content**: work_request type, specialist "EOA", task "Build a REST API for inventory management with CRUD operations", user_context "User wants full inventory tracking system with authentication", priority "high", success_criteria "REST API with all CRUD endpoints, authentication, tests passing"
+- **Content**: work_request type, specialist "AMOA", task "Build a REST API for inventory management with CRUD operations", user_context "User wants full inventory tracking system with authentication", priority "high", success_criteria "REST API with all CRUD endpoints, authentication, tests passing"
 - **Priority**: `normal`
 
 ---
 
-### 4.2 Routing design work to EAA via AMCOS
+### 4.2 Routing design work to AMAA via AMCOS
 
 **Use this when**: User requests architecture/design work
 
-**Specialist routing**: Set specialist to `EAA` (Architect)
+**Specialist routing**: Set specialist to `AMAA` (Architect)
 
 Send a design work request to AMCOS using the `agent-messaging` skill:
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <design task summary>"
-- **Content**: work_request type with specialist "EAA", task description, user_context, priority, success_criteria
+- **Content**: work_request type with specialist "AMAA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal`
 
 **Example**: Send a design work request using the `agent-messaging` skill:
 - **Recipient**: `amcos-data-pipeline`
 - **Subject**: "User Request: Design data pipeline architecture"
-- **Content**: work_request type, specialist "EAA", task "Design architecture for real-time data pipeline processing 1M events/day", user_context "Need to process IoT sensor data from 10k devices, store in time-series DB, expose via API", priority "high", success_criteria "Architecture document with component diagrams, data flow, scalability plan"
+- **Content**: work_request type, specialist "AMAA", task "Design architecture for real-time data pipeline processing 1M events/day", user_context "Need to process IoT sensor data from 10k devices, store in time-series DB, expose via API", priority "high", success_criteria "Architecture document with component diagrams, data flow, scalability plan"
 - **Priority**: `normal`
 
 ---
 
-### 4.3 Routing implementation work to EOA via AMCOS
+### 4.3 Routing implementation work to AMOA via AMCOS
 
 **Use this when**: User requests building/implementing features
 
-**Specialist routing**: Set specialist to `EOA` (Orchestrator)
+**Specialist routing**: Set specialist to `AMOA` (Orchestrator)
 
 Send an implementation work request to AMCOS using the `agent-messaging` skill:
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <implementation task summary>"
-- **Content**: work_request type with specialist "EOA", task description, user_context, priority, success_criteria
+- **Content**: work_request type with specialist "AMOA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal` (or `high` if urgent)
 
 **Example**: Send an implementation work request using the `agent-messaging` skill:
 - **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Build REST API"
-- **Content**: work_request type, specialist "EOA", task "Implement REST API with CRUD operations for inventory items", user_context "Database schema already designed. Need endpoints for: create item, update item, delete item, list items, search items.", priority "high", success_criteria "All endpoints working, tests passing, documented with OpenAPI spec"
+- **Content**: work_request type, specialist "AMOA", task "Implement REST API with CRUD operations for inventory items", user_context "Database schema already designed. Need endpoints for: create item, update item, delete item, list items, search items.", priority "high", success_criteria "All endpoints working, tests passing, documented with OpenAPI spec"
 - **Priority**: `normal`
 
 ---
 
-### 4.4 Routing review/integration work to EIA via AMCOS
+### 4.4 Routing review/integration work to AMIA via AMCOS
 
 **Use this when**: User requests code review, testing, merging, or release
 
-**Specialist routing**: Set specialist to `EIA` (Integrator)
+**Specialist routing**: Set specialist to `AMIA` (Integrator)
 
 Send a review/integration work request to AMCOS using the `agent-messaging` skill:
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "User Request: <review/integration task summary>"
-- **Content**: work_request type with specialist "EIA", task description, user_context, priority, success_criteria
+- **Content**: work_request type with specialist "AMIA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal`
 
 **Example (code review)**: Send a review work request using the `agent-messaging` skill:
 - **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Review API implementation"
-- **Content**: work_request type, specialist "EIA", task "Review REST API implementation for code quality, security, performance", user_context "EOA completed implementation. User wants thorough review before merging to main.", priority "high", success_criteria "Code review complete, all issues addressed, PR approved and merged"
+- **Content**: work_request type, specialist "AMIA", task "Review REST API implementation for code quality, security, performance", user_context "AMOA completed implementation. User wants thorough review before merging to main.", priority "high", success_criteria "Code review complete, all issues addressed, PR approved and merged"
 - **Priority**: `normal`
 
 **Example (release)**: Send a release work request using the `agent-messaging` skill:
 - **Recipient**: `amcos-inventory-system`
 - **Subject**: "User Request: Release version 2.0"
-- **Content**: work_request type, specialist "EIA", task "Create release 2.0 with all new features, update changelog, tag release", user_context "All features complete, tests passing. User ready to release.", priority "normal", success_criteria "Release 2.0 tagged, changelog updated, release notes published"
+- **Content**: work_request type, specialist "AMIA", task "Create release 2.0 with all new features, update changelog, tag release", user_context "All features complete, tests passing. User ready to release.", priority "normal", success_criteria "Release 2.0 tagged, changelog updated, release notes published"
 - **Priority**: `normal`
 
 ---

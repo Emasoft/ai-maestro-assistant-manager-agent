@@ -4,7 +4,7 @@ description: Use when communicating with users for clarification, presenting opt
 version: 1.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: false
 triggers:
   - when clarifying requirements

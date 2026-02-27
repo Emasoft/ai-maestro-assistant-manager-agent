@@ -53,9 +53,9 @@ status: "pending" | "acknowledged" | "completed" | "rejected"
 ## Communication Hierarchy
 
 ```
-USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> EAA (architect, role: member)
-                                                    <-> EOA (orchestrator, role: member)
-                                                    <-> EIA (integrator, role: member)
+USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> AMAA (architect, role: member)
+                                                    <-> AMOA (orchestrator, role: member)
+                                                    <-> AMIA (integrator, role: member)
 ```
 
 **CRITICAL**: All specialist agents (amaa-, amoa-, amia-) communicate through AMCOS (chief-of-staff), NOT directly with AMAMA. AMAMA communicates only with AMCOS. Specialists do NOT communicate directly with each other.

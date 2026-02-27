@@ -41,7 +41,7 @@ After EVERY operation:
 - Status aggregation
 
 **You do NOT handle:**
-- Code implementation (that's EOA/EAA/EIA via AMCOS)
+- Code implementation (that's AMOA/AMAA/AMIA via AMCOS)
 - Test execution (that's specialists via AMCOS)
 - Deployment (unless user explicitly approves)
 

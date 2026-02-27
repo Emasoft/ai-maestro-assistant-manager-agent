@@ -1,7 +1,7 @@
 ---
 name: amama-label-taxonomy
 description: Use when managing GitHub issue labels for user requests, setting priorities, or reporting status to users. Covers priority and status label taxonomy. Trigger with `/amama-label-taxonomy`.
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 context: fork
 user-invocable: false
 compatibility: Requires AI Maestro installed.
@@ -32,7 +32,7 @@ Follow these steps to manage labels as AMAMA:
 5. **Set blocked status** when user requests pause (`status:blocked`)
 6. **Report status** by querying issues with relevant labels
 7. **Explain labels** to user in clear, non-technical language
-8. **Facilitate human review** when Integrator (EIA) escalates significant tasks for user testing/review
+8. **Facilitate human review** when Integrator (AMIA) escalates significant tasks for user testing/review
 
 **Checklist for label management**:
 
@@ -92,7 +92,7 @@ The full workflow uses these 8 status columns:
 | Label | When AMAMA Sets It |
 |-------|------------------|
 | `status:backlog` | When creating new issue from user request |
-| `status:human-review` | When EIA escalates a significant task for user review |
+| `status:human-review` | When AMIA escalates a significant task for user review |
 | `status:blocked` | When user requests pause or issue cannot proceed |
 
 ---
@@ -225,10 +225,10 @@ The implementation agent is actively working on this task.
 
 ### Labels AMAMA Never Sets
 
-- `assign:*` - Set by EOA/AMCOS
-- `review:*` - Managed by EIA
-- `effort:*` - Set by EOA during triage
-- `component:*` - Set by EOA/EAA
+- `assign:*` - Set by AMOA/AMCOS
+- `review:*` - Managed by AMIA
+- `effort:*` - Set by AMOA during triage
+- `component:*` - Set by AMOA/AMAA
 
 ### AMAMA's Approval Authority
 

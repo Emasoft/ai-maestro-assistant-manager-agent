@@ -4,7 +4,7 @@ description: Use when routing user requests to appropriate specialist agents bas
 version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: false
 triggers:
   - User submits a new request or task
@@ -49,7 +49,7 @@ AI Maestro defines exactly **3 governance roles**:
 ## Prerequisites
 
 - AI Maestro messaging system must be running
-- All specialist agents (EAA, EOA, EIA) must be registered with `role: 'member'`
+- All specialist agents (AMAA, AMOA, AMIA) must be registered with `role: 'member'`
 - `docs_dev/handoffs/` directory must exist and be writable
 - UUID generation capability required
 
@@ -65,18 +65,18 @@ AI Maestro defines exactly **3 governance roles**:
 8. Report routing decision to user
 
 Specialist agents routed to:
-- **EAA** — Agent with architect specialization (governance role: `member`)
-- **EOA** — Agent with orchestrator specialization (governance role: `member`)
-- **EIA** — Agent with integrator specialization (governance role: `member`)
+- **AMAA** — Agent with architect specialization (governance role: `member`)
+- **AMOA** — Agent with orchestrator specialization (governance role: `member`)
+- **AMIA** — Agent with integrator specialization (governance role: `member`)
 
 ## Output
 
 | Routing Decision | Action Taken | Handoff File | Message Sent |
 |------------------|--------------|--------------|--------------|
 | Route to AMCOS | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to Chief of Staff |
-| Route to EAA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Architect delegation |
-| Route to EOA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Orchestrator delegation |
-| Route to EIA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Integrator delegation |
+| Route to AMAA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Architect delegation |
+| Route to AMOA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Orchestrator delegation |
+| Route to AMIA (via AMCOS) | Create handoff document | `handoff-{uuid}-amama-to-amcos.md` | AI Maestro message to AMCOS for Integrator delegation |
 | Handle Directly | Respond to user | None | None |
 | Ambiguous Intent | Request clarification | None | None |
 
@@ -96,70 +96,70 @@ Routing is based on **agent specialization/skills**, not governance role. The go
 
 | User Intent Pattern | Route To | Agent Specialization | Handoff Type |
 |---------------------|----------|----------------------|--------------|
-| "design", "plan", "architect", "spec", "requirements" | AMCOS (for EAA) | architect | task_assignment |
-| "build", "implement", "create", "develop", "code" | AMCOS (for EOA) | orchestrator | task_assignment |
-| "review", "test", "merge", "release", "deploy", "quality" | AMCOS (for EIA) | integrator | task_assignment |
+| "design", "plan", "architect", "spec", "requirements" | AMCOS (for AMAA) | architect | task_assignment |
+| "build", "implement", "create", "develop", "code" | AMCOS (for AMOA) | orchestrator | task_assignment |
+| "review", "test", "merge", "release", "deploy", "quality" | AMCOS (for AMIA) | integrator | task_assignment |
 | "spawn agent", "terminate agent", "restart session", "agent health" | AMCOS | chief-of-staff (governance) | agent_lifecycle |
 | "status", "progress", "update" | Handle directly | — | none |
 | "approve", "reject", "confirm" | Handle directly | — | approval_response |
 
 ## Detailed Routing Rules
 
-**IMPORTANT**: All specialist routing goes through AMCOS (chief-of-staff). AMAMA never communicates directly with specialist agents. When a routing rule says "route to EAA/EOA/EIA", it means: create a handoff, send it to AMCOS, and AMCOS delegates to the appropriate specialist.
+**IMPORTANT**: All specialist routing goes through AMCOS (chief-of-staff). AMAMA never communicates directly with specialist agents. When a routing rule says "route to AMAA/AMOA/AMIA", it means: create a handoff, send it to AMCOS, and AMCOS delegates to the appropriate specialist.
 
-### Route to EAA (Architect specialization, `role: member`) when:
+### Route to AMAA (Architect specialization, `role: member`) when:
 
 1. **New project/feature design needed**
    - User says: "Design a...", "Plan how to...", "Create architecture for..."
-   - Action: Create handoff with requirements, send to AMCOS for EAA delegation
+   - Action: Create handoff with requirements, send to AMCOS for AMAA delegation
 
 2. **Requirements analysis required**
    - User says: "What do we need for...", "Analyze requirements for..."
-   - Action: Create handoff with context, send to AMCOS for EAA delegation
+   - Action: Create handoff with context, send to AMCOS for AMAA delegation
 
 3. **Technical specification needed**
    - User says: "Spec out...", "Document how...", "Define the API for..."
-   - Action: Create handoff, send to AMCOS for EAA delegation
+   - Action: Create handoff, send to AMCOS for AMAA delegation
 
 4. **Module planning required**
    - User says: "Break down...", "Modularize...", "Plan implementation of..."
-   - Action: Create handoff, send to AMCOS for EAA delegation
+   - Action: Create handoff, send to AMCOS for AMAA delegation
 
-### Route to EOA (Orchestrator specialization, `role: member`) when:
+### Route to AMOA (Orchestrator specialization, `role: member`) when:
 
 1. **Implementation ready to start**
    - Condition: Approved design/plan exists
-   - Action: Create handoff with design docs, send to AMCOS for EOA delegation
+   - Action: Create handoff with design docs, send to AMCOS for AMOA delegation
 
 2. **Task coordination needed**
    - User says: "Build...", "Implement...", "Start development..."
-   - Action: Create handoff with requirements, send to AMCOS for EOA delegation
+   - Action: Create handoff with requirements, send to AMCOS for AMOA delegation
 
 3. **Multi-agent work coordination**
    - Condition: Work requires multiple parallel agents
-   - Action: Create handoff with task breakdown, send to AMCOS for EOA delegation
+   - Action: Create handoff with task breakdown, send to AMCOS for AMOA delegation
 
 4. **Progress monitoring required**
    - Condition: Orchestration in progress, need intervention
-   - Action: Forward message to AMCOS for EOA
+   - Action: Forward message to AMCOS for AMOA
 
-### Route to EIA (Integrator specialization, `role: member`) when:
+### Route to AMIA (Integrator specialization, `role: member`) when:
 
 1. **Work ready for integration**
    - Condition: Orchestrator agent signals completion
-   - Action: Create handoff with completion report, send to AMCOS for EIA delegation
+   - Action: Create handoff with completion report, send to AMCOS for AMIA delegation
 
 2. **Code review requested**
    - User says: "Review...", "Check the PR...", "Evaluate changes..."
-   - Action: Create handoff with PR details, send to AMCOS for EIA delegation
+   - Action: Create handoff with PR details, send to AMCOS for AMIA delegation
 
 3. **Quality gates needed**
    - User says: "Test...", "Validate...", "Run quality checks..."
-   - Action: Create handoff, send to AMCOS for EIA delegation
+   - Action: Create handoff, send to AMCOS for AMIA delegation
 
 4. **Release preparation**
    - User says: "Prepare release...", "Merge...", "Deploy..."
-   - Action: Create handoff, send to AMCOS for EIA delegation
+   - Action: Create handoff, send to AMCOS for AMIA delegation
 
 ### Route to AMCOS (Chief of Staff — governance role: `chief-of-staff`) when:
 
@@ -209,20 +209,20 @@ Routing is based on **agent specialization/skills**, not governance role. The go
 ## Communication Hierarchy
 
 ```
-USER <-> AMAMA (Assistant Manager) <-> AMCOS (Chief of Staff) <-> EAA (Architect skill agent)
-                                                            <-> EOA (Orchestrator skill agent)
-                                                            <-> EIA (Integrator skill agent)
+USER <-> AMAMA (Assistant Manager) <-> AMCOS (Chief of Staff) <-> AMAA (Architect skill agent)
+                                                            <-> AMOA (Orchestrator skill agent)
+                                                            <-> AMIA (Integrator skill agent)
 ```
 
 **Governance roles in this hierarchy:**
 - AMAMA: `manager`
 - AMCOS: `chief-of-staff`
-- EAA, EOA, EIA: `member` (with specialization expressed via skills/tags)
+- AMAA, AMOA, AMIA: `member` (with specialization expressed via skills/tags)
 
 **CRITICAL**:
 - AMAMA is the ONLY agent that communicates directly with the USER
 - AMCOS manages agent lifecycle and sits between AMAMA and specialist agents
-- EAA, EOA, and EIA do NOT communicate directly with each other or with AMAMA
+- AMAA, AMOA, and AMIA do NOT communicate directly with each other or with AMAMA
 - All specialist agent operations flow through AMCOS
 - All specialist agents use governance `role: 'member'` — their specialization is metadata, not a governance concept
 
@@ -325,7 +325,7 @@ All handoff files are stored in: `docs_dev/handoffs/`
 | Search designs by status | `amama_design_search.py --status` | Filter by draft/approved/deprecated |
 | List all designs | `amama_design_search.py --list` | Catalog of all design documents |
 
-### Route to EAA (Architect agent) for:
+### Route to AMAA (Architect agent) for:
 
 | Operation | User Intent Pattern | Handoff Content |
 |-----------|---------------------|-----------------|
@@ -360,7 +360,7 @@ User mentions design/spec/architecture
          │ YES           │ NO
          ▼               ▼
 ┌────────────────┐  ┌─────────────────┐
-│ Include design │  │ Route to EAA to │
+│ Include design │  │ Route to AMAA to │
 │ context in     │  │ create new      │
 │ routing        │  │ design          │
 └────────────────┘  └─────────────────┘
@@ -368,7 +368,7 @@ User mentions design/spec/architecture
 
 ## Module Orchestration Routing
 
-### Route to EOA (Orchestrator agent) for:
+### Route to AMOA (Orchestrator agent) for:
 
 | Operation | User Intent Pattern | Handoff Content |
 |-----------|---------------------|-----------------|
@@ -379,7 +379,7 @@ User mentions design/spec/architecture
 
 ### Orchestration Handoff Checklist
 
-When routing to EOA, handoff MUST include:
+When routing to AMOA, handoff MUST include:
 
 1. **Design Reference**: UUID of approved design
 2. **Module List**: Modules to implement (from design)
@@ -406,18 +406,18 @@ Copy this checklist and track your progress:
 
 ## Examples
 
-### Example 1: Routing a Design Request to EAA
+### Example 1: Routing a Design Request to AMAA
 
 ```
 # User says: "Design a user authentication system"
 
-# AMAMA identifies intent: "design" -> Route to AMCOS for EAA delegation (architect specialization, role: member)
+# AMAMA identifies intent: "design" -> Route to AMCOS for AMAA delegation (architect specialization, role: member)
 
 # Creates handoff
 ## Handoff: handoff-a1b2c3d4-amama-to-amcos.md
 
 **From**: AMAMA (Assistant Manager)
-**To**: AMCOS (Chief of Staff) -> EAA (Architect agent, role: member)
+**To**: AMCOS (Chief of Staff) -> AMAA (Architect agent, role: member)
 **Type**: task_assignment
 
 ### Request

@@ -12,9 +12,9 @@ Requires **AI Maestro >= 0.26.0** for inter-agent messaging, governance APIs, an
 
 ```
 USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (member)
-                                                    <-> EAA  (architect skills)
-                                                    <-> EOA  (orchestrator skills)
-                                                    <-> EIA  (integrator skills)
+                                                    <-> AMAA  (architect skills)
+                                                    <-> AMOA  (orchestrator skills)
+                                                    <-> AMIA  (integrator skills)
 ```
 
 **Governance Roles** (AI Maestro defines exactly 3):
@@ -23,7 +23,7 @@ USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (membe
 |------|-------|---------|
 | `manager` | AMAMA | Team manager, sole user contact, full admin authority |
 | `chief-of-staff` | AMCOS | Agent lifecycle, permissions, failure recovery |
-| `member` | EAA, EOA, EIA | All specialist agents (specialization via skills/tags) |
+| `member` | AMAA, AMOA, AMIA | All specialist agents (specialization via skills/tags) |
 
 ## Core Responsibilities
 

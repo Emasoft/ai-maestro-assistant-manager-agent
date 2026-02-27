@@ -88,9 +88,9 @@ Send an approval response using the `agent-messaging` skill:
 - **Subject**: "[APPROVED/REJECTED] <approval type> for <item>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
-  - `type`: `approval_response`
+  - `type`: `approval_decision`
   - `message`: User feedback (if any)
-  - `decision`: One of `approved`, `rejected`, or `needs_revision`
+  - `decision`: One of `approve`, `deny`, or `defer`
   - `conditions`: List of conditions that must be met (if approving with conditions)
   - `user_comment`: Optional verbatim user comment
 

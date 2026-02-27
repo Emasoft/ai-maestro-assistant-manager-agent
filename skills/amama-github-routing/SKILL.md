@@ -4,7 +4,7 @@ description: Use when routing GitHub operations (issues, PRs, projects, releases
 version: 2.0.0
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: false
 triggers:
   - User requests GitHub operation (issues, PRs, projects, Kanban)
@@ -19,7 +19,7 @@ triggers:
 - GitHub CLI (`gh`) must be installed and authenticated
 - AI Maestro messaging system must be running
 - AI Maestro team task files at `~/.aimaestro/teams/tasks-{teamId}.json`
-- EIA, EAA, and EOA agents must be available
+- AMIA, AMAA, and AMOA agents must be available
 
 ## Instructions
 
@@ -40,7 +40,7 @@ Copy this checklist and track your progress:
 - [ ] Determine owning team and apply team label
 - [ ] Check for design or module context
 - [ ] Consult appropriate decision tree (issue/PR/kanban/release)
-- [ ] Determine target agent (EIA/EAA/EOA/AMAMA)
+- [ ] Determine target agent (AMIA/AMAA/AMOA/AMAMA)
 - [ ] Prepare handoff document with required fields and team label
 - [ ] Include UUID tracking if design/module linked
 - [ ] Send handoff via AI Maestro
@@ -64,9 +64,9 @@ Copy this checklist and track your progress:
 8. [Release Operations Decision Tree](#release-operations-decision-tree)
    - 8.1 [Release Routing Matrix](#release-routing-matrix)
 9. [Handoff Content Requirements](#handoff-content-requirements)
-   - 9.1 [For EIA (Integrator) GitHub Handoffs](#for-eia-integrator-github-handoffs)
-   - 9.2 [For EAA (Architect) Design-GitHub Handoffs](#for-eaa-architect-design-github-handoffs)
-   - 9.3 [For EOA (Orchestrator) Module-GitHub Handoffs](#for-eoa-orchestrator-module-github-handoffs)
+   - 9.1 [For AMIA (Integrator) GitHub Handoffs](#for-eia-integrator-github-handoffs)
+   - 9.2 [For AMAA (Architect) Design-GitHub Handoffs](#for-eaa-architect-design-github-handoffs)
+   - 9.3 [For AMOA (Orchestrator) Module-GitHub Handoffs](#for-eoa-orchestrator-module-github-handoffs)
 10. [UUID Tracking Across GitHub Operations](#uuid-tracking-across-github-operations)
     - 10.1 [UUID Reference Format in GitHub](#uuid-reference-format-in-github)
     - 10.2 [Searching by UUID](#searching-by-uuid)
@@ -84,9 +84,9 @@ Copy this checklist and track your progress:
 This skill provides decision trees for routing GitHub operations to the appropriate specialist role while enforcing team boundaries via labels and syncing all task state changes with AI Maestro's centralized task system.
 
 Specialist roles:
-- **EIA** (Integrator Agent) - Primary GitHub handler
-- **EAA** (Architect Agent) - Design-linked GitHub operations
-- **EOA** (Orchestrator Agent) - Module-related GitHub operations
+- **AMIA** (Integrator Agent) - Primary GitHub handler
+- **AMAA** (Architect Agent) - Design-linked GitHub operations
+- **AMOA** (Orchestrator Agent) - Module-related GitHub operations
 
 ## Team Boundaries and Labels
 
@@ -233,7 +233,7 @@ If a GitHub project uses custom column names, AMAMA must maintain a mapping in:
 
 ## Primary Routing Principle
 
-**EIA is the default GitHub handler.** Route to EAA or EOA only when the operation has design or module context. All routing must respect team boundaries.
+**AMIA is the default GitHub handler.** Route to AMAA or AMOA only when the operation has design or module context. All routing must respect team boundaries.
 
 ## Master Decision Tree
 
@@ -296,11 +296,11 @@ GitHub operation requested
     ▼       ▼          ▼              ▼
 CREATE   UPDATE   ┌──────────┐   ┌──────────┐
 LINK     LINK     │ Route to │   │ Route to │
-    │       │     │ EOA      │   │ EIA      │
+    │       │     │ AMOA      │   │ AMIA      │
     │       │     └──────────┘   └──────────┘
     ▼       ▼
 ┌──────────────┐
-│ Route to EAA │
+│ Route to AMAA │
 │ with design  │
 │ UUID         │
 └──────────────┘
@@ -316,14 +316,14 @@ LINK     LINK     │ Route to │   │ Route to │
 
 | Scenario | Route To | Handoff Content | Team Label |
 |----------|----------|-----------------|------------|
-| Create bug report | EIA | Issue template, reproduction steps | Required: `team:{teamId}` |
-| Create feature request | EIA | Issue template, requirements | Required: `team:{teamId}` |
-| Create issue FROM design | EAA | Design UUID, section reference | Inherit from design team |
-| Link existing issue to design | EAA | Issue number, design UUID | Verify team match |
-| Update issue labels/status | EIA | Issue number, changes | Verify team ownership |
-| Close issue with verification | EIA | Issue number, verification results | Sync `completed` to task file |
-| Create module task issue | EOA | Module UUID, task details | Inherit from module team |
-| Track implementation progress | EOA | Issue number, module UUID | Sync status to task file |
+| Create bug report | AMIA | Issue template, reproduction steps | Required: `team:{teamId}` |
+| Create feature request | AMIA | Issue template, requirements | Required: `team:{teamId}` |
+| Create issue FROM design | AMAA | Design UUID, section reference | Inherit from design team |
+| Link existing issue to design | AMAA | Issue number, design UUID | Verify team match |
+| Update issue labels/status | AMIA | Issue number, changes | Verify team ownership |
+| Close issue with verification | AMIA | Issue number, verification results | Sync `completed` to task file |
+| Create module task issue | AMOA | Module UUID, task details | Inherit from module team |
+| Track implementation progress | AMOA | Issue number, module UUID | Sync status to task file |
 
 ## Pull Request Operations Decision Tree
 
@@ -344,7 +344,7 @@ LINK     LINK     │ Route to │   │ Route to │
     ▼           ▼           ▼            ▼
 ┌────────┐ ┌────────┐ ┌────────┐  ┌────────┐
 │ Route  │ │ Route  │ │ Route  │  │ Route  │
-│ to EIA │ │ to EIA │ │ to EIA │  │ to EIA │
+│ to AMIA │ │ to AMIA │ │ to AMIA │  │ to AMIA │
 └────────┘ └────────┘ └────────┘  └────────┘
     │           │           │            │
     └───────────┴───────────┴────────────┘
@@ -356,18 +356,18 @@ LINK     LINK     │ Route to │   │ Route to │
     └────────────────────────────────┘
 ```
 
-**Note**: All PR operations go to EIA. EIA may consult with EAA for design validation or EOA for implementation verification. PR merges trigger task status sync for linked issues.
+**Note**: All PR operations go to AMIA. AMIA may consult with AMAA for design validation or AMOA for implementation verification. PR merges trigger task status sync for linked issues.
 
 ### PR Routing Matrix
 
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
-| Create PR | EIA | Branch, description, linked issues, team label | Linked issues to `review` |
-| Review PR | EIA | PR number, review criteria | None |
-| Request changes | EIA | PR number, requested changes | Linked issues back to `in_progress` |
-| Approve PR | EIA | PR number, approval notes | None |
-| Merge PR | EIA | PR number, merge strategy | Linked issues to `completed` |
-| Close PR without merge | EIA | PR number, reason | Linked issues back to `in_progress` |
+| Create PR | AMIA | Branch, description, linked issues, team label | Linked issues to `review` |
+| Review PR | AMIA | PR number, review criteria | None |
+| Request changes | AMIA | PR number, requested changes | Linked issues back to `in_progress` |
+| Approve PR | AMIA | PR number, approval notes | None |
+| Merge PR | AMIA | PR number, merge strategy | Linked issues to `completed` |
+| Close PR without merge | AMIA | PR number, reason | Linked issues back to `in_progress` |
 
 ## Kanban/Projects Operations Decision Tree
 
@@ -389,7 +389,7 @@ LINK     LINK     │ Route to │   │ Route to │
     ▼           ▼           ▼               ▼
 ┌────────┐ ┌─────────────────────┐   ┌──────────┐
 │ Route  │ │ Is item a design    │   │ Handle   │
-│ to EIA │ │ or module?          │   │ locally  │
+│ to AMIA │ │ or module?          │   │ locally  │
 │ + sync │ └──────────┬──────────┘   │ (AMAMA)  │
 │ task   │            │              └──────────┘
 │ file   │    ┌───────┴───────┐
@@ -397,7 +397,7 @@ LINK     LINK     │ Route to │   │ Route to │
               ▼               ▼
         ┌──────────┐   ┌──────────┐
         │ Route to │   │ Route to │
-        │ EAA      │   │ EOA      │
+        │ AMAA      │   │ AMOA      │
         │ + sync   │   │ + sync   │
         │ task file│   │ task file│
         └──────────┘   └──────────┘
@@ -409,14 +409,14 @@ LINK     LINK     │ Route to │   │ Route to │
 
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
-| Sync board with GitHub | EIA | Project ID, sync scope | Full reconciliation with task file |
-| Create design card | EAA | Design UUID, card details, team label | Create task entry as `backlog` |
-| Create module card | EOA | Module UUID, card details, team label | Create task entry as `backlog` |
-| Move card (non-specific) | EIA | Card ID, target column, team label | Update task status |
-| Move design card | EAA | Card ID, design context | Update task status |
-| Move module card | EOA | Card ID, module context | Update task status |
+| Sync board with GitHub | AMIA | Project ID, sync scope | Full reconciliation with task file |
+| Create design card | AMAA | Design UUID, card details, team label | Create task entry as `backlog` |
+| Create module card | AMOA | Module UUID, card details, team label | Create task entry as `backlog` |
+| Move card (non-specific) | AMIA | Card ID, target column, team label | Update task status |
+| Move design card | AMAA | Card ID, design context | Update task status |
+| Move module card | AMOA | Card ID, module context | Update task status |
 | Query board status | AMAMA (local) | Project ID | Read from task file for fast response |
-| Archive completed items | EIA | Project ID, archive criteria | Remove `completed` tasks older than threshold |
+| Archive completed items | AMIA | Project ID, archive criteria | Remove `completed` tasks older than threshold |
 
 ### Kanban-to-Task Sync Procedure
 
@@ -440,14 +440,14 @@ When a Kanban card moves:
 └───────────────┬─────────────────┘
                 ▼
 ┌─────────────────────────────────┐
-│ All operations go to EIA        │
+│ All operations go to AMIA        │
 │ (Integrator owns releases)      │
 └───────────────┬─────────────────┘
                 │
                 ▼
           ┌──────────┐
           │ Route to │
-          │ EIA      │
+          │ AMIA      │
           └──────────┘
                 │
                 ▼
@@ -462,15 +462,15 @@ When a Kanban card moves:
 
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
-| Create release | EIA | Version, changelog, assets | Mark included issues `completed` |
-| Draft release notes | EIA | Version, commit range | None |
-| Tag version | EIA | Tag name, commit SHA | None |
-| Publish release | EIA | Release ID, publish settings | Mark included issues `completed` |
-| Update release | EIA | Release ID, changes | None |
+| Create release | AMIA | Version, changelog, assets | Mark included issues `completed` |
+| Draft release notes | AMIA | Version, commit range | None |
+| Tag version | AMIA | Tag name, commit SHA | None |
+| Publish release | AMIA | Release ID, publish settings | Mark included issues `completed` |
+| Update release | AMIA | Release ID, changes | None |
 
 ## Handoff Content Requirements
 
-### For EIA (Integrator) GitHub Handoffs
+### For AMIA (Integrator) GitHub Handoffs
 
 ```markdown
 ## GitHub Operation Handoff
@@ -493,7 +493,7 @@ When a Kanban card moves:
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 
-### For EAA (Architect) Design-GitHub Handoffs
+### For AMAA (Architect) Design-GitHub Handoffs
 
 ```markdown
 ## Design-GitHub Link Handoff
@@ -516,7 +516,7 @@ When a Kanban card moves:
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 
-### For EOA (Orchestrator) Module-GitHub Handoffs
+### For AMOA (Orchestrator) Module-GitHub Handoffs
 
 ```markdown
 ## Module-GitHub Handoff
@@ -584,7 +584,7 @@ gh issue list --label "team:backend" --search "AMAMA-LINK: module-uuid=def456"
 ### Ambiguous Routing
 
 If operation could go to multiple agents:
-1. Default to EIA (most GitHub operations)
+1. Default to AMIA (most GitHub operations)
 2. Ask user for clarification if design/module context unclear
 3. Log routing decision for audit
 
@@ -638,7 +638,7 @@ After routing a GitHub operation, AMAMA should produce:
 
 | Output Element | Content |
 |----------------|---------|
-| **Routing Decision** | Which agent (EIA/EAA/EOA/AMAMA) received the operation |
+| **Routing Decision** | Which agent (AMIA/AMAA/AMOA/AMAMA) received the operation |
 | **Operation Type** | Issue/PR/Kanban/Release |
 | **Team Label** | The team label applied to the operation |
 | **Handoff Status** | Sent/Queued/Failed |
@@ -656,7 +656,7 @@ Reference: {tracking_id}
 
 ## Examples
 
-### Example 1: Routing a Bug Report Issue to EIA with Team Label
+### Example 1: Routing a Bug Report Issue to AMIA with Team Label
 
 ```
 # User request
@@ -668,7 +668,7 @@ Reference: {tracking_id}
 3. Apply label: team:backend
 4. Is linked to design doc? NO
 5. Is module implementation task? NO
-6. Route to: EIA
+6. Route to: AMIA
 
 # Handoff content
 ## GitHub Operation Handoff
@@ -692,7 +692,7 @@ Reference: {tracking_id}
 - Task file: ~/.aimaestro/teams/tasks-backend.json
 
 # Output
-[ROUTED] GitHub issue → EIA
+[ROUTED] GitHub issue → AMIA
 Team: team:backend
 Handoff: Sent
 Task Sync: Synced → backlog
@@ -709,7 +709,7 @@ Reference: #52
 1. Operation type: KANBAN (MOVE CARD)
 2. Check team label on #45: team:backend
 3. Map "In Review" column → AI Maestro status: review
-4. Route to: EIA
+4. Route to: AMIA
 
 # Task sync
 Update ~/.aimaestro/teams/tasks-backend.json:
@@ -717,14 +717,14 @@ Update ~/.aimaestro/teams/tasks-backend.json:
 - Append to statusHistory
 
 # Output
-[ROUTED] GitHub kanban → EIA
+[ROUTED] GitHub kanban → AMIA
 Team: team:backend
 Handoff: Sent
 Task Sync: Synced → review
 Reference: #45
 ```
 
-### Example 3: Routing a Design-Linked Card to EAA
+### Example 3: Routing a Design-Linked Card to AMAA
 
 ```
 # User request
@@ -734,13 +734,13 @@ Reference: #45
 1. Operation type: KANBAN
 2. Determine team from design ownership: team:design
 3. Is item design or module? DESIGN
-4. Route to: EAA
+4. Route to: AMAA
 
 # Task sync
 Create entry in ~/.aimaestro/teams/tasks-design.json with status: backlog
 
 # Output
-[ROUTED] GitHub kanban → EAA
+[ROUTED] GitHub kanban → AMAA
 Team: team:design
 Handoff: Sent
 Task Sync: Synced → backlog

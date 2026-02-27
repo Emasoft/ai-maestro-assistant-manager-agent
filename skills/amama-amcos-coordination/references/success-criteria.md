@@ -34,7 +34,7 @@ Each operation has clear success criteria. Verify these before reporting complet
 User request: "Build a REST API for the inventory system"
 Parsed intent: {action: "build", target: "REST API", project: "inventory-system"}
 Routing: ORCHESTRATOR (via AMCOS)
-User notified: "Routing your request to AMCOS, who will coordinate with EOA to implement the REST API..."
+User notified: "Routing your request to AMCOS, who will coordinate with AMOA to implement the REST API..."
 ```
 
 **Self-Check Questions:**
@@ -154,7 +154,7 @@ Verify the response was sent by checking sent messages using the `agent-messagin
 ```
 User: "What's the status of the API implementation?"
 Status query sent to: amcos-inventory-system
-Response: "EOA reports 8/12 tasks complete, EIA completed code review, tests passing"
+Response: "AMOA reports 8/12 tasks complete, AMIA completed code review, tests passing"
 User notified: "API implementation is 67% complete. 8 of 12 tasks done. Code review passed. All tests passing."
 ```
 

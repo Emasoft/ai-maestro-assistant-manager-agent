@@ -31,7 +31,7 @@ AMCOS session: amcos-inventory-system
 
 Routing to: ORCHESTRATOR (via AMCOS)
 
-The EOA will coordinate the implementation. I'll keep you updated on progress. You can ask me for status anytime.
+The AMOA will coordinate the implementation. I'll keep you updated on progress. You can ask me for status anytime.
 ```
 
 **Actions Taken**:
@@ -239,7 +239,7 @@ After 3 failed creation attempts:
    - Attempt 3: <error>
 
    Impact:
-   - Cannot route work to specialist agents (EOA, EAA, EIA)
+   - Cannot route work to specialist agents (AMOA, AMAA, AMIA)
    - Project directory and git repo are ready
    - You can still interact with me for planning
 

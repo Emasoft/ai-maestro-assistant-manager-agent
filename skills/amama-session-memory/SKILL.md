@@ -7,7 +7,7 @@ compatibility: Requires AI Maestro installed.
 metadata:
   author: Emasoft
 context: fork
-agent: amama-main
+agent: amama-assistant-manager-main-agent
 user-invocable: false
 triggers:
   - when session starts and user context must be restored
@@ -62,7 +62,7 @@ AI Maestro's subconscious memory system automatically indexes conversation histo
 
 - **Implicit preference detection**: Searching past conversations for patterns like repeated format choices, tone corrections, or decision styles without AMAMA having explicitly recorded them.
 - **Decision context retrieval**: When a decision was made in a conversation but not formally logged, semantic search over history can recover the context.
-- **Cross-agent memory**: Preferences expressed to other agents (EIA, EAA, EOA) are indexed and accessible to AMAMA.
+- **Cross-agent memory**: Preferences expressed to other agents (AMIA, AMAA, AMOA) are indexed and accessible to AMAMA.
 
 **Query interface**:
 ```bash
@@ -213,7 +213,7 @@ I've loaded your previous context (via AI Maestro memory):
 - You prefer concise responses
 - Pending: database schema choice (deferred)
 - Last state: monitoring
-- Cross-agent note: EAA recorded you prefer modular designs
+- Cross-agent note: AMAA recorded you prefer modular designs
 
 Would you like to continue where we left off?
 ```
@@ -485,7 +485,7 @@ Copy this checklist and track your progress:
 - [ ] Test session continuity across compaction
 - [ ] Test CozoDB failure and fallback path
 - [ ] Test semantic search retrieval of implicit preferences
-- [ ] Test cross-agent memory (preferences from EIA/EAA/EOA)
+- [ ] Test cross-agent memory (preferences from AMIA/AMAA/AMOA)
 - [ ] Test GitHub issue context integration
 
 ## Output
@@ -539,8 +539,8 @@ I've loaded your context from AI Maestro's agent database:
 - High technical detail (stable - 3 sessions)
 
 **Cross-Agent Insights** (from subconscious memory):
-- EAA noted you prefer modular architecture patterns
-- EOA recorded you like task breakdowns in checklists
+- AMAA noted you prefer modular architecture patterns
+- AMOA recorded you like task breakdowns in checklists
 
 **Pending Items**:
 - Database schema choice (deferred)

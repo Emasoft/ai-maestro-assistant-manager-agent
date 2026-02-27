@@ -21,9 +21,9 @@ When AMCOS sends an approval request, AMAMA responds with one of:
 
 | Decision | Code | Effect |
 |----------|------|--------|
-| **Approved** | `approved` | AMCOS proceeds with the operation |
-| **Rejected** | `rejected` | AMCOS cancels the operation |
-| **Needs Revision** | `needs-revision` | AMCOS must modify and resubmit |
+| **Approve** | `approve` | AMCOS proceeds with the operation |
+| **Deny** | `deny` | AMCOS cancels the operation |
+| **Defer** | `defer` | AMCOS must provide more information or modify and resubmit |
 
 ### When to Use Each Decision
 
@@ -52,7 +52,7 @@ AMAMA sends responses using the `agent-messaging` skill:
 - **Subject**: "AMAMA Approval Response: <request_id>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
-  - `type`: `approval-response`
+  - `type`: `approval_decision`
   - `request_id`: Must match the original request ID from AMCOS
   - `decision`: One of `approved`, `rejected`, or `needs-revision`
   - `comment`: Optional explanation for the decision
@@ -66,7 +66,7 @@ AMAMA sends responses using the `agent-messaging` skill:
 | Field | Required | Description |
 |-------|----------|-------------|
 | `request_id` | Yes | Must match the original request ID from AMCOS |
-| `decision` | Yes | One of: `approved`, `rejected`, `needs-revision` |
+| `decision` | Yes | One of: `approve`, `deny`, `defer` |
 | `comment` | No | Explanation for the decision |
 | `conditions` | No | Array of conditions AMCOS must follow if approved |
 | `responded_at` | Yes | ISO-8601 timestamp of the response |
