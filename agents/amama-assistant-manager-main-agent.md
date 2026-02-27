@@ -1,6 +1,6 @@
 ---
 name: amama-assistant-manager-main-agent
-description: Assistant Manager main agent - user's right hand, sole interlocutor with user. Governance role: manager. Requires AI Maestro installed.
+description: "Assistant Manager main agent - user's right hand, sole interlocutor with user. Governance role manager. Requires AI Maestro installed."
 model: opus
 skills:
   - amama-user-communication
