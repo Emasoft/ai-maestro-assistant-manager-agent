@@ -166,8 +166,12 @@ NAME_PATTERN = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
 REQUIRED_README_SECTIONS = {
     "installation": re.compile(r"^#{1,3}\s*installation", re.IGNORECASE | re.MULTILINE),
     "update": re.compile(r"^#{1,3}\s*(update|updating)", re.IGNORECASE | re.MULTILINE),
-    "uninstall": re.compile(r"^#{1,3}\s*(uninstall|remove|removal)", re.IGNORECASE | re.MULTILINE),
-    "troubleshooting": re.compile(r"^#{1,3}\s*troubleshooting", re.IGNORECASE | re.MULTILINE),
+    "uninstall": re.compile(
+        r"^#{1,3}\s*(uninstall|remove|removal)", re.IGNORECASE | re.MULTILINE
+    ),
+    "troubleshooting": re.compile(
+        r"^#{1,3}\s*troubleshooting", re.IGNORECASE | re.MULTILINE
+    ),
 }
 
 # Required troubleshooting topics that should be documented
@@ -407,12 +411,16 @@ def validate_plugin_entry(
     # Validate source configuration
     source = plugin.get("source")
     if source is not None:
-        results.extend(validate_plugin_source(plugin, plugin_id, marketplace_dir, json_path))
+        results.extend(
+            validate_plugin_source(plugin, plugin_id, marketplace_dir, json_path)
+        )
 
     # Validate local path if present
     local_path = plugin.get("path")
     if local_path is not None:
-        results.extend(validate_local_path(local_path, plugin_id, marketplace_dir, json_path))
+        results.extend(
+            validate_local_path(local_path, plugin_id, marketplace_dir, json_path)
+        )
 
     # Validate repository URL if present
     repository = plugin.get("repository")
@@ -584,7 +592,11 @@ def validate_plugin_source(
             local_plugin_path = marketplace_dir / plugin_name
             # Only warn if it exists as a git submodule (has .git file), not just a directory
             git_marker = local_plugin_path / ".git"
-            if local_plugin_path.exists() and local_plugin_path.is_dir() and git_marker.exists():
+            if (
+                local_plugin_path.exists()
+                and local_plugin_path.is_dir()
+                and git_marker.exists()
+            ):
                 results.append(
                     ValidationResult(
                         level="MAJOR",
@@ -957,7 +969,9 @@ def validate_readme_content(readme_path: Path) -> list[ValidationResult]:
                 ValidationResult(
                     level="MINOR",
                     category="deployment",
-                    message=(f"README.md Installation section may be incomplete. Missing: {', '.join(missing_steps)}"),
+                    message=(
+                        f"README.md Installation section may be incomplete. Missing: {', '.join(missing_steps)}"
+                    ),
                     file=str(readme_path),
                     suggestion=(
                         "Include steps for: add marketplace, install plugin, verify installation, restart Claude Code"
@@ -1054,7 +1068,10 @@ def validate_git_submodules(
         for plugin in plugins:
             plugin_name = plugin.get("name", "")
             source = plugin.get("source", {})
-            is_url_source = isinstance(source, dict) and source.get("source") in ("github", "url")
+            is_url_source = isinstance(source, dict) and source.get("source") in (
+                "github",
+                "url",
+            )
             if not is_url_source:
                 all_url_based = False
             plugin_path = marketplace_dir / plugin_name
@@ -1126,7 +1143,9 @@ def validate_git_submodules(
                 expected_repo = f"https://github.com/{source.get('repo', '')}"
             elif source_type == "url":
                 expected_repo = source.get("url")
-        elif isinstance(source, str) and (source.startswith("http") or source.startswith("git@")):
+        elif isinstance(source, str) and (
+            source.startswith("http") or source.startswith("git@")
+        ):
             expected_repo = source
 
         # Check if plugin directory exists
@@ -1147,11 +1166,16 @@ def validate_git_submodules(
             continue
 
         # Check if plugin is a submodule
-        if plugin_name not in submodules and plugin_name not in [p.split("/")[-1] for p in submodules]:
+        if plugin_name not in submodules and plugin_name not in [
+            p.split("/")[-1] for p in submodules
+        ]:
             # Check if it's in a subdirectory
             found = False
             for submod_path in submodules:
-                if submod_path.endswith(f"/{plugin_name}") or submod_path == plugin_name:
+                if (
+                    submod_path.endswith(f"/{plugin_name}")
+                    or submod_path == plugin_name
+                ):
                     found = True
                     break
 
@@ -1357,7 +1381,11 @@ def validate_marketplace_private_info(
                     continue
 
                 rel_dir = Path(dirpath).relative_to(root_dir)
-                rel_path = f"{base_rel}/{rel_dir}/{filename}" if base_rel else f"{rel_dir}/{filename}"
+                rel_path = (
+                    f"{base_rel}/{rel_dir}/{filename}"
+                    if base_rel
+                    else f"{rel_dir}/{filename}"
+                )
                 rel_path = rel_path.replace("./", "").lstrip("/")
 
                 scan_file(filepath, rel_path)
@@ -1666,7 +1694,9 @@ def validate_marketplace(marketplace_path: Path) -> ValidationReport:
     # Validate plugins
     plugins = data.get("plugins")
     if plugins is not None:
-        plugin_names, plugin_results = validate_plugins_array(plugins, marketplace_dir, json_path)
+        plugin_names, plugin_results = validate_plugins_array(
+            plugins, marketplace_dir, json_path
+        )
         report.plugins_found = plugin_names
         report.results.extend(plugin_results)
 
@@ -1684,7 +1714,9 @@ def validate_marketplace(marketplace_path: Path) -> ValidationReport:
             report.results.extend(github_source_results)
 
             # Scan for private info leaks (usernames, home paths)
-            private_info_results = validate_marketplace_private_info(marketplace_dir, plugins)
+            private_info_results = validate_marketplace_private_info(
+                marketplace_dir, plugins
+            )
             report.results.extend(private_info_results)
 
             # Scan GitHub Actions workflows for dangerous inline Python patterns
@@ -1846,7 +1878,11 @@ Examples:
         action="store_true",
         help="Output results as JSON",
     )
-    parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Strict mode — NIT issues also block validation",
+    )
 
     args = parser.parse_args()
 
@@ -1857,7 +1893,10 @@ Examples:
     if not marketplace_path.exists():
         print(f"Error: {marketplace_path} does not exist", file=sys.stderr)
         return 1
-    if marketplace_path.is_dir() and not (marketplace_path / "marketplace.json").exists():
+    if (
+        marketplace_path.is_dir()
+        and not (marketplace_path / "marketplace.json").exists()
+    ):
         print(
             f"Error: No marketplace.json found at {marketplace_path}\n"
             f"Expected a marketplace directory with marketplace.json.",
@@ -1865,7 +1904,9 @@ Examples:
         )
         return 1
     if marketplace_path.is_file() and marketplace_path.name != "marketplace.json":
-        print(f"Error: {marketplace_path} is not a marketplace.json file", file=sys.stderr)
+        print(
+            f"Error: {marketplace_path} is not a marketplace.json file", file=sys.stderr
+        )
         return 1
 
     # Run validation

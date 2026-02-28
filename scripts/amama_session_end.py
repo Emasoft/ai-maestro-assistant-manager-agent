@@ -211,12 +211,10 @@ def update_session_end_marker(memory_root: Path) -> bool:
     if "## Last Session" in content:
         # Update existing marker
         import re
+
         pattern = r"## Last Session\s*\n\*\*Ended\*\*: [^\n]+"
         new_content = re.sub(
-            pattern,
-            f"## Last Session\n\n**Ended**: {timestamp}",
-            content,
-            count=1
+            pattern, f"## Last Session\n\n**Ended**: {timestamp}", content, count=1
         )
     else:
         # Add marker at the end

@@ -215,7 +215,9 @@ def write_yaml_file(path: Path, data: dict[str, Any]) -> bool:
     """Write data to a YAML file."""
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        content = yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False)
+        content = yaml.dump(
+            data, default_flow_style=False, allow_unicode=True, sort_keys=False
+        )
         path.write_text(content, encoding="utf-8")
         return True
     except Exception as e:
@@ -308,15 +310,21 @@ def create_template_files(root: Path, platforms: list[str]) -> list[Path]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize design folder structure for assistant-manager")
-    parser.add_argument("--root", default=DEFAULT_ROOT, help="Root folder for design documents")
+    parser = argparse.ArgumentParser(
+        description="Initialize design folder structure for assistant-manager"
+    )
+    parser.add_argument(
+        "--root", default=DEFAULT_ROOT, help="Root folder for design documents"
+    )
     parser.add_argument(
         "--platforms",
         nargs="+",
         default=DEFAULT_PLATFORMS,
         help="Platforms to create folders for (default: shared)",
     )
-    parser.add_argument("--force", action="store_true", help="Overwrite existing index file")
+    parser.add_argument(
+        "--force", action="store_true", help="Overwrite existing index file"
+    )
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
     args = parser.parse_args()
@@ -343,7 +351,9 @@ def main() -> int:
     if index_file.exists() and not args.force:
         if args.json:
             results["success"] = False
-            results["errors"].append(f"Design folder already initialized at {root}. Use --force to reinitialize.")
+            results["errors"].append(
+                f"Design folder already initialized at {root}. Use --force to reinitialize."
+            )
             print(json.dumps(results, indent=2))
         else:
             print(f"Design folder already initialized at {root}")

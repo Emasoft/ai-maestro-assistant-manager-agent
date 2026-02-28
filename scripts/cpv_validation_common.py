@@ -236,24 +236,41 @@ SKIP_DIRS = {
 # Note: Generic API Key pattern excludes env var placeholders like ${VAR} or $VAR
 SECRET_PATTERNS = [
     (re.compile(r"AKIA[0-9A-Z]{16}"), "AWS Access Key"),
-    (re.compile(r"-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----"), "Private Key"),
+    (
+        re.compile(r"-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----"),
+        "Private Key",
+    ),
     (re.compile(r"ghp_[a-zA-Z0-9]{36}"), "GitHub Personal Access Token"),
     (re.compile(r"sk-[a-zA-Z0-9]{20,}"), "API Key (sk-... format)"),
     (re.compile(r"xox[baprs]-[0-9a-zA-Z-]+"), "Slack Token"),
-    (re.compile(r"github_pat_[a-zA-Z0-9_]{22,}"), "GitHub Fine-Grained Personal Access Token"),
+    (
+        re.compile(r"github_pat_[a-zA-Z0-9_]{22,}"),
+        "GitHub Fine-Grained Personal Access Token",
+    ),
     (re.compile(r"AIza[0-9A-Za-z\-_]{35}"), "Google API Key"),
     (re.compile(r"sk_live_[a-zA-Z0-9]{24,}"), "Stripe Secret Key"),
     (re.compile(r"pk_live_[a-zA-Z0-9]{24,}"), "Stripe Publishable Key"),
     (re.compile(r"sk-ant-[a-zA-Z0-9\-_]{80,}"), "Anthropic API Key"),
     (re.compile(r"npm_[a-zA-Z0-9]{36}"), "npm Access Token"),
-    (re.compile(r"://[^:\s]+:[^@\s]+@[^\s]+"), "Database Connection String with Credentials"),
+    (
+        re.compile(r"://[^:\s]+:[^@\s]+@[^\s]+"),
+        "Database Connection String with Credentials",
+    ),
     (re.compile(r"SG\.[a-zA-Z0-9\-_]{22}\.[a-zA-Z0-9\-_]{43}"), "SendGrid API Key"),
     # Generic API key pattern excludes environment variable placeholders (${VAR} or $VAR)
-    (re.compile(r"api[_-]?key['\"]?\s*[:=]\s*['\"](?!\$[\{A-Z_])[^'\"]{20,}['\"]", re.I), "Generic API Key"),
+    (
+        re.compile(
+            r"api[_-]?key['\"]?\s*[:=]\s*['\"](?!\$[\{A-Z_])[^'\"]{20,}['\"]", re.I
+        ),
+        "Generic API Key",
+    ),
     # JWT tokens (base64url-encoded header.payload, signature optional)
     (re.compile(r"eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}"), "JWT Token"),
     # AWS Secret Access Key (40-char base64 string)
-    (re.compile(r"aws_secret_access_key\s*[:=]\s*['\"]?[A-Za-z0-9/+=]{40}", re.I), "AWS Secret Access Key"),
+    (
+        re.compile(r"aws_secret_access_key\s*[:=]\s*['\"]?[A-Za-z0-9/+=]{40}", re.I),
+        "AWS Secret Access Key",
+    ),
 ]
 
 # Generic example usernames that are acceptable in documentation
@@ -301,9 +318,17 @@ USER_PATH_PATTERNS = [
 # Plugins should use relative paths or ${CLAUDE_PLUGIN_ROOT} / ${HOME}
 ABSOLUTE_PATH_PATTERNS = [
     # macOS/Linux home directory paths — CRITICAL portability issue
-    (re.compile(r'(?<![#!])(/(?:Users|home)/[^/\s"\'`>\]})]+/[^\s"\'`>\]})]+)'), "home directory path"),
+    (
+        re.compile(r'(?<![#!])(/(?:Users|home)/[^/\s"\'`>\]})]+/[^\s"\'`>\]})]+)'),
+        "home directory path",
+    ),
     # Windows home directory paths
-    (re.compile(r'(?<!\$\{)(?<!\$)([A-Z]:[\\\/]Users[\\\/][^\s"\'`>\]})]+)', re.IGNORECASE), "Windows home path"),
+    (
+        re.compile(
+            r'(?<!\$\{)(?<!\$)([A-Z]:[\\\/]Users[\\\/][^\s"\'`>\]})]+)', re.IGNORECASE
+        ),
+        "Windows home path",
+    ),
     # Unix system paths — non-portable, use env vars or relative paths instead
     # The (?<![#!]) lookbehind skips shebangs like #!/usr/bin/env or #!/bin/bash
     (
@@ -422,7 +447,9 @@ PRIVATE_USERNAMES: set[str] = _get_private_usernames()
 
 # Patterns for detecting private paths with actual usernames
 # More specific than USER_PATH_PATTERNS - these flag as CRITICAL
-def build_private_path_patterns(usernames: set[str]) -> list[tuple[re.Pattern[str], str]]:
+def build_private_path_patterns(
+    usernames: set[str],
+) -> list[tuple[re.Pattern[str], str]]:
     """Build regex patterns for detecting private usernames in paths.
 
     Args:
@@ -441,7 +468,10 @@ def build_private_path_patterns(usernames: set[str]) -> list[tuple[re.Pattern[st
                     re.compile(rf"/Users/{escaped}(/|$)", re.IGNORECASE),
                     f"macOS private path with username '{username}'",
                 ),
-                (re.compile(rf"/home/{escaped}(/|$)", re.IGNORECASE), f"Linux private path with username '{username}'"),
+                (
+                    re.compile(rf"/home/{escaped}(/|$)", re.IGNORECASE),
+                    f"Linux private path with username '{username}'",
+                ),
                 (
                     re.compile(rf"C:\\Users\\{escaped}(\\|$)", re.IGNORECASE),
                     f"Windows private path with username '{username}'",
@@ -451,7 +481,10 @@ def build_private_path_patterns(usernames: set[str]) -> list[tuple[re.Pattern[st
                     f"Windows private path with username '{username}'",
                 ),
                 # Also catch username alone in suspicious contexts
-                (re.compile(rf"(?<=/){escaped}(?=/)", re.IGNORECASE), f"username '{username}' in path"),
+                (
+                    re.compile(rf"(?<=/){escaped}(?=/)", re.IGNORECASE),
+                    f"username '{username}' in path",
+                ),
             ]
         )
     return patterns
@@ -535,7 +568,14 @@ def get_gitignored_files(root_path: Path) -> set[str]:
     # Try using git check-ignore for accuracy (respects .gitignore hierarchy)
     try:
         result = subprocess.run(
-            ["git", "ls-files", "--ignored", "--exclude-standard", "--others", "--directory"],
+            [
+                "git",
+                "ls-files",
+                "--ignored",
+                "--exclude-standard",
+                "--others",
+                "--directory",
+            ],
             cwd=root_path,
             capture_output=True,
             text=True,
@@ -609,7 +649,9 @@ def is_path_gitignored(rel_path: str, patterns: list[str]) -> bool:
         if pattern.startswith("!"):
             neg_pattern = pattern[1:]
             # If the path matches the negation pattern, it should NOT be ignored
-            if fnmatch.fnmatch(rel_path, neg_pattern) or fnmatch.fnmatch(str(Path(rel_path).name), neg_pattern):
+            if fnmatch.fnmatch(rel_path, neg_pattern) or fnmatch.fnmatch(
+                str(Path(rel_path).name), neg_pattern
+            ):
                 return False
             continue
 
@@ -643,7 +685,12 @@ def is_path_gitignored(rel_path: str, patterns: list[str]) -> bool:
                 continue
             else:
                 # General ** — replace with regex-like matching
-                regex = pattern.replace(".", r"\.").replace("**", ".*").replace("*", "[^/]*").replace("?", "[^/]")
+                regex = (
+                    pattern.replace(".", r"\.")
+                    .replace("**", ".*")
+                    .replace("*", "[^/]*")
+                    .replace("?", "[^/]")
+                )
                 if re.match(regex + "$", rel_path):
                     return True
                 continue
@@ -665,7 +712,9 @@ def is_path_gitignored(rel_path: str, patterns: list[str]) -> bool:
     return False
 
 
-def get_skip_dirs_with_gitignore(root_path: Path, additional_skip: set[str] | None = None) -> set[str]:
+def get_skip_dirs_with_gitignore(
+    root_path: Path, additional_skip: set[str] | None = None
+) -> set[str]:
     """Get combined set of directories to skip (built-in + gitignored).
 
     Args:
@@ -732,7 +781,10 @@ class ValidationResult:
 
     def to_dict(self) -> dict[str, str | int | bool | None]:
         """Convert to dictionary for JSON serialization."""
-        result: dict[str, str | int | bool | None] = {"level": self.level, "message": self.message}
+        result: dict[str, str | int | bool | None] = {
+            "level": self.level,
+            "message": self.message,
+        }
         if self.file is not None:
             result["file"] = self.file
         if self.line is not None:
@@ -805,7 +857,9 @@ class ValidationReport:
         fix_id: str | None = None,
     ) -> None:
         """Add a validation result."""
-        self.results.append(ValidationResult(level, message, file, line, phase, fixable, fix_id))
+        self.results.append(
+            ValidationResult(level, message, file, line, phase, fixable, fix_id)
+        )
 
     def passed(self, message: str, file: str | None = None) -> None:
         """Add a passed check."""
@@ -815,23 +869,33 @@ class ValidationReport:
         """Add an info message."""
         self.add("INFO", message, file)
 
-    def warning(self, message: str, file: str | None = None, line: int | None = None) -> None:
+    def warning(
+        self, message: str, file: str | None = None, line: int | None = None
+    ) -> None:
         """Add a warning — always reported, never blocks validation (even in --strict)."""
         self.add("WARNING", message, file, line)
 
-    def nit(self, message: str, file: str | None = None, line: int | None = None) -> None:
+    def nit(
+        self, message: str, file: str | None = None, line: int | None = None
+    ) -> None:
         """Add a nit — blocks validation only in --strict mode."""
         self.add("NIT", message, file, line)
 
-    def minor(self, message: str, file: str | None = None, line: int | None = None) -> None:
+    def minor(
+        self, message: str, file: str | None = None, line: int | None = None
+    ) -> None:
         """Add a minor issue."""
         self.add("MINOR", message, file, line)
 
-    def major(self, message: str, file: str | None = None, line: int | None = None) -> None:
+    def major(
+        self, message: str, file: str | None = None, line: int | None = None
+    ) -> None:
         """Add a major issue."""
         self.add("MAJOR", message, file, line)
 
-    def critical(self, message: str, file: str | None = None, line: int | None = None) -> None:
+    def critical(
+        self, message: str, file: str | None = None, line: int | None = None
+    ) -> None:
         """Add a critical issue."""
         self.add("CRITICAL", message, file, line)
 
@@ -914,7 +978,15 @@ class ValidationReport:
 
     def count_by_level(self) -> dict[str, int]:
         """Get count of results by level."""
-        counts: dict[str, int] = {"CRITICAL": 0, "MAJOR": 0, "MINOR": 0, "NIT": 0, "WARNING": 0, "INFO": 0, "PASSED": 0}
+        counts: dict[str, int] = {
+            "CRITICAL": 0,
+            "MAJOR": 0,
+            "MINOR": 0,
+            "NIT": 0,
+            "WARNING": 0,
+            "INFO": 0,
+            "PASSED": 0,
+        }
         for r in self.results:
             counts[r.level] = counts.get(r.level, 0) + 1
         return counts
@@ -980,7 +1052,11 @@ class ValidationReport:
         Returns:
             List of error results from the specified phase
         """
-        return [r for r in self.results if r.phase == phase and r.level in ("CRITICAL", "MAJOR", "MINOR")]
+        return [
+            r
+            for r in self.results
+            if r.phase == phase and r.level in ("CRITICAL", "MAJOR", "MINOR")
+        ]
 
     # =========================================================================
     # Partial Validation Support Methods
@@ -1154,7 +1230,9 @@ class ValidationContext:
         if condition:
             self.report.passed(f"[{self.name}] {message}", file)
         else:
-            self.report.add(level, f"[{self.name}] {message}", file, line, self.current_phase)
+            self.report.add(
+                level, f"[{self.name}] {message}", file, line, self.current_phase
+            )
         return condition
 
     def require(
@@ -1199,11 +1277,19 @@ class ValidationContext:
                 self.report.add_valid_item(item)
             else:
                 self.report.add_failed_item(item)
-                self.report.add("MAJOR", f"Validation failed for {item_name}", phase=self.current_phase)
+                self.report.add(
+                    "MAJOR",
+                    f"Validation failed for {item_name}",
+                    phase=self.current_phase,
+                )
             return is_valid
         except Exception as e:
             self.report.add_failed_item(item)
-            self.report.add("CRITICAL", f"Validation error for {item_name}: {e}", phase=self.current_phase)
+            self.report.add(
+                "CRITICAL",
+                f"Validation error for {item_name}: {e}",
+                phase=self.current_phase,
+            )
             return False
 
     def add_error(
@@ -1221,7 +1307,9 @@ class ValidationContext:
             file: Optional file path
             line: Optional line number
         """
-        self.report.add(level, f"[{self.name}] {message}", file, line, self.current_phase)
+        self.report.add(
+            level, f"[{self.name}] {message}", file, line, self.current_phase
+        )
 
     def add_fixable(
         self,
@@ -1380,7 +1468,9 @@ def format_result(result: ValidationResult, show_file: bool = True) -> str:
     return "".join(parts)
 
 
-def print_report_summary(report: ValidationReport, title: str = "Validation Report") -> None:
+def print_report_summary(
+    report: ValidationReport, title: str = "Validation Report"
+) -> None:
     """Print a formatted summary of a validation report."""
     counts = report.count_by_level()
     score = report.score
@@ -1400,7 +1490,13 @@ def print_report_summary(report: ValidationReport, title: str = "Validation Repo
     print(f"{COLORS['PASSED']}PASSED:   {counts['PASSED']}{COLORS['RESET']}")
 
     # Print score and grade
-    grade_color = COLORS["PASSED"] if score >= 80 else COLORS["MAJOR"] if score >= 60 else COLORS["CRITICAL"]
+    grade_color = (
+        COLORS["PASSED"]
+        if score >= 80
+        else COLORS["MAJOR"]
+        if score >= 60
+        else COLORS["CRITICAL"]
+    )
     print(
         f"\n{COLORS['BOLD']}Health Score:{COLORS['RESET']} {grade_color}{score}/100 (Grade: {grade}){COLORS['RESET']}"
     )
@@ -1410,11 +1506,15 @@ def print_report_summary(report: ValidationReport, title: str = "Validation Repo
     if exit_code == EXIT_OK:
         print(f"\n{COLORS['PASSED']}✓ All checks passed{COLORS['RESET']}")
     elif exit_code == EXIT_CRITICAL:
-        print(f"\n{COLORS['CRITICAL']}✗ Critical issues found - must fix before use{COLORS['RESET']}")
+        print(
+            f"\n{COLORS['CRITICAL']}✗ Critical issues found - must fix before use{COLORS['RESET']}"
+        )
     elif exit_code == EXIT_MAJOR:
         print(f"\n{COLORS['MAJOR']}! Major issues found - should fix{COLORS['RESET']}")
     else:
-        print(f"\n{COLORS['MINOR']}~ Minor issues found - recommended to fix{COLORS['RESET']}")
+        print(
+            f"\n{COLORS['MINOR']}~ Minor issues found - recommended to fix{COLORS['RESET']}"
+        )
 
 
 def print_results_by_level(report: ValidationReport, verbose: bool = False) -> None:
@@ -1437,19 +1537,25 @@ def print_results_by_level(report: ValidationReport, verbose: bool = False) -> N
     for level in ["CRITICAL", "MAJOR", "MINOR"]:
         results = by_level[level]
         if results:
-            print(f"\n{COLORS[level]}--- {level} ISSUES ({len(results)}) ---{COLORS['RESET']}")
+            print(
+                f"\n{COLORS[level]}--- {level} ISSUES ({len(results)}) ---{COLORS['RESET']}"
+            )
             for result in results:
                 print(f"  {format_result(result)}")
 
     # Always print NIT (blocks in --strict mode)
     if by_level["NIT"]:
-        print(f"\n{COLORS['NIT']}--- NIT ISSUES ({len(by_level['NIT'])}) [blocks in --strict] ---{COLORS['RESET']}")
+        print(
+            f"\n{COLORS['NIT']}--- NIT ISSUES ({len(by_level['NIT'])}) [blocks in --strict] ---{COLORS['RESET']}"
+        )
         for result in by_level["NIT"]:
             print(f"  {format_result(result)}")
 
     # Always print WARNING (never blocks, but always visible)
     if by_level["WARNING"]:
-        print(f"\n{COLORS['WARNING']}--- WARNINGS ({len(by_level['WARNING'])}) [non-blocking] ---{COLORS['RESET']}")
+        print(
+            f"\n{COLORS['WARNING']}--- WARNINGS ({len(by_level['WARNING'])}) [non-blocking] ---{COLORS['RESET']}"
+        )
         for result in by_level["WARNING"]:
             print(f"  {format_result(result)}")
 
@@ -1458,7 +1564,9 @@ def print_results_by_level(report: ValidationReport, verbose: bool = False) -> N
         for level in ["INFO", "PASSED"]:
             results = by_level[level]
             if results:
-                print(f"\n{COLORS[level]}--- {level} ({len(results)}) ---{COLORS['RESET']}")
+                print(
+                    f"\n{COLORS[level]}--- {level} ({len(results)}) ---{COLORS['RESET']}"
+                )
                 for result in results:
                     print(f"  {format_result(result)}")
 
@@ -1468,7 +1576,9 @@ def print_results_by_level(report: ValidationReport, verbose: bool = False) -> N
 # =============================================================================
 
 
-def check_utf8_encoding(content: bytes, report: ValidationReport, filename: str) -> bool:
+def check_utf8_encoding(
+    content: bytes, report: ValidationReport, filename: str
+) -> bool:
     """Check file is UTF-8 encoded without BOM.
 
     Args:
@@ -1615,7 +1725,11 @@ def scan_directory_for_private_info(
     # Combine skip dirs (includes gitignored dirs if respect_gitignore=True)
     if respect_gitignore:
         dirs_to_skip = get_skip_dirs_with_gitignore(root_path, skip_dirs)
-        gitignore_patterns = parse_gitignore(root_path / ".gitignore") if (root_path / ".gitignore").exists() else []
+        gitignore_patterns = (
+            parse_gitignore(root_path / ".gitignore")
+            if (root_path / ".gitignore").exists()
+            else []
+        )
     else:
         dirs_to_skip = set(PRIVATE_INFO_SKIP_DIRS)
         if skip_dirs:
@@ -1633,7 +1747,11 @@ def scan_directory_for_private_info(
             rel_path = str(rel_dir / filename) if str(rel_dir) != "." else filename
 
             # Skip gitignored files
-            if respect_gitignore and gitignore_patterns and is_path_gitignored(rel_path, gitignore_patterns):
+            if (
+                respect_gitignore
+                and gitignore_patterns
+                and is_path_gitignored(rel_path, gitignore_patterns)
+            ):
                 continue
 
             # Check only relevant file types
@@ -1642,7 +1760,9 @@ def scan_directory_for_private_info(
 
             files_checked += 1
 
-            issues = scan_file_for_private_info(filepath, report, rel_path, additional_usernames)
+            issues = scan_file_for_private_info(
+                filepath, report, rel_path, additional_usernames
+            )
             total_issues += issues
 
     return files_checked, total_issues
@@ -1666,12 +1786,16 @@ def validate_no_private_info(
         report: ValidationReport to add results to
         additional_usernames: Extra usernames to check beyond PRIVATE_USERNAMES
     """
-    files_checked, issues_found = scan_directory_for_private_info(root_path, report, additional_usernames)
+    files_checked, issues_found = scan_directory_for_private_info(
+        root_path, report, additional_usernames
+    )
 
     if issues_found == 0:
         report.passed(f"No private info found ({files_checked} files checked)")
     else:
-        report.info(f"Found {issues_found} private info issue(s) in {files_checked} files")
+        report.info(
+            f"Found {issues_found} private info issue(s) in {files_checked} files"
+        )
 
 
 def scan_file_for_absolute_paths(
@@ -1726,7 +1850,9 @@ def scan_file_for_absolute_paths(
                 continue
 
             # Skip allowed documentation paths — only in doc files, not in code/scripts
-            if is_doc_file and any(matched_text.startswith(prefix) for prefix in ALLOWED_DOC_PATH_PREFIXES):
+            if is_doc_file and any(
+                matched_text.startswith(prefix) for prefix in ALLOWED_DOC_PATH_PREFIXES
+            ):
                 continue
 
             # Skip if it's an environment variable reference
@@ -1744,7 +1870,11 @@ def scan_file_for_absolute_paths(
             line_num = content[: match.start()].count("\n") + 1
             issues_found += 1
             # Use MINOR for system paths in scripts (may be intentional), MAJOR for home paths
-            severity = "minor" if desc == "system absolute path" and not is_doc_file else "major"
+            severity = (
+                "minor"
+                if desc == "system absolute path" and not is_doc_file
+                else "major"
+            )
             getattr(report, severity)(
                 f"Absolute path found: '{matched_text[:60]}...' - "
                 "use relative path, ${CLAUDE_PLUGIN_ROOT}, or ${CLAUDE_PROJECT_DIR}",
@@ -1780,7 +1910,11 @@ def validate_no_absolute_paths(
     # Combine skip dirs (includes gitignored dirs if respect_gitignore=True)
     if respect_gitignore:
         dirs_to_skip = get_skip_dirs_with_gitignore(root_path, skip_dirs)
-        gitignore_patterns = parse_gitignore(root_path / ".gitignore") if (root_path / ".gitignore").exists() else []
+        gitignore_patterns = (
+            parse_gitignore(root_path / ".gitignore")
+            if (root_path / ".gitignore").exists()
+            else []
+        )
     else:
         dirs_to_skip = set(PRIVATE_INFO_SKIP_DIRS)
         if skip_dirs:
@@ -1798,7 +1932,11 @@ def validate_no_absolute_paths(
             rel_path = str(rel_dir / filename) if str(rel_dir) != "." else filename
 
             # Skip gitignored files
-            if respect_gitignore and gitignore_patterns and is_path_gitignored(rel_path, gitignore_patterns):
+            if (
+                respect_gitignore
+                and gitignore_patterns
+                and is_path_gitignored(rel_path, gitignore_patterns)
+            ):
                 continue
 
             # Check only relevant file types
@@ -1832,7 +1970,9 @@ _TOC_SECTION_RE = re.compile(
 )
 
 # Regex to extract individual TOC heading titles (strip numbering, links, bullets)
-_TOC_ENTRY_RE = re.compile(r"(?m)^[\s]*[-*]?\s*(?:\d+\.?\s*)?(?:\[([^\]]+)\]\([^)]*\)|(.+))")
+_TOC_ENTRY_RE = re.compile(
+    r"(?m)^[\s]*[-*]?\s*(?:\d+\.?\s*)?(?:\[([^\]]+)\]\([^)]*\)|(.+))"
+)
 
 # Regex to find markdown links pointing to .md files in references/
 _MD_LINK_RE = re.compile(r"\[([^\]]+)\]\(((?:references/)?[^\s)]+\.md)\)")
@@ -1975,7 +2115,9 @@ def validate_toc_embedding(
         search_end = min(len(lines), link_line_num + 50)
         nearby_text = "\n".join(lines[search_start:search_end])
 
-        embedded_count = sum(1 for heading in toc_headings if heading.lower() in nearby_text.lower())
+        embedded_count = sum(
+            1 for heading in toc_headings if heading.lower() in nearby_text.lower()
+        )
 
         min_required = min(2, len(toc_headings))
         if embedded_count >= min_required:

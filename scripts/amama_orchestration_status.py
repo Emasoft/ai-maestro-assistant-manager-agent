@@ -20,9 +20,7 @@ from datetime import datetime
 
 def main():
     """Main entry point for orchestration status."""
-    parser = argparse.ArgumentParser(
-        description="View Orchestration Phase progress"
-    )
+    parser = argparse.ArgumentParser(description="View Orchestration Phase progress")
     parser.add_argument(
         "--verbose",
         action="store_true",
@@ -48,7 +46,10 @@ def main():
     # Check for orchestration phase state file
     exec_state_file = claude_dir / "orchestrator-exec-phase.local.md"
     if not exec_state_file.exists():
-        print("ERROR: Not in Orchestration Phase. Run /approve-plan first.", file=sys.stderr)
+        print(
+            "ERROR: Not in Orchestration Phase. Run /approve-plan first.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     # Read state file (minimal parsing)
@@ -73,7 +74,9 @@ def main():
         print("╠════════════════════════════════════════════════════════════════╣")
         print(f"║ Plan ID: {plan_id:<52} ║")
         print(f"║ Status: {status:<55} ║")
-        print(f"║ Progress: {modules_complete}/{modules_total} modules complete (0%)                        ║")
+        print(
+            f"║ Progress: {modules_complete}/{modules_total} modules complete (0%)                        ║"
+        )
         print("╠════════════════════════════════════════════════════════════════╣")
 
     if not args.agents_only:
@@ -99,7 +102,9 @@ def main():
 
     if args.verbose:
         print(f"\nState file: {exec_state_file}")
-        print(f"Last updated: {datetime.fromtimestamp(exec_state_file.stat().st_mtime).isoformat()}")
+        print(
+            f"Last updated: {datetime.fromtimestamp(exec_state_file.stat().st_mtime).isoformat()}"
+        )
 
 
 if __name__ == "__main__":

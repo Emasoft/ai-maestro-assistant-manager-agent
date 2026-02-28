@@ -122,11 +122,15 @@ def init_storage(project_root: Path) -> None:
 
     # Create .gitkeep
     gitkeep = storage_root.parent / ".gitkeep"
-    gitkeep.write_text("# AMAMA document storage - do not delete this folder\n", encoding="utf-8")
+    gitkeep.write_text(
+        "# AMAMA document storage - do not delete this folder\n", encoding="utf-8"
+    )
 
     # Update .gitignore if in git repo
     gitignore_path = project_root / ".gitignore"
-    gitignore_entry = "\n# AMAMA Document Storage (local cache)\n.aimaestro/\n!.aimaestro/.gitkeep\n"
+    gitignore_entry = (
+        "\n# AMAMA Document Storage (local cache)\n.aimaestro/\n!.aimaestro/.gitkeep\n"
+    )
 
     if gitignore_path.exists():
         content = gitignore_path.read_text(encoding="utf-8")
@@ -181,7 +185,13 @@ def extract_attachment_url(comment_url: str) -> str | None:
     # Fetch comment body via gh CLI
     try:
         result = subprocess.run(
-            ["gh", "api", f"repos/{owner}/{repo}/issues/comments/{comment_id}", "--jq", ".body"],
+            [
+                "gh",
+                "api",
+                f"repos/{owner}/{repo}/issues/comments/{comment_id}",
+                "--jq",
+                ".body",
+            ],
             capture_output=True,
             text=True,
             check=True,
@@ -361,16 +371,20 @@ def lookup_documents(
                     metadata = {}
                     if metadata_file.exists():
                         try:
-                            metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+                            metadata = json.loads(
+                                metadata_file.read_text(encoding="utf-8")
+                            )
                         except json.JSONDecodeError:
                             pass
 
-                    results.append({
-                        "path": str(md_file),
-                        "category": cat,
-                        "task_id": task_id,
-                        "metadata": metadata,
-                    })
+                    results.append(
+                        {
+                            "path": str(md_file),
+                            "category": cat,
+                            "task_id": task_id,
+                            "metadata": metadata,
+                        }
+                    )
 
     return results
 
@@ -390,10 +404,12 @@ def verify_storage(project_root: Path | None = None) -> dict[str, Any]:
     }
 
     if not storage_root.exists():
-        report["issues"].append({
-            "type": "missing_root",
-            "message": f"Storage root does not exist: {storage_root}",
-        })
+        report["issues"].append(
+            {
+                "type": "missing_root",
+                "message": f"Storage root does not exist: {storage_root}",
+            }
+        )
         return report
 
     for category in CATEGORIES:
@@ -412,22 +428,26 @@ def verify_storage(project_root: Path | None = None) -> dict[str, Any]:
             # Check read-only
             mode = md_file.stat().st_mode
             if mode & stat.S_IWUSR or mode & stat.S_IWGRP or mode & stat.S_IWOTH:
-                report["issues"].append({
-                    "type": "writable_file",
-                    "path": str(md_file),
-                    "message": "File is not read-only",
-                })
+                report["issues"].append(
+                    {
+                        "type": "writable_file",
+                        "path": str(md_file),
+                        "message": "File is not read-only",
+                    }
+                )
 
             # Check metadata exists
             metadata_file = md_file.with_suffix("").with_name(
                 f"{md_file.stem}_metadata.json"
             )
             if not metadata_file.exists():
-                report["issues"].append({
-                    "type": "missing_metadata",
-                    "path": str(md_file),
-                    "message": "Metadata file missing",
-                })
+                report["issues"].append(
+                    {
+                        "type": "missing_metadata",
+                        "path": str(md_file),
+                        "message": "Metadata file missing",
+                    }
+                )
             else:
                 # Verify SHA256
                 try:
@@ -436,17 +456,21 @@ def verify_storage(project_root: Path | None = None) -> dict[str, Any]:
                     if stored_hash:
                         current_hash = compute_sha256(md_file)
                         if stored_hash != current_hash:
-                            report["issues"].append({
-                                "type": "integrity_violation",
-                                "path": str(md_file),
-                                "message": f"SHA256 mismatch: stored={stored_hash[:16]}... current={current_hash[:16]}...",
-                            })
+                            report["issues"].append(
+                                {
+                                    "type": "integrity_violation",
+                                    "path": str(md_file),
+                                    "message": f"SHA256 mismatch: stored={stored_hash[:16]}... current={current_hash[:16]}...",
+                                }
+                            )
                 except json.JSONDecodeError:
-                    report["issues"].append({
-                        "type": "invalid_metadata",
-                        "path": str(metadata_file),
-                        "message": "Metadata JSON is invalid",
-                    })
+                    report["issues"].append(
+                        {
+                            "type": "invalid_metadata",
+                            "path": str(metadata_file),
+                            "message": "Metadata JSON is invalid",
+                        }
+                    )
 
         report["stats"]["by_category"][category] = cat_stats
 
@@ -490,11 +514,15 @@ def main() -> int:
     lookup_parser = subparsers.add_parser("lookup", help="Find documents by task ID")
     lookup_parser.add_argument("--task-id", required=True, help="Task ID to search")
     lookup_parser.add_argument("--category", help="Filter by category")
-    lookup_parser.add_argument("--project-root", type=Path, help="Project root directory")
+    lookup_parser.add_argument(
+        "--project-root", type=Path, help="Project root directory"
+    )
 
     # verify command
     verify_parser = subparsers.add_parser("verify", help="Verify storage integrity")
-    verify_parser.add_argument("--project-root", type=Path, help="Project root directory")
+    verify_parser.add_argument(
+        "--project-root", type=Path, help="Project root directory"
+    )
     verify_parser.add_argument(
         "--json",
         action="store_true",

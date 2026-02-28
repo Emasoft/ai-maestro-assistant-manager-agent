@@ -132,18 +132,26 @@ def display_status(verbose: bool = False) -> bool:
 
     # Calculate exit criteria status
     req_file_exists = Path("USER_REQUIREMENTS.md").exists()
-    all_req_complete = all(
-        s.get("status") == "complete" for s in requirements_sections
-    ) if requirements_sections else False
-    all_modules_have_criteria = all(
-        m.get("acceptance_criteria") for m in modules
-    ) if modules else False
+    all_req_complete = (
+        all(s.get("status") == "complete" for s in requirements_sections)
+        if requirements_sections
+        else False
+    )
+    all_modules_have_criteria = (
+        all(m.get("acceptance_criteria") for m in modules) if modules else False
+    )
     has_modules = len(modules) > 0
 
     criteria_status = [
         ("USER_REQUIREMENTS.md complete", req_file_exists and all_req_complete),
-        ("All modules defined with acceptance criteria", has_modules and all_modules_have_criteria),
-        ("GitHub Issues created for all modules", all(m.get("github_issue") for m in modules) if modules else False),
+        (
+            "All modules defined with acceptance criteria",
+            has_modules and all_modules_have_criteria,
+        ),
+        (
+            "GitHub Issues created for all modules",
+            all(m.get("github_issue") for m in modules) if modules else False,
+        ),
         ("User approved the plan", plan_complete),
     ]
 
@@ -155,22 +163,22 @@ def display_status(verbose: bool = False) -> bool:
 
     # Summary
     if plan_complete:
-        print("\n✓ Plan Phase complete. Run /start-orchestration to begin implementation.")
+        print(
+            "\n✓ Plan Phase complete. Run /start-orchestration to begin implementation."
+        )
     else:
         incomplete = sum(1 for _, met in criteria_status if not met)
-        print(f"\n{incomplete} exit criteria remaining. Complete them to approve the plan.")
+        print(
+            f"\n{incomplete} exit criteria remaining. Complete them to approve the plan."
+        )
 
     return True
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Display Plan Phase status"
-    )
+    parser = argparse.ArgumentParser(description="Display Plan Phase status")
     parser.add_argument(
-        "--verbose", "-v",
-        action="store_true",
-        help="Show detailed module information"
+        "--verbose", "-v", action="store_true", help="Show detailed module information"
     )
 
     args = parser.parse_args()

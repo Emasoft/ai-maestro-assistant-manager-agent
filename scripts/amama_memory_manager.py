@@ -243,7 +243,9 @@ Always log errors immediately to In-Flight Errors.
 
 def _create_parser() -> argparse.ArgumentParser:
     """Create argument parser for CLI."""
-    parser = argparse.ArgumentParser(description="AI Maestro Assistant Manager Memory File Management")
+    parser = argparse.ArgumentParser(
+        description="AI Maestro Assistant Manager Memory File Management"
+    )
     parser.add_argument("--memory-root", type=Path, default=Path("design/memory"))
     sub = parser.add_subparsers(dest="command", required=True)
 

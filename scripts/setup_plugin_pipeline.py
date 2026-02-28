@@ -120,7 +120,10 @@ class PipelineStatus:
     @property
     def is_valid(self) -> bool:
         """Check if pipeline has no critical or major issues."""
-        return not any(issue.level in (IssueLevel.CRITICAL, IssueLevel.MAJOR) for issue in self.issues)
+        return not any(
+            issue.level in (IssueLevel.CRITICAL, IssueLevel.MAJOR)
+            for issue in self.issues
+        )
 
     @property
     def critical_count(self) -> int:
@@ -615,11 +618,15 @@ tests_dev/
 class PipelineSetup:
     """Handles pipeline setup and validation for Claude Code plugins."""
 
-    def __init__(self, project_path: Path, dry_run: bool = False, verbose: bool = False):
+    def __init__(
+        self, project_path: Path, dry_run: bool = False, verbose: bool = False
+    ):
         self.project_path = project_path.resolve()
         self.dry_run = dry_run
         self.verbose = verbose
-        self.status = PipelineStatus(project_type=ProjectType.UNKNOWN, project_path=self.project_path)
+        self.status = PipelineStatus(
+            project_type=ProjectType.UNKNOWN, project_path=self.project_path
+        )
 
     def detect_project_type(self) -> ProjectType:
         """Detect what type of project this is."""
@@ -922,7 +929,12 @@ class PipelineSetup:
                 else:
                     try:
                         hook_path.write_text(content, encoding="utf-8")
-                        hook_path.chmod(hook_path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+                        hook_path.chmod(
+                            hook_path.stat().st_mode
+                            | stat.S_IXUSR
+                            | stat.S_IXGRP
+                            | stat.S_IXOTH
+                        )
                         print(f"{GREEN}✓{NC} Installed {name} hook")
                         fixed += 1
                     except OSError as e:
@@ -976,7 +988,10 @@ class PipelineSetup:
             try:
                 content = gitignore.read_text(encoding="utf-8")
                 # Check for multiple markers to avoid duplicating content
-                needs_update = not all(marker in content for marker in ["__pycache__", ".mypy_cache", "docs_dev/"])
+                needs_update = not all(
+                    marker in content
+                    for marker in ["__pycache__", ".mypy_cache", "docs_dev/"]
+                )
                 if needs_update:
                     if self.dry_run:
                         print(f"{YELLOW}Would update:{NC} .gitignore")
@@ -1023,10 +1038,15 @@ class PipelineSetup:
                         print(f"{GREEN}✓{NC} Removed {submodule}/post-commit hook")
                         fixed += 1
                     except OSError as e:
-                        print(f"{RED}✘{NC} Failed to remove {submodule}/post-commit: {e}")
+                        print(
+                            f"{RED}✘{NC} Failed to remove {submodule}/post-commit: {e}"
+                        )
 
             # Install post-rewrite and post-merge
-            for name, content in [("post-rewrite", POST_REWRITE_HOOK), ("post-merge", POST_MERGE_HOOK)]:
+            for name, content in [
+                ("post-rewrite", POST_REWRITE_HOOK),
+                ("post-merge", POST_MERGE_HOOK),
+            ]:
                 hook_path = hooks_dir / name
                 if not hook_path.exists():
                     if self.dry_run:
@@ -1034,11 +1054,18 @@ class PipelineSetup:
                     else:
                         try:
                             hook_path.write_text(content, encoding="utf-8")
-                            hook_path.chmod(hook_path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+                            hook_path.chmod(
+                                hook_path.stat().st_mode
+                                | stat.S_IXUSR
+                                | stat.S_IXGRP
+                                | stat.S_IXOTH
+                            )
                             print(f"{GREEN}✓{NC} Installed {submodule}/{name} hook")
                             fixed += 1
                         except OSError as e:
-                            print(f"{RED}✘{NC} Failed to install {submodule}/{name}: {e}")
+                            print(
+                                f"{RED}✘{NC} Failed to install {submodule}/{name}: {e}"
+                            )
 
         return fixed
 
@@ -1108,21 +1135,44 @@ Examples:
         """,
     )
 
-    parser.add_argument("path", nargs="?", default=".", help="Path to project (default: current directory)")
-
     parser.add_argument(
-        "--type", choices=["marketplace", "plugin"], help="Force project type (auto-detected by default)"
+        "path",
+        nargs="?",
+        default=".",
+        help="Path to project (default: current directory)",
     )
 
-    parser.add_argument("--validate", "-v", action="store_true", help="Validate pipeline only (don't fix)")
+    parser.add_argument(
+        "--type",
+        choices=["marketplace", "plugin"],
+        help="Force project type (auto-detected by default)",
+    )
 
-    parser.add_argument("--fix", "-f", action="store_true", help="Fix all fixable issues")
+    parser.add_argument(
+        "--validate",
+        "-v",
+        action="store_true",
+        help="Validate pipeline only (don't fix)",
+    )
 
-    parser.add_argument("--dry-run", "-n", action="store_true", help="Show what would be done without making changes")
+    parser.add_argument(
+        "--fix", "-f", action="store_true", help="Fix all fixable issues"
+    )
 
-    parser.add_argument("--quiet", "-q", action="store_true", help="Minimal output (for CI)")
+    parser.add_argument(
+        "--dry-run",
+        "-n",
+        action="store_true",
+        help="Show what would be done without making changes",
+    )
 
-    parser.add_argument("--verbose", action="store_true", help="Show detailed output including warnings")
+    parser.add_argument(
+        "--quiet", "-q", action="store_true", help="Minimal output (for CI)"
+    )
+
+    parser.add_argument(
+        "--verbose", action="store_true", help="Show detailed output including warnings"
+    )
 
     parser.add_argument("--json", action="store_true", help="Output as JSON")
 
@@ -1157,7 +1207,11 @@ Examples:
                 }
                 for i in status.issues
             ],
-            "summary": {"critical": status.critical_count, "major": status.major_count, "minor": status.minor_count},
+            "summary": {
+                "critical": status.critical_count,
+                "major": status.major_count,
+                "minor": status.minor_count,
+            },
         }
         print(json.dumps(output, indent=2))
         return 0 if status.is_valid else 1
@@ -1174,7 +1228,9 @@ Examples:
         # Check if there are any fixable issues (including minor ones)
         fixable_issues = [i for i in status.issues if i.fix_available]
         if not fixable_issues and not args.dry_run:
-            print(f"{GREEN}No fixes needed - all issues require manual intervention{NC}")
+            print(
+                f"{GREEN}No fixes needed - all issues require manual intervention{NC}"
+            )
         else:
             print(f"\n{BOLD}Fixing issues...{NC}")
             fixed = setup.fix()
@@ -1185,7 +1241,9 @@ Examples:
                 print(f"\n{GREEN}Fixed {fixed} issue(s){NC}")
 
                 # Re-validate
-                setup.status = PipelineStatus(project_type=ProjectType.UNKNOWN, project_path=project_path)
+                setup.status = PipelineStatus(
+                    project_type=ProjectType.UNKNOWN, project_path=project_path
+                )
                 status = setup.validate()
 
                 if status.is_valid and not status.issues:
@@ -1193,7 +1251,9 @@ Examples:
                 elif status.is_valid:
                     print(f"{GREEN}Pipeline is valid (some minor issues remain){NC}")
                 else:
-                    print(f"{YELLOW}Some issues remain - manual intervention needed{NC}")
+                    print(
+                        f"{YELLOW}Some issues remain - manual intervention needed{NC}"
+                    )
 
     # Exit code
     if args.validate or args.fix:

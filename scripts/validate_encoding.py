@@ -237,7 +237,9 @@ def is_text_file(file_path: Path) -> bool:
 # =============================================================================
 
 
-def check_utf8_encoding(content: bytes, file_path: str, report: EncodingValidationReport) -> bool:
+def check_utf8_encoding(
+    content: bytes, file_path: str, report: EncodingValidationReport
+) -> bool:
     """Check if file content is valid UTF-8.
 
     Rule 1: UTF-8 encoding required (all files)
@@ -254,7 +256,9 @@ def check_utf8_encoding(content: bytes, file_path: str, report: EncodingValidati
         content.decode("utf-8")
         return True
     except UnicodeDecodeError as e:
-        report.critical(f"File is not valid UTF-8: {file_path} (error at byte {e.start}: {e.reason})")
+        report.critical(
+            f"File is not valid UTF-8: {file_path} (error at byte {e.start}: {e.reason})"
+        )
         report.stats["utf8_issues"] += 1
         return False
 
@@ -305,7 +309,9 @@ def check_bom(content: bytes, file_path: str, report: EncodingValidationReport) 
     return True
 
 
-def check_json_unicode(content: str, file_path: str, report: EncodingValidationReport) -> bool:
+def check_json_unicode(
+    content: str, file_path: str, report: EncodingValidationReport
+) -> bool:
     """Validate proper Unicode handling in JSON files.
 
     Rule 3: Proper Unicode handling in JSON
@@ -335,7 +341,9 @@ def check_json_unicode(content: str, file_path: str, report: EncodingValidationR
         return True
 
 
-def check_escape_sequences(content: str, file_path: str, report: EncodingValidationReport) -> bool:
+def check_escape_sequences(
+    content: str, file_path: str, report: EncodingValidationReport
+) -> bool:
     """Check for improperly escaped special characters.
 
     Rule 4: Special characters properly escaped
@@ -356,7 +364,9 @@ def check_escape_sequences(content: str, file_path: str, report: EncodingValidat
     if control_chars:
         unique_chars = set(control_chars)
         char_codes = ", ".join(f"0x{ord(c):02x}" for c in unique_chars)
-        report.minor(f"File contains raw control characters ({char_codes}): {file_path}")
+        report.minor(
+            f"File contains raw control characters ({char_codes}): {file_path}"
+        )
         report.stats["escape_issues"] += 1
         issues_found = True
 
@@ -375,7 +385,9 @@ def check_escape_sequences(content: str, file_path: str, report: EncodingValidat
     return not issues_found
 
 
-def check_line_endings(content: bytes, file_path: str, suffix: str, report: EncodingValidationReport) -> bool:
+def check_line_endings(
+    content: bytes, file_path: str, suffix: str, report: EncodingValidationReport
+) -> bool:
     """Check line endings match requirements for file type.
 
     Rule 5: Line endings: LF for source files (.py, .sh, .md, .json)
@@ -408,11 +420,15 @@ def check_line_endings(content: bytes, file_path: str, suffix: str, report: Enco
     # Rule 6: Shell scripts MUST use LF (CRLF breaks them)
     if suffix in SHELL_EXTENSIONS:
         if has_crlf:
-            report.critical(f"Shell script has CRLF line endings (will break execution): {file_path}")
+            report.critical(
+                f"Shell script has CRLF line endings (will break execution): {file_path}"
+            )
             report.stats["shell_crlf_issues"] += 1
             return False
         if has_cr_only:
-            report.critical(f"Shell script has CR-only line endings (will break execution): {file_path}")
+            report.critical(
+                f"Shell script has CR-only line endings (will break execution): {file_path}"
+            )
             report.stats["shell_crlf_issues"] += 1
             return False
         if has_mixed:
@@ -424,7 +440,9 @@ def check_line_endings(content: bytes, file_path: str, suffix: str, report: Enco
     # Rule 5: Source files should use LF
     if suffix in LF_REQUIRED_EXTENSIONS:
         if has_crlf:
-            report.minor(f"Source file has CRLF line endings (should use LF): {file_path}")
+            report.minor(
+                f"Source file has CRLF line endings (should use LF): {file_path}"
+            )
             report.stats["line_ending_issues"] += 1
             return False
         if has_cr_only:
@@ -444,7 +462,9 @@ def check_line_endings(content: bytes, file_path: str, suffix: str, report: Enco
 # =============================================================================
 
 
-def validate_file(file_path: Path, plugin_path: Path, report: EncodingValidationReport) -> None:
+def validate_file(
+    file_path: Path, plugin_path: Path, report: EncodingValidationReport
+) -> None:
     """Run all encoding validations on a single file.
 
     Args:
@@ -550,7 +570,10 @@ def validate_encoding(plugin_path: Path) -> EncodingValidationReport:
         report.passed("JSON Unicode handling is correct")
     if report.stats["escape_issues"] == 0:
         report.passed("No improper escape sequences detected")
-    if report.stats["line_ending_issues"] == 0 and report.stats["shell_crlf_issues"] == 0:
+    if (
+        report.stats["line_ending_issues"] == 0
+        and report.stats["shell_crlf_issues"] == 0
+    ):
         report.passed("All line endings are correct for file types")
 
     return report
@@ -583,10 +606,21 @@ Exit Codes:
   3 - MINOR issues found (recommended to fix)
         """,
     )
-    parser.add_argument("plugin_path", type=Path, help="Path to the plugin directory to validate")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Show all results including INFO and PASSED")
+    parser.add_argument(
+        "plugin_path", type=Path, help="Path to the plugin directory to validate"
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Show all results including INFO and PASSED",
+    )
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
-    parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Strict mode — NIT issues also block validation",
+    )
 
     args = parser.parse_args()
 

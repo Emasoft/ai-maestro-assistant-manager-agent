@@ -196,7 +196,9 @@ def setup_plugin_notifications(
         return result
 
     if verbose:
-        print(f"\nChecking {len(submodules)} plugin submodules for notification workflow...\n")
+        print(
+            f"\nChecking {len(submodules)} plugin submodules for notification workflow...\n"
+        )
 
     template_dir = get_template_dir()
     template_path = template_dir / "github-workflows" / "notify-marketplace.yml"
@@ -216,12 +218,16 @@ def setup_plugin_notifications(
             result["missing"].append(plugin_name)
             if verbose:
                 print(f"  [MISSING] {plugin_name}")
-                print(f"            Copy template to: {plugin_path}/.github/workflows/notify-marketplace.yml")
+                print(
+                    f"            Copy template to: {plugin_path}/.github/workflows/notify-marketplace.yml"
+                )
         elif status["needs_configuration"]:
             result["needs_config"].append(plugin_name)
             if verbose:
                 print(f"  [NEEDS CONFIG] {plugin_name}")
-                print("                 Update MARKETPLACE_OWNER and MARKETPLACE_REPO in the workflow")
+                print(
+                    "                 Update MARKETPLACE_OWNER and MARKETPLACE_REPO in the workflow"
+                )
         else:
             result["configured"].append(plugin_name)
             if verbose:
@@ -238,7 +244,9 @@ def setup_plugin_notifications(
         if result["missing"]:
             print("\n  To set up missing plugins:")
             print(f"  1. Copy {template_path}")
-            print("  2. Place in each plugin's .github/workflows/notify-marketplace.yml")
+            print(
+                "  2. Place in each plugin's .github/workflows/notify-marketplace.yml"
+            )
             print("  3. Update MARKETPLACE_OWNER and MARKETPLACE_REPO values")
             print("  4. Add MARKETPLACE_PAT secret to each plugin repo")
 
@@ -507,13 +515,21 @@ def get_full_status(
         print(f"Valid: {'Yes' if status['is_valid_marketplace'] else 'No'}")
 
         print("\n--- Marketplace Components ---")
-        wf_status = "[OK]" if status["workflows"]["update_submodules"]["exists"] else "[MISSING]"
+        wf_status = (
+            "[OK]"
+            if status["workflows"]["update_submodules"]["exists"]
+            else "[MISSING]"
+        )
         print(f"  {wf_status} .github/workflows/update-submodules.yml")
 
-        sc_status = "[OK]" if status["scripts"]["sync_versions"]["exists"] else "[MISSING]"
+        sc_status = (
+            "[OK]" if status["scripts"]["sync_versions"]["exists"] else "[MISSING]"
+        )
         print(f"  {sc_status} scripts/sync_marketplace_versions.py")
 
-        nt_status = "[OK]" if status["scripts"]["notify_template"]["exists"] else "[MISSING]"
+        nt_status = (
+            "[OK]" if status["scripts"]["notify_template"]["exists"] else "[MISSING]"
+        )
         print(f"  {nt_status} scripts/notify-marketplace.yml.template")
 
         if status["readme"]["exists"]:
@@ -558,7 +574,10 @@ def setup_marketplace_automation(
     if not marketplace_json.exists():
         marketplace_json = marketplace_dir / "marketplace.json"
     if not marketplace_json.exists():
-        print(f"Error: Not a marketplace directory (no marketplace.json): {marketplace_dir}", file=sys.stderr)
+        print(
+            f"Error: Not a marketplace directory (no marketplace.json): {marketplace_dir}",
+            file=sys.stderr,
+        )
         return False
 
     if verbose:
@@ -602,7 +621,9 @@ def setup_marketplace_automation(
             # Make executable
             dst_script.chmod(dst_script.stat().st_mode | 0o111)
     else:
-        print("  [SKIP] sync_marketplace_versions.py template not found", file=sys.stderr)
+        print(
+            "  [SKIP] sync_marketplace_versions.py template not found", file=sys.stderr
+        )
 
     # 5. Copy notify-marketplace.yml template (for reference)
     src_notify = template_dir / "github-workflows" / "notify-marketplace.yml"
@@ -612,7 +633,9 @@ def setup_marketplace_automation(
         if verbose:
             status = "[EXISTS]" if dst_notify.exists() else "[CREATE]"
             print(f"  {status} scripts/notify-marketplace.yml.template")
-            print("         (Copy to each plugin repo's .github/workflows/ and configure)")
+            print(
+                "         (Copy to each plugin repo's .github/workflows/ and configure)"
+            )
         if not dry_run:
             shutil.copy2(src_notify, dst_notify)
 

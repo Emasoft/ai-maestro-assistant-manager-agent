@@ -64,7 +64,8 @@ def main() -> None:
 
     # Create orchestration state file
     exec_state_file = claude_dir / "orchestrator-exec-phase.local.md"
-    exec_state_file.write_text(f"""# Orchestration Phase State
+    exec_state_file.write_text(
+        f"""# Orchestration Phase State
 
 Plan ID: {plan_data["plan_id"]}
 Status: ready
@@ -76,7 +77,9 @@ Plan Approved: true
 
 ## Agents
 (No agents registered yet)
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     # Update plan state to mark as complete
     plan_content = plan_state_file.read_text(encoding="utf-8")

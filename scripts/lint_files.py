@@ -142,8 +142,12 @@ def detect_languages(repo_root: Path) -> dict[str, list[Path]]:
 
     # Dockerfile
     dockerfile_files = [f for f in repo_root.glob("**/Dockerfile") if should_include(f)]
-    dockerfile_files += [f for f in repo_root.glob("**/Dockerfile.*") if should_include(f)]
-    dockerfile_files += [f for f in repo_root.glob("**/*.dockerfile") if should_include(f)]
+    dockerfile_files += [
+        f for f in repo_root.glob("**/Dockerfile.*") if should_include(f)
+    ]
+    dockerfile_files += [
+        f for f in repo_root.glob("**/*.dockerfile") if should_include(f)
+    ]
     if dockerfile_files:
         languages["dockerfile"] = dockerfile_files
 
@@ -208,7 +212,10 @@ def install_python_tool(tool: str) -> bool:
     if shutil.which("uv"):
         try:
             result = subprocess.run(
-                ["uv", "tool", "install", "--python", "3.12", tool], capture_output=True, text=True, timeout=120
+                ["uv", "tool", "install", "--python", "3.12", tool],
+                capture_output=True,
+                text=True,
+                timeout=120,
             )
             if result.returncode == 0:
                 print(f"{GREEN}  ✔ {tool} installed via uv tool (Python 3.12){NC}")
@@ -225,11 +232,16 @@ def install_python_tool(tool: str) -> bool:
     # pipx (fallback)
     if shutil.which("pipx"):
         try:
-            result = subprocess.run(["pipx", "install", tool], capture_output=True, text=True, timeout=120)
+            result = subprocess.run(
+                ["pipx", "install", tool], capture_output=True, text=True, timeout=120
+            )
             if result.returncode == 0:
                 print(f"{GREEN}  ✔ {tool} installed via pipx{NC}")
                 return True
-            if "already installed" in result.stderr.lower() or "already installed" in result.stdout.lower():
+            if (
+                "already installed" in result.stderr.lower()
+                or "already installed" in result.stdout.lower()
+            ):
                 print(f"{GREEN}  ✔ {tool} already installed via pipx{NC}")
                 return True
             last_error = result.stderr.strip() or result.stdout.strip()
@@ -243,7 +255,10 @@ def install_python_tool(tool: str) -> bool:
         if shutil.which(pip_cmd):
             try:
                 result = subprocess.run(
-                    [pip_cmd, "install", "--user", tool], capture_output=True, text=True, timeout=120
+                    [pip_cmd, "install", "--user", tool],
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
                 )
                 if result.returncode == 0:
                     print(f"{GREEN}  ✔ {tool} installed via {pip_cmd} --user{NC}")
@@ -282,7 +297,9 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
         if not shutil.which("mypy"):
             print(f"{YELLOW}  Installing mypy...{NC}")
             if not install_python_tool("mypy"):
-                print(f"{YELLOW}  ⚠ Could not install mypy, type checking will be skipped{NC}")
+                print(
+                    f"{YELLOW}  ⚠ Could not install mypy, type checking will be skipped{NC}"
+                )
         return True
 
     elif language == "javascript":
@@ -336,11 +353,15 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
         for pkg_mgr, cmd in pkg_managers:
             if shutil.which(pkg_mgr):
                 try:
-                    result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+                    result = subprocess.run(
+                        cmd, capture_output=True, text=True, timeout=180
+                    )
                     if result.returncode == 0:
                         print(f"{GREEN}  ✔ shellcheck installed via {pkg_mgr}{NC}")
                         return True
-                    last_error = f"{pkg_mgr}: {result.stderr.strip() or result.stdout.strip()}"
+                    last_error = (
+                        f"{pkg_mgr}: {result.stderr.strip() or result.stdout.strip()}"
+                    )
                 except subprocess.TimeoutExpired:
                     last_error = f"{pkg_mgr}: timed out"
                 except OSError as e:
@@ -374,7 +395,10 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
                 print(f"{YELLOW}  Installing rustfmt via rustup...{NC}")
                 try:
                     subprocess.run(
-                        ["rustup", "component", "add", "rustfmt"], capture_output=True, text=True, timeout=120
+                        ["rustup", "component", "add", "rustfmt"],
+                        capture_output=True,
+                        text=True,
+                        timeout=120,
                     )
                 except (subprocess.TimeoutExpired, OSError):
                     print(f"{YELLOW}  ⚠ rustfmt install failed{NC}")
@@ -382,7 +406,10 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
                 print(f"{YELLOW}  Installing clippy via rustup...{NC}")
                 try:
                     subprocess.run(
-                        ["rustup", "component", "add", "clippy"], capture_output=True, text=True, timeout=120
+                        ["rustup", "component", "add", "clippy"],
+                        capture_output=True,
+                        text=True,
+                        timeout=120,
                     )
                 except (subprocess.TimeoutExpired, OSError):
                     print(f"{YELLOW}  ⚠ clippy install failed{NC}")
@@ -407,13 +434,19 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
         ]:
             if shutil.which(pkg_mgr):
                 try:
-                    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+                    result = subprocess.run(
+                        cmd, capture_output=True, text=True, timeout=120
+                    )
                     if result.returncode == 0:
-                        print(f"{GREEN}  ✔ markdownlint-cli installed via {pkg_mgr}{NC}")
+                        print(
+                            f"{GREEN}  ✔ markdownlint-cli installed via {pkg_mgr}{NC}"
+                        )
                         return True
                 except (subprocess.TimeoutExpired, OSError):
                     pass
-        print(f"{YELLOW}  ⚠ markdownlint not available (install via: npm install -g markdownlint-cli){NC}")
+        print(
+            f"{YELLOW}  ⚠ markdownlint not available (install via: npm install -g markdownlint-cli){NC}"
+        )
         return False
 
     elif language == "json":
@@ -425,7 +458,9 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
             return True
         print(f"{YELLOW}  Installing yamllint...{NC}")
         if not install_python_tool("yamllint"):
-            print(f"{YELLOW}  ⚠ Install via: uv tool install --python 3.12 yamllint  OR  pipx install yamllint{NC}")
+            print(
+                f"{YELLOW}  ⚠ Install via: uv tool install --python 3.12 yamllint  OR  pipx install yamllint{NC}"
+            )
             return False
         return True
 
@@ -454,19 +489,25 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
     elif language == "css":
         if _resolve_tool("stylelint") is not None:
             return True
-        print(f"{YELLOW}  ⚠ stylelint not found (install via: npm install -g stylelint){NC}")
+        print(
+            f"{YELLOW}  ⚠ stylelint not found (install via: npm install -g stylelint){NC}"
+        )
         return False
 
     elif language == "html":
         if _resolve_tool("htmlhint") is not None:
             return True
-        print(f"{YELLOW}  ⚠ htmlhint not found (install via: npm install -g htmlhint){NC}")
+        print(
+            f"{YELLOW}  ⚠ htmlhint not found (install via: npm install -g htmlhint){NC}"
+        )
         return False
 
     elif language == "sql":
         if _resolve_tool("sqlfluff") is not None:
             return True
-        print(f"{YELLOW}  ⚠ sqlfluff not found (install via: uv tool install sqlfluff  OR  pipx install sqlfluff){NC}")
+        print(
+            f"{YELLOW}  ⚠ sqlfluff not found (install via: uv tool install sqlfluff  OR  pipx install sqlfluff){NC}"
+        )
         return False
 
     elif language == "toml":
@@ -481,7 +522,9 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
 
                 return True
             except ModuleNotFoundError:
-                print(f"{YELLOW}  ⚠ TOML parser not found (need Python 3.11+ or: pip install tomli){NC}")
+                print(
+                    f"{YELLOW}  ⚠ TOML parser not found (need Python 3.11+ or: pip install tomli){NC}"
+                )
                 return False
 
     elif language == "powershell":
@@ -490,9 +533,7 @@ def ensure_linter_installed(language: str, repo_root: Path) -> bool:
         if os_type == "windows":
             hint = "Install-Module -Name PSScriptAnalyzer -Scope CurrentUser"
         else:
-            hint = (
-                "brew install powershell/tap/powershell && pwsh -c 'Install-Module PSScriptAnalyzer -Scope CurrentUser'"
-            )
+            hint = "brew install powershell/tap/powershell && pwsh -c 'Install-Module PSScriptAnalyzer -Scope CurrentUser'"
         print(f"{YELLOW}  ⚠ PSScriptAnalyzer not found (install via: {hint}){NC}")
         return False
 
@@ -536,7 +577,10 @@ def lint_python(repo_root: Path) -> bool:
         print(f"{BLUE}    [2/2] mypy...{NC}")
         try:
             result = subprocess.run(
-                ["mypy", "--ignore-missing-imports", str(repo_root)], capture_output=True, text=True, timeout=180
+                ["mypy", "--ignore-missing-imports", str(repo_root)],
+                capture_output=True,
+                text=True,
+                timeout=180,
             )
             if result.returncode != 0:
                 print(f"{RED}    Type errors found:{NC}")
@@ -586,7 +630,13 @@ def lint_javascript(repo_root: Path) -> bool:
     # Read-only check (no --fix)
     print(f"{BLUE}    eslint...{NC}")
     try:
-        result = subprocess.run(eslint_cmd + ["."], cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            eslint_cmd + ["."],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
         return result.returncode == 0
     except subprocess.TimeoutExpired:
         print(f"{YELLOW}    eslint timed out{NC}")
@@ -601,7 +651,9 @@ def lint_shell(repo_root: Path, files: list[Path]) -> bool:
     all_passed = True
     for f in files:
         try:
-            result = subprocess.run(["shellcheck", "-x", str(f)], capture_output=True, text=True, timeout=60)
+            result = subprocess.run(
+                ["shellcheck", "-x", str(f)], capture_output=True, text=True, timeout=60
+            )
             if result.returncode != 0:
                 all_passed = False
                 print(f"{YELLOW}      {f.name}: issues found{NC}")
@@ -618,7 +670,13 @@ def lint_go(repo_root: Path) -> bool:
     # gofmt -l: list files whose formatting differs (read-only, no -w)
     print(f"{BLUE}    gofmt -l (check formatting)...{NC}")
     try:
-        result = subprocess.run(["gofmt", "-l", "."], cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            ["gofmt", "-l", "."],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
         if result.stdout.strip():
             # Files need formatting
             print(f"{RED}    Files need formatting:{NC}")
@@ -634,7 +692,13 @@ def lint_go(repo_root: Path) -> bool:
     # go vet (read-only)
     print(f"{BLUE}    go vet...{NC}")
     try:
-        result = subprocess.run(["go", "vet", "./..."], cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            ["go", "vet", "./..."],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
         return result.returncode == 0
     except subprocess.TimeoutExpired:
         print(f"{YELLOW}    go vet timed out{NC}")
@@ -651,7 +715,13 @@ def lint_rust(repo_root: Path) -> bool:
     # cargo fmt --check (read-only: exits non-zero if changes needed)
     print(f"{BLUE}    cargo fmt --check...{NC}")
     try:
-        result = subprocess.run(["cargo", "fmt", "--check"], cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            ["cargo", "fmt", "--check"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
         if result.returncode != 0:
             print(f"{RED}    Formatting issues found (run 'cargo fmt' to fix){NC}")
             return False
@@ -664,7 +734,13 @@ def lint_rust(repo_root: Path) -> bool:
     # cargo clippy (read-only, no --fix)
     print(f"{BLUE}    cargo clippy...{NC}")
     try:
-        result = subprocess.run(["cargo", "clippy"], cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            ["cargo", "clippy"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
         return result.returncode == 0
     except subprocess.TimeoutExpired:
         print(f"{YELLOW}    cargo clippy timed out{NC}")
@@ -693,7 +769,13 @@ def lint_markdown(repo_root: Path, files: list[Path]) -> bool:
     # Read-only check (no --fix)
     print(f"{BLUE}    markdownlint...{NC}")
     try:
-        result = subprocess.run(lint_cmd + file_paths, cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            lint_cmd + file_paths,
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
         if result.returncode != 0:
             output = (result.stdout or result.stderr or "").strip()
             if output:
@@ -791,11 +873,15 @@ def lint_dockerfile(repo_root: Path, files: list[Path]) -> bool:
     print(f"{BLUE}    hadolint...{NC}")
     for f in files:
         try:
-            result = subprocess.run(cmd + [str(f)], capture_output=True, text=True, timeout=60)
+            result = subprocess.run(
+                cmd + [str(f)], capture_output=True, text=True, timeout=60
+            )
             if result.returncode != 0:
                 all_passed = False
                 print(f"{YELLOW}      {f.name}: issues found{NC}")
-                for line in (result.stdout or result.stderr or "").strip().split("\n")[:3]:
+                for line in (
+                    (result.stdout or result.stderr or "").strip().split("\n")[:3]
+                ):
                     if line.strip():
                         print(f"        {line}")
         except subprocess.TimeoutExpired:
@@ -817,7 +903,9 @@ def lint_xml(repo_root: Path, files: list[Path]) -> bool:
     print(f"{BLUE}    xmllint --noout...{NC}")
     for f in files:
         try:
-            result = subprocess.run(cmd + ["--noout", str(f)], capture_output=True, text=True, timeout=60)
+            result = subprocess.run(
+                cmd + ["--noout", str(f)], capture_output=True, text=True, timeout=60
+            )
             if result.returncode != 0:
                 all_passed = False
                 print(f"{YELLOW}      {f.name}: XML validation failed{NC}")
@@ -843,7 +931,9 @@ def lint_css(repo_root: Path, files: list[Path]) -> bool:
 
     print(f"{BLUE}    stylelint...{NC}")
     try:
-        result = subprocess.run(cmd + file_paths, cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            cmd + file_paths, cwd=repo_root, capture_output=True, text=True, timeout=120
+        )
         if result.returncode != 0 and result.stdout:
             for line in result.stdout.strip().split("\n")[:5]:
                 print(f"{YELLOW}    {line}{NC}")
@@ -867,7 +957,9 @@ def lint_html(repo_root: Path, files: list[Path]) -> bool:
 
     print(f"{BLUE}    htmlhint...{NC}")
     try:
-        result = subprocess.run(cmd + file_paths, cwd=repo_root, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(
+            cmd + file_paths, cwd=repo_root, capture_output=True, text=True, timeout=120
+        )
         if result.returncode != 0 and result.stdout:
             for line in result.stdout.strip().split("\n")[:5]:
                 print(f"{YELLOW}    {line}{NC}")
@@ -895,7 +987,11 @@ def lint_sql(repo_root: Path, files: list[Path]) -> bool:
     print(f"{BLUE}    sqlfluff lint...{NC}")
     try:
         result = subprocess.run(
-            cmd + ["lint", "--dialect", "ansi"] + file_paths, cwd=repo_root, capture_output=True, text=True, timeout=180
+            cmd + ["lint", "--dialect", "ansi"] + file_paths,
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            timeout=180,
         )
         if result.returncode != 0 and result.stdout:
             for line in result.stdout.strip().split("\n")[:5]:
@@ -949,18 +1045,24 @@ def lint_powershell(repo_root: Path, files: list[Path]) -> bool:
     """Lint PowerShell scripts with PSScriptAnalyzer (read-only)."""
     cmd = _resolve_tool("PSScriptAnalyzer")
     if not cmd:
-        print(f"{YELLOW}    ⚠ PSScriptAnalyzer not available, cannot lint PowerShell files{NC}")
+        print(
+            f"{YELLOW}    ⚠ PSScriptAnalyzer not available, cannot lint PowerShell files{NC}"
+        )
         return True
 
     all_passed = True
     print(f"{BLUE}    PSScriptAnalyzer...{NC}")
     for f in files:
         try:
-            result = subprocess.run(cmd + ["-Path", str(f)], capture_output=True, text=True, timeout=60)
+            result = subprocess.run(
+                cmd + ["-Path", str(f)], capture_output=True, text=True, timeout=60
+            )
             if result.returncode != 0:
                 all_passed = False
                 print(f"{YELLOW}      {f.name}: issues found{NC}")
-                for line in (result.stdout or result.stderr or "").strip().split("\n")[:3]:
+                for line in (
+                    (result.stdout or result.stderr or "").strip().split("\n")[:3]
+                ):
                     if line.strip():
                         print(f"        {line}")
         except subprocess.TimeoutExpired:
@@ -979,7 +1081,12 @@ def lint_powershell(repo_root: Path, files: list[Path]) -> bool:
 def get_repo_root() -> Path:
     """Get repository root via git."""
     try:
-        result = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, timeout=10)
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
         if result.returncode == 0 and result.stdout.strip():
             return Path(result.stdout.strip())
     except (subprocess.TimeoutExpired, OSError):
