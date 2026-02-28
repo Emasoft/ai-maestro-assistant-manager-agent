@@ -818,9 +818,9 @@ def validate_allowed_tools_field(
             category="Frontmatter",
         )
 
-    # Over-permissioning warning
+    # Over-permissioning advisory — not blocking
     if len(tool_list) > 6:
-        report.minor(
+        report.warning(
             f"Many tools permitted ({len(tool_list)}) - consider limiting",
             "SKILL.md",
             category="Frontmatter",
@@ -2213,10 +2213,22 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    skill_path = Path(args.skill_path)
+    skill_path = Path(args.skill_path).resolve()
 
     if not skill_path.exists():
         print(f"Error: {skill_path} does not exist", file=sys.stderr)
+        return 1
+
+    if not skill_path.is_dir():
+        print(f"Error: {skill_path} is not a directory (expected a skill directory)", file=sys.stderr)
+        return 1
+
+    # Verify content type — skill directory must contain SKILL.md
+    if not (skill_path / "SKILL.md").exists() and not (skill_path / "skill.md").exists():
+        print(
+            f"Error: No SKILL.md found in {skill_path}\nA valid skill directory must contain a SKILL.md file.",
+            file=sys.stderr,
+        )
         return 1
 
     report = validate_skill(

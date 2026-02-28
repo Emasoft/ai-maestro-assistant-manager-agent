@@ -23,6 +23,11 @@ dmypy.json
 *.swp
 *.swo
 
+# Virtual environments
+.venv/
+venv/
+env/
+
 # Environment
 .env
 .env.*

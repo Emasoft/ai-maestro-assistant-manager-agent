@@ -158,13 +158,6 @@ def validate_mcp_server(
         report.major(f"Invalid transport type '{transport}' for server {server_name}")
         transport = "stdio"  # Assume stdio for further validation
 
-    # SSE transport deprecation warning
-    if transport == "sse":
-        report.minor(
-            f"Server {server_name} uses 'sse' transport which is deprecated. "
-            f"Consider migrating to 'http' (streamable-http) transport instead.",
-        )
-
     # Validate based on transport type
     if transport == "stdio":
         # stdio servers require 'command'
@@ -201,7 +194,7 @@ def validate_mcp_server(
                         f"Verify the package is trusted and consider pinning a version."
                     )
 
-        # Warn about SSE deprecation
+        # Warn about url field ignored for stdio transport
         if "url" in config and transport == "stdio":
             report.info(f"Server {server_name} has 'url' but transport is stdio - url will be ignored")
 
@@ -533,7 +526,7 @@ def print_results(report: ValidationReport, verbose: bool = False) -> None:
     if report.exit_code == 0:
         print(f"{colors['PASSED']}✓ All MCP checks passed{colors['RESET']}")
     else:
-        status_color = colors[["PASSED", "CRITICAL", "MAJOR", "MINOR"][report.exit_code]]
+        status_color = colors[["PASSED", "CRITICAL", "MAJOR", "MINOR", "NIT"][min(report.exit_code, 4)]]
         print(f"{status_color}✗ Issues found{colors['RESET']}")
 
     print()
@@ -552,15 +545,29 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    # Determine path
+    # Determine path — always resolve to absolute so relative_to() works
     if args.path:
-        path = Path(args.path)
+        path = Path(args.path).resolve()
     else:
-        path = Path.cwd()
+        path = Path.cwd().resolve()
 
     if not path.exists():
         print(f"Error: {path} does not exist", file=sys.stderr)
         return 1
+
+    # Verify content type — must be .mcp.json file or directory containing one
+    if path.is_file() and not path.name.endswith(".mcp.json"):
+        print(f"Error: {path} is not an MCP config file (expected .mcp.json)", file=sys.stderr)
+        return 1
+    if path.is_dir():
+        has_mcp = (path / ".mcp.json").exists() or (path / ".claude-plugin").is_dir()
+        if not has_mcp:
+            print(
+                f"Error: No MCP configuration found at {path}\n"
+                f"Expected .mcp.json file or a plugin directory with .claude-plugin/.",
+                file=sys.stderr,
+            )
+            return 1
 
     # Determine if it's a file or directory
     if path.is_file():
