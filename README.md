@@ -1,12 +1,14 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.0.0 (bump from 1.1.6 -- the entire plugin was migrated to v2 architecture)
+**Version**: 2.1.0
+
+Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/23blocks-OS/ai-maestro-plugins).
 
 ## Overview
 
 The AI Maestro Assistant Manager Agent (AMAMA) is the **user's right hand** -- the sole interlocutor with the user. It receives user requests, clarifies requirements, routes work to appropriate specialist agents via the Chief-of-Staff (AMCOS), and presents results back to the user.
 
-Requires **AI Maestro >= 0.26.0** for inter-agent messaging, governance APIs, and team management.
+Requires **[AI Maestro](https://github.com/23blocks-OS/ai-maestro) >= 0.26.0** for inter-agent messaging, governance APIs, and team management.
 
 ## Communication Hierarchy
 
