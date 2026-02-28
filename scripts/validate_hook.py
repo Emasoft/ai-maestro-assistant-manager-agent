@@ -336,7 +336,7 @@ def lint_python_script(script_path: Path, report: ValidationReport) -> None:
     if ruff_cmd:
         try:
             result = subprocess.run(
-                ruff_cmd + ["check", "--output-format=json", str(script_path)],
+                ruff_cmd + ["check", "--select=E,F,W", "--ignore=E501", "--output-format=json", str(script_path)],
                 capture_output=True,
                 text=True,
                 timeout=30,
