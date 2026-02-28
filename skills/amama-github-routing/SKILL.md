@@ -118,6 +118,12 @@ GitHub operation requested
 ## Decision Trees and Routing Matrices
 
 All operation-specific decision trees and routing matrices are in [decision-trees-and-routing.md](references/decision-trees-and-routing.md):
+  - Contents
+  - Issue Operations Decision Tree
+  - Issue Routing Matrix
+  - Pull Request Operations Decision Tree
+  - PR Routing Matrix
+  - Kanban/Projects Operations Decision Tree
 
 - **Issue Operations** - Routes to AMIA (default), AMAA (design-linked), or AMOA (module tasks). Includes issue routing matrix.
 - **Pull Request Operations** - All PR operations route to AMIA. AMIA consults AMAA/AMOA as needed. PR merges trigger task sync.
@@ -127,6 +133,10 @@ All operation-specific decision trees and routing matrices are in [decision-tree
 ## Handoff Content Requirements
 
 Each specialist agent requires specific handoff content. Templates are available in [handoff-templates-and-uuid.md](references/handoff-templates-and-uuid.md):
+  - For AMIA (Integrator) GitHub Handoffs
+  - For AMAA (Architect) Design-GitHub Handoffs
+  - For AMOA (Orchestrator) Module-GitHub Handoffs
+  - UUID Tracking Across GitHub Operations
 
 - **AMIA handoffs**: Operation type, action, target, team label, details, expected outcome, task sync status
 - **AMAA handoffs**: Design UUID, design path, GitHub target, team label, link context, expected outcome
@@ -137,6 +147,9 @@ Each specialist agent requires specific handoff content. Templates are available
 Design and module UUIDs are embedded in GitHub items (issue bodies, PR descriptions, Kanban card notes) using `AMAMA-LINK` comment tags. UUIDs enable cross-referencing between designs, modules, and GitHub items.
 
 For UUID reference formats and search commands, see [handoff-templates-and-uuid.md](references/handoff-templates-and-uuid.md#uuid-tracking-across-github-operations).
+  - UUID Tracking Across GitHub Operations
+  - For AMIA (Integrator) GitHub Handoffs
+  - For AMAA (Architect) Design-GitHub Handoffs
 
 ## Error Handling
 
@@ -211,6 +224,10 @@ Reference: {tracking_id}
 ## Examples
 
 For detailed worked examples, see [routing-examples.md](references/routing-examples.md):
+  - Example 1: Routing a Bug Report Issue to AMIA with Team Label
+  - Example 2: Kanban Card Move with Task Sync
+  - Example 3: Routing a Design-Linked Card to AMAA
+  - Example 4: Cross-Team Operation Blocked
 
 1. **Bug report to AMIA** - Standard issue creation with team label and task sync to `backlog`
 2. **Kanban card move** - Moving an issue to "In Review" with bidirectional task sync
@@ -242,3 +259,23 @@ For detailed worked examples, see [routing-examples.md](references/routing-examp
 | [handoff-templates-and-uuid.md](references/handoff-templates-and-uuid.md) | Handoff templates for AMIA/AMAA/AMOA and UUID tracking format |
 | [routing-examples.md](references/routing-examples.md) | Worked examples of routing decisions |
 | [proactive-kanban-monitoring.md](references/proactive-kanban-monitoring.md) | Proactive Kanban monitoring schedule, procedures, and error handling |
+
+**decision-trees-and-routing.md sections:**
+  - Contents
+  - Issue Operations Decision Tree
+  - Issue Routing Matrix
+  - Pull Request Operations Decision Tree
+  - PR Routing Matrix
+  - Kanban/Projects Operations Decision Tree
+
+**handoff-templates-and-uuid.md sections:**
+  - For AMIA (Integrator) GitHub Handoffs
+  - For AMAA (Architect) Design-GitHub Handoffs
+  - For AMOA (Orchestrator) Module-GitHub Handoffs
+  - UUID Tracking Across GitHub Operations
+
+**routing-examples.md sections:**
+  - Example 1: Routing a Bug Report Issue to AMIA with Team Label
+  - Example 2: Kanban Card Move with Task Sync
+  - Example 3: Routing a Design-Linked Card to AMAA
+  - Example 4: Cross-Team Operation Blocked

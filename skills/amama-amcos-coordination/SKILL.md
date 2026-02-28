@@ -113,6 +113,10 @@ In v1, AMAMA spawned dedicated AMCOS instances. In v2, AMAMA assigns the COS rol
 AMAMA is the ONLY agent authorized to assign the COS role, ensuring single point of authority and role constraint enforcement.
 
 See [creating-amcos-instance.md](references/creating-amcos-instance.md):
+  - Why AMAMA Assigns the COS Role
+  - How to Assign the COS Role
+  - Prerequisites
+  - Key Difference from v1
 - Why only AMAMA can assign the COS role -> Section 1
 - How to assign the COS role to an existing agent -> Section 2
 - When to assign the COS role -> Section 3
@@ -167,7 +171,13 @@ curl -X POST "$AIMAESTRO_API/api/teams" \
 
 Teams are stored in `~/.aimaestro/teams/registry.json`.
 
-See [creating-amcos-procedure.md](references/creating-amcos-procedure.md) for the full step-by-step procedure.
+See [creating-amcos-procedure.md](references/creating-amcos-procedure.md) for the full step-by-step procedure:
+  - Contents
+  - Overview
+  - Key Principles
+  - Agent Registration
+  - Registration API Call
+  - Agent Required Parameters
 
 ---
 
@@ -201,6 +211,10 @@ A COS-assigned agent sends approval requests to AMAMA when:
 AMAMA responds with: `approve`, `deny`, or `defer`. The response includes request_id, decision, optional comment, and conditions.
 
 See [approval-response-workflow.md](references/approval-response-workflow.md):
+  - Decision Options
+  - Response Format
+  - Field Descriptions
+  - Use-Case TOC
 - When a COS-assigned agent sends an approval request -> Section 1
 - How to format the response message -> Section 2
 - What evaluation criteria to use -> Section 3
@@ -213,6 +227,10 @@ See [approval-response-workflow.md](references/approval-response-workflow.md):
 Autonomous mode allows a COS-assigned agent to proceed with certain operation types without requesting approval for each one. AMAMA controls delegation via grant/revoke messages.
 
 See [delegation-rules.md](references/delegation-rules.md):
+  - What is Autonomous Mode
+  - Delegation Configuration
+  - Granting Autonomous Mode
+  - Grant Parameters
 - When to grant autonomous mode to a COS-assigned agent -> Section 2
 - How to configure delegation rules -> Section 2
 - When to revoke autonomous mode -> Section 3
@@ -225,6 +243,10 @@ See [delegation-rules.md](references/delegation-rules.md):
 All COS coordination happens via AI Maestro messages with specific JSON formats.
 
 See [message-formats.md](references/message-formats.md):
+  - AMCOS Approval Request Format
+  - AMAMA Response Format
+  - Autonomy Messages
+  - Field Descriptions
 - When formatting an approval request from COS-assigned agent -> Section 1
 - When formatting an approval response from AMAMA -> Section 2
 - When formatting an autonomy grant/revoke message -> Section 3
@@ -237,6 +259,9 @@ See [message-formats.md](references/message-formats.md):
 A COS-assigned agent notifies AMAMA when operations complete. User notification depends on operation type and user preferences.
 
 See [completion-notifications.md](references/completion-notifications.md):
+  - When AMCOS Sends Completion Notifications
+  - Processing Completion Notifications
+  - Notification Triggers by Mode
 - When COS-assigned agent sends completion notifications -> Section 1
 - How to process completion notifications -> Section 2
 - When to notify the user about completions -> Section 3
@@ -299,9 +324,9 @@ cos_audit_log:
 ## Examples
 
 For complete examples of COS coordination flows, see [examples.md](references/examples.md):
-- When handling a deployment approval request -> Example 1
-- When granting autonomous mode for development -> Example 2
-- When processing a completion notification -> Example 3
+  - Example 1: AMCOS Requests Approval for Deployment
+  - Example 2: Granting Autonomous Mode for Development Tasks
+  - Example 3: AMCOS Reports Completion
 
 ---
 
@@ -400,14 +425,64 @@ If no ACK after retry:
 ### Reference Documents
 
 - [references/ai-maestro-message-templates.md](references/ai-maestro-message-templates.md) - AI Maestro inter-agent message templates
+  - Receiving Messages
+  - Receiving approval requests
+  - Sending Approval-Related Messages
+  - Receiving status reports
 - [references/success-criteria.md](references/success-criteria.md) - COS coordination success criteria
+  - Success: User Request Understood
+  - Success: Project and Team Creation Complete
+  - Success: AMCOS Agent Created and Ready
+  - Success: Approval Processed
 - [references/workflow-checklists.md](references/workflow-checklists.md) - COS coordination checklists
+  - Checklist: Creating New Team
+  - Checklist: Assigning COS Role
+  - Checklist: Processing AMCOS Approval Request
+  - Checklist: Routing User Request to AMCOS
+  - Checklist: Providing Status to User
 - [references/creating-amcos-instance.md](references/creating-amcos-instance.md) - Assigning COS role procedure
+  - Why AMAMA Assigns the COS Role
+  - How to Assign the COS Role
+  - Prerequisites
+  - Key Difference from v1
 - [references/creating-amcos-procedure.md](references/creating-amcos-procedure.md) - Team creation and agent registration procedure
+  - Contents
+  - Overview
+  - Key Principles
+  - Agent Registration
+  - Registration API Call
+  - Agent Required Parameters
 - [references/workflow-examples.md](references/workflow-examples.md) - End-to-end workflow examples
+  - Example 1: User Requests New Project
+  - Example 2: AMCOS Requests Approval (Low Risk)
+  - Example 3: AMCOS Requests Approval (High Risk)
+  - Example 4: User Requests Status
+  - Example 5: COS Role Assignment Failure
 - [references/approval-response-workflow.md](references/approval-response-workflow.md) - Approval response workflow and format
+  - Decision Options
+  - Response Format
+  - Field Descriptions
+  - Use-Case TOC
 - [references/completion-notifications.md](references/completion-notifications.md) - COS completion notification handling
+  - When AMCOS Sends Completion Notifications
+  - Processing Completion Notifications
+  - Notification Triggers by Mode
 - [references/delegation-rules.md](references/delegation-rules.md) - Autonomy delegation rules and configuration
+  - What is Autonomous Mode
+  - Delegation Configuration
+  - Granting Autonomous Mode
+  - Grant Parameters
 - [references/examples.md](references/examples.md) - COS coordination flow examples
+  - Example 1: AMCOS Requests Approval for Deployment
+  - Example 2: Granting Autonomous Mode for Development Tasks
+  - Example 3: AMCOS Reports Completion
 - [references/message-formats.md](references/message-formats.md) - AI Maestro message formats for COS communication
+  - AMCOS Approval Request Format
+  - AMAMA Response Format
+  - Autonomy Messages
+  - Field Descriptions
 - [references/spawn-failure-recovery.md](references/spawn-failure-recovery.md) - Agent and COS assignment failure recovery
+  - Overview
+  - AMCOS COS Assignment Failure Recovery Protocol
+  - Recovery Steps
+  - Verify AI Maestro API

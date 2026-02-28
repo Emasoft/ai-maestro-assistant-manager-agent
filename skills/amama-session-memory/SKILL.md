@@ -133,6 +133,8 @@ AMAMA session memory is structured around the user relationship, not technical t
 Memory retrieval and updates are driven by state changes, not time intervals. There are 4 retrieval triggers (session start, role routing, GitHub issue context, approval request) and 5 update triggers (preference expression, decision made, availability change, pending item resolution, session end/compaction).
 
 For detailed trigger conditions, detection signals, actions, and CozoDB/fallback API examples, see [references/memory-triggers.md](references/memory-triggers.md).
+  - Memory Retrieval Triggers
+  - Memory Update Triggers
 
 ## Handoff Document Creation
 
@@ -141,6 +143,10 @@ When a session ends or context compacts, a handoff record ensures continuity. Th
 **Best practices**: Be specific (include issue numbers, CozoDB IDs), be current (write before compaction), be minimal (essential context only), be actionable (include resume instructions), be redundant (always write both CozoDB and fallback).
 
 For the full handoff document template, CozoDB write format, and fallback file structure, see [references/handoff-format.md](references/handoff-format.md).
+  - Handoff Document Format
+  - CozoDB Handoff Record
+  - Fallback Handoff Document Structure
+  - Handoff Best Practices
 
 ## Instructions
 
@@ -198,6 +204,9 @@ Follow these steps to maintain session memory:
 Six detailed examples covering all major operations are provided in the reference document: session start with CozoDB, session start with fallback, preference detection, decision recording, availability state changes, and semantic search for implicit preferences.
 
 See [references/examples.md](references/examples.md) for the full examples.
+  - Example 1: Session Start with AI Maestro Memory
+  - Example 2: Session Start with Fallback
+  - Example 3: Detecting and Recording Preference
 
 ## Error Handling
 
@@ -228,9 +237,22 @@ See [references/examples.md](references/examples.md) for the full examples.
 ### Reference Documents
 
 - [references/record-keeping-formats.md](references/record-keeping-formats.md) - Session record-keeping formats
+  - Contents
+  - Overview
+  - Project Registry
+  - Approval Log
 - [references/memory-triggers.md](references/memory-triggers.md) - Detailed retrieval and update trigger patterns with API examples
+  - Memory Retrieval Triggers
+  - Memory Update Triggers
 - [references/handoff-format.md](references/handoff-format.md) - Handoff document templates and CozoDB write format
+  - Handoff Document Format
+  - CozoDB Handoff Record
+  - Fallback Handoff Document Structure
+  - Handoff Best Practices
 - [references/examples.md](references/examples.md) - Six detailed session memory operation examples
+  - Example 1: Session Start with AI Maestro Memory
+  - Example 2: Session Start with Fallback
+  - Example 3: Detecting and Recording Preference
 
 ---
 

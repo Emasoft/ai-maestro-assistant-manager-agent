@@ -123,6 +123,12 @@ Next steps: [What happens now]
 ## Blocker Communication
 
 When tasks are blocked and require user decisions, use the blocker notification templates. See [references/blocker-notification-templates.md](references/blocker-notification-templates.md):
+  - Contents
+  - When to notify the user about blockers
+  - ALL blockers require IMMEDIATE user notification
+  - Do NOT notify for non-blockers
+  - Blocker notification message format
+  - Standard blocker notification
 
 - When to notify the user about blockers (immediate vs batch vs skip)
 - Blocker notification message format (standard, urgent, cascade)
@@ -341,4 +347,19 @@ The script is located at `../../scripts/amama_design_search.py` relative to this
 | Reference | Description |
 |-----------|-------------|
 | [response-templates.md](references/response-templates.md) | User communication response templates |
+
+  - Table of Contents
+  - Work Request Acknowledgment
+  - Template
+  - When to Use
+  - Guidelines
+  - Status Updates
+
 | [blocker-notification-templates.md](references/blocker-notification-templates.md) | Templates for communicating task blockers to the user and handling their responses |
+
+  - Contents
+  - When to notify the user about blockers
+  - ALL blockers require IMMEDIATE user notification
+  - Do NOT notify for non-blockers
+  - Blocker notification message format
+  - Standard blocker notification

@@ -115,6 +115,11 @@ pending --> remote-approved --> dual-approved --> executed
 Eight governance request types are supported: `add-to-team`, `remove-from-team`, `assign-cos`, `remove-cos`, `transfer-agent`, `create-agent`, `delete-agent`, `configure-agent`.
 
 Each type has a specific payload schema and presentation template. See [references/governance-request-types.md](references/governance-request-types.md) for full details including payloads and MANAGER presentation templates.
+  - Contents
+  - add-to-team
+  - remove-from-team
+  - assign-cos
+  - remove-cos
 
 ## GovernanceRequest API Endpoints
 
@@ -130,6 +135,12 @@ The API provides endpoints for listing, retrieving, approving, and rejecting Gov
 ## Legacy Approval Types
 
 Five legacy approval types from v1 are supported for backward compatibility: push, merge, publish, security, and design. These use the standard AI Maestro messaging system rather than the GovernanceRequest API. See [references/legacy-approval-types.md](references/legacy-approval-types.md) for workflows and presentation templates.
+  - Contents
+  - Push Approval
+  - Merge Approval
+  - Publish Approval
+  - Security Approval
+  - Design Approval
 
 ## Approval State Tracking
 
@@ -240,9 +251,24 @@ Copy this checklist and track your progress:
 ### Reference Documents
 
 - [references/governance-request-types.md](references/governance-request-types.md) - All 8 GovernanceRequest types with payloads and templates
+  - Contents
+  - add-to-team
+  - remove-from-team
+  - assign-cos
+  - remove-cos
 - [references/api-endpoints.md](references/api-endpoints.md) - API endpoints with curl examples and transfer handling
 - [references/legacy-approval-types.md](references/legacy-approval-types.md) - Legacy v1 approval workflows (push, merge, publish, security, design)
+  - Contents
+  - Push Approval
+  - Merge Approval
+  - Publish Approval
+  - Security Approval
+  - Design Approval
 - [references/expiry-workflow.md](references/expiry-workflow.md) - Approval expiry workflow and configuration
 - [references/examples.md](references/examples.md) - Worked examples of approval/rejection flows
 - [references/rule-14-enforcement.md](references/rule-14-enforcement.md) - RULE 14: User Requirements Are Immutable
+  - 1 When handling user requirements in any workflow
+  - 2 When detecting potential requirement deviations
+  - 3 When a technical constraint conflicts with a requirement
+  - 4 When documenting requirement compliance
 - [references/best-practices.md](references/best-practices.md) - Approval workflow best practices

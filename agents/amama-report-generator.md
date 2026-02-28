@@ -70,6 +70,9 @@ This skill contains:
 All reports MUST include a **Requirement Compliance** section tracing features to user requirements.
 
 > **For RULE 14 enforcement details**, see [amama-approval-workflows/references/rule-14-enforcement.md](../skills/amama-approval-workflows/references/rule-14-enforcement.md)
+>   - 1 When handling user requirements in any workflow
+>   - 2 When detecting potential requirement deviations
+>   - 3 When a technical constraint conflicts with a requirement
 
 **Required in every report:**
 ```markdown
