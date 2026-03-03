@@ -40,9 +40,7 @@ def calculate_file_checksum(file_path: Path) -> str:
     return sha256_hash.hexdigest()
 
 
-def calculate_directory_checksum(
-    dir_path: Path, exclude_patterns: list[str] | None = None
-) -> str:
+def calculate_directory_checksum(dir_path: Path, exclude_patterns: list[str] | None = None) -> str:
     """
     Calculate combined checksum of all files in a directory.
 
@@ -53,13 +51,7 @@ def calculate_directory_checksum(
     Returns:
         Hex-encoded SHA-256 checksum of all file contents combined
     """
-    exclude_patterns = exclude_patterns or [
-        "__pycache__",
-        ".git",
-        ".mypy_cache",
-        ".ruff_cache",
-        "*.pyc",
-    ]
+    exclude_patterns = exclude_patterns or ["__pycache__", ".git", ".mypy_cache", ".ruff_cache", "*.pyc"]
 
     sha256_hash = hashlib.sha256()
 
@@ -76,9 +68,7 @@ def calculate_directory_checksum(
         return False
 
     # Sort files for consistent ordering
-    files = sorted(
-        f for f in dir_path.rglob("*") if f.is_file() and not should_exclude(f)
-    )
+    files = sorted(f for f in dir_path.rglob("*") if f.is_file() and not should_exclude(f))
 
     for file_path in files:
         # Include relative path in hash for structure-awareness
@@ -137,9 +127,7 @@ def get_plugin_name(plugin_root: Path) -> str | None:
         return None
 
 
-def load_marketplace_json(
-    marketplace_path: Path,
-) -> tuple[dict[str, Any] | None, str | None]:
+def load_marketplace_json(marketplace_path: Path) -> tuple[dict[str, Any] | None, str | None]:
     """
     Load existing marketplace.json.
 
@@ -208,10 +196,7 @@ def create_marketplace_entry(plugin_root: Path) -> dict[str, Any]:
 
 
 def update_marketplace_json(
-    plugin_root: Path,
-    marketplace_path: Path | None = None,
-    force: bool = False,
-    verbose: bool = False,
+    plugin_root: Path, marketplace_path: Path | None = None, force: bool = False, verbose: bool = False
 ) -> tuple[bool, str, bool]:
     """
     Update marketplace.json with current plugin metadata.
@@ -243,11 +228,7 @@ def update_marketplace_json(
         for i, plugin in enumerate(plugins):
             if plugin.get("name") == new_entry["name"]:
                 if plugin.get("checksum") == new_entry["checksum"]:
-                    return (
-                        True,
-                        "marketplace.json is up-to-date (checksum unchanged)",
-                        False,
-                    )
+                    return True, "marketplace.json is up-to-date (checksum unchanged)", False
                 break
 
     # Build or update marketplace structure
@@ -287,11 +268,7 @@ def update_marketplace_json(
             json.dump(marketplace_data, f, indent=2)
             f.write("\n")
 
-        return (
-            True,
-            f"Updated marketplace.json with version {new_entry['version']}",
-            True,
-        )
+        return True, f"Updated marketplace.json with version {new_entry['version']}", True
     except Exception as e:
         return False, f"Error writing marketplace.json: {e}", False
 
@@ -318,34 +295,20 @@ Examples:
     )
 
     parser.add_argument(
-        "--plugin-dir",
-        type=Path,
-        default=None,
-        help="Plugin root directory (default: parent of scripts/)",
+        "--plugin-dir", type=Path, default=None, help="Plugin root directory (default: parent of scripts/)"
     )
 
     parser.add_argument(
-        "--marketplace",
-        type=Path,
-        default=None,
-        help="Path to marketplace.json (default: plugin-dir/marketplace.json)",
+        "--marketplace", type=Path, default=None, help="Path to marketplace.json (default: plugin-dir/marketplace.json)"
     )
 
-    parser.add_argument(
-        "--force", action="store_true", help="Force update even if checksum unchanged"
-    )
+    parser.add_argument("--force", action="store_true", help="Force update even if checksum unchanged")
 
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Show detailed output"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show detailed output")
 
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
-    parser.add_argument(
-        "--check-only",
-        action="store_true",
-        help="Check if update is needed without making changes",
-    )
+    parser.add_argument("--check-only", action="store_true", help="Check if update is needed without making changes")
 
     args = parser.parse_args()
 
@@ -366,14 +329,10 @@ Examples:
         if args.json:
             print(json.dumps({"error": f"plugin.json not found at {plugin_json_path}"}))
         else:
-            print(
-                f"Error: plugin.json not found at {plugin_json_path}", file=sys.stderr
-            )
+            print(f"Error: plugin.json not found at {plugin_json_path}", file=sys.stderr)
         return 1
 
-    marketplace_path = (
-        args.marketplace if args.marketplace else plugin_root / "marketplace.json"
-    )
+    marketplace_path = args.marketplace if args.marketplace else plugin_root / "marketplace.json"
 
     if args.check_only:
         # Just check if update is needed
@@ -387,14 +346,7 @@ Examples:
 
         if existing_data is None:
             if args.json:
-                print(
-                    json.dumps(
-                        {
-                            "needs_update": True,
-                            "reason": "marketplace.json does not exist",
-                        }
-                    )
-                )
+                print(json.dumps({"needs_update": True, "reason": "marketplace.json does not exist"}))
             else:
                 print("Update needed: marketplace.json does not exist")
             return 0
@@ -405,11 +357,7 @@ Examples:
             if plugin.get("name") == new_entry["name"]:
                 if plugin.get("checksum") == new_entry["checksum"]:
                     if args.json:
-                        print(
-                            json.dumps(
-                                {"needs_update": False, "reason": "checksum unchanged"}
-                            )
-                        )
+                        print(json.dumps({"needs_update": False, "reason": "checksum unchanged"}))
                     else:
                         print("No update needed: checksum unchanged")
                     return 0
@@ -421,9 +369,7 @@ Examples:
         return 0
 
     # Perform update
-    success, message, was_updated = update_marketplace_json(
-        plugin_root, marketplace_path, args.force, args.verbose
-    )
+    success, message, was_updated = update_marketplace_json(plugin_root, marketplace_path, args.force, args.verbose)
 
     if args.json:
         output = {

@@ -28,9 +28,7 @@ class VersionLocation:
 
     file_path: Path
     version: str
-    source: (
-        str  # Description of where in the file (e.g., "version field", "__version__")
-    )
+    source: str  # Description of where in the file (e.g., "version field", "__version__")
 
     def relative_path(self, root: Path) -> str:
         """Get path relative to root for display."""
@@ -61,9 +59,7 @@ def extract_version_from_plugin_json(plugin_root: Path) -> VersionLocation | Non
 
         version = data.get("version")
         if version:
-            return VersionLocation(
-                file_path=plugin_json_path, version=str(version), source="version field"
-            )
+            return VersionLocation(file_path=plugin_json_path, version=str(version), source="version field")
     except Exception:
         pass
 
@@ -91,9 +87,7 @@ def extract_version_from_pyproject(plugin_root: Path) -> VersionLocation | None:
         # Match version = "X.Y.Z" or version = 'X.Y.Z'
         match = re.search(r'^version\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE)
         if match:
-            return VersionLocation(
-                file_path=pyproject_path, version=match.group(1), source="version field"
-            )
+            return VersionLocation(file_path=pyproject_path, version=match.group(1), source="version field")
     except Exception:
         pass
 
@@ -133,11 +127,7 @@ def extract_version_from_changelog(plugin_root: Path) -> VersionLocation | None:
         for pattern in patterns:
             match = re.search(pattern, content, re.MULTILINE)
             if match:
-                return VersionLocation(
-                    file_path=changelog_path,
-                    version=match.group(1),
-                    source="latest release header",
-                )
+                return VersionLocation(file_path=changelog_path, version=match.group(1), source="latest release header")
     except Exception:
         pass
 
@@ -157,40 +147,22 @@ def extract_versions_from_python_files(plugin_root: Path) -> list[VersionLocatio
     results: list[VersionLocation] = []
 
     # Directories to exclude from scanning
-    exclude_dirs = {
-        "__pycache__",
-        ".venv",
-        "venv",
-        "env",
-        ".env",
-        "node_modules",
-        ".git",
-        ".mypy_cache",
-        ".ruff_cache",
-    }
+    exclude_dirs = {"__pycache__", ".venv", "venv", "env", ".env", "node_modules", ".git", ".mypy_cache", ".ruff_cache"}
 
     for py_file in plugin_root.rglob("*.py"):
         # Skip excluded directories and hidden directories
         parts_set = set(py_file.relative_to(plugin_root).parts)
-        if parts_set & exclude_dirs or any(
-            p.startswith(".") for p in py_file.relative_to(plugin_root).parts
-        ):
+        if parts_set & exclude_dirs or any(p.startswith(".") for p in py_file.relative_to(plugin_root).parts):
             continue
 
         try:
             content = py_file.read_text(encoding="utf-8")
 
             # Match __version__ = "X.Y.Z" or __version__ = 'X.Y.Z'
-            match = re.search(
-                r'^__version__\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE
-            )
+            match = re.search(r'^__version__\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE)
             if match:
                 results.append(
-                    VersionLocation(
-                        file_path=py_file,
-                        version=match.group(1),
-                        source="__version__ variable",
-                    )
+                    VersionLocation(file_path=py_file, version=match.group(1), source="__version__ variable")
                 )
         except Exception:
             pass
@@ -198,9 +170,7 @@ def extract_versions_from_python_files(plugin_root: Path) -> list[VersionLocatio
     return results
 
 
-def check_version_consistency(
-    plugin_root: Path, verbose: bool = False
-) -> tuple[bool, list[VersionLocation]]:
+def check_version_consistency(plugin_root: Path, verbose: bool = False) -> tuple[bool, list[VersionLocation]]:
     """
     Check that all versions in the plugin are consistent.
 
@@ -260,15 +230,10 @@ Exit codes:
     )
 
     parser.add_argument(
-        "--plugin-dir",
-        type=Path,
-        default=None,
-        help="Plugin root directory (default: parent of scripts/)",
+        "--plugin-dir", type=Path, default=None, help="Plugin root directory (default: parent of scripts/)"
     )
 
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Show detailed output"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show detailed output")
 
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
@@ -293,12 +258,7 @@ Exit codes:
         output = {
             "consistent": is_consistent,
             "versions": [
-                {
-                    "file": v.relative_path(plugin_root),
-                    "version": v.version,
-                    "source": v.source,
-                }
-                for v in versions
+                {"file": v.relative_path(plugin_root), "version": v.version, "source": v.source} for v in versions
             ],
             "unique_versions": list(set(v.version for v in versions)),
         }
@@ -331,15 +291,11 @@ Exit codes:
 
         if is_consistent:
             canonical_version = versions[0].version
-            print(
-                f"[OK] All {len(versions)} files have consistent version: {canonical_version}"
-            )
+            print(f"[OK] All {len(versions)} files have consistent version: {canonical_version}")
         else:
             unique = set(v.version for v in versions)
             print("[ERROR] Version mismatch detected!")
-            print(
-                f"  Found {len(unique)} different versions: {', '.join(sorted(unique))}"
-            )
+            print(f"  Found {len(unique)} different versions: {', '.join(sorted(unique))}")
             print()
             print("To fix, run:")
             print("  python scripts/bump_version.py --set <version>")

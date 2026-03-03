@@ -29,11 +29,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from cpv_validation_common import (
-    BUILTIN_AGENT_TYPES,
-    VALID_CONTEXT_VALUES,
-    ValidationReport,
-)
+from cpv_validation_common import BUILTIN_AGENT_TYPES, VALID_CONTEXT_VALUES, ValidationReport
 
 # Maximum recommended SKILL.md line count per Anthropic docs
 MAX_SKILL_LINES = 500
@@ -99,9 +95,7 @@ def parse_frontmatter(content: str) -> tuple[dict[str, Any] | None, str, int]:
         return None, content, 0
 
 
-def validate_frontmatter(
-    skill_path: Path, content: str, report: ValidationReport
-) -> dict[str, Any] | None:
+def validate_frontmatter(skill_path: Path, content: str, report: ValidationReport) -> dict[str, Any] | None:
     """Validate YAML frontmatter structure and content."""
     # Check frontmatter exists
     if not content.startswith("---"):
@@ -135,9 +129,7 @@ def validate_frontmatter(
     return frontmatter
 
 
-def validate_name_field(
-    frontmatter: dict[str, Any], skill_dir_name: str, report: ValidationReport
-) -> None:
+def validate_name_field(frontmatter: dict[str, Any], skill_dir_name: str, report: ValidationReport) -> None:
     """Validate the 'name' frontmatter field."""
     if "name" not in frontmatter:
         report.info(
@@ -153,9 +145,7 @@ def validate_name_field(
     # Validate name format per docs:
     # "Lowercase letters, numbers, and hyphens only (max 64 characters)"
     if not isinstance(name, str):
-        report.critical(
-            f"'name' must be a string, got {type(name).__name__}", "SKILL.md"
-        )
+        report.critical(f"'name' must be a string, got {type(name).__name__}", "SKILL.md")
         return
 
     if len(name) > 64:
@@ -181,9 +171,7 @@ def validate_name_field(
         )
 
 
-def validate_description_field(
-    frontmatter: dict[str, Any], body: str, report: ValidationReport
-) -> None:
+def validate_description_field(frontmatter: dict[str, Any], body: str, report: ValidationReport) -> None:
     """Validate the 'description' frontmatter field."""
     if "description" not in frontmatter:
         # Check if body has content that could serve as description
@@ -222,9 +210,7 @@ def validate_description_field(
     report.passed("'description' field present", "SKILL.md")
 
 
-def validate_context_field(
-    frontmatter: dict[str, Any], report: ValidationReport
-) -> None:
+def validate_context_field(frontmatter: dict[str, Any], report: ValidationReport) -> None:
     """Validate the 'context' frontmatter field."""
     if "context" not in frontmatter:
         return
@@ -307,9 +293,7 @@ def validate_boolean_field(
     report.passed(f"'{field_name}' field valid: {value}", "SKILL.md")
 
 
-def validate_allowed_tools_field(
-    frontmatter: dict[str, Any], report: ValidationReport
-) -> None:
+def validate_allowed_tools_field(frontmatter: dict[str, Any], report: ValidationReport) -> None:
     """Validate the 'allowed-tools' frontmatter field."""
     if "allowed-tools" not in frontmatter:
         return
@@ -352,9 +336,7 @@ def validate_model_field(frontmatter: dict[str, Any], report: ValidationReport) 
     report.passed(f"'model' field present: {model}", "SKILL.md")
 
 
-def validate_argument_hint_field(
-    frontmatter: dict[str, Any], report: ValidationReport
-) -> None:
+def validate_argument_hint_field(frontmatter: dict[str, Any], report: ValidationReport) -> None:
     """Validate the 'argument-hint' frontmatter field."""
     if "argument-hint" not in frontmatter:
         return
@@ -543,15 +525,7 @@ def print_results(report: SkillValidationReport, verbose: bool = False) -> None:
     }
 
     # Count by level
-    counts = {
-        "CRITICAL": 0,
-        "MAJOR": 0,
-        "MINOR": 0,
-        "NIT": 0,
-        "WARNING": 0,
-        "INFO": 0,
-        "PASSED": 0,
-    }
+    counts = {"CRITICAL": 0, "MAJOR": 0, "MINOR": 0, "NIT": 0, "WARNING": 0, "INFO": 0, "PASSED": 0}
     for r in report.results:
         counts[r.level] += 1
 
@@ -619,19 +593,14 @@ def print_json(report: SkillValidationReport) -> None:
             "info": sum(1 for r in report.results if r.level == "INFO"),
             "passed": sum(1 for r in report.results if r.level == "PASSED"),
         },
-        "results": [
-            {"level": r.level, "message": r.message, "file": r.file, "line": r.line}
-            for r in report.results
-        ],
+        "results": [{"level": r.level, "message": r.message, "file": r.file, "line": r.line} for r in report.results],
     }
     print(json.dumps(output, indent=2))
 
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Validate a Claude Code skill directory"
-    )
+    parser = argparse.ArgumentParser(description="Validate a Claude Code skill directory")
     parser.add_argument("skill_path", help="Path to the skill directory")
     parser.add_argument(
         "--verbose",
@@ -640,11 +609,7 @@ def main() -> int:
         help="Show all results including passed checks",
     )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="Strict mode — NIT issues also block validation",
-    )
+    parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
     args = parser.parse_args()
 
     skill_path = Path(args.skill_path).resolve()
@@ -654,17 +619,11 @@ def main() -> int:
         return 1
 
     if not skill_path.is_dir():
-        print(
-            f"Error: {skill_path} is not a directory (expected a skill directory)",
-            file=sys.stderr,
-        )
+        print(f"Error: {skill_path} is not a directory (expected a skill directory)", file=sys.stderr)
         return 1
 
     # Verify content type — skill directory must contain SKILL.md
-    if (
-        not (skill_path / "SKILL.md").exists()
-        and not (skill_path / "skill.md").exists()
-    ):
+    if not (skill_path / "SKILL.md").exists() and not (skill_path / "skill.md").exists():
         print(
             f"Error: No SKILL.md found in {skill_path}\nA valid skill directory must contain a SKILL.md file.",
             file=sys.stderr,

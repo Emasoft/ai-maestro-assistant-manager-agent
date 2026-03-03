@@ -298,11 +298,7 @@ def validate_skill_compliance(
 
     if frontmatter is None:
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            "No YAML frontmatter found (required for enterprise compliance)",
-            location,
-        )
+        report.add(level, "No YAML frontmatter found (required for enterprise compliance)", location)
         result.is_compliant = False
         result.missing_required.extend(list(ENTERPRISE_REQUIRED_FIELDS))
         return result
@@ -332,9 +328,7 @@ def validate_skill_compliance(
     validate_mode_field(frontmatter, location, report, result)
 
     # Determine compliance status
-    result.is_compliant = (
-        len(result.missing_required) == 0 and len(result.invalid_fields) == 0
-    )
+    result.is_compliant = len(result.missing_required) == 0 and len(result.invalid_fields) == 0
 
     return result
 
@@ -353,11 +347,7 @@ def validate_required_metadata(
         result.missing_required.append("name")
     elif not isinstance(frontmatter["name"], str):
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"'name' must be a string, got {type(frontmatter['name']).__name__}",
-            location,
-        )
+        report.add(level, f"'name' must be a string, got {type(frontmatter['name']).__name__}", location)
         result.invalid_fields.append("name")
     elif not frontmatter["name"].strip():
         level = "CRITICAL" if report.strict_mode else "MAJOR"
@@ -373,11 +363,7 @@ def validate_required_metadata(
         result.missing_required.append("description")
     elif not isinstance(frontmatter["description"], str):
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"'description' must be a string, got {type(frontmatter['description']).__name__}",
-            location,
-        )
+        report.add(level, f"'description' must be a string, got {type(frontmatter['description']).__name__}", location)
         result.invalid_fields.append("description")
     elif not frontmatter["description"].strip():
         level = "CRITICAL" if report.strict_mode else "MAJOR"
@@ -396,11 +382,7 @@ def validate_author_field(
     """Rule 5: Validate author field (REQUIRED for enterprise compliance)."""
     if "author" not in frontmatter:
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            "Missing required field: 'author' (enterprise compliance requirement)",
-            location,
-        )
+        report.add(level, "Missing required field: 'author' (enterprise compliance requirement)", location)
         result.missing_required.append("author")
         return
 
@@ -429,11 +411,7 @@ def validate_author_field(
             report.passed(f"'author' field present: {author_str}", location)
     else:
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"'author' must be a string or object, got {type(author).__name__}",
-            location,
-        )
+        report.add(level, f"'author' must be a string or object, got {type(author).__name__}", location)
         result.invalid_fields.append("author")
 
 
@@ -446,11 +424,7 @@ def validate_license_field(
     """Rule 6: Validate license field (REQUIRED for enterprise, SPDX identifier)."""
     if "license" not in frontmatter:
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            "Missing required field: 'license' (enterprise compliance requirement)",
-            location,
-        )
+        report.add(level, "Missing required field: 'license' (enterprise compliance requirement)", location)
         result.missing_required.append("license")
         return
 
@@ -458,11 +432,7 @@ def validate_license_field(
 
     if not isinstance(license_value, str):
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"'license' must be a string (SPDX identifier), got {type(license_value).__name__}",
-            location,
-        )
+        report.add(level, f"'license' must be a string (SPDX identifier), got {type(license_value).__name__}", location)
         result.invalid_fields.append("license")
         return
 
@@ -474,9 +444,7 @@ def validate_license_field(
 
     # Check if it's a known SPDX identifier
     if license_value in COMMON_SPDX_LICENSES:
-        report.passed(
-            f"'license' field present (valid SPDX): {license_value}", location
-        )
+        report.passed(f"'license' field present (valid SPDX): {license_value}", location)
     else:
         # Not a known SPDX identifier, but might be valid - just warn
         report.minor(
@@ -502,19 +470,13 @@ def validate_context_field(
 
     if not isinstance(context, str):
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level, f"'context' must be a string, got {type(context).__name__}", location
-        )
+        report.add(level, f"'context' must be a string, got {type(context).__name__}", location)
         result.invalid_fields.append("context")
         return
 
     if context not in VALID_CONTEXT_VALUES:
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"Invalid 'context' value: '{context}'. Valid values: {VALID_CONTEXT_VALUES}",
-            location,
-        )
+        report.add(level, f"Invalid 'context' value: '{context}'. Valid values: {VALID_CONTEXT_VALUES}", location)
         result.invalid_fields.append("context")
         return
 
@@ -531,19 +493,14 @@ def validate_agent_field(
     if "agent" not in frontmatter:
         # Agent is only relevant if context: fork is set
         if frontmatter.get("context") == "fork":
-            report.info(
-                "No 'agent' field with context: fork (defaults to general-purpose)",
-                location,
-            )
+            report.info("No 'agent' field with context: fork (defaults to general-purpose)", location)
         return
 
     agent = frontmatter["agent"]
 
     if not isinstance(agent, str):
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level, f"'agent' must be a string, got {type(agent).__name__}", location
-        )
+        report.add(level, f"'agent' must be a string, got {type(agent).__name__}", location)
         result.invalid_fields.append("agent")
         return
 
@@ -567,10 +524,7 @@ def validate_agent_field(
                 location,
             )
         else:
-            report.info(
-                f"'agent' value '{agent}' may be a custom agent from .claude/agents/",
-                location,
-            )
+            report.info(f"'agent' value '{agent}' may be a custom agent from .claude/agents/", location)
 
 
 def validate_user_invocable_field(
@@ -587,11 +541,7 @@ def validate_user_invocable_field(
 
     if not isinstance(value, bool):
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"'user-invocable' must be a boolean (true/false), got {type(value).__name__}",
-            location,
-        )
+        report.add(level, f"'user-invocable' must be a boolean (true/false), got {type(value).__name__}", location)
         result.invalid_fields.append("user-invocable")
         return
 
@@ -607,9 +557,7 @@ def validate_tags_field(
     """Rule 7: Validate tags array (RECOMMENDED)."""
     if "tags" not in frontmatter:
         # Tags are recommended but not required
-        report.minor(
-            "Missing recommended field: 'tags' (helps with skill discovery)", location
-        )
+        report.minor("Missing recommended field: 'tags' (helps with skill discovery)", location)
         result.missing_recommended.append("tags")
         return
 
@@ -621,17 +569,13 @@ def validate_tags_field(
         return
 
     if len(tags) == 0:
-        report.minor(
-            "'tags' array is empty (add tags for better skill discovery)", location
-        )
+        report.minor("'tags' array is empty (add tags for better skill discovery)", location)
         return
 
     # Validate each tag is a string
     invalid_tags = [t for t in tags if not isinstance(t, str)]
     if invalid_tags:
-        report.minor(
-            f"'tags' array contains non-string values: {invalid_tags}", location
-        )
+        report.minor(f"'tags' array contains non-string values: {invalid_tags}", location)
         return
 
     report.passed(f"'tags' field valid: {len(tags)} tag(s)", location)
@@ -652,19 +596,13 @@ def validate_mode_field(
 
     if not isinstance(mode, str):
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level, f"'mode' must be a string, got {type(mode).__name__}", location
-        )
+        report.add(level, f"'mode' must be a string, got {type(mode).__name__}", location)
         result.invalid_fields.append("mode")
         return
 
     if mode not in VALID_MODE_VALUES:
         level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level,
-            f"Invalid 'mode' value: '{mode}'. Valid values: {VALID_MODE_VALUES}",
-            location,
-        )
+        report.add(level, f"Invalid 'mode' value: '{mode}'. Valid values: {VALID_MODE_VALUES}", location)
         result.invalid_fields.append("mode")
         return
 
@@ -706,9 +644,7 @@ def validate_agent_compliance(
 
     if frontmatter is None:
         level: Level = "CRITICAL" if report.strict_mode else "MAJOR"
-        report.add(
-            level, "No YAML frontmatter found (required for agent compliance)", location
-        )
+        report.add(level, "No YAML frontmatter found (required for agent compliance)", location)
         result.is_compliant = False
         result.missing_required.extend(["name", "description"])
         return result
@@ -773,9 +709,7 @@ def validate_enterprise_compliance(
     skills_dir = plugin_path / "skills"
     if skills_dir.exists() and skills_dir.is_dir():
         # Scan all skills
-        skill_dirs = [
-            d for d in skills_dir.iterdir() if d.is_dir() and not d.name.startswith(".")
-        ]
+        skill_dirs = [d for d in skills_dir.iterdir() if d.is_dir() and not d.name.startswith(".")]
         report.total_skills = len(skill_dirs)
 
         for skill_dir in sorted(skill_dirs):
@@ -844,9 +778,7 @@ def print_results(report: EnterpriseComplianceReport, verbose: bool = False) -> 
     print(f"{colors['BOLD']}Enterprise Compliance Validation{colors['RESET']}")
     print(f"Plugin: {report.plugin_path}")
     if report.strict_mode:
-        print(
-            f"{colors['MAJOR']}Mode: STRICT (all rules are CRITICAL){colors['RESET']}"
-        )
+        print(f"{colors['MAJOR']}Mode: STRICT (all rules are CRITICAL){colors['RESET']}")
     print("=" * 70)
 
     # Print compliance summary
@@ -900,9 +832,7 @@ def print_results(report: EnterpriseComplianceReport, verbose: bool = False) -> 
     # Print final status
     print("\n" + "-" * 70)
     if report.exit_code == EXIT_OK:
-        print(
-            f"{colors['PASSED']}SUCCESS: All enterprise compliance checks passed{colors['RESET']}"
-        )
+        print(f"{colors['PASSED']}SUCCESS: All enterprise compliance checks passed{colors['RESET']}")
     elif report.exit_code == EXIT_CRITICAL:
         crit = colors["CRITICAL"]
         rst = colors["RESET"]

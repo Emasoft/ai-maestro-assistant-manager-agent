@@ -131,9 +131,7 @@ def count_frontmatter_markers(content: str) -> int:
 # =============================================================================
 
 
-def validate_file_format(
-    content: str, report: CommandValidationReport, filename: str
-) -> bool:
+def validate_file_format(content: str, report: CommandValidationReport, filename: str) -> bool:
     """Validate file format: must have exactly two --- markers for YAML frontmatter."""
     marker_count = count_frontmatter_markers(content)
 
@@ -154,9 +152,7 @@ def validate_file_format(
     return True
 
 
-def validate_frontmatter_exists(
-    content: str, report: CommandValidationReport, filename: str
-) -> dict[str, Any] | None:
+def validate_frontmatter_exists(content: str, report: CommandValidationReport, filename: str) -> dict[str, Any] | None:
     """Validate YAML frontmatter exists and is valid."""
     if not content.startswith("---"):
         report.critical("No YAML frontmatter found (required)", filename)
@@ -187,9 +183,7 @@ def validate_frontmatter_exists(
     return frontmatter
 
 
-def validate_name_field(
-    frontmatter: dict[str, Any], filename: str, report: CommandValidationReport
-) -> None:
+def validate_name_field(frontmatter: dict[str, Any], filename: str, report: CommandValidationReport) -> None:
     """Validate the 'name' frontmatter field."""
     if "name" not in frontmatter:
         # Use filename as fallback name (without .md extension)
@@ -238,9 +232,7 @@ def validate_name_field(
         report.major(f"Name cannot start/end with hyphen: {name}", filename)
 
 
-def validate_description_field(
-    frontmatter: dict[str, Any], filename: str, report: CommandValidationReport
-) -> None:
+def validate_description_field(frontmatter: dict[str, Any], filename: str, report: CommandValidationReport) -> None:
     """Validate the 'description' frontmatter field (REQUIRED, max 60 chars)."""
     if "description" not in frontmatter:
         report.major("Missing 'description' field (required)", filename)
@@ -249,9 +241,7 @@ def validate_description_field(
     desc = frontmatter["description"]
 
     if not isinstance(desc, str):
-        report.critical(
-            f"'description' must be a string, got {type(desc).__name__}", filename
-        )
+        report.critical(f"'description' must be a string, got {type(desc).__name__}", filename)
         return
 
     if not desc.strip():
@@ -283,14 +273,10 @@ def validate_description_field(
     report.passed("'description' field valid", filename)
 
 
-def validate_allowed_tools_field(
-    frontmatter: dict[str, Any], filename: str, report: CommandValidationReport
-) -> None:
+def validate_allowed_tools_field(frontmatter: dict[str, Any], filename: str, report: CommandValidationReport) -> None:
     """Validate the 'allowed-tools' frontmatter field."""
     if "allowed-tools" not in frontmatter:
-        report.info(
-            "No 'allowed-tools' field (command will inherit default tools)", filename
-        )
+        report.info("No 'allowed-tools' field (command will inherit default tools)", filename)
         return
 
     tools = frontmatter["allowed-tools"]
@@ -322,9 +308,7 @@ def validate_allowed_tools_field(
         for tool, error_msg in invalid_tools:
             report.major(f"Invalid tool pattern '{tool}': {error_msg}", filename)
     else:
-        report.passed(
-            f"'allowed-tools' field valid: {len(tool_list)} tool(s)", filename
-        )
+        report.passed(f"'allowed-tools' field valid: {len(tool_list)} tool(s)", filename)
 
 
 def validate_tool_pattern(tool: str) -> tuple[bool, str]:
@@ -377,9 +361,7 @@ def validate_tool_pattern(tool: str) -> tuple[bool, str]:
     return True, ""
 
 
-def validate_model_field(
-    frontmatter: dict[str, Any], filename: str, report: CommandValidationReport
-) -> None:
+def validate_model_field(frontmatter: dict[str, Any], filename: str, report: CommandValidationReport) -> None:
     """Validate the 'model' frontmatter field."""
     if "model" not in frontmatter:
         report.info("No 'model' field (command will inherit current model)", filename)
@@ -404,9 +386,7 @@ def validate_model_field(
     report.passed(f"'model' field valid: {model}", filename)
 
 
-def validate_argument_hint_field(
-    frontmatter: dict[str, Any], filename: str, report: CommandValidationReport
-) -> None:
+def validate_argument_hint_field(frontmatter: dict[str, Any], filename: str, report: CommandValidationReport) -> None:
     """Validate the 'argument-hint' frontmatter field."""
     if "argument-hint" not in frontmatter:
         return
@@ -414,15 +394,11 @@ def validate_argument_hint_field(
     hint = frontmatter["argument-hint"]
 
     if not isinstance(hint, str):
-        report.major(
-            f"'argument-hint' must be a string, got {type(hint).__name__}", filename
-        )
+        report.major(f"'argument-hint' must be a string, got {type(hint).__name__}", filename)
         return
 
     if not hint.strip():
-        report.minor(
-            "'argument-hint' is empty (should describe expected arguments)", filename
-        )
+        report.minor("'argument-hint' is empty (should describe expected arguments)", filename)
         return
 
     # Check for reasonable length
@@ -435,9 +411,7 @@ def validate_argument_hint_field(
     report.passed(f"'argument-hint' field valid: {hint}", filename)
 
 
-def validate_body_content(
-    content: str, filename: str, report: CommandValidationReport
-) -> None:
+def validate_body_content(content: str, filename: str, report: CommandValidationReport) -> None:
     """Validate command body content (after frontmatter)."""
     _, body, _ = parse_frontmatter(content)
 
@@ -454,25 +428,12 @@ def validate_body_content(
             filename,
         )
     else:
-        report.passed(
-            f"Command body has adequate content ({len(body_text)} chars)", filename
-        )
+        report.passed(f"Command body has adequate content ({len(body_text)} chars)", filename)
 
     # Check for common command body patterns
     has_instructions = any(
         keyword in body_text.lower()
-        for keyword in [
-            "you",
-            "will",
-            "should",
-            "must",
-            "when",
-            "if",
-            "task",
-            "do",
-            "perform",
-            "execute",
-        ]
+        for keyword in ["you", "will", "should", "must", "when", "if", "task", "do", "perform", "execute"]
     )
     if not has_instructions:
         report.info(
@@ -481,9 +442,7 @@ def validate_body_content(
         )
 
 
-def validate_security(
-    content: str, filename: str, report: CommandValidationReport
-) -> None:
+def validate_security(content: str, filename: str, report: CommandValidationReport) -> None:
     """Check for security issues in command content."""
     # Check for hardcoded secrets
     for pattern, description in SECRET_PATTERNS:
@@ -502,10 +461,7 @@ def validate_security(
 
     # Check for ${CLAUDE_PLUGIN_ROOT} usage (good practice for plugin commands)
     if "/scripts/" in content or "\\scripts\\" in content:
-        if (
-            "${CLAUDE_PLUGIN_ROOT}" not in content
-            and "$CLAUDE_PLUGIN_ROOT" not in content
-        ):
+        if "${CLAUDE_PLUGIN_ROOT}" not in content and "$CLAUDE_PLUGIN_ROOT" not in content:
             report.info(
                 "Consider using ${CLAUDE_PLUGIN_ROOT} for plugin-relative paths",
                 filename,
@@ -540,10 +496,7 @@ def validate_command(command_path: Path) -> CommandValidationReport:
 
     # Check file extension
     if command_path.suffix.lower() != ".md":
-        report.major(
-            f"Command file should have .md extension, got: {command_path.suffix}",
-            filename,
-        )
+        report.major(f"Command file should have .md extension, got: {command_path.suffix}", filename)
 
     # Read file content (binary first for encoding check)
     content_bytes = command_path.read_bytes()
@@ -635,13 +588,7 @@ def print_results(report: CommandValidationReport, verbose: bool = False) -> Non
 
     # Print score
     score = report.score
-    score_color = (
-        COLORS["PASSED"]
-        if score >= 80
-        else COLORS["MAJOR"]
-        if score >= 60
-        else COLORS["CRITICAL"]
-    )
+    score_color = COLORS["PASSED"] if score >= 80 else COLORS["MAJOR"] if score >= 60 else COLORS["CRITICAL"]
     print(f"\n  Score: {score_color}{score}/100{COLORS['RESET']}")
 
     # Print details
@@ -663,13 +610,9 @@ def print_results(report: CommandValidationReport, verbose: bool = False) -> Non
     if report.exit_code == EXIT_OK:
         print(f"{COLORS['PASSED']}[OK] Command validation passed{COLORS['RESET']}")
     elif report.exit_code == EXIT_CRITICAL:
-        print(
-            f"{COLORS['CRITICAL']}[CRITICAL] CRITICAL issues - command will not work{COLORS['RESET']}"
-        )
+        print(f"{COLORS['CRITICAL']}[CRITICAL] CRITICAL issues - command will not work{COLORS['RESET']}")
     elif report.exit_code == EXIT_MAJOR:
-        print(
-            f"{COLORS['MAJOR']}[MAJOR] MAJOR issues - significant problems{COLORS['RESET']}"
-        )
+        print(f"{COLORS['MAJOR']}[MAJOR] MAJOR issues - significant problems{COLORS['RESET']}")
     else:
         print(f"{COLORS['MINOR']}[MINOR] MINOR issues - may affect UX{COLORS['RESET']}")
 
@@ -689,10 +632,7 @@ def print_json(report: CommandValidationReport) -> None:
             "info": sum(1 for r in report.results if r.level == "INFO"),
             "passed": sum(1 for r in report.results if r.level == "PASSED"),
         },
-        "results": [
-            {"level": r.level, "message": r.message, "file": r.file, "line": r.line}
-            for r in report.results
-        ],
+        "results": [{"level": r.level, "message": r.message, "file": r.file, "line": r.line} for r in report.results],
     }
     print(json.dumps(output, indent=2))
 
@@ -704,9 +644,7 @@ def print_json(report: CommandValidationReport) -> None:
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Validate a Claude Code command file or directory"
-    )
+    parser = argparse.ArgumentParser(description="Validate a Claude Code command file or directory")
     parser.add_argument("path", help="Path to command .md file or commands/ directory")
     parser.add_argument(
         "--verbose",
@@ -715,11 +653,7 @@ def main() -> int:
         help="Show all results including passed checks",
     )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="Strict mode — NIT issues also block validation",
-    )
+    parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
     args = parser.parse_args()
 
     path = Path(args.path).resolve()
@@ -733,9 +667,7 @@ def main() -> int:
         print(f"Error: {path} is not a Markdown (.md) command file", file=sys.stderr)
         return 1
     if path.is_dir() and not list(path.glob("*.md")):
-        print(
-            f"Error: No command definition files (.md) found in {path}", file=sys.stderr
-        )
+        print(f"Error: No command definition files (.md) found in {path}", file=sys.stderr)
         return 1
 
     # Handle directory vs file
@@ -756,22 +688,14 @@ def main() -> int:
                         "exit_code": r.exit_code,
                         "score": r.score,
                         "counts": {
-                            "critical": sum(
-                                1 for x in r.results if x.level == "CRITICAL"
-                            ),
+                            "critical": sum(1 for x in r.results if x.level == "CRITICAL"),
                             "major": sum(1 for x in r.results if x.level == "MAJOR"),
                             "minor": sum(1 for x in r.results if x.level == "MINOR"),
                             "info": sum(1 for x in r.results if x.level == "INFO"),
                             "passed": sum(1 for x in r.results if x.level == "PASSED"),
                         },
                         "results": [
-                            {
-                                "level": x.level,
-                                "message": x.message,
-                                "file": x.file,
-                                "line": x.line,
-                            }
-                            for x in r.results
+                            {"level": x.level, "message": x.message, "file": x.file, "line": x.line} for x in r.results
                         ],
                     }
                     for r in reports

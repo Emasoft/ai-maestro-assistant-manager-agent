@@ -63,9 +63,7 @@ class DocumentationValidationReport(ValidationReport):
 # =============================================================================
 
 
-def validate_readme_exists(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> bool:
+def validate_readme_exists(plugin_path: Path, report: DocumentationValidationReport) -> bool:
     """Validate that README.md exists at plugin root.
 
     Args:
@@ -98,9 +96,7 @@ def validate_readme_exists(
 # =============================================================================
 
 
-def validate_installation_section(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_installation_section(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that README contains installation instructions.
 
     Looks for sections named: Installation, Getting Started, Setup, Quick Start
@@ -139,9 +135,7 @@ def validate_installation_section(
 # =============================================================================
 
 
-def validate_usage_section(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_usage_section(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that README contains usage examples.
 
     Looks for sections named: Usage, Examples, How to Use
@@ -178,9 +172,7 @@ def validate_usage_section(
 # =============================================================================
 
 
-def validate_description_section(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_description_section(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that README contains a description.
 
     A description is considered present if there's content between the
@@ -238,9 +230,7 @@ def validate_description_section(
 # =============================================================================
 
 
-def validate_broken_links(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_broken_links(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that all internal links point to existing files.
 
     Checks markdown links [text](path) where path is a local file reference.
@@ -295,9 +285,7 @@ def validate_broken_links(
 # =============================================================================
 
 
-def validate_changelog_exists(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_changelog_exists(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that CHANGELOG.md exists (recommended).
 
     Args:
@@ -326,9 +314,7 @@ def validate_changelog_exists(
 # =============================================================================
 
 
-def validate_heading_hierarchy(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_heading_hierarchy(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that heading levels don't skip (h1 -> h3 is bad).
 
     Args:
@@ -372,9 +358,7 @@ def validate_heading_hierarchy(
 # =============================================================================
 
 
-def validate_code_block_closed(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_code_block_closed(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that all code blocks are properly closed.
 
     Checks that ``` fences are balanced (even count).
@@ -421,9 +405,7 @@ def validate_code_block_closed(
 # =============================================================================
 
 
-def validate_code_block_language_tags(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_code_block_language_tags(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that code blocks have language tags.
 
     Checks that code fences specify a language (```python not just ```).
@@ -470,9 +452,7 @@ def validate_code_block_language_tags(
 # =============================================================================
 
 
-def validate_list_formatting(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_list_formatting(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that list formatting is consistent.
 
     Checks for mixed list markers (-, *, +) in the same document.
@@ -523,9 +503,7 @@ def validate_list_formatting(
 # =============================================================================
 
 
-def validate_table_structure(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_table_structure(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that markdown tables have consistent structure.
 
     Checks that:
@@ -600,9 +578,7 @@ def validate_table_structure(
 # =============================================================================
 
 
-def validate_image_references(
-    plugin_path: Path, report: DocumentationValidationReport
-) -> None:
+def validate_image_references(plugin_path: Path, report: DocumentationValidationReport) -> None:
     """Validate that image references point to existing files.
 
     Checks markdown images ![alt](path) where path is a local file.
@@ -844,9 +820,7 @@ def main() -> int:
     Returns:
         Exit code (0=ok, 1=critical, 2=major, 3=minor)
     """
-    parser = argparse.ArgumentParser(
-        description="Validate documentation files in a Claude Code plugin"
-    )
+    parser = argparse.ArgumentParser(description="Validate documentation files in a Claude Code plugin")
     parser.add_argument("plugin_path", help="Path to the plugin directory")
     parser.add_argument(
         "--verbose",
@@ -855,11 +829,7 @@ def main() -> int:
         help="Show all results including passed checks",
     )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
-    parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="Strict mode — NIT issues also block validation",
-    )
+    parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
     args = parser.parse_args()
 
     plugin_path = Path(args.plugin_path).resolve()

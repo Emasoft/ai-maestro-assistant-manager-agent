@@ -204,9 +204,7 @@ def is_validator_script(file_path: str) -> bool:
     """
     file_lower = file_path.lower()
     # Validator scripts that contain intentional pattern definitions
-    return (
-        "validate_" in file_lower and file_lower.endswith(".py")
-    ) or "cpv_validation_common" in file_lower
+    return ("validate_" in file_lower and file_lower.endswith(".py")) or "cpv_validation_common" in file_lower
 
 
 def scan_for_injection(content: str, file_path: str, report: ValidationReport) -> int:
@@ -229,10 +227,7 @@ def scan_for_injection(content: str, file_path: str, report: ValidationReport) -
 
     # Determine if file is a test file - test files often have mock/example content
     is_test_file = (
-        "test_" in file_lower
-        or "_test.py" in file_lower
-        or "/tests/" in file_lower
-        or "\\tests\\" in file_lower
+        "test_" in file_lower or "_test.py" in file_lower or "/tests/" in file_lower or "\\tests\\" in file_lower
     )
 
     # Determine if file is a validator script - they contain intentional patterns
@@ -261,11 +256,7 @@ def scan_for_injection(content: str, file_path: str, report: ValidationReport) -
         # Check pipe to shell (CRITICAL) - dangerous in any context
         for pattern, msg in PIPE_TO_SHELL_PATTERNS:
             # Skip if line looks like documentation (markdown table)
-            if (
-                "|" in line
-                and line.count("|") >= 2
-                and ("object" in line.lower() or "string" in line.lower())
-            ):
+            if "|" in line and line.count("|") >= 2 and ("object" in line.lower() or "string" in line.lower()):
                 continue
             if pattern.search(line):
                 report.critical(f"{msg}: {line.strip()[:80]}", file_path, line_num)
@@ -286,9 +277,7 @@ def scan_for_injection(content: str, file_path: str, report: ValidationReport) -
     return issues_found
 
 
-def scan_for_path_traversal(
-    content: str, file_path: str, report: ValidationReport
-) -> int:
+def scan_for_path_traversal(content: str, file_path: str, report: ValidationReport) -> int:
     """Scan content for path traversal patterns. Returns count of issues found.
 
     Note: Documentation files (.md) often contain examples showing path syntax.
@@ -338,14 +327,8 @@ def scan_for_secrets(content: str, file_path: str, report: ValidationReport) -> 
         for pattern, secret_type in SECRET_PATTERNS:
             if pattern.search(line):
                 # Mask the actual secret in the report
-                masked_line = (
-                    line.strip()[:40] + "..."
-                    if len(line.strip()) > 40
-                    else line.strip()
-                )
-                report.critical(
-                    f"{secret_type} detected: {masked_line}", file_path, line_num
-                )
+                masked_line = line.strip()[:40] + "..." if len(line.strip()) > 40 else line.strip()
+                report.critical(f"{secret_type} detected: {masked_line}", file_path, line_num)
                 issues_found += 1
 
     return issues_found
@@ -441,10 +424,7 @@ def check_script_permissions(plugin_path: Path, report: ValidationReport) -> int
                             report.minor(f"Shell script missing shebang: {rel_path}")
                             issues_found += 1
                         elif "bash" not in first_line and "sh" not in first_line:
-                            report.info(
-                                f"Shell script has non-standard shebang: {first_line.strip()}",
-                                str(rel_path),
-                            )
+                            report.info(f"Shell script has non-standard shebang: {first_line.strip()}", str(rel_path))
 
                 except (OSError, PermissionError) as e:
                     report.major(f"Cannot check script permissions: {rel_path} ({e})")
@@ -503,16 +483,10 @@ def scan_all_files(plugin_path: Path, report: ValidationReport) -> dict[str, int
 
                 # Run all content scans
                 # CRITICAL: Injection detection runs FIRST, before any allowlisting
-                stats["injection_issues"] += scan_for_injection(
-                    content, rel_path, report
-                )
-                stats["path_traversal_issues"] += scan_for_path_traversal(
-                    content, rel_path, report
-                )
+                stats["injection_issues"] += scan_for_injection(content, rel_path, report)
+                stats["path_traversal_issues"] += scan_for_path_traversal(content, rel_path, report)
                 stats["secret_issues"] += scan_for_secrets(content, rel_path, report)
-                stats["user_path_issues"] += scan_for_user_paths(
-                    content, rel_path, report
-                )
+                stats["user_path_issues"] += scan_for_user_paths(content, rel_path, report)
 
             except (OSError, PermissionError) as e:
                 report.minor(f"Cannot read file: {rel_path} ({e})")
@@ -571,9 +545,7 @@ def validate_security(plugin_path: Path) -> ValidationReport:
     scan_stats = scan_all_files(plugin_path, report)
 
     # Report scan statistics
-    report.info(
-        f"Scanned {scan_stats['files_scanned']} files, skipped {scan_stats['files_skipped']} binary files"
-    )
+    report.info(f"Scanned {scan_stats['files_scanned']} files, skipped {scan_stats['files_skipped']} binary files")
 
     # Add passed messages for clean categories
     if scan_stats["injection_issues"] == 0:
@@ -615,21 +587,10 @@ Exit Codes:
   3 - MINOR issues found (recommended to fix)
         """,
     )
-    parser.add_argument(
-        "plugin_path", type=Path, help="Path to the plugin directory to validate"
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Show all results including INFO and PASSED",
-    )
+    parser.add_argument("plugin_path", type=Path, help="Path to the plugin directory to validate")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show all results including INFO and PASSED")
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
-    parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="Strict mode — NIT issues also block validation",
-    )
+    parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
 
     args = parser.parse_args()
 
