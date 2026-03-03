@@ -1,5 +1,11 @@
 # Approval Workflow Examples
 
+## Contents
+
+- [Example 1: Approving a Team Membership Request](#example-1-approving-a-team-membership-request)
+- [Example 2: Handling a Transfer Request](#example-2-handling-a-transfer-request)
+- [Example 3: Rejecting a Dangerous Request](#example-3-rejecting-a-dangerous-request)
+
 ## Example 1: Approving a Team Membership Request
 
 ```bash

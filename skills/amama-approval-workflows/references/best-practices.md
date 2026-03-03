@@ -1,5 +1,15 @@
 # Best Practices
 
+## Contents
+
+- [1. Always Verify Before Reporting](#1-always-verify-before-reporting)
+- [2. Maintain Records Consistently](#2-maintain-records-consistently)
+- [3. Clear Communication with User](#3-clear-communication-with-user)
+- [4. Risk-Aware Approval Decisions](#4-risk-aware-approval-decisions)
+- [5. Scope Management](#5-scope-management)
+- [6. Error Handling](#6-error-handling)
+- [7. Timeliness](#7-timeliness)
+
 ## 1. Always Verify Before Reporting
 
 **Don't assume AMCOS is alive** - always send health check ping after deploying.

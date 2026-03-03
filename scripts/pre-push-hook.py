@@ -165,7 +165,14 @@ def lint_python_scripts(plugin_dir: Path) -> list[tuple[str, str]]:
 
     try:
         result = subprocess.run(
-            ["ruff", "check", str(scripts_dir), "--select=E,F,W", "--ignore=E501", "--quiet"],
+            [
+                "ruff",
+                "check",
+                str(scripts_dir),
+                "--select=E,F,W",
+                "--ignore=E501",
+                "--quiet",
+            ],
             capture_output=True,
             text=True,
             timeout=30,

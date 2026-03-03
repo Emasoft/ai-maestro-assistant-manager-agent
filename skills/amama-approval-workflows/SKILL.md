@@ -124,6 +124,12 @@ Each type has a specific payload schema and presentation template. See [referenc
 ## GovernanceRequest API Endpoints
 
 The API provides endpoints for listing, retrieving, approving, and rejecting GovernanceRequests, plus a dedicated transfer submission endpoint. See [references/api-endpoints.md](references/api-endpoints.md) for full endpoint documentation with curl examples.
+  - List Pending Requests
+  - Get a Specific Request
+  - Approve a Request (MANAGER only)
+  - Reject a Request (MANAGER only)
+  - Submit a Transfer Request
+  - Transfer Request Handling (M5)
 
 **Key endpoints**:
 - `GET /api/v1/governance/requests?status=pending` - List pending requests
@@ -192,6 +198,9 @@ legacy_approvals:
 ## Approval Expiry Workflow
 
 Requests pending longer than 24 hours are auto-rejected. The expiry check runs hourly. See [references/expiry-workflow.md](references/expiry-workflow.md) for the full expiry workflow, including API calls, state updates, notifications, and configuration options.
+  - Expiry Check Schedule
+  - Expiry Workflow Steps
+  - Expiry Configuration
 
 ## User Notification
 
@@ -204,9 +213,9 @@ When a GovernanceRequest is created:
 ## Examples
 
 See [references/examples.md](references/examples.md) for complete worked examples including:
-1. Approving a team membership request
-2. Handling a transfer request (with dual-approval flow)
-3. Rejecting a dangerous delete-agent request
+  - Example 1: Approving a Team Membership Request
+  - Example 2: Handling a Transfer Request
+  - Example 3: Rejecting a Dangerous Request
 
 ## Error Handling
 
@@ -257,6 +266,9 @@ Copy this checklist and track your progress:
   - assign-cos
   - remove-cos
 - [references/api-endpoints.md](references/api-endpoints.md) - API endpoints with curl examples and transfer handling
+  - List Pending Requests
+  - Approve a Request (MANAGER only)
+  - Submit a Transfer Request
 - [references/legacy-approval-types.md](references/legacy-approval-types.md) - Legacy v1 approval workflows (push, merge, publish, security, design)
   - Contents
   - Push Approval
@@ -265,10 +277,19 @@ Copy this checklist and track your progress:
   - Security Approval
   - Design Approval
 - [references/expiry-workflow.md](references/expiry-workflow.md) - Approval expiry workflow and configuration
+  - Expiry Check Schedule
+  - Expiry Workflow Steps
+  - Expiry Configuration
 - [references/examples.md](references/examples.md) - Worked examples of approval/rejection flows
+  - Example 1: Approving a Team Membership Request
+  - Example 2: Handling a Transfer Request
+  - Example 3: Rejecting a Dangerous Request
 - [references/rule-14-enforcement.md](references/rule-14-enforcement.md) - RULE 14: User Requirements Are Immutable
   - 1 When handling user requirements in any workflow
   - 2 When detecting potential requirement deviations
   - 3 When a technical constraint conflicts with a requirement
   - 4 When documenting requirement compliance
 - [references/best-practices.md](references/best-practices.md) - Approval workflow best practices
+  - 1. Always Verify Before Reporting
+  - 2. Maintain Records Consistently
+  - 3. Clear Communication with User

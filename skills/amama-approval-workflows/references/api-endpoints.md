@@ -1,5 +1,14 @@
 # GovernanceRequest API Endpoints Reference
 
+## Contents
+
+- [List Pending Requests](#list-pending-requests)
+- [Get a Specific Request](#get-a-specific-request)
+- [Approve a Request (MANAGER only)](#approve-a-request-manager-only)
+- [Reject a Request (MANAGER only)](#reject-a-request-manager-only)
+- [Submit a Transfer Request](#submit-a-transfer-request)
+- [Transfer Request Handling (M5)](#transfer-request-handling-m5)
+
 ## List Pending Requests
 
 ```bash

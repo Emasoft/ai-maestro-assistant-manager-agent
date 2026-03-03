@@ -1,5 +1,18 @@
 # Handoff Document Format
 
+## Contents
+
+- [CozoDB Handoff Record](#cozodb-handoff-record)
+- [Fallback Handoff Document Structure](#fallback-handoff-document-structure)
+- [Session Metadata](#session-metadata)
+- [User State](#user-state)
+- [Active Context](#active-context)
+- [Pending Items Requiring User Attention](#pending-items-requiring-user-attention)
+- [Recent Decisions](#recent-decisions)
+- [Communication Notes](#communication-notes)
+- [Resume Instructions](#resume-instructions)
+- [Handoff Best Practices](#handoff-best-practices)
+
 When AMAMA session ends or context compacts, a handoff record ensures continuity. The primary handoff is stored in CozoDB; a file-based copy is written as fallback.
 
 ## CozoDB Handoff Record

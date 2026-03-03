@@ -1,5 +1,11 @@
 # Approval Expiry Workflow Reference
 
+## Contents
+
+- [Expiry Check Schedule](#expiry-check-schedule)
+- [Expiry Workflow Steps](#expiry-workflow-steps)
+- [Expiry Configuration](#expiry-configuration)
+
 GovernanceRequests that remain pending for too long are automatically rejected to prevent stale requests from blocking workflows.
 
 ## Expiry Check Schedule
