@@ -1,7 +1,7 @@
 ---
 name: amama-status-reporting
 description: Use when generating status reports. Queries AI Maestro APIs (sessions, health, teams, tasks) for live data. Trigger with status report requests.
-version: 2.0.0
+version: 2.3.0
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent

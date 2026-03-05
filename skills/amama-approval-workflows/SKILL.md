@@ -1,7 +1,7 @@
 ---
 name: amama-approval-workflows
 description: Use when handling governance approvals via GovernanceRequest API (team membership, agent lifecycle, COS assignment). Trigger with pending governance requests.
-version: 2.0.0
+version: 2.3.0
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
@@ -23,7 +23,7 @@ This skill provides the Assistant Manager (AMAMA) with structured workflows for 
 
 | Track | Scope | Mechanism | Skill |
 |-------|-------|-----------|-------|
-| **Governance approvals** | Team membership, COS assignment, agent lifecycle, transfers | GovernanceRequest API (`POST /api/governance/requests/{id}/approve`) | This skill (`amama-approval-workflows`) |
+| **Governance approvals** | Team membership, COS assignment, agent lifecycle, transfers | GovernanceRequest API (`POST /api/v1/governance/requests/{id}/approve`) | This skill (`amama-approval-workflows`) |
 | **Operational approvals** | Deployments, merges, test runs, routine AMCOS operations | Message-based flow (`approval_request` / `approval_decision` messages) | `amama-amcos-coordination` skill |
 
 Governance approvals use typed GovernanceRequest objects with a defined state machine. Operational approvals use the message-based flow described in `amama-amcos-coordination/references/message-formats.md`.

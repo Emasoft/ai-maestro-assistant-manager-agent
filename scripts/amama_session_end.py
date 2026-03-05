@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -210,8 +211,6 @@ def update_session_end_marker(memory_root: Path) -> bool:
 
     if "## Last Session" in content:
         # Update existing marker
-        import re
-
         pattern = r"## Last Session\s*\n\*\*Ended\*\*: [^\n]+"
         new_content = re.sub(
             pattern, f"## Last Session\n\n**Ended**: {timestamp}", content, count=1

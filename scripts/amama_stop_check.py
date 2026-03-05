@@ -36,14 +36,23 @@ def get_memory_root(cwd: str) -> Path:
 
 
 def check_ai_maestro_inbox() -> tuple[int, list[str]]:
-    """Check AI Maestro inbox for unread messages.
-
-    Note: amp-send is a send-only CLI. Message retrieval is not supported
-    by the AMP CLI, so this function always returns zero unread messages.
-
-    Returns:
-        Tuple of (unread_count, list of message subjects)
-    """
+    """Check AI Maestro inbox for unread messages via the API."""
+    try:
+        api_base = os.environ.get("AIMAESTRO_API", "http://localhost:23000")
+        session_name = os.environ.get("AIMAESTRO_AGENT", "")
+        if not session_name:
+            return 0, []
+        result = subprocess.run(
+            ["curl", "-sf", f"{api_base}/api/messages?agent={session_name}&action=unread-count"],
+            capture_output=True, text=True, timeout=5,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            data = json.loads(result.stdout)
+            count = data.get("count", 0)
+            if count > 0:
+                return count, [f"{count} unread message(s)"]
+    except (subprocess.TimeoutExpired, subprocess.SubprocessError, json.JSONDecodeError, FileNotFoundError, OSError):
+        pass
     return 0, []
 
 

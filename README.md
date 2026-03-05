@@ -1,6 +1,6 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.2.0
+**Version**: 2.3.0
 
 Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/23blocks-OS/ai-maestro-plugins).
 

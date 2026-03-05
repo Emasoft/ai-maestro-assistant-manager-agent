@@ -2,7 +2,7 @@
 name: amama-respond-to-amcos
 description: "Respond to pending AMCOS approval requests with approve, deny, or defer decision"
 argument-hint: "--request-id <id> --decision <approve|deny|defer> [--comment <text>]"
-allowed-tools: ["Read", "Write"]
+allowed-tools: ["Read", "Write", "Bash"]
 ---
 
 # Respond to AMCOS Command
@@ -158,7 +158,6 @@ The command sends an approval response to AMCOS using the `agent-messaging` skil
 ## Related Commands
 
 - `/amama-orchestration-status` - View pending AMCOS requests in status report
-- `/amama-configure-amcos-delegation` - Configure autonomous operation rules
 - `/amama-approve-plan` - Approve plans (separate from AMCOS approval flow)
 
 ## Related Skills

@@ -11,13 +11,14 @@ Usage:
 """
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 import yaml
 
 # Plan phase state file location
-PLAN_STATE_FILE = Path("design/plan-phase.local.md")
+PLAN_STATE_FILE = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / "design" / "plan-phase.local.md"
 
 
 def parse_frontmatter(file_path: Path) -> dict:

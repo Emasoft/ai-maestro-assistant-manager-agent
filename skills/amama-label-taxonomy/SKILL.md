@@ -1,11 +1,11 @@
 ---
 name: amama-label-taxonomy
 description: Use when managing GitHub issue labels for user requests, setting priorities, or reporting status to users. Covers priority and status label taxonomy. Trigger with `/amama-label-taxonomy`.
-agent: amama-assistant-manager-main-agent
-context: fork
-user-invocable: false
+version: 2.3.0
 compatibility: Requires AI Maestro installed.
-version: 2.0.0
+context: fork
+agent: amama-assistant-manager-main-agent
+user-invocable: false
 ---
 
 # AMAMA Label Taxonomy

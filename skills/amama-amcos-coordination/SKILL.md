@@ -1,7 +1,7 @@
 ---
 name: amama-amcos-coordination
 description: Use when coordinating with the Chief of Staff (COS) for approval requests and autonomous operation delegation. Trigger with COS coordination requests.
-version: 2.0.0
+version: 2.3.0
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
@@ -405,11 +405,8 @@ If no ACK after retry:
 
 ## Related Commands
 
-- `/amama-respond-to-cos` - Respond to pending COS approval requests
-- `/amama-configure-cos-delegation` - Configure COS delegation rules
+- `/amama-respond-to-amcos` - Respond to pending COS approval requests
 - `/amama-orchestration-status` - View status including COS operations
-- `/amama-assign-cos` - Assign COS role to an existing agent
-- `/amama-create-team` - Create a new team
 
 ## Resources
 

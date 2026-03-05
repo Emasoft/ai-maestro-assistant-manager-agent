@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -17,7 +18,7 @@ from typing import Any, cast
 import yaml
 
 # State file location
-EXEC_STATE_FILE = Path("design/exec-phase.local.md")
+EXEC_STATE_FILE = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / "design" / "exec-phase.local.md"
 
 
 def parse_frontmatter(file_path: Path) -> tuple[dict[str, Any], str]:

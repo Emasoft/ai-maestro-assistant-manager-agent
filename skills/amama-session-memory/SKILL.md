@@ -1,11 +1,8 @@
 ---
 name: amama-session-memory
 description: User preference and communication style persistence via AI Maestro memory system. Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start.
-version: 2.0.0
-license: MIT
+version: 2.3.0
 compatibility: Requires AI Maestro installed.
-metadata:
-  author: Emasoft
 context: fork
 agent: amama-assistant-manager-main-agent
 user-invocable: false
@@ -256,7 +253,7 @@ See [references/examples.md](references/examples.md) for the full examples.
 
 ---
 
-**Version**: 2.0.0
+**Version**: 2.2.0
 **Last Updated**: 2026-02-27
 **Target Audience**: AI Maestro Assistant Manager Agent
 **Difficulty Level**: Intermediate

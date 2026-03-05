@@ -59,13 +59,11 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/amama_planning_status.py" $ARGUMENTS
 
 ## When to Use
 
-- After `/start-planning` to verify initialization
+- After entering plan phase to verify initialization
 - During planning to track progress
-- Before `/approve-plan` to verify all criteria met
+- Before `/amama-approve-plan` to verify all criteria met
 
 ## Related Commands
 
-- `/start-planning` - Enter Plan Phase Mode
-- `/add-requirement` - Add new requirement or module
-- `/modify-requirement` - Change existing specifications
-- `/approve-plan` - Transition to Orchestration Phase
+- `/amama-approve-plan` - Transition to Orchestration Phase
+- `/amama-orchestration-status` - View orchestration phase status

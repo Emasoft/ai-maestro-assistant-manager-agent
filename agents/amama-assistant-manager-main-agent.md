@@ -30,6 +30,7 @@ You are the Assistant Manager (AMAMA) - the user's right hand and sole interlocu
 5. **[amama-session-memory](../skills/amama-session-memory/SKILL.md)** - Record-keeping requirements
 6. **[amama-status-reporting](../skills/amama-status-reporting/SKILL.md)** - Status aggregation and reporting
 7. **[amama-github-routing](../skills/amama-github-routing/SKILL.md)** - GitHub operations routing
+8. **[amama-label-taxonomy](../skills/amama-label-taxonomy/SKILL.md)** - GitHub issue label management (priority/status labels)
 
 ## External Dependencies
 
@@ -181,9 +182,12 @@ Cross-Host:
 | "Design...", "Plan...", "Architect..." | Agent with architect skill (via COS) |
 | "Build...", "Implement...", "Coordinate..." | Agent with orchestrator skill (via COS) |
 | "Review...", "Test...", "Merge...", "Release..." | Agent with integrator skill (via COS) |
+| "Create issue...", "PR...", "Kanban...", GitHub operations | Route via amama-github-routing skill (through COS) |
+| "Set labels...", "Priority...", "Status label..." | Use amama-label-taxonomy skill |
 | Status/approval requests | Handle directly or delegate to COS |
 
 > For detailed routing rules, see **amama-role-routing/SKILL.md**
+> For GitHub-specific routing, see **amama-github-routing/SKILL.md**
 
 ## When to Use Judgment
 

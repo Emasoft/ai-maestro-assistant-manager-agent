@@ -291,9 +291,9 @@ def download_document(
             check=True,
             timeout=60,
         )
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
         print(f"ERROR: Download failed: {e}")
-        print(f"stderr: {e.stderr}")
+        print(f"stderr: {getattr(e, 'stderr', '')}")
         return None
 
     if not file_path.exists() or file_path.stat().st_size == 0:

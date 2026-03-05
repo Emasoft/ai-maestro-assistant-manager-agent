@@ -16,6 +16,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 from amama_memory_operations import (
     add_decision,
     add_pattern,

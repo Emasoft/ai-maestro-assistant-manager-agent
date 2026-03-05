@@ -116,9 +116,9 @@ Labels applied:
 ╠════════════════════════════════════════════════════════════════╣
 ║ NEXT STEPS                                                     ║
 ╠════════════════════════════════════════════════════════════════╣
-║ 1. Run /start-orchestration to begin implementation            ║
-║ 2. Register remote agents with /register-agent                 ║
-║ 3. Assign modules with /assign-module                          ║
+║ 1. Begin orchestration phase implementation                     ║
+║ 2. Register agents via AI Maestro API                          ║
+║ 3. Assign modules to registered agents                         ║
 ╚════════════════════════════════════════════════════════════════╝
 ```
 
@@ -127,12 +127,11 @@ Labels applied:
 | Error | Cause | Solution |
 |-------|-------|----------|
 | "Requirements incomplete" | Requirement sections not complete | Mark all sections complete |
-| "Module missing criteria" | Module has no acceptance criteria | Add criteria with `/modify-requirement` |
+| "Module missing criteria" | Module has no acceptance criteria | Add acceptance criteria to the module |
 | "USER_REQUIREMENTS.md not found" | File doesn't exist | Create the requirements document |
-| "Not in Plan Phase" | No plan phase state file | Run `/start-planning` first |
+| "Not in Plan Phase" | No plan phase state file | Enter plan phase first |
 
 ## Related Commands
 
-- `/planning-status` - Verify prerequisites
-- `/start-orchestration` - Begin Orchestration Phase
-- `/register-agent` - Register remote agents for implementation
+- `/amama-planning-status` - Verify prerequisites
+- `/amama-orchestration-status` - View orchestration phase status

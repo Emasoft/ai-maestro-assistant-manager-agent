@@ -78,7 +78,6 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/amama_orchestration_status.py" $ARGUMENTS
 
 ## Related Commands
 
-- `/start-orchestration` - Begin orchestration
-- `/assign-module` - Assign module to agent
-- `/check-agents` - Poll all active agents
-- `/register-agent` - Register new agent
+- `/amama-approve-plan` - Approve plan and transition to orchestration
+- `/amama-planning-status` - View planning phase status
+- `/amama-respond-to-amcos` - Respond to COS approval requests

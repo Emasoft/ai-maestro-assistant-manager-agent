@@ -1,7 +1,7 @@
 ---
 name: amama-github-routing
 description: Use when routing GitHub operations (issues, PRs, projects, releases) to specialists via team labels. Trigger with GitHub requests.
-version: 2.0.0
+version: 2.3.0
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
@@ -43,7 +43,7 @@ Copy this checklist and track your progress:
 - [ ] Determine target agent (AMIA/AMAA/AMOA/AMAMA)
 - [ ] Prepare handoff document with required fields and team label
 - [ ] Include UUID tracking if design/module linked
-- [ ] Send handoff via AI Maestro
+- [ ] Route through COS-assigned agent (all specialist routing goes through COS, never directly to specialists)
 - [ ] Sync task status to `~/.aimaestro/teams/tasks-{teamId}.json`
 - [ ] Log routing decision
 - [ ] Track handoff status
