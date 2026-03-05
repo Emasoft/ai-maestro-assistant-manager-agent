@@ -308,6 +308,10 @@ def main() -> int:
     except json.JSONDecodeError:
         hook_input = {}
 
+    # Skip blocking for subagents — only block main agent exits (2.1.69+: agent_id present means subagent)
+    if hook_input.get("agent_id"):
+        return 0
+
     # Get working directory from input or environment
     cwd = hook_input.get("cwd", os.getcwd())
     memory_root = get_memory_root(cwd)
