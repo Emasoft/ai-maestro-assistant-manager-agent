@@ -93,6 +93,14 @@ All reports MUST include a **Requirement Compliance** section tracing features t
 
 ---
 
+### Output Rules
+- Reports MUST be concise: max 20 lines for status summaries
+- Use tables for structured data (teams, agents, tasks)
+- Omit empty sections — only report what has data
+- For detailed reports, write to a .md file and provide the path
+
+---
+
 ## Data Sources
 
 > **For query syntax and examples**, see amama-status-reporting skill Section 3.

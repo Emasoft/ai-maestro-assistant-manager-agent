@@ -146,7 +146,7 @@ claude --plugin-dir /path/to/ai-maestro-assistant-manager-agent
 
 ```bash
 cd /path/to/ai-maestro-assistant-manager-agent
-uv run python scripts/validate_plugin.py . --verbose
+CLAUDE_PRIVATE_USERNAMES="emanuelesabetta" uv run --with pyyaml --with types-PyYAML python scripts/validate_plugin.py . --verbose
 ```
 
 ## Scripts
@@ -186,7 +186,7 @@ All scripts are in the `scripts/` directory and use the `amama_` prefix:
 | `validate_skill_comprehensive.py` | Comprehensive skill validation |
 | `validate_skill.py` | Basic skill validation |
 | `validate_xref.py` | Cross-reference validation |
-| `validation_common.py` | Shared validation utilities |
+| `cpv_validation_common.py` | Shared validation utilities (CPV) |
 
 ## Project Structure
 
@@ -207,7 +207,7 @@ ai-maestro-assistant-manager-agent/
 ├── scripts/
 │   ├── amama_*.py                     # AMAMA functional scripts
 │   ├── validate_*.py                  # Plugin validation suite
-│   ├── validation_common.py           # Shared validation utilities
+│   ├── cpv_validation_common.py        # Shared validation utilities (CPV)
 │   ├── smart_exec.py                  # Smart command execution
 │   ├── bump_version.py                # Version bumping
 │   └── pre-push-hook.py              # Pre-push validation
@@ -229,6 +229,14 @@ ai-maestro-assistant-manager-agent/
 ├── LICENSE                            # MIT License
 └── README.md
 ```
+
+## Compatibility
+
+| Dependency | Minimum Version |
+|------------|----------------|
+| Claude Code | 2.1.69+ |
+| AI Maestro | 0.26.0+ |
+| Python | 3.8+ |
 
 ## License
 

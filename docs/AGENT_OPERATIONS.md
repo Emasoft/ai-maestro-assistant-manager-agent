@@ -14,9 +14,9 @@
 | Operation | API | Notes |
 |-----------|-----|-------|
 | Create team | `POST /api/teams` | Specifies team type (open/closed) |
-| Assign COS | `POST /api/teams/{id}/cos` | Assigns chief-of-staff to closed team |
-| Approve request | `POST /api/governance/approve` | GovernanceRequest approval |
-| Reject request | `POST /api/governance/reject` | GovernanceRequest rejection |
+| Assign COS | `PATCH /api/teams/{id}/chief-of-staff` | Assigns chief-of-staff to closed team |
+| Approve request | `POST /api/v1/governance/requests/{id}/approve` | GovernanceRequest approval |
+| Reject request | `POST /api/v1/governance/requests/{id}/reject` | GovernanceRequest rejection |
 | Send message | `POST /api/messages` | AI Maestro messaging |
 | Check inbox | `GET /api/messages?agent={name}&status=unread` | Priority: urgent > high > normal |
 

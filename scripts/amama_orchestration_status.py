@@ -18,7 +18,7 @@ from pathlib import Path
 from datetime import datetime
 
 
-def main():
+def main() -> int:
     """Main entry point for orchestration status."""
     parser = argparse.ArgumentParser(description="View Orchestration Phase progress")
     parser.add_argument(
@@ -58,8 +58,8 @@ def main():
     # Extract basic info (simple parsing)
     plan_id = "plan-unknown"
     status = "ready"
-    modules_complete = 0
-    modules_total = 0
+    modules_complete = 0  # TODO: Implement real module tracking via AI Maestro API
+    modules_total = 0  # TODO: Implement real module tracking via AI Maestro API
 
     for line in state_content.split("\n"):
         if line.startswith("Plan ID:"):
@@ -106,6 +106,8 @@ def main():
             f"Last updated: {datetime.fromtimestamp(exec_state_file.stat().st_mtime).isoformat()}"
         )
 
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

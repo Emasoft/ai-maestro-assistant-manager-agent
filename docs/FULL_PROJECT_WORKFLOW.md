@@ -7,9 +7,9 @@
 | Step | Actor | Action | API |
 |------|-------|--------|-----|
 | 1 | Manager | Create GitHub repo + team | `POST /api/teams` |
-| 2 | Manager | Assign COS to team | `POST /api/teams/{id}/cos` |
+| 2 | Manager | Assign COS to team | `PATCH /api/teams/{id}/chief-of-staff` |
 | 3 | COS | Propose member roster | GovernanceRequest to manager |
-| 4 | Manager | Approve roster | `POST /api/governance/approve` |
+| 4 | Manager | Approve roster | `POST /api/v1/governance/requests/{id}/approve` |
 | 5 | COS | Add members to team | `POST /api/teams/{id}/members` |
 
 ### Phase 2: Design

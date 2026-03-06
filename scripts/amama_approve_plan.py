@@ -15,7 +15,7 @@ from pathlib import Path
 from datetime import datetime
 
 
-def main() -> None:
+def main() -> int:
     """Main entry point for plan approval."""
     parser = argparse.ArgumentParser(
         description="Approve plan and transition to Orchestration Phase"
@@ -59,7 +59,7 @@ def main() -> None:
     plan_data = {
         "plan_id": f"plan-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
         "goal": "Implementation plan",
-        "modules": [],
+        "modules": [],  # TODO: Implement real plan module loading via design documents
     }
 
     # Create orchestration state file
@@ -116,6 +116,8 @@ Plan Approved: true
         print(f"\nState file created: {exec_state_file}")
         print(f"Plan state updated: {plan_state_file}")
 
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

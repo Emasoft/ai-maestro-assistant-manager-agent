@@ -239,6 +239,11 @@ See [references/examples.md](references/examples.md) for complete worked example
 | Timeout (24 hours) | `rejected` | Auto-reject via API, notify requesting agent |
 | Rate limit hit | `pending` (unchanged) | Queue the action, wait for cooldown, then retry |
 
+### Proactive Monitoring
+- Poll `GET /api/v1/governance/requests?status=pending` every 60 seconds during active sessions
+- Present pending requests to user with context and recommended action
+- Auto-escalate requests older than 10 minutes to urgent priority
+
 ## Checklist
 
 Copy this checklist and track your progress:

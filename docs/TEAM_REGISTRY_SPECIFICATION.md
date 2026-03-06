@@ -16,7 +16,7 @@
 | Get team | `GET /api/teams/{id}` |
 | Update team | `PATCH /api/teams/{id}` |
 | Delete team | `DELETE /api/teams/{id}` |
-| Assign COS | `POST /api/teams/{id}/cos` |
+| Assign COS | `PATCH /api/teams/{id}/chief-of-staff` |
 | Add member | `POST /api/teams/{id}/members` |
 | Remove member | `DELETE /api/teams/{id}/members/{agent}` |
 
