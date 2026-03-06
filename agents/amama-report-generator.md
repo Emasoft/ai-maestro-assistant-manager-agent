@@ -99,6 +99,11 @@ All reports MUST include a **Requirement Compliance** section tracing features t
 - Omit empty sections — only report what has data
 - For detailed reports, write to a .md file and provide the path
 
+### File Output Convention (Token Conservation)
+- All reports MUST be written to `design/reports/` with pattern: `{report-type}-{context}-{YYYYMMDD-HHMMSS}.md`
+- Response to orchestrator: max 5 lines (the Output Format below is the maximum)
+- NEVER return raw data, code blocks, or full file contents inline
+
 ---
 
 ## Data Sources

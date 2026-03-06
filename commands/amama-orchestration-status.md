@@ -27,38 +27,14 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/amama_orchestration_status.py" $ARGUMENTS
 
 ## Output Format
 
+The script prints a concise summary to stdout and writes the full detailed table to a report file:
+
 ```
-╔════════════════════════════════════════════════════════════════╗
-║                 ORCHESTRATION PHASE STATUS                     ║
-╠════════════════════════════════════════════════════════════════╣
-║ Plan ID: plan-20260108-143022                                  ║
-║ Status: executing                                              ║
-║ Progress: 1/3 modules complete (33%)                           ║
-╠════════════════════════════════════════════════════════════════╣
-║ MODULE STATUS                                                  ║
-╠════════════════════════════════════════════════════════════════╣
-║ [✓] auth-core      #42  implementer-1  complete                ║
-║ [→] oauth-google   #43  implementer-2  in_progress (Poll: 5m)  ║
-║ [ ] auth-2fa       #44  -              pending                 ║
-╠════════════════════════════════════════════════════════════════╣
-║ REGISTERED AGENTS                                              ║
-╠════════════════════════════════════════════════════════════════╣
-║ AI Agents:                                                     ║
-║   - implementer-1 (helper-agent-generic)                       ║
-║   - implementer-2 (helper-agent-python)                        ║
-║ Human Developers:                                              ║
-║   - dev-alice (GitHub)                                         ║
-╠════════════════════════════════════════════════════════════════╣
-║ ACTIVE ASSIGNMENTS                                             ║
-╠════════════════════════════════════════════════════════════════╣
-║ oauth-google → implementer-2                                   ║
-║   Status: working                                              ║
-║   Instruction Verification: ✓ verified                         ║
-║   Last Poll: 5 minutes ago                                     ║
-║   Issues Reported: 0                                           ║
-║   Next Poll Due: 10 minutes                                    ║
-╚════════════════════════════════════════════════════════════════╝
+[DONE] orchestration-status - Plan: plan-20260108-143022, Status: executing, Progress: 1/3
+Report: design/reports/orchestration-status_20260108_143022.md
 ```
+
+The full report file contains the detailed ASCII table with module status, agent registry, active assignments, and verification status.
 
 ## Options
 

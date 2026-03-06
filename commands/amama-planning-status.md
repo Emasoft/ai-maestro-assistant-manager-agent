@@ -25,33 +25,14 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/amama_planning_status.py" $ARGUMENTS
 
 ## Output Format
 
+The script prints a concise summary to stdout and writes the full detailed table to a report file:
+
 ```
-╔════════════════════════════════════════════════════════════════╗
-║                    PLAN PHASE STATUS                           ║
-╠════════════════════════════════════════════════════════════════╣
-║ Plan ID: plan-20260108-143022                                  ║
-║ Status: drafting                                               ║
-║ Goal: Build user authentication with OAuth2                    ║
-╠════════════════════════════════════════════════════════════════╣
-║ REQUIREMENTS PROGRESS                                          ║
-╠════════════════════════════════════════════════════════════════╣
-║ [✓] Functional Requirements     - complete                     ║
-║ [→] Non-Functional Requirements - in_progress                  ║
-║ [ ] Architecture Design         - pending                      ║
-╠════════════════════════════════════════════════════════════════╣
-║ MODULES DEFINED (2)                                            ║
-╠════════════════════════════════════════════════════════════════╣
-║ 1. auth-core      - Core Authentication    [planned]           ║
-║ 2. oauth-google   - Google OAuth2          [pending]           ║
-╠════════════════════════════════════════════════════════════════╣
-║ EXIT CRITERIA                                                  ║
-╠════════════════════════════════════════════════════════════════╣
-║ [ ] USER_REQUIREMENTS.md complete                              ║
-║ [ ] All modules defined with acceptance criteria               ║
-║ [ ] GitHub Issues created for all modules                      ║
-║ [ ] User approved the plan                                     ║
-╚════════════════════════════════════════════════════════════════╝
+[DONE] planning-status - Plan: plan-20260108-143022, Status: drafting, 4 exit criteria remaining
+Report: design/reports/planning-status_20260108_143022.md
 ```
+
+The full report file contains the detailed ASCII table with requirements progress, module definitions, and exit criteria checklist.
 
 ## Options
 

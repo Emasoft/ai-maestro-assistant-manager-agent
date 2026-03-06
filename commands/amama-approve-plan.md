@@ -101,26 +101,14 @@ Labels applied:
 
 ## Output Example
 
+The script prints a concise summary to stdout and writes the full detailed table to a report file:
+
 ```
-╔════════════════════════════════════════════════════════════════╗
-║                    PLAN APPROVED                               ║
-╠════════════════════════════════════════════════════════════════╣
-║ Plan ID: plan-20260108-143022                                  ║
-║ Goal: Build user authentication with OAuth2                    ║
-╠════════════════════════════════════════════════════════════════╣
-║ GITHUB ISSUES CREATED                                          ║
-╠════════════════════════════════════════════════════════════════╣
-║ #42 - Core Authentication (auth-core)        [priority-high]   ║
-║ #43 - Google OAuth2 (oauth-google)           [priority-medium] ║
-║ #44 - Two-Factor Auth (auth-2fa)             [priority-low]    ║
-╠════════════════════════════════════════════════════════════════╣
-║ NEXT STEPS                                                     ║
-╠════════════════════════════════════════════════════════════════╣
-║ 1. Begin orchestration phase implementation                     ║
-║ 2. Register agents via AI Maestro API                          ║
-║ 3. Assign modules to registered agents                         ║
-╚════════════════════════════════════════════════════════════════╝
+[DONE] approve-plan - Plan plan-20260108-143022 approved. 3 GitHub issues created.
+Report: design/reports/plan-approval_20260108_143022.md
 ```
+
+The full report file contains the detailed table with issue URLs, labels, and next steps.
 
 ## Error Conditions
 

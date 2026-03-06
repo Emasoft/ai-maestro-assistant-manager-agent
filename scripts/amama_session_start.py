@@ -194,46 +194,30 @@ def format_context_summary(
     Returns:
         Formatted summary string for system message
     """
+    # Compact format to minimize token consumption in agent context
     lines = []
-    lines.append("=" * 60)
-    lines.append("AI MAESTRO ASSISTANT MANAGER MEMORY CONTEXT LOADED")
-    lines.append("=" * 60)
+    lines.append("--- AMAMA MEMORY LOADED ---")
 
     if focus:
-        lines.append("")
-        lines.append("CURRENT FOCUS:")
-        lines.append(f"  {focus}")
+        lines.append(f"FOCUS: {focus[:60]}")
 
     if decisions:
-        lines.append("")
-        lines.append("RECENT DECISIONS:")
-        for d in decisions:
-            lines.append(f"  - {d}")
+        lines.append(f"DECISIONS ({len(decisions)}): " + "; ".join(d[:50] for d in decisions[:2]))
 
     if errors:
-        lines.append("")
-        lines.append("IN-FLIGHT ERRORS (unresolved):")
-        for e in errors:
+        for e in errors[:2]:
             step = e.get("step", "?")
-            agent = e.get("agent", "?")
-            error_text = e.get("error", "?")[:100]
+            error_text = e.get("error", "?")[:60]
             impact = e.get("impact", "?")
-            lines.append(f"  [{impact}] {step}/{agent}: {error_text}")
+            lines.append(f"ERROR [{impact}]: {step} - {error_text}")
 
     if progress:
-        lines.append("")
-        lines.append("RECENT PROGRESS (last 3 days):")
-        for p in progress[:3]:
-            lines.append(f"  - {p[:80]}...")
+        lines.append(f"PROGRESS ({len(progress)}): " + "; ".join(p[:50] for p in progress[:2]))
 
     if patterns:
-        lines.append("")
-        lines.append(f"KNOWN PATTERNS: {', '.join(patterns)}")
+        lines.append(f"PATTERNS: {', '.join(patterns[:3])}")
 
-    lines.append("")
-    lines.append("=" * 60)
-    lines.append("Review design/memory/ files for full context")
-    lines.append("=" * 60)
+    lines.append("Full context: .claude/amama/")
 
     return "\n".join(lines)
 

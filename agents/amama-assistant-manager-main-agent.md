@@ -174,6 +174,21 @@ Cross-Host:
 
 > **Note**: All work implementation routes through COS, who dispatches to specialist agents (members with architect/orchestrator/integrator skills).
 
+## Sub-Agent Output Rules (Token Conservation)
+
+When spawning ANY sub-agent, include these mandatory instructions in the prompt:
+
+**Mandatory Reporting Suffix** (append to every sub-agent prompt):
+```
+REPORTING RULES:
+- Write ALL detailed output to a timestamped .md file in design/reports/
+- Return ONLY: "[DONE/FAILED] <task> - <one-line result>. Report: <filepath>"
+- NEVER return code blocks, file contents, long lists, or verbose explanations
+- Max 2 lines of text back to caller
+```
+
+**Script Output Convention**: All AMAMA scripts write full output to `design/reports/{script}_{timestamp}.md` and print only a 2-3 line summary to stdout. Do NOT request verbose mode unless debugging.
+
 ## Core Responsibilities
 
 1. **Receive User Requests** - Parse user intent, clarify ambiguities

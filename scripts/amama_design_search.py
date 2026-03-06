@@ -27,6 +27,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional, cast
 
+# Ensure sibling modules are importable when run as a standalone script
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_report_writer import ReportWriter
+
 
 @dataclass
 class DesignDocument:
@@ -358,8 +362,14 @@ Examples:
     documents = scan_design_documents(project_dir)
 
     if not documents:
+        report_writer = ReportWriter("design-search")
         result = {"results": [], "count": 0, "message": "No design documents found"}
-        print(json.dumps(result, indent=2))
+        report_path = report_writer.write_report(
+            "# Design Search Report\n\nNo design documents found.\n\n```json\n"
+            + json.dumps(result, indent=2)
+            + "\n```\n"
+        )
+        report_writer.print_summary("Found 0 documents (none in project)", report_path)
         return 0
 
     # Apply filters
@@ -374,7 +384,7 @@ Examples:
     if args.status:
         results = filter_by_status(results, args.status)
 
-    # Output results
+    # Build the full output payload
     output = {
         "results": [document_to_dict(doc) for doc in results],
         "count": len(results),
@@ -382,21 +392,48 @@ Examples:
         "project_dir": str(project_dir),
     }
 
-    print(json.dumps(output, indent=2))
+    # Build a human-readable summary section for the report
+    summary_lines: list[str] = []
+    summary_lines.append("--- Design Search Results ---")
+    summary_lines.append(f"Found: {len(results)} of {len(documents)} documents")
+    for doc in results:
+        status_icon = {"approved": "[+]", "draft": "[.]", "deprecated": "[-]"}.get(
+            doc.status, "[?]"
+        )
+        summary_lines.append(f"  {status_icon} {doc.title}")
+        summary_lines.append(f"      Path: {doc.path}")
+        if doc.uuid:
+            summary_lines.append(f"      UUID: {doc.uuid}")
 
-    # Print summary to stderr if requested
-    if args.summary:
-        print("\n--- Design Search Results ---", file=sys.stderr)
-        print(f"Found: {len(results)} of {len(documents)} documents", file=sys.stderr)
-        for doc in results:
-            status_icon = {"approved": "[+]", "draft": "[.]", "deprecated": "[-]"}.get(
-                doc.status, "[?]"
-            )
-            print(f"  {status_icon} {doc.title}", file=sys.stderr)
-            print(f"      Path: {doc.path}", file=sys.stderr)
-            if doc.uuid:
-                print(f"      UUID: {doc.uuid}", file=sys.stderr)
-        print(file=sys.stderr)
+    # Write everything to a report file instead of stdout/stderr
+    report_writer = ReportWriter("design-search")
+    report_content = (
+        "# Design Search Report\n\n"
+        "## Summary\n\n"
+        + "\n".join(summary_lines)
+        + "\n\n## Full JSON Output\n\n```json\n"
+        + json.dumps(output, indent=2)
+        + "\n```\n"
+    )
+    report_path = report_writer.write_report(report_content)
+
+    # Build the query description for the summary line
+    query_parts: list[str] = []
+    if args.uuid:
+        query_parts.append(f'uuid="{args.uuid}"')
+    if args.keyword:
+        query_parts.append(f'keyword="{args.keyword}"')
+    if args.status:
+        query_parts.append(f'status="{args.status}"')
+    if args.list:
+        query_parts.append("list-all")
+    query_desc = ", ".join(query_parts) if query_parts else "all"
+
+    # Print only a 2-line summary to stdout
+    report_writer.print_summary(
+        f'Found {len(results)} documents matching {query_desc}',
+        report_path,
+    )
 
     return 0
 

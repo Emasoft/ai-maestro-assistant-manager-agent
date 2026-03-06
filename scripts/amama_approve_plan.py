@@ -14,6 +14,9 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_report_writer import ReportWriter
+
 
 def main() -> int:
     """Main entry point for plan approval."""
@@ -89,32 +92,40 @@ Plan Approved: true
         )
         plan_state_file.write_text(plan_content, encoding="utf-8")
 
-    # Output success message
-    print("╔════════════════════════════════════════════════════════════════╗")
-    print("║                    PLAN APPROVED                               ║")
-    print("╠════════════════════════════════════════════════════════════════╣")
-    print(f"║ Plan ID: {plan_data['plan_id']:<52} ║")
-    print(f"║ Goal: {plan_data['goal']:<55} ║")
-    print("╠════════════════════════════════════════════════════════════════╣")
+    # Build verbose output for report file
+    lines = []
+    lines.append("╔════════════════════════════════════════════════════════════════╗")
+    lines.append("║                    PLAN APPROVED                               ║")
+    lines.append("╠════════════════════════════════════════════════════════════════╣")
+    lines.append(f"║ Plan ID: {plan_data['plan_id']:<52} ║")
+    lines.append(f"║ Goal: {plan_data['goal']:<55} ║")
+    lines.append("╠════════════════════════════════════════════════════════════════╣")
 
     if args.skip_issues:
-        print("║ GitHub Issues: SKIPPED (--skip-issues flag)                   ║")
+        lines.append("║ GitHub Issues: SKIPPED (--skip-issues flag)                   ║")
     else:
-        print("║ GITHUB ISSUES CREATED                                          ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
-        print("║ (No modules defined - issues will be created during planning)  ║")
+        lines.append("║ GITHUB ISSUES CREATED                                          ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("║ (No modules defined - issues will be created during planning)  ║")
 
-    print("╠════════════════════════════════════════════════════════════════╣")
-    print("║ NEXT STEPS                                                     ║")
-    print("╠════════════════════════════════════════════════════════════════╣")
-    print("║ 1. Run /start-orchestration to begin implementation            ║")
-    print("║ 2. Register remote agents with /register-agent                 ║")
-    print("║ 3. Assign modules with /assign-module                          ║")
-    print("╚════════════════════════════════════════════════════════════════╝")
+    lines.append("╠════════════════════════════════════════════════════════════════╣")
+    lines.append("║ NEXT STEPS                                                     ║")
+    lines.append("╠════════════════════════════════════════════════════════════════╣")
+    lines.append("║ 1. Run /start-orchestration to begin implementation            ║")
+    lines.append("║ 2. Register remote agents with /register-agent                 ║")
+    lines.append("║ 3. Assign modules with /assign-module                          ║")
+    lines.append("╚════════════════════════════════════════════════════════════════╝")
 
-    if args.verbose:
-        print(f"\nState file created: {exec_state_file}")
-        print(f"Plan state updated: {plan_state_file}")
+    lines.append(f"\nState file created: {exec_state_file}")
+    lines.append(f"Plan state updated: {plan_state_file}")
+
+    # Write verbose output to report file, print only summary to stdout
+    writer = ReportWriter("plan-approval")
+    report_path = writer.write_report("\n".join(lines))
+    writer.print_summary(
+        f"Plan {plan_data['plan_id']} approved. State files created.",
+        report_path,
+    )
 
     return 0
 

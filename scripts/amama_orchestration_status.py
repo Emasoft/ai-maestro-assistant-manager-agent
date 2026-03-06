@@ -17,6 +17,9 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_report_writer import ReportWriter
+
 
 def main() -> int:
     """Main entry point for orchestration status."""
@@ -67,44 +70,55 @@ def main() -> int:
         elif line.startswith("Status:"):
             status = line.split(":", 1)[1].strip()
 
-    # Output status
+    # Collect verbose output into a buffer for the report file
+    lines: list[str] = []
+
     if not args.agents_only:
-        print("╔════════════════════════════════════════════════════════════════╗")
-        print("║                 ORCHESTRATION PHASE STATUS                     ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
-        print(f"║ Plan ID: {plan_id:<52} ║")
-        print(f"║ Status: {status:<55} ║")
-        print(
+        lines.append("╔════════════════════════════════════════════════════════════════╗")
+        lines.append("║                 ORCHESTRATION PHASE STATUS                     ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
+        lines.append(f"║ Plan ID: {plan_id:<52} ║")
+        lines.append(f"║ Status: {status:<55} ║")
+        lines.append(
             f"║ Progress: {modules_complete}/{modules_total} modules complete (0%)                        ║"
         )
-        print("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
 
     if not args.agents_only:
-        print("║ MODULE STATUS                                                  ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
-        print("║ (No modules defined yet)                                       ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("║ MODULE STATUS                                                  ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("║ (No modules defined yet)                                       ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
 
     if not args.modules_only:
-        print("║ REGISTERED AGENTS                                              ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
-        print("║ AI Agents:                                                     ║")
-        print("║   (No AI agents registered)                                    ║")
-        print("║ Human Developers:                                              ║")
-        print("║   (No human developers registered)                             ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("║ REGISTERED AGENTS                                              ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("║ AI Agents:                                                     ║")
+        lines.append("║   (No AI agents registered)                                    ║")
+        lines.append("║ Human Developers:                                              ║")
+        lines.append("║   (No human developers registered)                             ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
 
     if not args.modules_only:
-        print("║ ACTIVE ASSIGNMENTS                                             ║")
-        print("╠════════════════════════════════════════════════════════════════╣")
-        print("║ (No active assignments)                                        ║")
-        print("╚════════════════════════════════════════════════════════════════╝")
+        lines.append("║ ACTIVE ASSIGNMENTS                                             ║")
+        lines.append("╠════════════════════════════════════════════════════════════════╣")
+        lines.append("║ (No active assignments)                                        ║")
+        lines.append("╚════════════════════════════════════════════════════════════════╝")
 
     if args.verbose:
-        print(f"\nState file: {exec_state_file}")
-        print(
+        lines.append(f"\nState file: {exec_state_file}")
+        lines.append(
             f"Last updated: {datetime.fromtimestamp(exec_state_file.stat().st_mtime).isoformat()}"
         )
+
+    # Write verbose output to report file, print only summary to stdout
+    writer = ReportWriter("orchestration-status")
+    report_content = "\n".join(lines)
+    report_path = writer.write_report(report_content)
+    writer.print_summary(
+        f"Plan: {plan_id}, Status: {status}, Progress: {modules_complete}/{modules_total}",
+        report_path,
+    )
 
     return 0
 

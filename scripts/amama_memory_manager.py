@@ -18,6 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from amama_report_writer import ReportWriter
+
 from amama_memory_operations import (
     add_decision,
     add_pattern,
@@ -302,62 +304,49 @@ def _create_parser() -> argparse.ArgumentParser:
 
 
 def _print_health(health: MemoryHealth, as_json: bool) -> None:
-    """Print health report."""
+    """Write health report to file, print summary to stdout."""
+    rw = ReportWriter("memory-health")
+    report_data = {
+        "files": {
+            "activeContext": {
+                "exists": health.active_context_exists,
+                "size_kb": health.active_context_size_kb,
+                "entries": health.active_context_entries,
+            },
+            "progress": {
+                "exists": health.progress_exists,
+                "size_kb": health.progress_size_kb,
+                "entries": health.progress_entries,
+            },
+            "patterns": {
+                "exists": health.patterns_exists,
+                "size_kb": health.patterns_size_kb,
+                "entries": health.patterns_entries,
+            },
+        },
+        "needs_compact": health.needs_compact,
+        "issues": health.issues,
+    }
     if as_json:
-        print(
-            json.dumps(
-                {
-                    "files": {
-                        "activeContext": {
-                            "exists": health.active_context_exists,
-                            "size_kb": health.active_context_size_kb,
-                            "entries": health.active_context_entries,
-                        },
-                        "progress": {
-                            "exists": health.progress_exists,
-                            "size_kb": health.progress_size_kb,
-                            "entries": health.progress_entries,
-                        },
-                        "patterns": {
-                            "exists": health.patterns_exists,
-                            "size_kb": health.patterns_size_kb,
-                            "entries": health.patterns_entries,
-                        },
-                    },
-                    "needs_compact": health.needs_compact,
-                    "issues": health.issues,
-                },
-                indent=2,
-            )
-        )
+        report_content = json.dumps(report_data, indent=2)
     else:
-        print("Memory Health Report\n" + "=" * 40)
+        lines = ["Memory Health Report", "=" * 40]
         for name, exists, size, entries in [
-            (
-                "activeContext.md",
-                health.active_context_exists,
-                health.active_context_size_kb,
-                health.active_context_entries,
-            ),
-            (
-                "progress.md     ",
-                health.progress_exists,
-                health.progress_size_kb,
-                health.progress_entries,
-            ),
-            (
-                "patterns.md     ",
-                health.patterns_exists,
-                health.patterns_size_kb,
-                health.patterns_entries,
-            ),
+            ("activeContext.md", health.active_context_exists, health.active_context_size_kb, health.active_context_entries),
+            ("progress.md     ", health.progress_exists, health.progress_size_kb, health.progress_entries),
+            ("patterns.md     ", health.patterns_exists, health.patterns_size_kb, health.patterns_entries),
         ]:
             status = "OK" if exists else "MISSING"
-            print(f"{name}: {status} ({size:.1f} KB, {entries} entries)")
+            lines.append(f"{name}: {status} ({size:.1f} KB, {entries} entries)")
         if health.needs_compact:
-            print("\nWARNING: Compact recommended")
+            lines.append("\nWARNING: Compact recommended")
         if health.issues:
-            print("Issues:" + "".join(f"\n  - {i}" for i in health.issues))
+            lines.append("Issues:" + "".join(f"\n  - {i}" for i in health.issues))
+        report_content = "\n".join(lines)
+    report_path = rw.write_report(report_content)
+    file_count = sum(1 for x in [health.active_context_exists, health.progress_exists, health.patterns_exists] if x)
+    total_size = health.active_context_size_kb + health.progress_size_kb + health.patterns_size_kb
+    rw.print_summary(f"{file_count} files, {total_size:.1f} KB total", report_path)
 
 
 def main() -> int:
@@ -381,15 +370,18 @@ def main() -> int:
         return 0 if clear_errors(config) else 1
     if args.command == "get-errors":
         errors = get_recent_errors(config, args.limit)
+        rw = ReportWriter("memory-errors")
         if args.json:
-            print(json.dumps(errors, indent=2))
+            report_content = json.dumps(errors, indent=2)
         elif not errors:
-            print("No in-flight errors")
+            report_content = "No in-flight errors"
         else:
+            lines = []
             for e in errors:
-                print(
-                    f"[{e.get('timestamp', '?')}] {e.get('step', '?')}/{e.get('agent', '?')}: {e.get('error', '?')}"
-                )
+                lines.append(f"[{e.get('timestamp', '?')}] {e.get('step', '?')}/{e.get('agent', '?')}: {e.get('error', '?')}")
+            report_content = "\n".join(lines)
+        report_path = rw.write_report(report_content)
+        rw.print_summary(f"{len(errors)} errors found", report_path)
         return 0
     if args.command == "add-progress":
         return 0 if add_progress(config, args.text, args.category, args.workflow) else 1
@@ -397,13 +389,18 @@ def main() -> int:
         return 0 if add_pattern(config, args.name, args.text, args.category) else 1
     if args.command == "search-patterns":
         results = search_patterns(config, args.query)
+        rw = ReportWriter("memory-search")
         if args.json:
-            print(json.dumps(results, indent=2))
+            report_content = json.dumps(results, indent=2)
         elif not results:
-            print("No patterns found")
+            report_content = "No patterns found"
         else:
+            lines = []
             for r in results:
-                print(f"### {r['name']}\n{r['content'][:200]}...\n")
+                lines.append(f"### {r['name']}\n{r['content'][:200]}...\n")
+            report_content = "\n".join(lines)
+        report_path = rw.write_report(report_content)
+        rw.print_summary(f"{len(results)} patterns found", report_path)
         return 0
     if args.command == "compact":
         res = compact_memory(config, args.keep_entries, backup=not args.no_backup)

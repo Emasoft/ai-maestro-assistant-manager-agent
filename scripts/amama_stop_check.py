@@ -361,7 +361,26 @@ def main() -> int:
     # Decision: block if any issues found
     if issues:
         response = build_blocking_response(issues)
-        print(json.dumps(response, indent=2))
+        # Write full details to report file, minimize stdout JSON for token savings
+        try:
+            project_dir = os.environ.get("CLAUDE_PROJECT_DIR", cwd)
+            report_dir = Path(project_dir) / "design" / "reports"
+            report_dir.mkdir(parents=True, exist_ok=True)
+            from datetime import datetime
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            report_path = report_dir / f"stop_check_{ts}.md"
+            report_path.write_text(json.dumps(response, indent=2), encoding="utf-8")
+            # Minimal stdout: counts only, no lists, no indentation
+            minimal = {
+                "decision": response["decision"],
+                "reason": response["reason"],
+                "hookSpecificOutput": response["hookSpecificOutput"],
+                "report": str(report_path),
+            }
+            print(json.dumps(minimal, separators=(",", ":")))
+        except OSError:
+            # Fallback: output full response if report write fails
+            print(json.dumps(response, indent=2))
         return 2  # Block exit
 
     # No issues - allow exit

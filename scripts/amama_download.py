@@ -16,15 +16,21 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import re
 import stat
 import subprocess
 import sys
+from contextlib import redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+# Ensure sibling modules are importable
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_report_writer import ReportWriter
 
 # Category definitions with folder structure
 CATEGORIES: dict[str, dict[str, Any]] = {
@@ -536,20 +542,37 @@ def main() -> int:
         return 1
 
     if args.command == "init":
-        init_storage(args.project_root)
+        # Capture verbose output from init_storage
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            init_storage(args.project_root)
+        rw = ReportWriter("download-init")
+        report_path = rw.write_report(buf.getvalue())
+        storage_path = get_storage_root(args.project_root)
+        rw.print_summary(f"Storage initialized at {storage_path}", report_path)
         return 0
 
     elif args.command == "download":
-        result = download_document(
-            url=args.url,
-            task_id=args.task_id,
-            category=args.category,
-            subcategory=args.subcategory,
-            doc_type=args.doc_type,
-            sender=args.sender,
-            project_root=args.project_root,
-        )
-        return 0 if result else 1
+        # Capture verbose output from download_document
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            result = download_document(
+                url=args.url,
+                task_id=args.task_id,
+                category=args.category,
+                subcategory=args.subcategory,
+                doc_type=args.doc_type,
+                sender=args.sender,
+                project_root=args.project_root,
+            )
+        rw = ReportWriter("download")
+        report_path = rw.write_report(buf.getvalue())
+        if result:
+            rw.print_summary(f"{result.name} saved to {result.parent}", report_path)
+            return 0
+        else:
+            rw.print_failure("Download failed", report_path)
+            return 1
 
     elif args.command == "lookup":
         results = lookup_documents(
@@ -557,39 +580,57 @@ def main() -> int:
             project_root=args.project_root,
             category=args.category,
         )
+        # Build verbose report
+        lines: list[str] = []
         if results:
-            print(f"\nFound {len(results)} document(s) for {args.task_id}:\n")
+            lines.append(f"Found {len(results)} document(s) for {args.task_id}:\n")
             for doc in results:
-                print(f"  [{doc['category']}] {doc['path']}")
+                lines.append(f"  [{doc['category']}] {doc['path']}")
                 if doc["metadata"]:
                     ts = doc["metadata"].get("download", {}).get("timestamp", "?")
-                    print(f"           Downloaded: {ts}")
+                    lines.append(f"           Downloaded: {ts}")
         else:
-            print(f"No documents found for task: {args.task_id}")
+            lines.append(f"No documents found for task: {args.task_id}")
+
+        rw = ReportWriter("download-lookup")
+        report_path = rw.write_report("\n".join(lines))
+        rw.print_summary(
+            f"Found {len(results)} document(s) for {args.task_id}", report_path
+        )
         return 0
 
     elif args.command == "verify":
         report = verify_storage(args.project_root)
+        # Build verbose report text
+        verify_lines: list[str] = []
         if args.json:
-            print(json.dumps(report, indent=2))
+            verify_lines.append(json.dumps(report, indent=2))
         else:
-            print("\n=== AMAMA Storage Verification Report ===\n")
-            print(f"Storage Root: {report['storage_root']}")
-            print(f"Total Files: {report['stats']['total_files']}")
-            print(f"Total Size: {report['stats']['total_size_bytes']} bytes")
-            print("\nBy Category:")
+            verify_lines.append("=== AMAMA Storage Verification Report ===\n")
+            verify_lines.append(f"Storage Root: {report['storage_root']}")
+            verify_lines.append(f"Total Files: {report['stats']['total_files']}")
+            verify_lines.append(f"Total Size: {report['stats']['total_size_bytes']} bytes")
+            verify_lines.append("\nBy Category:")
             for cat, stats in report["stats"]["by_category"].items():
-                print(f"  {cat}: {stats['files']} files, {stats['size_bytes']} bytes")
-
+                verify_lines.append(
+                    f"  {cat}: {stats['files']} files, {stats['size_bytes']} bytes"
+                )
             if report["issues"]:
-                print(f"\nIssues Found: {len(report['issues'])}")
+                verify_lines.append(f"\nIssues Found: {len(report['issues'])}")
                 for issue in report["issues"]:
-                    print(f"  [{issue['type']}] {issue['message']}")
+                    verify_lines.append(f"  [{issue['type']}] {issue['message']}")
                     if "path" in issue:
-                        print(f"    Path: {issue['path']}")
+                        verify_lines.append(f"    Path: {issue['path']}")
             else:
-                print("\nNo issues found. Storage is healthy.")
+                verify_lines.append("\nNo issues found. Storage is healthy.")
 
+        rw = ReportWriter("download-verify")
+        report_path = rw.write_report("\n".join(verify_lines))
+        total_files = report["stats"]["total_files"]
+        issue_count = len(report["issues"])
+        rw.print_summary(
+            f"{total_files} files, {issue_count} issues", report_path
+        )
         return 1 if report["issues"] else 0
 
     return 0
