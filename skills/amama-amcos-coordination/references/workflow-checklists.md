@@ -29,7 +29,7 @@ When user requests a new project team:
   ```bash
   curl -X PATCH "$AIMAESTRO_API/api/teams/{team-id}/chief-of-staff" \
     -H "Content-Type: application/json" \
-    -d '{"agent_id": "<agent-id>"}'
+    -d '{"agentId": "<agent-id>"}'
   ```
 - [ ] **Send health check ping** to the COS agent using the `agent-messaging` skill (mandatory)
 - [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
@@ -53,7 +53,7 @@ When assigning the Chief-of-Staff (COS) role to an existing registered agent:
   ```bash
   curl -X PATCH "$AIMAESTRO_API/api/teams/{team-id}/chief-of-staff" \
     -H "Content-Type: application/json" \
-    -d '{"agent_id": "<agent-id>"}'
+    -d '{"agentId": "<agent-id>"}'
   ```
 - [ ] **Send cos-role-assignment message** to the agent using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project-name>`

@@ -87,9 +87,9 @@ fi
 # Falls back to python3 if uv is not available
 set +e
 if command -v uv &> /dev/null; then
-    uv run --with pyyaml python scripts/validate_plugin.py . --verbose 2>&1
+    CLAUDE_PRIVATE_USERNAMES="emanuelesabetta" uv run --with pyyaml --with types-PyYAML python scripts/validate_plugin.py . --verbose 2>&1
 else
-    python3 scripts/validate_plugin.py . --verbose 2>&1
+    CLAUDE_PRIVATE_USERNAMES="emanuelesabetta" python3 scripts/validate_plugin.py . --verbose 2>&1
 fi
 VALIDATION_EXIT_CODE=$?
 set -e

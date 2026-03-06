@@ -1,7 +1,7 @@
 ---
 name: amama-status-reporting
 description: Use when generating status reports. Queries AI Maestro APIs (sessions, health, teams, tasks) for live data. Trigger with status report requests.
-version: 2.3.0
+version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
@@ -24,7 +24,7 @@ Generate comprehensive status reports by querying AI Maestro APIs for live agent
 - AI Maestro API must be reachable at `$AIMAESTRO_API` (default: `http://localhost:23000`)
 - GitHub CLI (`gh`) must be installed for issue/PR status
 - Session memory files must be accessible
-- `docs_dev/reports/` directory must exist
+- `design/reports/` directory must exist
 
 ## AI Maestro Status APIs
 
@@ -105,7 +105,7 @@ curl -s "$AIMAESTRO_API/api/teams/$TEAM_ID/tasks" | jq '[.tasks[] | select(.stat
 3. Query GitHub for issue and PR status using `gh` CLI
 4. Read session memory files for additional context
 5. Compile all information into unified report format
-6. Save report to `docs_dev/reports/status-{date}.md`
+6. Save report to `design/reports/status-{date}.md`
 7. Present formatted report to user
 
 ## Report Types
@@ -136,10 +136,10 @@ but the initial notification always happens immediately.
 
 | Report Type | Format | Location |
 |-------------|--------|----------|
-| Quick Status | Markdown summary | `docs_dev/reports/status-{date}.md` |
-| Progress Report | Markdown with sections | `docs_dev/reports/progress-{date}.md` |
-| Handoff Summary | Markdown with task lists | `docs_dev/reports/handoff-{date}.md` |
-| Blocker Report | Markdown with blocker details | `docs_dev/reports/blockers-{date}.md` |
+| Quick Status | Markdown summary | `design/reports/status-{date}.md` |
+| Progress Report | Markdown with sections | `design/reports/progress-{date}.md` |
+| Handoff Summary | Markdown with task lists | `design/reports/handoff-{date}.md` |
+| Blocker Report | Markdown with blocker details | `design/reports/blockers-{date}.md` |
 
 ## Report Sections
 
@@ -166,7 +166,7 @@ but the initial notification always happens immediately.
 
 ## Output Location
 
-Reports saved to: `docs_dev/reports/status-{date}.md`
+Reports saved to: `design/reports/status-{date}.md`
 
 ## Examples
 
@@ -249,7 +249,7 @@ Reports saved to: `docs_dev/reports/status-{date}.md`
 | `/api/teams/{id}/tasks` 404 | Team not found | Verify team ID, create team if needed |
 | GitHub API failure | Auth or rate limit | Use cached data, note staleness |
 | Memory file not found | Not initialized | Report "no session data available" |
-| Report directory missing | First report | Create `docs_dev/reports/` automatically |
+| Report directory missing | First report | Create `design/reports/` automatically |
 | Task file missing | `~/.aimaestro/teams/tasks-{teamId}.json` not created | Initialize via API or report empty |
 
 ## Resources
@@ -274,6 +274,6 @@ Copy this checklist and track your progress:
 - [ ] Query GitHub for issue and PR status
 - [ ] Read session memory files for context
 - [ ] Compile all information into unified report format
-- [ ] Create `docs_dev/reports/` directory if it doesn't exist
-- [ ] Save report to `docs_dev/reports/status-{date}.md`
+- [ ] Create `design/reports/` directory if it doesn't exist
+- [ ] Save report to `design/reports/status-{date}.md`
 - [ ] Present formatted report to user

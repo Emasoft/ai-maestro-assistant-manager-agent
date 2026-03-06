@@ -32,6 +32,8 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Validate plugin
+        env:
+          CLAUDE_PRIVATE_USERNAMES: emanuelesabetta
         run: |
           echo "=== Plugin Validation (strict mode) ==="
           echo ""

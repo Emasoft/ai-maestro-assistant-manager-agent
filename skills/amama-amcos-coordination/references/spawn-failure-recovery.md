@@ -85,7 +85,7 @@ If a COS is already assigned:
 ```bash
 curl -X PATCH "http://localhost:23000/api/teams/<team-id>/chief-of-staff" \
   -H "Content-Type: application/json" \
-  -d '{"agent_id": "<agent-id>"}'
+  -d '{"agentId": "<agent-id>"}'
 ```
 
 Retry with the same agent, or if repeated failures occur, try assigning a different eligible agent.

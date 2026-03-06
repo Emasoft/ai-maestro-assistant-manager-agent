@@ -11,12 +11,16 @@ Usage:
     python3 amama_init_design_folders.py --root design --platforms web
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import yaml
 

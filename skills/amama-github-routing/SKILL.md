@@ -1,7 +1,7 @@
 ---
 name: amama-github-routing
 description: Use when routing GitHub operations (issues, PRs, projects, releases) to specialists via team labels. Trigger with GitHub requests.
-version: 2.3.0
+version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent

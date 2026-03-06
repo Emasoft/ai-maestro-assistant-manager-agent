@@ -26,6 +26,7 @@ import json
 import os
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -366,7 +367,6 @@ def main() -> int:
             project_dir = os.environ.get("CLAUDE_PROJECT_DIR", cwd)
             report_dir = Path(project_dir) / "design" / "reports"
             report_dir.mkdir(parents=True, exist_ok=True)
-            from datetime import datetime
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             report_path = report_dir / f"stop_check_{ts}.md"
             report_path.write_text(json.dumps(response, indent=2), encoding="utf-8")

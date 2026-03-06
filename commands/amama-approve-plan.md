@@ -45,7 +45,7 @@ Before running this command:
 - [ ] All modules must have acceptance criteria defined
 - [ ] All requirement sections must have `complete` status
 
-Use `/planning-status` to verify all criteria are met.
+Use `/amama-planning-status` to verify all criteria are met.
 
 ## Options
 
@@ -58,7 +58,7 @@ Use `/planning-status` to verify all criteria are met.
 ```
 Plan Phase State File (.claude/orchestrator-plan-phase.local.md)
     |
-    | /approve-plan validates and updates
+    | /amama-approve-plan validates and updates
     v
 plan_phase_complete: true
     |
@@ -66,7 +66,7 @@ plan_phase_complete: true
     v
 Orchestration Phase State File (.claude/orchestrator-exec-phase.local.md)
     |
-    | Ready for /start-orchestration
+    | Ready for orchestration phase
     v
 Orchestration Phase begins
 ```

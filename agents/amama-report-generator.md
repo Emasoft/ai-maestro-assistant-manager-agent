@@ -44,7 +44,7 @@ This skill contains:
 | **No Execution** | Never run tests, builds, or deployment scripts |
 | **No Delegation** | Never spawn subagents or delegate tasks |
 | **Minimal Response** | Return `[DONE/FAILED] report-type - file_path` only |
-| **Output Location** | All reports to `docs_dev/reports/` with timestamped names |
+| **Output Location** | All reports to `design/reports/` with timestamped names |
 
 ---
 
@@ -160,7 +160,7 @@ user: Generate a progress report for the authentication module implementation.
 assistant: [DONE] report-generator: progress report generated
 
 Summary: Authentication module 8/12 tasks complete (67%)
-Output: docs_dev/reports/progress-auth-module-2026-02-05-143022.md
+Output: design/reports/progress-auth-module-2026-02-05-143022.md
 Health: Green
 Issues: 1 blocker (OAuth2 provider config)
 
@@ -173,7 +173,7 @@ user: I need a quality report before we release version 2.0.
 assistant: [DONE] report-generator: quality report generated
 
 Summary: Test coverage 87%, 3 lint warnings, docs 92% complete
-Output: docs_dev/reports/quality-v2.0-release-2026-02-05-143545.md
+Output: design/reports/quality-v2.0-release-2026-02-05-143545.md
 Health: Yellow
 Issues: 3 minor lint warnings, 2 missing docstrings
 </example>
@@ -184,7 +184,7 @@ user: Generate completion report for issue #42.
 assistant: [DONE] report-generator: completion report generated
 
 Summary: Issue #42 verification complete - INCOMPLETE (2/5 acceptance criteria unmet)
-Output: docs_dev/reports/completion-issue-42-2026-02-05-144201.md
+Output: design/reports/completion-issue-42-2026-02-05-144201.md
 Health: Red
 Issues: Missing integration tests, documentation incomplete
 

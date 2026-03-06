@@ -156,7 +156,7 @@ When the target agent is on a different host (remote AI Maestro instance), the a
 Submit a GovernanceRequest of type `assign-cos`:
 
 ```bash
-curl -X POST "$AIMAESTRO_API/api/governance/requests" \
+curl -X POST "$AIMAESTRO_API/api/v1/governance/requests" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "assign-cos",
@@ -186,7 +186,7 @@ curl -X POST "$AIMAESTRO_API/api/governance/requests" \
 3. **Rejected** - Governance policy denies the assignment; AMAMA is notified with reason
 4. **Executed** - Assignment completed on remote host; AMAMA receives confirmation
 
-**Verify**: Poll `GET /api/governance/requests/$REQUEST_ID` until status is `approved` and then `executed`.
+**Verify**: Poll `GET /api/v1/governance/requests/$REQUEST_ID` until status is `approved` and then `executed`.
 
 ### Cross-Host Limitations
 

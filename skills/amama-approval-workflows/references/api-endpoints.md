@@ -55,7 +55,7 @@ curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/{id}/reject" \
 ## Submit a Transfer Request
 
 ```bash
-curl -X POST "$AIMAESTRO_API/api/governance/transfers" \
+curl -X POST "$AIMAESTRO_API/api/v1/governance/transfers" \
   -H "Content-Type: application/json" \
   -d '{
     "agentId": "<agent-uuid>",
@@ -77,7 +77,7 @@ Transfer requests have special routing rules because they involve two teams.
 
 ### Transfer Workflow
 
-1. **Request submitted** via `POST /api/governance/transfers`
+1. **Request submitted** via `POST /api/v1/governance/transfers`
 2. A GovernanceRequest of type `transfer-agent` is created with status `pending`
 3. **Notifications sent** to:
    - MANAGER (AMAMA) for governance approval

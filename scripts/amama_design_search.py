@@ -17,6 +17,8 @@ Usage:
 Output: JSON for programmatic use, human-readable summary to stderr
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os

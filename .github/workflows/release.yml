@@ -20,49 +20,25 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff mypy pyyaml types-PyYAML
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Validate plugin manifest
+      - name: Validate plugin
+        env:
+          CLAUDE_PRIVATE_USERNAMES: emanuelesabetta
         run: |
-          python -c "
-          import json
-          data = json.load(open('.claude-plugin/plugin.json'))
-          name = data.get('name', '?')
-          ver = data.get('version', '?')
-          print(f'Plugin: {name} v{ver}')
-          "
-
-      - name: Lint Python scripts
-        run: |
-          if ls scripts/*.py 1> /dev/null 2>&1; then
-            ruff check scripts/ --select=E,F,W --ignore=E501
+          set +e
+          uv run --with pyyaml --with types-PyYAML python scripts/validate_plugin.py . --verbose
+          exit_code=$?
+          set -e
+          if [ $exit_code -le 2 ] && [ $exit_code -ne 0 ]; then
+            echo "Validation FAILED (exit code: $exit_code)"
+            exit $exit_code
           fi
-
-      - name: Generate changelog
-        id: changelog
-        run: |
-          # Get the previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-
-          if [ -z "$PREV_TAG" ]; then
-            # First release - get all commits
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" HEAD)
-          else
-            # Get commits since previous tag
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..HEAD)
-          fi
-
-          # Write changelog to file for multi-line output
-          echo "$CHANGELOG" > changelog.txt
-          echo "changelog_file=changelog.txt" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          body_path: changelog.txt
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.3.0
+**Version**: 2.3.2
 
 Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/23blocks-OS/ai-maestro-plugins).
 
@@ -149,6 +149,10 @@ cd /path/to/ai-maestro-assistant-manager-agent
 CLAUDE_PRIVATE_USERNAMES="emanuelesabetta" uv run --with pyyaml --with types-PyYAML python scripts/validate_plugin.py . --verbose
 ```
 
+## Token Optimization
+
+All AMAMA scripts write verbose output to timestamped report files in `design/reports/` and print only 2-3 line summaries to stdout. Sub-agents must follow the same pattern — see the main agent's "Sub-Agent Output Rules" section.
+
 ## Scripts
 
 All scripts are in the `scripts/` directory and use the `amama_` prefix:
@@ -158,6 +162,7 @@ All scripts are in the `scripts/` directory and use the `amama_` prefix:
 | `amama_session_start.py` | SessionStart hook -- load memory |
 | `amama_session_end.py` | SessionEnd hook -- save memory |
 | `amama_stop_check.py` | Stop hook -- verify coordination complete |
+| `amama_report_writer.py` | Shared report writer for token-efficient output |
 | `amama_memory_manager.py` | CozoDB memory management |
 | `amama_memory_operations.py` | Memory CRUD operations |
 | `amama_notify_agent.py` | Send notifications to agents |
@@ -217,13 +222,13 @@ ai-maestro-assistant-manager-agent/
 │   └── thresholds.py                  # Governance thresholds
 ├── skills/
 │   ├── amama-amcos-coordination/      # AMCOS coordination skill + 12 reference docs
-│   ├── amama-approval-workflows/      # Governance approval workflows + 2 references
-│   ├── amama-github-routing/          # GitHub operations routing + 1 reference
+│   ├── amama-approval-workflows/      # Governance approval workflows + 7 reference docs
+│   ├── amama-github-routing/          # GitHub operations routing + 6 reference docs
 │   ├── amama-label-taxonomy/          # GitHub label management
 │   ├── amama-role-routing/            # Request routing to specialists
-│   ├── amama-session-memory/          # CozoDB session memory + 1 reference
+│   ├── amama-session-memory/          # CozoDB session memory + 4 reference docs
 │   ├── amama-status-reporting/        # Status report generation
-│   └── amama-user-communication/      # User interaction patterns + 2 references
+│   └── amama-user-communication/      # User interaction patterns + 2 reference docs
 ├── docs/                              # Published documentation
 ├── git-hooks/                         # Git hook scripts
 ├── LICENSE                            # MIT License

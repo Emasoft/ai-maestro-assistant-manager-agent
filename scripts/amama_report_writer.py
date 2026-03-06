@@ -6,6 +6,8 @@ report files and print only concise summaries to stdout. This reduces
 token consumption when script output is captured into agent context.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 from datetime import datetime

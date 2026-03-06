@@ -8,12 +8,16 @@ Usage:
     python3 am_notify_agent.py implementer-1 --subject "Update" --message "Requirements changed"
 """
 
+from __future__ import annotations
+
 import argparse
 import os
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any, cast
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import yaml
 

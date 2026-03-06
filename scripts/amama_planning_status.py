@@ -10,6 +10,8 @@ Usage:
     python3 am_planning_status.py --verbose
 """
 
+from __future__ import annotations
+
 import argparse
 import os
 import sys

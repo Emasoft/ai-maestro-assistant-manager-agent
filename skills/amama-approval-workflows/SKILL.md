@@ -1,7 +1,7 @@
 ---
 name: amama-approval-workflows
 description: Use when handling governance approvals via GovernanceRequest API (team membership, agent lifecycle, COS assignment). Trigger with pending governance requests.
-version: 2.3.0
+version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
@@ -44,7 +44,7 @@ The governance password authenticates MANAGER approval/rejection actions. It is 
 Set the governance password on first use:
 
 ```bash
-curl -X POST "$AIMAESTRO_API/api/governance/password" \
+curl -X POST "$AIMAESTRO_API/api/v1/governance/password" \
   -H "Content-Type: application/json" \
   -d '{"password": "<governance-password>"}'
 ```
@@ -136,7 +136,7 @@ The API provides endpoints for listing, retrieving, approving, and rejecting Gov
 - `GET /api/v1/governance/requests/{id}` - Get specific request
 - `POST /api/v1/governance/requests/{id}/approve` - Approve (MANAGER only)
 - `POST /api/v1/governance/requests/{id}/reject` - Reject (MANAGER only)
-- `POST /api/governance/transfers` - Submit transfer request
+- `POST /api/v1/governance/transfers` - Submit transfer request
 
 ## Legacy Approval Types
 
