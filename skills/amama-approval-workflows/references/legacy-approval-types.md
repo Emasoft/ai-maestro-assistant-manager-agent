@@ -1,14 +1,14 @@
 # Legacy Approval Types Reference
 
-The following approval types from v1 are still supported for backward compatibility with non-governance workflows. These use the standard AI Maestro messaging system rather than the GovernanceRequest API.
-
-## Contents
-
+<!-- TOC -->
 - [Push Approval](#push-approval)
 - [Merge Approval](#merge-approval)
 - [Publish Approval](#publish-approval)
 - [Security Approval](#security-approval)
 - [Design Approval](#design-approval)
+<!-- /TOC -->
+
+The following approval types from v1 are still supported for backward compatibility with non-governance workflows. These use the standard AI Maestro messaging system rather than the GovernanceRequest API.
 
 ## Push Approval
 

@@ -1,18 +1,15 @@
 # Delegation Rules for Autonomous Operation
 
-## Use-Case TOC
-
-- When to grant autonomous mode to AMCOS -> Section 2
-- How to configure delegation rules -> Section 2
-- When to revoke autonomous mode -> Section 3
-- What operations always require approval -> Section 4
-
-## Table of Contents
-
-1. What is Autonomous Mode
-2. Granting Autonomous Mode
-3. Revoking Autonomous Mode
-4. Operations That ALWAYS Require AMAMA Approval
+<!-- TOC -->
+- [1. What is Autonomous Mode](#1-what-is-autonomous-mode)
+  - [Delegation Configuration](#delegation-configuration)
+- [2. Granting Autonomous Mode](#2-granting-autonomous-mode)
+  - [Grant Parameters](#grant-parameters)
+- [3. Revoking Autonomous Mode](#3-revoking-autonomous-mode)
+  - [Revocation Message](#revocation-message)
+  - [Revocation Reasons](#revocation-reasons)
+- [4. Operations That ALWAYS Require AMAMA Approval](#4-operations-that-always-require-amama-approval)
+<!-- /TOC -->
 
 ---
 

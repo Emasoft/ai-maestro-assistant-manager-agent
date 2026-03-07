@@ -1,16 +1,16 @@
 # Completion Notifications from AMCOS
 
-## Use-Case TOC
-
-- When AMCOS sends completion notifications -> Section 1
-- How to process completion notifications -> Section 2
-- When to notify the user about completions -> Section 3
-
-## Table of Contents
-
-1. When AMCOS Sends Completion Notifications
-2. Processing Completion Notifications
-3. User Notification Rules
+<!-- TOC -->
+- [1. When AMCOS Sends Completion Notifications](#1-when-amcos-sends-completion-notifications)
+  - [Notification Triggers by Mode](#notification-triggers-by-mode)
+- [2. Processing Completion Notifications](#2-processing-completion-notifications)
+  - [Step 1: Parse the notification](#step-1-parse-the-notification)
+  - [Step 2: Handle based on result](#step-2-handle-based-on-result)
+  - [Step 3: Handle autonomous mode operations](#step-3-handle-autonomous-mode-operations)
+- [3. User Notification Rules](#3-user-notification-rules)
+  - [User Preference Defaults](#user-preference-defaults)
+  - [Aggregation for Status Reports](#aggregation-for-status-reports)
+<!-- /TOC -->
 
 ---
 

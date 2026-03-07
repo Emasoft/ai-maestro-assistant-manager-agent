@@ -1,17 +1,12 @@
 # Responding to AMCOS Approval Requests
 
-## Use-Case TOC
-
-- When AMCOS sends an approval request -> Section 1
-- How to format the response message -> Section 2
-- What evaluation criteria to use -> Section 3
-- When to escalate to user -> Section 3
-
-## Table of Contents
-
-1. Decision Options
-2. Response Format
-3. Response Workflow
+<!-- TOC -->
+- [1. Decision Options](#1-decision-options)
+  - [When to Use Each Decision](#when-to-use-each-decision)
+- [2. Response Format](#2-response-format)
+  - [Field Descriptions](#field-descriptions)
+- [3. Response Workflow](#3-response-workflow)
+<!-- /TOC -->
 
 ---
 

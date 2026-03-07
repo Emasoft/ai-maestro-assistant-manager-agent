@@ -35,6 +35,8 @@ from cpv_validation_common import (
     SKILL_FRONTMATTER_FIELDS,
     VALID_CONTEXT_VALUES,
     ValidationReport,
+    save_report_and_print_summary,
+    validate_component_name,
 )
 
 # Maximum recommended SKILL.md line count per Anthropic docs
@@ -139,33 +141,12 @@ def validate_name_field(frontmatter: dict[str, Any], skill_dir_name: str, report
         name = frontmatter["name"]
         report.passed(f"'name' field present: {name}", "SKILL.md")
 
-    # Validate name format per docs:
-    # "Lowercase letters, numbers, and hyphens only (max 64 characters)"
     if not isinstance(name, str):
         report.critical(f"'name' must be a string, got {type(name).__name__}", "SKILL.md")
         return
 
-    if len(name) > 64:
-        report.major(
-            f"Skill name exceeds 64 characters ({len(name)} chars): {name}",
-            "SKILL.md",
-        )
-
-    if name != name.lower():
-        report.major(f"Skill name must be lowercase: {name}", "SKILL.md")
-
-    if not re.match(r"^[a-z][a-z0-9-]*$", name):
-        report.major(
-            f"Skill name must use only lowercase letters, numbers, hyphens: {name}",
-            "SKILL.md",
-        )
-
-    # Check name matches directory name (recommended)
-    if "name" in frontmatter and name != skill_dir_name:
-        report.info(
-            f"Skill name '{name}' differs from directory name '{skill_dir_name}'",
-            "SKILL.md",
-        )
+    # Uniform naming validation via shared function (includes dir-name match as MAJOR)
+    validate_component_name(name, "skill", report, directory_name=skill_dir_name if "name" in frontmatter else None)
 
 
 def validate_description_field(frontmatter: dict[str, Any], body: str, report: ValidationReport) -> None:
@@ -623,6 +604,9 @@ def main() -> int:
         help="Show all results including passed checks",
     )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument(
+        "--report", type=str, default=None, help="Save detailed report to file, print only summary to stdout"
+    )
     parser.add_argument("--strict", action="store_true", help="Strict mode — NIT issues also block validation")
     args = parser.parse_args()
 
@@ -649,7 +633,10 @@ def main() -> int:
     if args.json:
         print_json(report)
     else:
-        print_results(report, args.verbose)
+        if args.report:
+            save_report_and_print_summary(report, Path(args.report), "Skill Validation", print_results, args.verbose, plugin_path=args.skill_path)
+        else:
+            print_results(report, args.verbose)
 
     if args.strict:
         return report.exit_code_strict()

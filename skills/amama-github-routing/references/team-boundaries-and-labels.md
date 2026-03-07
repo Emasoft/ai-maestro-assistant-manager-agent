@@ -1,5 +1,11 @@
 # Team Boundaries and Labels
 
+<!-- TOC -->
+- [Team Label Rules](#team-label-rules)
+- [Team Label Application](#team-label-application)
+- [Team Boundary Enforcement Decision](#team-boundary-enforcement-decision)
+<!-- /TOC -->
+
 All GitHub issues must be tagged with a team label to enforce team boundaries. Team labels follow the format `team:{teamId}`.
 
 ## Team Label Rules

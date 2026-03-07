@@ -1,16 +1,20 @@
 # AMCOS Coordination Examples
 
-## Use-Case TOC
-
-- When handling a deployment approval request -> Example 1
-- When granting autonomous mode for development -> Example 2
-- When processing a completion notification -> Example 3
-
-## Table of Contents
-
-1. Example 1: AMCOS Requests Approval for Deployment
-2. Example 2: Granting Autonomous Mode for Development Tasks
-3. Example 3: AMCOS Reports Completion
+<!-- TOC -->
+- [Example 1: AMCOS Requests Approval for Deployment](#example-1-amcos-requests-approval-for-deployment)
+  - [AMCOS sends approval request](#amcos-sends-approval-request)
+  - [AMAMA evaluates the request](#amama-evaluates-the-request)
+  - [AMAMA responds with approval](#amama-responds-with-approval)
+- [Example 2: Granting Autonomous Mode for Development Tasks](#example-2-granting-autonomous-mode-for-development-tasks)
+  - [User request](#user-request)
+  - [AMAMA sends autonomy grant](#amama-sends-autonomy-grant)
+  - [What AMCOS can now do autonomously](#what-amcos-can-now-do-autonomously)
+  - [What AMCOS still needs approval for](#what-amcos-still-needs-approval-for)
+- [Example 3: AMCOS Reports Completion](#example-3-amcos-reports-completion)
+  - [AMCOS sends completion notification](#amcos-sends-completion-notification)
+  - [AMAMA processes the notification](#amama-processes-the-notification)
+  - [State update](#state-update)
+<!-- /TOC -->
 
 ---
 

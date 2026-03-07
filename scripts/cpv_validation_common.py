@@ -201,6 +201,12 @@ VALID_TOOLS = {
     "TaskGet",
     "TaskStop",
     "ToolSearch",
+    "MultiEdit",
+    "Notebook",
+    "TodoRead",
+    "TodoWrite",
+    "LSP",
+    "Agent",
 }
 
 # Valid model values for agents
@@ -229,6 +235,8 @@ SKIP_DIRS = {
     "dist",
     "build",
     "*.egg-info",
+    # Dev-only directories (gitignored, not shipped)
+    "*_dev",
 }
 
 # Binary file extensions — used by security and encoding validators to skip binary files
@@ -782,6 +790,24 @@ def is_path_gitignored(rel_path: str, patterns: list[str]) -> bool:
     return False
 
 
+def get_gitignore_filter(plugin_root: Path):  # noqa: ANN201
+    """Create a GitignoreFilter for the given plugin root.
+
+    Returns a GitignoreFilter instance that respects .gitignore patterns.
+    All validators should use this instead of hardcoded skip lists.
+
+    Usage:
+        gi = get_gitignore_filter(plugin_root)
+        for dirpath, dirnames, filenames in gi.walk():
+            ...
+        for path in gi.rglob("*.py"):
+            ...
+    """
+    from gitignore_filter import GitignoreFilter
+
+    return GitignoreFilter(plugin_root)
+
+
 def get_skip_dirs_with_gitignore(root_path: Path, additional_skip: set[str] | None = None) -> set[str]:
     """Get combined set of directories to skip (built-in + gitignored).
 
@@ -815,10 +841,66 @@ def get_skip_dirs_with_gitignore(root_path: Path, additional_skip: set[str] | No
 NAME_PATTERN = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
 
 # Maximum recommended values for names and descriptions
-MAX_NAME_LENGTH = 64
+MAX_NAME_LENGTH = 70
 MAX_DESCRIPTION_LENGTH = 1024
 MIN_BODY_CHARS = 100
 MAX_BODY_WORDS = 2000
+
+# =============================================================================
+# Shared Naming Validation
+# =============================================================================
+
+
+def validate_component_name(
+    name: str,
+    component_type: str,
+    report: "ValidationReport",
+    *,
+    directory_name: str | None = None,
+) -> None:
+    """Validate a component name against uniform naming rules.
+
+    Enforces consistent naming across all component types (plugin, skill, agent,
+    command, mcp-server, marketplace-plugin, reference-file):
+    - Must start with a lowercase letter
+    - Must end with a lowercase letter (no digit at end)
+    - Only lowercase letters, digits, and single hyphens allowed
+    - No consecutive hyphens, no underscores, no uppercase
+    - Max length: MAX_NAME_LENGTH (70) chars
+    - For skills: frontmatter name must match directory name
+
+    Args:
+        name: The component name to validate.
+        component_type: Human-readable type label for error messages.
+        report: ValidationReport to accumulate results into.
+        directory_name: If provided, name must match this (for skill dir-name check).
+    """
+    if not name:
+        report.add("CRITICAL", f"{component_type} name is empty")
+        return
+    # Length check
+    if len(name) > MAX_NAME_LENGTH:
+        report.add("MAJOR", f"{component_type} name '{name}' exceeds {MAX_NAME_LENGTH} chars ({len(name)})")
+    # Pattern check: NAME_PATTERN validates structure (start with letter, kebab-case, no --)
+    if not NAME_PATTERN.match(name):
+        # Provide specific diagnostic message
+        if name[0].isdigit():
+            report.add("CRITICAL", f"{component_type} name '{name}' must not start with a digit")
+        elif "--" in name:
+            report.add("CRITICAL", f"{component_type} name '{name}' contains consecutive hyphens")
+        elif "_" in name:
+            report.add("CRITICAL", f"{component_type} name '{name}' contains underscore (use hyphen)")
+        elif any(c.isupper() for c in name):
+            report.add("CRITICAL", f"{component_type} name '{name}' contains uppercase (use lowercase)")
+        else:
+            report.add("CRITICAL", f"{component_type} name '{name}' does not match naming pattern (lowercase letters, digits, hyphens; must start with letter)")
+    elif name[-1].isdigit():
+        # Pattern matched but name ends with digit — not allowed
+        report.add("CRITICAL", f"{component_type} name '{name}' must not end with a digit")
+    # Directory name match (for skills: frontmatter name must equal directory name)
+    if directory_name is not None and name != directory_name:
+        report.add("MAJOR", f"{component_type} frontmatter name '{name}' must match directory name '{directory_name}'")
+
 
 # =============================================================================
 # Data Classes
@@ -1045,7 +1127,7 @@ class ValidationReport:
         counts = self.count_by_level()
         return {
             "score": self.score,
-            "grade": calculate_letter_grade(self.score),
+            "score_pct": self.score,
             "exit_code": self.exit_code,
             "counts": counts,
             "results": [r.to_dict() for r in self.results],
@@ -1410,46 +1492,6 @@ def get_plugin_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-def calculate_letter_grade(score: int) -> str:
-    """Convert numeric score (0-100) to letter grade.
-
-    Grade scale:
-    - A+ : 97-100
-    - A  : 93-96
-    - A- : 90-92
-    - B+ : 87-89
-    - B  : 83-86
-    - B- : 80-82
-    - C+ : 77-79
-    - C  : 73-76
-    - C- : 70-72
-    - D  : 60-69
-    - F  : 0-59
-    """
-    if score >= 97:
-        return "A+"
-    elif score >= 93:
-        return "A"
-    elif score >= 90:
-        return "A-"
-    elif score >= 87:
-        return "B+"
-    elif score >= 83:
-        return "B"
-    elif score >= 80:
-        return "B-"
-    elif score >= 77:
-        return "C+"
-    elif score >= 73:
-        return "C"
-    elif score >= 70:
-        return "C-"
-    elif score >= 60:
-        return "D"
-    else:
-        return "F"
-
-
 def is_valid_kebab_case(name: str) -> bool:
     """Check if name follows kebab-case convention."""
     return bool(NAME_PATTERN.match(name))
@@ -1501,7 +1543,6 @@ def print_report_summary(report: ValidationReport, title: str = "Validation Repo
     """Print a formatted summary of a validation report."""
     counts = report.count_by_level()
     score = report.score
-    grade = calculate_letter_grade(score)
 
     print(f"\n{'=' * 60}")
     print(f"{COLORS['BOLD']}{title}{COLORS['RESET']}")
@@ -1516,11 +1557,9 @@ def print_report_summary(report: ValidationReport, title: str = "Validation Repo
     print(f"{COLORS['INFO']}INFO:     {counts['INFO']}{COLORS['RESET']}")
     print(f"{COLORS['PASSED']}PASSED:   {counts['PASSED']}{COLORS['RESET']}")
 
-    # Print score and grade
+    # Print score
     grade_color = COLORS["PASSED"] if score >= 80 else COLORS["MAJOR"] if score >= 60 else COLORS["CRITICAL"]
-    print(
-        f"\n{COLORS['BOLD']}Health Score:{COLORS['RESET']} {grade_color}{score}/100 (Grade: {grade}){COLORS['RESET']}"
-    )
+    print(f"\n{COLORS['BOLD']}Syntactic Score:{COLORS['RESET']} {grade_color}{score}/100{COLORS['RESET']}")
 
     # Print exit code interpretation
     exit_code = report.exit_code
@@ -1578,6 +1617,77 @@ def print_results_by_level(report: ValidationReport, verbose: bool = False) -> N
                 print(f"\n{COLORS[level]}--- {level} ({len(results)}) ---{COLORS['RESET']}")
                 for result in results:
                     print(f"  {format_result(result)}")
+
+
+def print_compact_summary(report: ValidationReport, title: str, report_path: Path | None = None, plugin_path: Path | str | None = None) -> None:
+    """Print a concise summary: counts by severity + verdict."""
+    counts = report.count_by_level()
+    exit_code = report.exit_code
+
+    # Determine verdict — VALID/INVALID for the whole plugin or skill
+    if exit_code == EXIT_OK:
+        verdict = f"{COLORS['PASSED']}VALID{COLORS['RESET']}"
+        verdict_line = f"{COLORS['PASSED']}Verdict: VALID{COLORS['RESET']}"
+    elif exit_code == EXIT_CRITICAL:
+        verdict = f"{COLORS['CRITICAL']}INVALID{COLORS['RESET']}"
+        verdict_line = f"{COLORS['CRITICAL']}Verdict: INVALID — critical issues must be fixed{COLORS['RESET']}"
+    elif exit_code == EXIT_MAJOR:
+        verdict = f"{COLORS['MAJOR']}INVALID{COLORS['RESET']}"
+        verdict_line = f"{COLORS['MAJOR']}Verdict: INVALID — major issues must be fixed{COLORS['RESET']}"
+    else:
+        verdict = f"{COLORS['MINOR']}INVALID{COLORS['RESET']}"
+        verdict_line = f"{COLORS['MINOR']}Verdict: INVALID — minor issues should be fixed{COLORS['RESET']}"
+
+    # Print compact output — always show all levels, PASSED first, WARNING last
+    print(f"{COLORS['BOLD']}{title}{COLORS['RESET']}: {verdict}")
+    parts = []
+    for level in ("PASSED", "CRITICAL", "MAJOR", "MINOR", "NIT", "WARNING"):
+        c = counts.get(level, 0)
+        parts.append(f"{COLORS.get(level, '')}{level}:{c}{COLORS['RESET']}")
+    print(f"  {' | '.join(parts)}")
+    print(f"  {verdict_line}")
+    if plugin_path:
+        print(f"  Plugin: {plugin_path}")
+    if report_path:
+        print(f"  Report: {report_path}")
+
+
+def save_report_and_print_summary(
+    report: ValidationReport,
+    report_path: Path,
+    title: str,
+    print_fn: Callable[..., None],
+    *args: Any,
+    plugin_path: Path | str | None = None,
+    **kwargs: Any,
+) -> None:
+    """Save full detailed report to file, print only compact summary to stdout.
+
+    Args:
+        report: The validation report
+        report_path: Path to write the detailed report file
+        title: Title for the compact summary
+        print_fn: The script's print_results function (captures its stdout)
+        plugin_path: Path to the validated plugin/skill (shown in compact summary)
+        *args, **kwargs: Additional arguments passed to print_fn
+    """
+    import io
+    import sys
+
+    # Capture full verbose output
+    old_stdout = sys.stdout
+    sys.stdout = buffer = io.StringIO()
+    try:
+        print_fn(report, *args, **kwargs)
+    finally:
+        sys.stdout = old_stdout
+
+    # Write captured output to report file
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(buffer.getvalue())
+
+    # Print compact summary to real stdout
+    print_compact_summary(report, title, report_path, plugin_path=plugin_path)
 
 
 # =============================================================================

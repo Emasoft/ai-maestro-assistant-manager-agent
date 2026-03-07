@@ -5,18 +5,14 @@ version: 1.0.0
 parent-skill: amama-github-routing
 ---
 
-## Contents
-
-- [Proactive Kanban Monitoring Overview](#proactive-kanban-monitoring)
-- [Monitoring Schedule](#monitoring-schedule)
-- [Changes to Monitor](#changes-to-monitor)
-- [Monitoring Procedure](#monitoring-procedure)
-  - [Step 1: Capture Snapshot](#step-1-capture-snapshot)
-  - [Step 2: Compare with Previous Snapshot](#step-2-compare-with-previous-snapshot)
-  - [Step 3: Process Detected Changes](#step-3-process-detected-changes)
-  - [Step 4: Update Internal State](#step-4-update-internal-state)
-- [Kanban Monitoring Checklist](#kanban-monitoring-checklist)
-- [Error Handling](#error-handling)
+<!-- TOC -->
+- [Proactive Kanban Monitoring](#proactive-kanban-monitoring)
+  - [Monitoring Schedule](#monitoring-schedule)
+  - [Changes to Monitor](#changes-to-monitor)
+  - [Monitoring Procedure](#monitoring-procedure)
+  - [Kanban Monitoring Checklist](#kanban-monitoring-checklist)
+  - [Error Handling](#error-handling)
+<!-- /TOC -->
 
 ---
 

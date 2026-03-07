@@ -49,7 +49,7 @@ from cpv_validation_common import (
     Level,
     ValidationReport,
     ValidationResult,
-    calculate_letter_grade,
+    save_report_and_print_summary,
 )
 
 # =============================================================================
@@ -839,7 +839,7 @@ def print_results(report: EnterpriseComplianceReport, verbose: bool = False) -> 
         rst = colors["RESET"]
         print(f"{minor}NOTICE: Minor compliance issues found{rst}")
 
-    print(f"\nScore: {report.score}/100 ({calculate_letter_grade(report.score)})")
+    print(f"\nScore: {report.score}/100")
     print()
 
 
@@ -894,6 +894,9 @@ Exit codes:
         action="store_true",
         help="Enterprise mode: all rules become CRITICAL (fail-fast)",
     )
+    parser.add_argument(
+        "--report", type=str, default=None, help="Save detailed report to file, print only summary to stdout"
+    )
     args = parser.parse_args()
 
     plugin_path = Path(args.plugin_path).resolve()
@@ -918,6 +921,8 @@ Exit codes:
 
     if args.json:
         print_json(report)
+    elif args.report:
+        save_report_and_print_summary(report, Path(args.report), "Enterprise Validation", print_results, args.verbose, plugin_path=args.plugin_path)
     else:
         print_results(report, args.verbose)
 
