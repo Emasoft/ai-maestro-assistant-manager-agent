@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Enables AMAMA to coordinate with COS-assigned agents. A COS is an existing registered agent assigned as operational coordinator within a team via Team API. See [references/cos-definition.md](references/cos-definition.md).
+Coordinates with COS-assigned agents (team coordinators). See [references/cos-definition.md](references/cos-definition.md).
 
 ## Prerequisites
 
@@ -90,14 +90,9 @@ See [references/workflow-examples.md](references/workflow-examples.md) for full 
 ## Resources
 
 - [references/message-formats.md](references/message-formats.md) - JSON formats
-  - AMCOS Approval Request Format
-  - Field Descriptions
-  - AMAMA Response Format
-  - Autonomy Messages
-  - Grant Message
-  - Revoke Message
-  - Completion Notification Format
-  - Field Descriptions
+  - AMCOS Approval Request Format, Field Descriptions, AMAMA Response Format
+  - Autonomy Messages, Grant Message, Revoke Message
+  - Completion Notification Format, Field Descriptions
 - `references/ai-maestro-message-templates.md` - Templates
 - `references/success-criteria.md` - Success criteria
 - [references/workflow-checklists.md](references/workflow-checklists.md) - Checklists
@@ -107,6 +102,3 @@ See [references/workflow-examples.md](references/workflow-examples.md) for full 
   - Checklist: Routing User Request to AMCOS
   - Checklist: Providing Status to User
 - `references/spawn-failure-recovery.md` - Recovery
-
-**Skills:** `amama-approval-workflows`, `amama-role-routing`
-**Commands:** `/amama-respond-to-amcos`, `/amama-orchestration-status`

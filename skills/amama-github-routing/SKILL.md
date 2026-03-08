@@ -32,7 +32,7 @@ Routes GitHub operations to specialists via `team:{teamId}` labels, syncing to `
 7. Sync status to `tasks-{teamId}.json`
 8. Track handoff status and verify completion
 
-AMIA is the default. Route to AMAA/AMOA only when design/module context exists. PRs and releases always go to AMIA. Kanban routes by card type.
+Default: AMIA. Route to AMAA/AMOA only with design/module context. PRs/releases always AMIA.
 
 Copy this checklist and track your progress:
 

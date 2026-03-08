@@ -30,8 +30,6 @@ GovernanceRequest API workflows. Two tracks:
 6. Update state per references/state-tracking.md
 7. Notify requesting agent
 
-Endpoints: references/api-endpoints.md
-
 ## Output
 
 | Outcome | Action |
@@ -39,7 +37,7 @@ Endpoints: references/api-endpoints.md
 | Approve | Call approve, update, notify |
 | Reject | Call reject, update, notify |
 | Info needed | Query, re-present |
-| Timeout 24h | Auto-reject per references/expiry-workflow.md |
+| Timeout 24h | Auto-reject per expiry-workflow |
 | Rate limit | Queue, wait, retry |
 
 ## Error Handling
@@ -73,12 +71,10 @@ Copy this checklist and track your progress:
 ## Resources
 
 - [references/governance-request-types.md](references/governance-request-types.md) - Request types
-  - 1. add-to-team, 2. remove-from-team, 3. assign-cos, 4. remove-cos
-  - 5. transfer-agent, 6. create-agent, 7. delete-agent, 8. configure-agent
+  - add-to-team, remove-from-team, assign-cos, remove-cos, transfer-agent, create-agent, delete-agent, configure-agent
 - [references/api-endpoints.md](references/api-endpoints.md) - API endpoints
-  - List Pending Requests, Get a Specific Request
-  - Approve a Request (MANAGER only), Reject a Request (MANAGER only)
-  - Submit a Transfer Request, Transfer Request Handling (M5)
+  - List Pending Requests, Get a Specific Request, Approve a Request (MANAGER only)
+  - Reject a Request (MANAGER only), Submit a Transfer Request, Transfer Request Handling (M5)
 - [references/state-machine.md](references/state-machine.md) - State machine
   - States, Transitions, Plugin Prefix Reference
 - [references/state-tracking.md](references/state-tracking.md) - State tracking
@@ -98,6 +94,5 @@ Copy this checklist and track your progress:
   - Example 2: Handling a Transfer Request, Example 3: Rejecting a Dangerous Request
 - references/rule-14-enforcement.md - RULE 14: immutable user requirements
 - [references/best-practices.md](references/best-practices.md) - Best practices
-  - 1. Always Verify Before Reporting, 2. Maintain Records Consistently
-  - 3. Clear Communication with User, 4. Risk-Aware Approval Decisions
-  - 5. Scope Management, 6. Error Handling, 7. Timeliness
+  - Always Verify Before Reporting, Maintain Records Consistently, Clear Communication with User
+  - Risk-Aware Approval Decisions, Scope Management, Error Handling, Timeliness
