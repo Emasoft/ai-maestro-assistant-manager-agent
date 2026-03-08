@@ -1,13 +1,12 @@
 # Proactive AMCOS Monitoring
 
-<!-- TOC -->
+## Table of Contents
 - [Monitoring Schedule](#monitoring-schedule)
 - [Health Check Procedure](#health-check-procedure)
 - [AI Maestro Inbox Check](#ai-maestro-inbox-check)
 - [Responsiveness Ping (15 Minute Timeout)](#responsiveness-ping-15-minute-timeout)
 - [Actions When AMCOS Unresponsive](#actions-when-amcos-unresponsive)
 - [See Also](#see-also)
-<!-- /TOC -->
 
 AMAMA must proactively monitor AMCOS health and responsiveness to prevent communication failures and ensure timely approval processing.
 

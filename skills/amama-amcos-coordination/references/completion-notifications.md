@@ -1,6 +1,6 @@
 # Completion Notifications from AMCOS
 
-<!-- TOC -->
+## Table of Contents
 - [1. When AMCOS Sends Completion Notifications](#1-when-amcos-sends-completion-notifications)
   - [Notification Triggers by Mode](#notification-triggers-by-mode)
 - [2. Processing Completion Notifications](#2-processing-completion-notifications)
@@ -10,7 +10,6 @@
 - [3. User Notification Rules](#3-user-notification-rules)
   - [User Preference Defaults](#user-preference-defaults)
   - [Aggregation for Status Reports](#aggregation-for-status-reports)
-<!-- /TOC -->
 
 ---
 

@@ -1,12 +1,11 @@
 # Escalation Rules Reference
 
-<!-- TOC -->
+## Table of Contents
 - [Auto-Reject Conditions](#auto-reject-conditions)
 - [Auto-Approve Conditions (NEVER by default)](#auto-approve-conditions-never-by-default)
 - [Escalation Triggers](#escalation-triggers)
 - [User Notification](#user-notification)
 - [Workflow Checklist](#workflow-checklist)
-<!-- /TOC -->
 
 ## Auto-Reject Conditions
 

@@ -1,6 +1,6 @@
 # Decision Trees and Routing Matrices
 
-## Contents
+## Table of Contents
 
 - [Issue Operations Decision Tree](#issue-operations-decision-tree)
 - [Pull Request Operations Decision Tree](#pull-request-operations-decision-tree)

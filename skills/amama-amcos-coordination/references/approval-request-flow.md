@@ -1,10 +1,9 @@
 # Approval Request Flow from COS-Assigned Agent to AMAMA
 
-<!-- TOC -->
+## Table of Contents
 - [When COS-Assigned Agent Sends Approval Requests](#when-cos-assigned-agent-sends-approval-requests)
 - [Request Categories](#request-categories)
 - [Related Documents](#related-documents)
-<!-- /TOC -->
 
 ## When COS-Assigned Agent Sends Approval Requests
 

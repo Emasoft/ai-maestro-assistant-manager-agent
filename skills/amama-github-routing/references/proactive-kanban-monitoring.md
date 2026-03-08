@@ -1,18 +1,17 @@
 ---
 name: proactive-kanban-monitoring
-description: Detailed procedures for proactive GitHub Project board monitoring, change detection, and notification routing.
+description: Proactive GitHub Project board monitoring and notification routing.
 version: 1.0.0
 parent-skill: amama-github-routing
 ---
 
-<!-- TOC -->
+## Table of Contents
 - [Proactive Kanban Monitoring](#proactive-kanban-monitoring)
   - [Monitoring Schedule](#monitoring-schedule)
   - [Changes to Monitor](#changes-to-monitor)
   - [Monitoring Procedure](#monitoring-procedure)
   - [Kanban Monitoring Checklist](#kanban-monitoring-checklist)
   - [Error Handling](#error-handling)
-<!-- /TOC -->
 
 ---
 

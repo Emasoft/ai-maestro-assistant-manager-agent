@@ -1,10 +1,9 @@
 # Handoff Protocol
 
-<!-- TOC -->
+## Table of Contents
 - [Steps](#steps)
 - [Design Document Scripts](#design-document-scripts)
 - [See Also](#see-also)
-<!-- /TOC -->
 
 Procedure for routing work between AMAMA, AMCOS, and specialist agents.
 

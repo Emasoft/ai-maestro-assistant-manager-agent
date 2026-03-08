@@ -1,6 +1,6 @@
 # Assigning the COS Role (AMAMA Exclusive Responsibility)
 
-<!-- TOC -->
+## Table of Contents
 - [1. Why AMAMA Assigns the COS Role](#1-why-amama-assigns-the-cos-role)
   - [Key Difference from v1 (Spawning AMCOS)](#key-difference-from-v1-spawning-amcos)
 - [2. How to Assign the COS Role](#2-how-to-assign-the-cos-role)
@@ -17,7 +17,6 @@
   - [GovernanceRequest for COS Assignment](#governancerequest-for-cos-assignment)
   - [GovernanceRequest Lifecycle](#governancerequest-lifecycle)
   - [Cross-Host Limitations](#cross-host-limitations)
-<!-- /TOC -->
 
 ---
 

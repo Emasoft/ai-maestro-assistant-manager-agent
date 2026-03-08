@@ -1,6 +1,6 @@
 # Handoff Content Requirements and UUID Tracking
 
-## Contents
+## Table of Contents
 
 - [For AMIA (Integrator) GitHub Handoffs](#for-amia-integrator-github-handoffs)
 - [For AMAA (Architect) Design-GitHub Handoffs](#for-amaa-architect-design-github-handoffs)

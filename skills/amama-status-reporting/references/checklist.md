@@ -1,8 +1,7 @@
 # Status Reporting Checklist
 
-<!-- TOC -->
-(Single-section checklist -- no subsections)
-<!-- /TOC -->
+## Table of Contents
+- [Status Reporting Checklist](#status-reporting-checklist)
 
 Copy this checklist and track your progress:
 

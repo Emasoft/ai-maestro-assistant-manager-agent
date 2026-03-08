@@ -6,19 +6,13 @@ compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
 user-invocable: false
-triggers:
-  - User requests GitHub operation (issues, PRs, projects, Kanban)
-  - GitHub webhook event requires agent action
-  - Kanban card status change requires AI Maestro task sync
 ---
 
 # GitHub Operation Routing Skill
 
 ## Overview
 
-Routes GitHub operations (issues, PRs, Kanban, releases) to the correct specialist agent while enforcing team boundaries via `team:{teamId}` labels and syncing task state to AI Maestro's `~/.aimaestro/teams/tasks-{teamId}.json`.
-
-**Specialist roles**: AMIA (Integrator, default GitHub handler), AMAA (Architect, design-linked ops), AMOA (Orchestrator, module-related ops).
+Routes GitHub operations to specialists via `team:{teamId}` labels, syncing to `tasks-{teamId}.json`. AMIA (Integrator, default), AMAA (Architect, design), AMOA (Orchestrator, modules).
 
 ## Prerequisites
 
@@ -29,68 +23,93 @@ Routes GitHub operations (issues, PRs, Kanban, releases) to the correct speciali
 
 ## Instructions
 
-1. Identify operation type (issue/PR/kanban/release)
-2. Determine owning team and apply `team:{teamId}` label (no routing without it)
+1. Identify operation type (issue, PR, kanban, or release)
+2. Determine owning team and apply `team:{teamId}` label
 3. Check for design or module context affecting routing
-4. Consult the decision tree for the operation type. See [decision-trees-and-routing.md](references/decision-trees-and-routing.md)
-5. Prepare handoff with required fields and team label. See [handoff-templates-and-uuid.md](references/handoff-templates-and-uuid.md)
+4. Consult the decision tree for the operation type
+5. Prepare handoff with required fields and team label
 6. Route via AI Maestro to the target agent (all routing goes through COS)
-7. Sync status to `tasks-{teamId}.json`. See [task-system-sync.md](references/task-system-sync.md)
+7. Sync status to `tasks-{teamId}.json`
 8. Track handoff status and verify completion
 
-**Primary rule**: AMIA is the default. Route to AMAA/AMOA only when design/module context exists. All routing respects team boundaries. See [team-boundaries-and-labels.md](references/team-boundaries-and-labels.md).
+AMIA is the default. Route to AMAA/AMOA only when design/module context exists. PRs and releases always go to AMIA. Kanban routes by card type.
 
-**Routing summary**:
-- **Issues**: AMIA (default), AMAA (design-linked), AMOA (module tasks)
-- **PRs**: Always AMIA (consults AMAA/AMOA as needed)
-- **Kanban**: AMIA (board sync), AMAA (design cards), AMOA (module cards), AMAMA (status queries)
-- **Releases**: Always AMIA
+Copy this checklist and track your progress:
+
+- [ ] Identify operation type
+- [ ] Apply team label
+- [ ] Consult decision tree
+- [ ] Prepare and send handoff
+- [ ] Sync task file
+- [ ] Verify completion
 
 ## Output
 
-After routing, produce:
-
 ```
 [ROUTED] GitHub {operation_type} -> {target_agent}
-Team: {team_label}
-Handoff: {status}
+Team: {team_label} | Handoff: {status}
 Task Sync: {sync_status} -> {new_task_status}
 Reference: {tracking_id}
 ```
 
 ## Error Handling
 
-- **Ambiguous routing**: Default to AMIA, ask user if design/module context unclear
-- **Missing team label**: Infer from module/design ownership; do NOT route until applied
-- **Missing context**: Query user, search locally, flag handoff as "INCOMPLETE"
-- **Agent unavailable**: Queue handoff, notify user, retry, escalate on repeated failure
+- **Ambiguous routing**: Default to AMIA, ask user if unclear
+- **Missing team label**: Infer from ownership; do NOT route until applied
+- **Agent unavailable**: Queue handoff, notify user, retry, escalate on failure
 - **Task sync failure**: Log, queue retry, reconcile on next success
-- **Cross-team violation**: Block, log, escalate to AMAMA
+- **Cross-team violation**: Block, log, escalate
 
-See [error-handling.md](references/error-handling.md) for full procedures.
+See error-handling.md for full procedures.
 
 ## Examples
 
-**Bug report to AMIA**: User says "Create issue for login timeout bug." AMAMA determines team:backend, no design/module link, routes to AMIA with task sync to `backlog`. Output: `[ROUTED] GitHub issue -> AMIA | Team: team:backend | Task Sync: backlog | Ref: #52`
+**Bug report**: "Create issue for login timeout" -> team:backend -> AMIA. Output: `[ROUTED] issue -> AMIA | team:backend | #52`
 
-**Cross-team blocked**: AMOA-frontend tries to close issue #45 (team:backend). AMAMA blocks, logs violation, requires AMAMA approval. Output: `[BLOCKED] Cross-team operation denied`
+**Cross-team blocked**: AMOA-frontend closes #45 (team:backend) -> blocked. Output: `[BLOCKED] Cross-team denied`
 
-See [routing-examples.md](references/routing-examples.md) for more examples including Kanban moves and design-linked cards.
+See routing-examples.md for more.
 
 ## Resources
 
-- Role Routing SKILL (see amama-role-routing skill)
-- Proactive Handoff Protocol (see amama-session-memory references)
-- AI Maestro Task System: `~/.aimaestro/teams/tasks-{teamId}.json`
-
 ### Reference Files
 
-| File | Content |
-|------|---------|
-| [team-boundaries-and-labels.md](references/team-boundaries-and-labels.md) | Team label rules, boundary enforcement |
-| [task-system-sync.md](references/task-system-sync.md) | Task status model, sync operations |
-| [decision-trees-and-routing.md](references/decision-trees-and-routing.md) | Issue/PR/Kanban/Release decision trees |
-| [handoff-templates-and-uuid.md](references/handoff-templates-and-uuid.md) | Handoff templates, UUID tracking |
-| [routing-examples.md](references/routing-examples.md) | Worked routing examples |
-| [proactive-kanban-monitoring.md](references/proactive-kanban-monitoring.md) | Kanban monitoring procedures |
-| [error-handling.md](references/error-handling.md) | Detailed error handling procedures |
+- [team-boundaries-and-labels.md](references/team-boundaries-and-labels.md)
+  - Team Label Rules
+  - Team Label Application
+  - Team Boundary Enforcement Decision
+- [task-system-sync.md](references/task-system-sync.md)
+  - Task Status Model
+  - Task File Format
+  - Sync Operations
+  - Bidirectional Sync Rules
+  - Status Mapping: GitHub Kanban Columns to AI Maestro Statuses
+- [decision-trees-and-routing.md](references/decision-trees-and-routing.md)
+  - Issue Operations Decision Tree
+  - Pull Request Operations Decision Tree
+  - Kanban/Projects Operations Decision Tree
+  - Release Operations Decision Tree
+- [handoff-templates-and-uuid.md](references/handoff-templates-and-uuid.md)
+  - For AMIA (Integrator) GitHub Handoffs
+  - For AMAA (Architect) Design-GitHub Handoffs
+  - For AMOA (Orchestrator) Module-GitHub Handoffs
+  - UUID Tracking Across GitHub Operations
+- [routing-examples.md](references/routing-examples.md)
+  - Example 1: Routing a Bug Report Issue to AMIA with Team Label
+  - Example 2: Kanban Card Move with Task Sync
+  - Example 3: Routing a Design-Linked Card to AMAA
+  - Example 4: Cross-Team Operation Blocked
+- [proactive-kanban-monitoring.md](references/proactive-kanban-monitoring.md)
+  - Proactive Kanban Monitoring
+  - Monitoring Schedule
+  - Changes to Monitor
+  - Monitoring Procedure
+  - Kanban Monitoring Checklist
+  - Error Handling
+- [error-handling.md](references/error-handling.md)
+  - Ambiguous Routing
+  - Missing Context
+  - Missing Team Label
+  - Agent Unavailable
+  - Task Sync Failures
+  - Cross-Team Boundary Violation

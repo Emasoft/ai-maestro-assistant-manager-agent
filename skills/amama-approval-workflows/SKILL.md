@@ -1,94 +1,103 @@
 ---
 name: amama-approval-workflows
-description: Use when handling governance approvals via GovernanceRequest API (team membership, agent lifecycle, COS assignment). Trigger with pending governance requests.
+description: Use when handling governance approvals via GovernanceRequest API for team, agent lifecycle, and COS decisions. Trigger with approval requests.
 version: 2.3.2
-compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
-user-invocable: false
-triggers:
-  - A GovernanceRequest is created with status "pending"
-  - An agent or COS submits a transfer request
-  - MANAGER needs to approve/reject a governance operation
-  - Quality gates or security gates require MANAGER authorization
 ---
 
 # Approval Workflows Skill
 
 ## Overview
 
-Structured workflows for handling **governance** approval requests through the GovernanceRequest API. Two approval tracks exist:
-
-- **Governance approvals** (this skill): Team membership, COS assignment, agent lifecycle, transfers. Uses GovernanceRequest API (`POST /api/v1/governance/requests/{id}/approve`).
-- **Operational approvals** (`amama-amcos-coordination` skill): Deployments, merges, test runs. Uses message-based flow.
+GovernanceRequest API workflows. Two tracks:
+- **Governance** (this skill): Team, COS, agent lifecycle, transfers.
+- **Operational** (`amama-amcos-coordination`): Deploys, merges, tests.
 
 ## Prerequisites
 
-- AI Maestro v2+ with Governance API at `$AIMAESTRO_API` (default: `http://localhost:23000`)
-- Governance password must be set. See [references/governance-password.md](references/governance-password.md)
-- AMAMA must have access to `docs_dev/handoffs/` directory
-- State file must be writable for local approval tracking
+- AI Maestro v2+ at `$AIMAESTRO_API`
+- Password set per references/governance-password.md
+- Writable state file and `docs_dev/handoffs`
 
 ## Instructions
 
-1. Poll for GovernanceRequests with status `pending` (`GET /api/v1/governance/requests?status=pending`)
-2. Parse request type (8 types supported). See [references/governance-request-types.md](references/governance-request-types.md)
-3. Present to MANAGER using the appropriate template
-4. On decision, call approve/reject endpoint with governance password
-5. Verify state transition completed. See [references/state-machine.md](references/state-machine.md)
-6. Update local state tracking. See [references/state-tracking.md](references/state-tracking.md)
-7. Notify requesting agent of the outcome
+1. Poll pending (`GET /api/v1/governance/requests?status=pending`)
+2. Parse type per references/governance-request-types.md
+3. Present to MANAGER using template
+4. Call approve/reject endpoint with password
+5. Verify transition per references/state-machine.md
+6. Update state per references/state-tracking.md
+7. Notify requesting agent
 
-**Key API endpoints:**
-- `GET /api/v1/governance/requests?status=pending` - List pending
-- `POST /api/v1/governance/requests/{id}/approve` - Approve
-- `POST /api/v1/governance/requests/{id}/reject` - Reject
-- `POST /api/v1/governance/transfers` - Submit transfer
-
-Full endpoint docs: [references/api-endpoints.md](references/api-endpoints.md)
+Endpoints: references/api-endpoints.md
 
 ## Output
 
-| Outcome | Status | Action |
-|---------|--------|--------|
-| MANAGER approves | `local-approved` or `dual-approved` | Call approve endpoint, update state, notify agent |
-| MANAGER rejects | `rejected` | Call reject endpoint, update state, notify agent |
-| MANAGER requests info | `pending` (unchanged) | Query details, re-present |
-| Timeout (24h) | `rejected` | Auto-reject, notify agent. See [references/expiry-workflow.md](references/expiry-workflow.md) |
-| Rate limit hit | `pending` (unchanged) | Queue action, wait for cooldown, retry |
+| Outcome | Action |
+|---------|--------|
+| Approve | Call approve, update, notify |
+| Reject | Call reject, update, notify |
+| Info needed | Query, re-present |
+| Timeout 24h | Auto-reject per references/expiry-workflow.md |
+| Rate limit | Queue, wait, retry |
 
 ## Error Handling
 
-| Error | Resolution |
-|-------|------------|
-| `401 Unauthorized` | Prompt MANAGER to re-enter governance password |
-| `429 Too Many Requests` | Wait 60 seconds, then retry |
-| `404 Not Found` | Verify request ID; may be already processed |
-| `409 Conflict` | Refresh request status and present current state |
-| Password not set | Run initial setup per [references/governance-password.md](references/governance-password.md) |
+| Error | Fix |
+|-------|-----|
+| `401` | Re-enter password |
+| `429` | Wait 60s, retry |
+| `404` | Check request ID |
+| `409` | Refresh status |
+| No password | references/governance-password.md |
 
 ## Examples
 
-**Approve a team membership request:**
-```bash
-# Poll, then approve
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/gov-abc123/approve" \
-  -H "Content-Type: application/json" \
-  -d '{"password": "***", "approvedBy": "MANAGER", "notes": "Approved"}'
-```
+**Input:** `POST /api/v1/governance/requests/{id}/approve` with `{"password":"***","approvedBy":"MANAGER","notes":"Approved after review"}`
 
-More examples: [references/examples.md](references/examples.md)
+**Output:** `{"status":"approved","updatedAt":"2026-03-08T10:00:00Z","approvedBy":"MANAGER"}`
+
+See [references/examples.md](references/examples.md) for more.
+
+Copy this checklist and track your progress:
+
+- [ ] Verify password set
+- [ ] Poll pending GovernanceRequests
+- [ ] Parse type, present to MANAGER
+- [ ] Wait for decision
+- [ ] Call approve/reject endpoint
+- [ ] Verify state transition
+- [ ] Update state file, notify agent
 
 ## Resources
 
-- [references/governance-request-types.md](references/governance-request-types.md) - All 8 request types with payloads and templates
-- [references/api-endpoints.md](references/api-endpoints.md) - API endpoints with curl examples
-- [references/state-machine.md](references/state-machine.md) - State machine, transitions, plugin prefixes
-- [references/state-tracking.md](references/state-tracking.md) - Local state file schema, proactive monitoring
-- [references/escalation-rules.md](references/escalation-rules.md) - Auto-reject/escalation rules, notification, checklist
-- [references/governance-password.md](references/governance-password.md) - Password setup and security rules
-- [references/legacy-approval-types.md](references/legacy-approval-types.md) - Legacy v1 approval workflows
-- [references/expiry-workflow.md](references/expiry-workflow.md) - Approval expiry workflow and configuration
-- [references/examples.md](references/examples.md) - Worked examples of approval/rejection flows
-- [references/rule-14-enforcement.md](references/rule-14-enforcement.md) - RULE 14: User Requirements Are Immutable
-- [references/best-practices.md](references/best-practices.md) - Approval workflow best practices
+- [references/governance-request-types.md](references/governance-request-types.md) - Request types
+  - 1. add-to-team, 2. remove-from-team, 3. assign-cos, 4. remove-cos
+  - 5. transfer-agent, 6. create-agent, 7. delete-agent, 8. configure-agent
+- [references/api-endpoints.md](references/api-endpoints.md) - API endpoints
+  - List Pending Requests, Get a Specific Request
+  - Approve a Request (MANAGER only), Reject a Request (MANAGER only)
+  - Submit a Transfer Request, Transfer Request Handling (M5)
+- [references/state-machine.md](references/state-machine.md) - State machine
+  - States, Transitions, Plugin Prefix Reference
+- [references/state-tracking.md](references/state-tracking.md) - State tracking
+  - State File Schema, Proactive Monitoring
+- [references/escalation-rules.md](references/escalation-rules.md) - Escalation
+  - Auto-Reject Conditions, Auto-Approve Conditions (NEVER by default)
+  - Escalation Triggers, User Notification, Workflow Checklist
+- [references/governance-password.md](references/governance-password.md) - Password
+  - Initial Setup, Security Rules
+- [references/legacy-approval-types.md](references/legacy-approval-types.md) - Legacy v1
+  - Push Approval, Merge Approval, Publish Approval
+  - Security Approval, Design Approval
+- [references/expiry-workflow.md](references/expiry-workflow.md) - Expiry
+  - Expiry Check Schedule, Expiry Workflow Steps, Expiry Configuration
+- [references/examples.md](references/examples.md) - Examples
+  - Example 1: Approving a Team Membership Request
+  - Example 2: Handling a Transfer Request, Example 3: Rejecting a Dangerous Request
+- references/rule-14-enforcement.md - RULE 14: immutable user requirements
+- [references/best-practices.md](references/best-practices.md) - Best practices
+  - 1. Always Verify Before Reporting, 2. Maintain Records Consistently
+  - 3. Clear Communication with User, 4. Risk-Aware Approval Decisions
+  - 5. Scope Management, 6. Error Handling, 7. Timeliness

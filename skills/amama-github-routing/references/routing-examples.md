@@ -1,6 +1,6 @@
 # GitHub Routing Examples
 
-## Contents
+## Table of Contents
 
 - [Example 1: Routing a Bug Report Issue to AMIA with Team Label](#example-1-routing-a-bug-report-issue-to-amia-with-team-label)
 - [Example 2: Kanban Card Move with Task Sync](#example-2-kanban-card-move-with-task-sync)

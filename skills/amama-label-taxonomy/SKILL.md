@@ -12,29 +12,29 @@ user-invocable: false
 
 ## Overview
 
-Provides the label taxonomy for the Assistant Manager Agent (AMAMA). AMAMA manages priority labels, initial status labels, and translates label states into user-friendly messages. Each role plugin has its own label-taxonomy skill.
+Label taxonomy for the Assistant Manager Agent (AMAMA). Manages priority labels, initial status labels, and translates label states into user messages.
 
 ## Prerequisites
 
 1. GitHub CLI (`gh`) available
-2. Repository with GitHub issue tracking enabled
-3. Understanding of AMAMA role (user communication and role routing)
+2. Repo with GitHub issue tracking enabled
+3. AMAMA role context (user communication, role routing)
 
 ## Instructions
 
-1. **Analyze user request** -- determine priority (`priority:critical|high|normal|low`) and type (`type:bug|feature|...`)
+1. **Analyze request** -- determine priority (`priority:critical|high|normal|low`) and type (`type:bug|feature|...`)
 2. **Create issue** with labels: `status:backlog`, `priority:*`, `type:*`
-3. **Monitor status changes** from other agents; translate to user-friendly messages
+3. **Monitor status changes** from other agents; translate to user messages
 4. **Update priorities** when user expresses urgency changes
-5. **Set blocked status** (`status:blocked`) when user requests pause
-6. **Facilitate human review** when Integrator (AMIA) escalates via `status:human-review`
+5. **Set blocked** (`status:blocked`) when user requests pause
+6. **Facilitate human review** when AMIA escalates via `status:human-review`
 7. **Report status** by querying issues with relevant labels
 
-**AMAMA sets**: `status:backlog`, `status:human-review`, `status:blocked`, all `priority:*` labels.
-**AMAMA monitors but does not set**: `status:todo|in-progress|ai-review|merge-release|done`, `assign:*`.
-**AMAMA never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
+**Sets**: `status:backlog|human-review|blocked`, all `priority:*`.
+**Monitors only**: `status:todo|in-progress|ai-review|merge-release|done`, `assign:*`.
+**Never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
 
-See `references/label-tables.md` for full label tables, kanban columns, and approval authority details.
+See `references/label-tables.md` for full label tables and approval authority.
 
 **Key commands**:
 
@@ -50,16 +50,27 @@ gh issue edit $NUM --add-label "status:blocked"
 gh issue list --label "status:in-progress" --json number,title,labels
 ```
 
-See `references/commands-and-patterns.md` for all commands, human review flow, and status report queries.
+See `references/commands-and-patterns.md` for all commands and patterns.
+
+## Checklist
+
+Copy this checklist and track your progress:
+
+- [ ] Identify priority and type from user request
+- [ ] Create issue with correct labels
+- [ ] Confirm creation to user
+- [ ] Monitor for status changes from other agents
+- [ ] Translate label changes into user-friendly updates
+- [ ] Update priority or blocked status as needed
 
 ## Output
 
 | Output Type | Format |
 |-------------|--------|
 | Issue creation | GitHub issue URL with labels |
-| Label update | Confirmation message (e.g., "Priority updated to high") |
+| Label update | Confirmation (e.g., "Priority updated to high") |
 | Status report | Markdown table of issues and labels |
-| Label explanation | Plain text translation of label meaning |
+| Label explanation | Plain text label meaning |
 
 ## Error Handling
 
@@ -83,7 +94,7 @@ gh issue create --title "Login page broken" \
   --label "type:bug" --label "priority:critical" --label "status:backlog"
 ```
 
-**Response**: "Created issue #123 with critical priority. The orchestrator will triage this shortly."
+**Response**: "Created issue #123 (critical). The orchestrator will triage shortly."
 
 ### Example: Priority change
 
@@ -95,13 +106,13 @@ gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
 
 **Response**: "Priority updated to high for issue #45."
 
-See `references/commands-and-patterns.md` for more examples including status reports and human review facilitation.
+See `references/commands-and-patterns.md` for more examples.
 
 ## Resources
 
-- `references/label-tables.md` -- Full label tables, kanban columns, approval authority
-- `references/commands-and-patterns.md` -- All gh commands, communication patterns, full examples
-- **AGENT_OPERATIONS.md** -- Core agent operational patterns
-- **amama-status-reporting** -- User communication patterns
-- **amama-user-communication** -- Communication style guidelines
-- **amama-role-routing** -- Role delegation patterns
+- `references/label-tables.md` -- Label tables, kanban columns, approval authority
+- `references/commands-and-patterns.md` -- Commands, patterns, examples
+- **AGENT_OPERATIONS.md** -- Agent operational patterns
+- **amama-status-reporting** -- Status communication
+- **amama-user-communication** -- Communication style
+- **amama-role-routing** -- Role delegation

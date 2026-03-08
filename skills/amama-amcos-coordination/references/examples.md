@@ -1,6 +1,6 @@
 # AMCOS Coordination Examples
 
-<!-- TOC -->
+## Table of Contents
 - [Example 1: AMCOS Requests Approval for Deployment](#example-1-amcos-requests-approval-for-deployment)
   - [AMCOS sends approval request](#amcos-sends-approval-request)
   - [AMAMA evaluates the request](#amama-evaluates-the-request)
@@ -14,7 +14,6 @@
   - [AMCOS sends completion notification](#amcos-sends-completion-notification)
   - [AMAMA processes the notification](#amama-processes-the-notification)
   - [State update](#state-update)
-<!-- /TOC -->
 
 ---
 

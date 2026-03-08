@@ -6,10 +6,6 @@ compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
 user-invocable: true
-triggers:
-  - when user asks for status
-  - when generating progress reports
-  - when summarizing work across agents
 ---
 
 # Status Reporting Skill
@@ -80,7 +76,18 @@ For detailed report section formats, see `references/report-formats.md`.
 
 For full examples including progress reports, see `references/report-formats.md`.
 
-For step-by-step checklist, see `references/checklist.md`.
+## Checklist
+
+Copy this checklist and track your progress:
+
+- [ ] Determine report type (quick status, progress, handoff, blocker)
+- [ ] Query AI Maestro APIs for sessions, health, teams, tasks
+- [ ] Query GitHub for issue/PR status via `gh` CLI
+- [ ] Read session memory files for context
+- [ ] Compile report and save to `design/reports/`
+- [ ] Present formatted report to user
+
+For the detailed step-by-step checklist, see `references/checklist.md`.
 
 ## Resources
 

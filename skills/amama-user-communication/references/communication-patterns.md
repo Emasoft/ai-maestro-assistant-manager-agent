@@ -1,12 +1,11 @@
 # Communication Patterns
 
-<!-- TOC -->
+## Table of Contents
 - [1. Clarification Request](#1-clarification-request)
 - [2. Option Presentation](#2-option-presentation)
 - [3. Approval Request](#3-approval-request)
 - [4. Completion Report](#4-completion-report)
 - [See Also](#see-also)
-<!-- /TOC -->
 
 Detailed templates for each communication type.
 

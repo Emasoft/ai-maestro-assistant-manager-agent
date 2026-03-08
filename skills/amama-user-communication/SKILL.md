@@ -6,32 +6,28 @@ compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
 user-invocable: false
-triggers:
-  - when clarifying requirements
-  - when presenting options to user
-  - when requesting approval
-  - when reporting completion
 ---
 
 # User Communication Skill
 
 ## Overview
 
-Provides standardized patterns for communicating with users: clarification requests, option presentations, approval requests, completion reports, blocker notifications, and status updates. For AMCOS coordination procedures, see the amama-amcos-coordination skill.
+Standardized patterns for user communication: clarification, options, approval, completion, blockers, and status updates.
 
 ## Prerequisites
 
-None required. This skill provides communication patterns that can be used immediately.
+None required.
 
 ## Instructions
 
-1. Identify the communication type needed (clarification, options, approval, completion, blocker, status)
-2. Use the appropriate template. See [references/communication-patterns.md](references/communication-patterns.md) for detailed templates
-3. Fill in all placeholders with specific information
-4. Follow the Quality Rules below for clarity
-5. Include relevant UUIDs, issue numbers, and file paths for traceability
+1. Identify communication type (clarification, options, approval, completion, blocker, status)
+2. Use the appropriate template from reference docs
+3. Fill all placeholders; include UUIDs, issue numbers, file paths
+4. Follow Quality Rules: be specific, actionable, honest, concise, traceable
 
 ### Checklist
+
+Copy this checklist and track your progress:
 
 - [ ] Identify communication type
 - [ ] Select and fill appropriate template
@@ -43,75 +39,77 @@ None required. This skill provides communication patterns that can be used immed
 
 | Type | When to Use |
 |------|-------------|
-| Clarification Request | User input is incomplete or ambiguous |
-| Option Presentation | Multiple approaches are viable |
-| Approval Request | Before significant or irreversible operations |
-| Completion Report | Task or subtask is finished |
-| AMCOS Handoff | Routing work to specialist agents |
+| Clarification Request | Input incomplete or ambiguous |
+| Option Presentation | Multiple approaches viable |
+| Approval Request | Before irreversible operations |
+| Completion Report | Task finished |
+| AMCOS Handoff | Routing to specialist agents |
 | Status Update | During long-running operations |
-
-## Blocker Communication
-
-When tasks are blocked, notify the user IMMEDIATELY. See [references/blocker-notification-templates.md](references/blocker-notification-templates.md) for full templates, escalation timelines, and resolution routing.
-
-| Blocker Type | Timing | Severity |
-|--------------|--------|----------|
-| Critical-path <48h deadline | Immediate | Critical |
-| Cascade blocker (multiple tasks) | Immediate | High |
-| Requires user credentials/access | Immediate | High |
-| Non-critical, no deadline | Next status report | Medium |
-| Technical (agents can resolve) | No notification | N/A |
-
-## Quality Rules
-
-1. **Be Specific**: Never say "some files" -- list them
-2. **Be Actionable**: Always tell user what to do next
-3. **Be Honest**: Admit uncertainty, don't guess
-4. **Be Concise**: Use bullets, avoid walls of text
-5. **Be Traceable**: Include UUIDs, issue numbers
 
 ## Error Handling
 
-| Error | Cause | Resolution |
-|-------|-------|------------|
-| No user response | User inactive | Wait, then send reminder per escalation timeline |
-| Ambiguous user input | Unclear response | Ask for specific clarification |
-| Template mismatch | Wrong pattern selected | Re-evaluate and use correct template |
-| AMCOS unresponsive | Session crashed or network issue | Follow recovery procedure in [references/amcos-monitoring.md](references/amcos-monitoring.md) |
+| Error | Resolution |
+|-------|------------|
+| No user response | Wait, then send reminder per escalation timeline |
+| Ambiguous input | Ask for specific clarification |
+| Template mismatch | Re-evaluate and use correct template |
+| AMCOS unresponsive | Follow recovery in amcos-monitoring.md |
 
 ## Examples
 
-### Clarification Request
+**Clarification Request:**
 ```
-I need clarification on the following:
-1. Should the login support both email and username?
+I need clarification:
+1. Should login support both email and username?
 2. What is the session timeout duration?
-
-Please provide:
-- Your preference for login identifiers
-- Timeout in minutes (e.g., 30, 60, 120)
 ```
 
-### Completion Report
+**Completion Report:**
 ```
-**Task Complete**
-Summary: Implemented user login endpoint with OAuth2 support.
-Changes made:
-- src/auth/login.py: Added login handler
-- tests/test_login.py: Added 15 test cases
-Verification: Run `pytest tests/test_login.py`
-Next steps: Proceed with logout endpoint
+Task Complete
+Summary: Implemented login endpoint with OAuth2.
+Changes: src/auth/login.py, tests/test_login.py (15 tests)
+Verify: pytest tests/test_login.py
+Next: Proceed with logout endpoint
 ```
 
 ## Resources
 
-Related skills: amama-amcos-coordination, amama-approval-workflows, amama-role-routing, shared/message_templates.md
+Related skills: amama-amcos-coordination, amama-approval-workflows, amama-role-routing
 
 ### Reference Documents
 
-- [references/communication-patterns.md](references/communication-patterns.md) -- Detailed templates for all types
-- [references/response-templates.md](references/response-templates.md) -- Response templates with guidelines
-- [references/blocker-notification-templates.md](references/blocker-notification-templates.md) -- Blocker formats, escalation, resolution routing
-- [references/workflow-examples.md](references/workflow-examples.md) -- Full workflow examples
-- [references/amcos-monitoring.md](references/amcos-monitoring.md) -- AMCOS health monitoring and recovery
-- [references/handoff-protocol.md](references/handoff-protocol.md) -- Handoff protocol and design doc scripts
+- [references/communication-patterns.md](references/communication-patterns.md)
+  - 1. Clarification Request
+  - 2. Option Presentation
+  - 3. Approval Request
+  - 4. Completion Report
+  - See Also
+- [references/response-templates.md](references/response-templates.md)
+  - Work Request Acknowledgment
+  - Status Updates
+  - Approval Requests
+  - Completion Reports
+  - Error Notifications
+- [references/blocker-notification-templates.md](references/blocker-notification-templates.md)
+  - 1. When to notify the user about blockers
+  - 2. Blocker notification message format
+  - 3. Handling user response to blockers
+  - 4. Timeout handling when user does not respond
+  - 5. Blocker resolution routing
+- [references/workflow-examples.md](references/workflow-examples.md)
+  - Workflow 1: Routing Implementation Request
+  - Workflow 2: Granting AMCOS Autonomous Mode
+  - Workflow 3: Presenting AMCOS Approval Request to User
+  - See Also
+- [references/amcos-monitoring.md](references/amcos-monitoring.md)
+  - Monitoring Schedule
+  - Health Check Procedure
+  - AI Maestro Inbox Check
+  - Responsiveness Ping (15 Minute Timeout)
+  - Actions When AMCOS Unresponsive
+  - See Also
+- [references/handoff-protocol.md](references/handoff-protocol.md)
+  - Steps
+  - Design Document Scripts
+  - See Also

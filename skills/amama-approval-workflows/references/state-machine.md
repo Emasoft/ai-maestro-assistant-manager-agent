@@ -1,10 +1,9 @@
 # GovernanceRequest State Machine Reference
 
-<!-- TOC -->
+## Table of Contents
 - [States](#states)
 - [Transitions](#transitions)
 - [Plugin Prefix Reference](#plugin-prefix-reference)
-<!-- /TOC -->
 
 Every GovernanceRequest follows this state machine:
 

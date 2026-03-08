@@ -1,12 +1,11 @@
 # AI Maestro Task System Sync
 
-<!-- TOC -->
+## Table of Contents
 - [Task Status Model](#task-status-model)
 - [Task File Format](#task-file-format)
 - [Sync Operations](#sync-operations)
 - [Bidirectional Sync Rules](#bidirectional-sync-rules)
 - [Status Mapping: GitHub Kanban Columns to AI Maestro Statuses](#status-mapping-github-kanban-columns-to-ai-maestro-statuses)
-<!-- /TOC -->
 
 All Kanban card movements and issue status changes must be synced with AI Maestro's task system at `~/.aimaestro/teams/tasks-{teamId}.json`.
 

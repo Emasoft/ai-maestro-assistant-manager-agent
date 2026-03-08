@@ -1,9 +1,8 @@
 # Governance Password Management Reference
 
-<!-- TOC -->
+## Table of Contents
 - [Initial Setup](#initial-setup)
 - [Security Rules](#security-rules)
-<!-- /TOC -->
 
 The governance password authenticates MANAGER approval/rejection actions. It is required before any GovernanceRequest can be approved or rejected.
 

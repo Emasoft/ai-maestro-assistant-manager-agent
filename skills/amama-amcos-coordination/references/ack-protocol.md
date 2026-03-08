@@ -1,11 +1,10 @@
 # Message Acknowledgment Protocol
 
-<!-- TOC -->
+## Table of Contents
 - [ACK Timeout Requirements](#ack-timeout-requirements)
 - [ACK Message Format](#ack-message-format)
 - [Handling Missing ACK](#handling-missing-ack)
 - [ACK Verification Checklist](#ack-verification-checklist)
-<!-- /TOC -->
 
 All messages sent to a COS-assigned agent require acknowledgment (ACK) to ensure reliable communication. Different message types have different ACK timeout requirements.
 

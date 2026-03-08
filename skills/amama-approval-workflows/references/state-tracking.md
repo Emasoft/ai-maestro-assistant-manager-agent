@@ -1,9 +1,8 @@
 # Approval State Tracking Reference
 
-<!-- TOC -->
+## Table of Contents
 - [State File Schema](#state-file-schema)
 - [Proactive Monitoring](#proactive-monitoring)
-<!-- /TOC -->
 
 All GovernanceRequests are tracked both in the API and in the local state file for redundancy.
 

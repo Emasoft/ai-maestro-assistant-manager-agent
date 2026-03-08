@@ -1,6 +1,6 @@
 # AI Maestro Message Templates for AMAMA
 
-<!-- TOC -->
+## Table of Contents
 - [1. Receiving Messages](#1-receiving-messages)
   - [1.1 Receiving approval requests from AMCOS](#11-receiving-approval-requests-from-amcos)
   - [1.2 Receiving status reports from AMCOS](#12-receiving-status-reports-from-amcos)
@@ -20,7 +20,6 @@
   - [5.1 How to send and receive messages](#51-how-to-send-and-receive-messages)
   - [5.2 Message content structure requirements](#52-message-content-structure-requirements)
   - [5.3 Priority levels and when to use them](#53-priority-levels-and-when-to-use-them)
-<!-- /TOC -->
 
 **Reference for**: `amama-amcos-coordination` skill
 

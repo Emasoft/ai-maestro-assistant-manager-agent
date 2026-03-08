@@ -1,5 +1,13 @@
 # Error Handling for GitHub Operation Routing
 
+## Table of Contents
+- [Ambiguous Routing](#ambiguous-routing)
+- [Missing Context](#missing-context)
+- [Missing Team Label](#missing-team-label)
+- [Agent Unavailable](#agent-unavailable)
+- [Task Sync Failures](#task-sync-failures)
+- [Cross-Team Boundary Violation](#cross-team-boundary-violation)
+
 ## Ambiguous Routing
 
 If operation could go to multiple agents:

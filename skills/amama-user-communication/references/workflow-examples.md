@@ -1,11 +1,10 @@
 # Workflow Examples
 
-<!-- TOC -->
+## Table of Contents
 - [Workflow 1: Routing Implementation Request](#workflow-1-routing-implementation-request)
 - [Workflow 2: Granting AMCOS Autonomous Mode](#workflow-2-granting-amcos-autonomous-mode)
 - [Workflow 3: Presenting AMCOS Approval Request to User](#workflow-3-presenting-amcos-approval-request-to-user)
 - [See Also](#see-also)
-<!-- /TOC -->
 
 Detailed workflow examples for user communication scenarios.
 

@@ -1,6 +1,6 @@
 # Delegation Rules for Autonomous Operation
 
-<!-- TOC -->
+## Table of Contents
 - [1. What is Autonomous Mode](#1-what-is-autonomous-mode)
   - [Delegation Configuration](#delegation-configuration)
 - [2. Granting Autonomous Mode](#2-granting-autonomous-mode)
@@ -9,7 +9,6 @@
   - [Revocation Message](#revocation-message)
   - [Revocation Reasons](#revocation-reasons)
 - [4. Operations That ALWAYS Require AMAMA Approval](#4-operations-that-always-require-amama-approval)
-<!-- /TOC -->
 
 ---
 
