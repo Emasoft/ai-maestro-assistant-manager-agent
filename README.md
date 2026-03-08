@@ -1,6 +1,6 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.3.2
+**Version**: 2.5.2
 
 Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/23blocks-OS/ai-maestro-plugins).
 
@@ -60,16 +60,16 @@ AI Maestro defines exactly 3 governance roles:
 
 ### Skills
 
-| Skill | Description | Triggers |
-|-------|-------------|----------|
-| `amama-user-communication` | User interaction patterns, response templates, escalation | When communicating with or presenting info to the user |
-| `amama-status-reporting` | Status report generation via AI Maestro APIs | When user requests status updates |
-| `amama-approval-workflows` | GovernanceRequest API approval workflows | When governance operations (team, agent, COS) need authorization |
-| `amama-role-routing` | Route requests to correct specialist agent via AMCOS | When delegating work based on user intent |
-| `amama-amcos-coordination` | AMCOS coordination: approvals, health checks, delegation | When AMCOS requests approval, reports status, or needs work delegated |
-| `amama-github-routing` | Route GitHub operations with team boundary awareness | When handling GitHub issues, PRs, projects, releases |
-| `amama-label-taxonomy` | GitHub label taxonomy and management | When creating or organizing GitHub labels |
-| `amama-session-memory` | CozoDB-backed session memory and handoff tracking | When persisting session state or tracking handoffs |
+| Skill | Refs | Description |
+|-------|------|-------------|
+| `amama-user-communication` | 6 | Communicating with users: clarification, options, approval, reporting |
+| `amama-status-reporting` | 4 | Generating status reports via AI Maestro APIs (sessions, health, teams, tasks) |
+| `amama-approval-workflows` | 11 | Governance approvals via GovernanceRequest API (team, agent lifecycle, COS) |
+| `amama-role-routing` | 4 | Routing user requests to specialist agents based on intent |
+| `amama-amcos-coordination` | 16 | COS coordination: approvals, delegation, health checks, completions |
+| `amama-github-routing` | 7 | Routing GitHub operations (issues, PRs, projects, releases) via team labels |
+| `amama-label-taxonomy` | 2 | GitHub label taxonomy management and triage |
+| `amama-session-memory` | 5 | CozoDB-backed session memory, preferences, handoff tracking |
 
 ### Hooks
 
@@ -174,7 +174,13 @@ All scripts are in the `scripts/` directory and use the `amama_` prefix:
 | `amama_init_design_folders.py` | Initialize design folder structure |
 | `smart_exec.py` | Smart command execution |
 | `bump_version.py` | Version bumping |
+| `check_version_consistency.py` | Verify version consistency across files |
 | `pre-push-hook.py` | Pre-push validation |
+| `publish.py` | Plugin publishing workflow |
+| `setup_git_hooks.py` | Git hooks setup |
+| `setup_marketplace_automation.py` | Marketplace automation setup |
+| `setup_plugin_pipeline.py` | Plugin pipeline setup |
+| `update_marketplace_metadata.py` | Update marketplace metadata |
 | `validate_plugin.py` | Main plugin validation entry point |
 | `validate_agent.py` | Agent definition validation |
 | `validate_command.py` | Command definition validation |
@@ -186,12 +192,16 @@ All scripts are in the `scripts/` directory and use the `amama_` prefix:
 | `validate_marketplace_pipeline.py` | Marketplace pipeline validation |
 | `validate_marketplace.py` | Marketplace metadata validation |
 | `validate_mcp.py` | MCP integration validation |
+| `validate_rules.py` | Rules validation |
 | `validate_scoring.py` | Plugin scoring validation |
 | `validate_security.py` | Security validation |
 | `validate_skill_comprehensive.py` | Comprehensive skill validation |
 | `validate_skill.py` | Basic skill validation |
 | `validate_xref.py` | Cross-reference validation |
 | `cpv_validation_common.py` | Shared validation utilities (CPV) |
+| `cpv_token_cost.py` | Token cost analysis |
+| `gitignore_filter.py` | Gitignore-aware file filtering |
+| `lint_files.py` | File linting utilities |
 
 ## Project Structure
 
@@ -221,14 +231,14 @@ ai-maestro-assistant-manager-agent/
 │   ├── message_templates.md           # Generic message templates
 │   └── thresholds.py                  # Governance thresholds
 ├── skills/
-│   ├── amama-amcos-coordination/      # AMCOS coordination skill + 12 reference docs
-│   ├── amama-approval-workflows/      # Governance approval workflows + 7 reference docs
-│   ├── amama-github-routing/          # GitHub operations routing + 6 reference docs
-│   ├── amama-label-taxonomy/          # GitHub label management
-│   ├── amama-role-routing/            # Request routing to specialists
-│   ├── amama-session-memory/          # CozoDB session memory + 4 reference docs
-│   ├── amama-status-reporting/        # Status report generation
-│   └── amama-user-communication/      # User interaction patterns + 2 reference docs
+│   ├── amama-amcos-coordination/      # AMCOS coordination skill + 16 reference docs
+│   ├── amama-approval-workflows/      # Governance approval workflows + 11 reference docs
+│   ├── amama-github-routing/          # GitHub operations routing + 7 reference docs
+│   ├── amama-label-taxonomy/          # GitHub label management + 2 reference docs
+│   ├── amama-role-routing/            # Request routing to specialists + 4 reference docs
+│   ├── amama-session-memory/          # CozoDB session memory + 5 reference docs
+│   ├── amama-status-reporting/        # Status report generation + 4 reference docs
+│   └── amama-user-communication/      # User interaction patterns + 6 reference docs
 ├── docs/                              # Published documentation
 ├── git-hooks/                         # Git hook scripts
 ├── LICENSE                            # MIT License
