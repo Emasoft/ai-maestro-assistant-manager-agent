@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 - [Priority Labels](#priority-labels-priority)
-- [Kanban Columns (Canonical 8-Column System)](#kanban-columns-canonical-8-column-system)
+- [Kanban Columns (Canonical 5-Status Model)](#kanban-columns-canonical-5-status-model)
 - [Status Labels AMAMA Updates](#status-labels-amama-updates)
 - [Labels AMAMA Monitors](#labels-amama-monitors)
 - [Labels AMAMA Never Sets](#labels-amama-never-sets)
@@ -25,32 +25,28 @@
 - Escalate priority when user expresses urgency
 - De-escalate when user indicates reduced urgency
 
-## Kanban Columns (Canonical 8-Column System)
+## Kanban Columns (Canonical 5-Status Model)
 
 | # | Column Code | Display Name | Label | Description |
 |---|-------------|-------------|-------|-------------|
 | 1 | `backlog` | Backlog | `status:backlog` | Entry point for new tasks |
-| 2 | `todo` | Todo | `status:todo` | Ready to start |
-| 3 | `in-progress` | In Progress | `status:in-progress` | Active work |
-| 4 | `ai-review` | AI Review | `status:ai-review` | Integrator agent reviews ALL tasks |
-| 5 | `human-review` | Human Review | `status:human-review` | User reviews BIG tasks only (via AMAMA) |
-| 6 | `merge-release` | Merge/Release | `status:merge-release` | Ready to merge |
-| 7 | `done` | Done | `status:done` | Completed |
-| 8 | `blocked` | Blocked | `status:blocked` | Blocked at any stage |
+| 2 | `pending` | Pending | `status:pending` | Ready to start |
+| 3 | `in_progress` | In Progress | `status:in-progress` | Active work |
+| 4 | `review` | Review | `status:review` | Integrator agent reviews ALL tasks; significant tasks escalated to manager |
+| 5 | `completed` | Completed | `status:completed` | Completed |
 
 **Task Routing Rules:**
-- **Small tasks**: In Progress -> AI Review -> Merge/Release -> Done
-- **Big tasks**: In Progress -> AI Review -> Human Review -> Merge/Release -> Done
-- **Human Review** is requested via AMAMA (Assistant Manager asks user to test/review)
-- Not all tasks go through Human Review -- only significant changes requiring human judgment
+- **Small tasks**: In Progress -> Review -> Completed
+- **Big tasks**: In Progress -> Review (escalate to manager) -> Completed
+- **Review** is requested via AMAMA (Assistant Manager asks user to test/review)
+- Not all tasks go through Review -- only significant changes requiring human judgment
 
 ## Status Labels AMAMA Updates
 
 | Label | When AMAMA Sets It |
 |-------|------------------|
 | `status:backlog` | When creating new issue from user request |
-| `status:human-review` | When AMIA escalates a significant task for user review |
-| `status:blocked` | When user requests pause or issue cannot proceed |
+| `status:review` | When AMIA escalates a significant task for user review (via AMAMA) |
 
 ## Labels AMAMA Monitors
 
@@ -58,13 +54,10 @@
 
 AMAMA reports status to user:
 - `status:backlog` - "Your request has been logged"
-- `status:todo` - "Your request is queued and ready to start"
+- `status:pending` - "Your request is queued and ready to start"
 - `status:in-progress` - "Work has started on your request"
-- `status:ai-review` - "The AI integrator is reviewing the work"
-- `status:human-review` - "This needs your review and testing"
-- `status:merge-release` - "Code is approved and ready to merge"
-- `status:blocked` - "There's a blocker, may need your input"
-- `status:done` - "Your request is complete"
+- `status:review` - "The AI integrator is reviewing the work"
+- `status:completed` - "Your request is complete"
 
 ### Assignment Labels (`assign:*`)
 

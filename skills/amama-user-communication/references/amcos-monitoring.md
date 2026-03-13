@@ -23,7 +23,7 @@ AMAMA must proactively monitor AMCOS health and responsiveness to prevent commun
 ## Health Check Procedure
 
 Send a periodic AMCOS health check every 10 minutes during active work using the `agent-messaging` skill:
-- **Recipient**: `amcos-<project-name>`
+- **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "Periodic Health Check"
 - **Content**: ping type, message "Routine health check", expect_reply true, timeout 60
 - **Type**: `ping`
@@ -38,7 +38,7 @@ Check your inbox every 2 minutes for approval requests using the `agent-messagin
 ## Responsiveness Ping (15 Minute Timeout)
 
 If no response from AMCOS after 15 minutes since last message sent, send an urgent ping using the `agent-messaging` skill:
-- **Recipient**: `amcos-<project-name>`
+- **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "URGENT: Response Required"
 - **Content**: ping type, message "No response received for 15 minutes. Please acknowledge.", expect_reply true, timeout 30
 - **Type**: `ping`
@@ -56,19 +56,19 @@ If AMCOS fails to respond after the urgent ping (30 second timeout):
 
 3. **Notify User**
    ```
-   AMCOS (amcos-<project-name>) is unresponsive.
+   AMCOS (amcos-<project>-coordinator) is unresponsive.
    Last successful contact: <timestamp>
    Attempted recovery: <steps taken>
 
    Options:
-   - [Restart AMCOS] - Attempt to recreate AMCOS agent
+   - [Restart AMCOS] - Attempt to reassign the chief-of-staff role to another agent
    - [Continue Without] - Proceed with reduced coordination
    - [Investigate] - Check logs for error details
    ```
 
 4. **Attempt Recovery**
    - If AI Maestro is down: Alert user to restart AI Maestro
-   - If AMCOS session crashed: Recreate AMCOS agent using standard creation procedure
+   - If AMCOS session crashed: Reassign the chief-of-staff role using standard reassignment procedure
    - If network issue: Wait 5 minutes and retry
 
 5. **Log Incident**

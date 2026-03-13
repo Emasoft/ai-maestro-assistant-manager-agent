@@ -23,7 +23,7 @@ Understood! I'll <action summary>.
 
 Creating project: <project-name>
 Location: <full-path>
-AMCOS session: amcos-<project-name>
+AMCOS session: amcos-<project-name>-coordinator
 
 Routing to: <SPECIALIST> (via AMCOS)
 
@@ -33,7 +33,7 @@ I'll keep you updated on progress. You can ask me for status anytime.
 ### When to Use
 
 - User submits a new work request
-- You're creating a project and creating an AMCOS agent
+- You're creating a project and assigning the chief-of-staff role to another agent
 - You're delegating to a specialist agent
 
 ### Guidelines
@@ -138,7 +138,7 @@ Use this template when reporting that a project or AMCOS has been successfully c
 
 Project: <project-name>
 Path: <full-path>
-AMCOS Session: amcos-<project-name>
+AMCOS Session: amcos-<project-name>-coordinator
 Status: Active and responding
 
 <Next steps or what AMCOS will do next>
@@ -147,7 +147,7 @@ Status: Active and responding
 ### When to Use
 
 - Project creation completed successfully
-- AMCOS agent created and health check passed
+- Chief-of-staff role assigned and health check passed
 - Ready to start work
 
 ### Guidelines
@@ -164,7 +164,7 @@ Status: Active and responding
 
 Project: inventory-system
 Path: /Users/user/Code/inventory-system
-AMCOS Session: amcos-inventory-system
+AMCOS Session: amcos-inventory-coordinator
 Status: Active and responding
 
 AMCOS will now set up the development environment and implement the core inventory tracking module. Expected completion: 2 hours.
@@ -213,13 +213,13 @@ I recommend: <suggested fix or escalation>
 ```
 ❌ Issue encountered: AMCOS health check timed out
 
-Details: Sent health check ping to amcos-inventory-system, no response after 30 seconds
+Details: Sent health check ping to amcos-inventory-coordinator, no response after 30 seconds
 Impact: Cannot confirm AMCOS is ready to receive work instructions
 Attempted: Retried health check 3 times with 10-second intervals
 
-I recommend: Restarting the AMCOS session. This usually resolves health check issues caused by initialization delays.
+I recommend: Reassigning the chief-of-staff role. This usually resolves health check issues caused by initialization delays.
 
-Should I restart the AMCOS?
+Should I reassign the chief-of-staff role?
 ```
 
 ---

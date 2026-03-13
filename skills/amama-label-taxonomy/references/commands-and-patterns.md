@@ -37,12 +37,12 @@ gh issue edit $ISSUE_NUMBER --remove-label "status:in-progress" --add-label "sta
 ### When Facilitating Human Review
 
 ```bash
-# Present the task to the user for review (escalated from AI Review)
+# Present the task to the user for review (escalated from Review)
 gh issue view $ISSUE_NUMBER --json title,body,labels
 # After user approves:
-gh issue edit $ISSUE_NUMBER --remove-label "status:human-review" --add-label "status:merge-release"
+gh issue edit $ISSUE_NUMBER --remove-label "status:review" --add-label "status:completed"
 # After user requests changes:
-gh issue edit $ISSUE_NUMBER --remove-label "status:human-review" --add-label "status:in-progress"
+gh issue edit $ISSUE_NUMBER --remove-label "status:review" --add-label "status:in-progress"
 ```
 
 ### When Generating Status Report
@@ -51,17 +51,11 @@ gh issue edit $ISSUE_NUMBER --remove-label "status:human-review" --add-label "st
 # Get all active issues for user
 gh issue list --label "status:in-progress" --json number,title,labels
 
-# Get issues in AI review
-gh issue list --label "status:ai-review" --json number,title,labels
-
-# Get issues awaiting human review
-gh issue list --label "status:human-review" --json number,title,labels
-
-# Get blocked issues needing attention
-gh issue list --label "status:blocked" --json number,title,labels
+# Get issues in review
+gh issue list --label "status:review" --json number,title,labels
 
 # Get completed issues
-gh issue list --label "status:done" --state closed --json number,title
+gh issue list --label "status:completed" --state closed --json number,title
 ```
 
 ---
@@ -92,7 +86,7 @@ The implementation agent is actively working on this task.
 | "Something is broken" | `type:bug`, `priority:high` |
 | "Can you add..." | `type:feature` |
 | "Put this on hold" | `status:blocked` |
-| "Resume this" | Remove `status:blocked`, add `status:todo` |
+| "Resume this" | Remove `status:blocked`, add `status:pending` |
 
 ---
 

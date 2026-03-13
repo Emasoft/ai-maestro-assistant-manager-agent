@@ -26,12 +26,12 @@ Label taxonomy for the Assistant Manager Agent (AMAMA). Manages priority labels,
 2. **Create issue** with labels: `status:backlog`, `priority:*`, `type:*`
 3. **Monitor status changes** from other agents; translate to user messages
 4. **Update priorities** when user expresses urgency changes
-5. **Set blocked** (`status:blocked`) when user requests pause
-6. **Facilitate human review** when AMIA escalates via `status:human-review`
+5. **Set blocked** (as a flag) when user requests pause
+6. **Facilitate review** when AMIA escalates
 7. **Report status** by querying issues with relevant labels
 
-**Sets**: `status:backlog|human-review|blocked`, all `priority:*`.
-**Monitors only**: `status:todo|in-progress|ai-review|merge-release|done`, `assign:*`.
+**Sets**: `status:backlog|review`, all `priority:*`.
+**Monitors only**: `status:pending|in_progress|review|completed`, `assign:*`.
 **Never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
 
 See `references/label-tables.md` for full label tables and approval authority.
@@ -116,3 +116,4 @@ See `references/commands-and-patterns.md` for more examples.
 - **amama-status-reporting** -- Status communication
 - **amama-user-communication** -- Communication style
 - **amama-role-routing** -- Role delegation
+

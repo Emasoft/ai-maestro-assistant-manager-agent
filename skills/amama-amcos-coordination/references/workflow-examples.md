@@ -25,7 +25,7 @@ Understood! I'll create a new team for the inventory management REST API.
 
 Creating team: inventory-system
 Team: inventory-system-team
-AMCOS session: amcos-inventory-system
+AMCOS session: amcos-inventory-coordinator
 
 Routing to: ORCHESTRATOR (via AMCOS)
 
@@ -47,7 +47,7 @@ The AMOA will coordinate the implementation. I'll keep you updated on progress. 
 **AMCOS Message**:
 ```json
 {
-  "from": "amcos-inventory-system",
+  "from": "amcos-inventory-coordinator",
   "subject": "Approval Request: RUN-TESTS-001",
   "content": {
     "type": "approval_request",
@@ -85,7 +85,7 @@ The AMOA will coordinate the implementation. I'll keep you updated on progress. 
 **AMCOS Message**:
 ```json
 {
-  "from": "amcos-inventory-system",
+  "from": "amcos-inventory-coordinator",
   "subject": "Approval Request: DEPLOY-PROD-001",
   "content": {
     "type": "approval_request",
@@ -128,7 +128,7 @@ Send approval to AMCOS with user quote, log to approval-log.md
 **User**: "What's the status of the API?"
 
 **Your Actions**:
-1. Query amcos-inventory-system via AI Maestro
+1. Query amcos-inventory-coordinator via AI Maestro
 2. Receive status report
 3. Format for user
 
