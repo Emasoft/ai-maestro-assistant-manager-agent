@@ -36,7 +36,7 @@
 | Step | Actor | Action |
 |------|-------|--------|
 | 15 | Members | Work on assigned tasks |
-| 16 | COS | Move tasks: `todo` -> `in-progress` |
+| 16 | COS | Move tasks: `pending` -> `in_progress` |
 | 17 | Members | Complete work, notify COS |
 | 18 | COS | Approve PR creation |
 | 19 | Members | Create PRs |
@@ -47,14 +47,14 @@
 |------|-------|--------|
 | 20 | COS | Request review from integrator-skilled member |
 | 21 | Member | Review PR, merge or reject |
-| 22 | COS | Handle failures: reassign, move back to `in-progress` |
+| 22 | COS | Handle failures: reassign, move back to `in_progress` |
 
 ### Phase 6: Completion
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 23 | COS | Move task through: `ai-review` -> `merge-release` -> `done` |
-| 24 | COS | For big tasks: route through `human-review` (via manager) |
+| 23 | COS | Move task to `review` then `completed` |
+| 24 | COS | For big tasks: escalate review to manager before completing |
 | 25 | COS | Report completion to manager |
 | 26 | COS | Assign next task to available member |
 
@@ -69,23 +69,20 @@
 | Design approval | Yes (user via manager) |
 | Big task human review | Yes (user via manager) |
 
-## Kanban Columns
+## Task Statuses
 
-| # | Column | Code | Route |
-|---|--------|------|-------|
-| 1 | Backlog | `backlog` | Entry point |
-| 2 | Todo | `todo` | Prioritized, ready |
-| 3 | In Progress | `in-progress` | Active work |
-| 4 | AI Review | `ai-review` | Integrator reviews |
-| 5 | Human Review | `human-review` | Big tasks only |
-| 6 | Merge/Release | `merge-release` | Approved |
-| 7 | Done | `done` | Complete |
-| 8 | Blocked | `blocked` | Any stage |
+| # | Status | Code | Description |
+|---|--------|------|-------------|
+| 1 | Backlog | `backlog` | Entry point, not yet prioritized |
+| 2 | Pending | `pending` | Prioritized, ready to start |
+| 3 | In Progress | `in_progress` | Active work |
+| 4 | Review | `review` | Under review (AI or human) |
+| 5 | Completed | `completed` | Done |
 
 ## Task Routing
 
-- **Small**: `in-progress` -> `ai-review` -> `merge-release` -> `done`
-- **Big**: `in-progress` -> `ai-review` -> `human-review` -> `merge-release` -> `done`
+- **Small**: `in_progress` -> `review` -> `completed`
+- **Big**: `in_progress` -> `review` (escalate to manager) -> `completed`
 
 ## Communication
 

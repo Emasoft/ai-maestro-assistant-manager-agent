@@ -35,7 +35,7 @@ Send a status request using the `agent-messaging` skill:
 ### 3. Status Update
 
 Send a status update using the `agent-messaging` skill:
-- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-{project}-manager`)
 - **Subject**: "[UPDATE] <task name> - <status>"
 - **Priority**: `normal`
 - **Content**: Include the following fields:
@@ -52,7 +52,7 @@ Send a status update using the `agent-messaging` skill:
 ### 4. Completion Signal
 
 Send a completion signal using the `agent-messaging` skill:
-- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-{project}-manager`)
 - **Subject**: "[COMPLETE] <task name>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
@@ -68,7 +68,7 @@ Send a completion signal using the `agent-messaging` skill:
 ### 5. Approval Request
 
 Send an approval request using the `agent-messaging` skill:
-- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-{project}-manager`)
 - **Subject**: "[APPROVAL] <approval type> for <item>"
 - **Priority**: `high`
 - **Content**: Include the following fields:
@@ -99,7 +99,7 @@ Send an approval response using the `agent-messaging` skill:
 ### 7. Question / Clarification
 
 Send a question or clarification request using the `agent-messaging` skill:
-- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-{project}-manager`)
 - **Subject**: "[QUESTION] <brief topic>"
 - **Priority**: `normal`
 - **Content**: Include the following fields:
@@ -114,7 +114,7 @@ Send a question or clarification request using the `agent-messaging` skill:
 ### 8. Error / Issue Report
 
 Send an error or issue report using the `agent-messaging` skill:
-- **Recipient**: The AMAMA session name (e.g., `amama-main-manager`)
+- **Recipient**: The AMAMA session name (e.g., `amama-{project}-manager`)
 - **Subject**: "[ERROR] <error type> in <component>"
 - **Priority**: `urgent`
 - **Content**: Include the following fields:
@@ -129,12 +129,15 @@ Send an error or issue report using the `agent-messaging` skill:
 
 ## Session Name Convention
 
-| Role | Prefix | Session Name Pattern |
+AI Maestro uses `domain-subdomain-name` format for session names:
+
+| Role | Domain | Example Session Name |
 |------|--------|---------------------|
-| Assistant Manager | `amama-` | `amama-{project}-session` |
-| Architect | `amaa-` | `amaa-{project}-session` |
-| Orchestrator | `amoa-` | `amoa-{project}-session` |
-| Integrator | `amia-` | `amia-{project}-session` |
+| Assistant Manager | `amama` | `amama-myproject-manager` |
+| Architect | `amaa` | `amaa-myproject-designer` |
+| Orchestrator | `amoa` | `amoa-myproject-orchestrator` |
+| Integrator | `amia` | `amia-myproject-integrator` |
+| Programmer | `ampa` | `ampa-myproject-implementer` |
 
 **Prefix Legend:**
 - `am` = AI Maestro (product identifier)
@@ -142,6 +145,7 @@ Send an error or issue report using the `agent-messaging` skill:
 - `aa` = Architect Agent
 - `oa` = Orchestrator Agent
 - `ia` = Integrator Agent
+- `pa` = Programmer Agent
 
 ## Priority Levels
 

@@ -79,9 +79,9 @@ Format: `<team-prefix>-<descriptor>[-<instance>]`
 
 ## Messaging Lookup
 
-Agents resolve addresses from registry:
-```bash
-curl -s "$AIMAESTRO_API/api/teams/{id}/members" | jq '.[].name'
+Agents resolve addresses from the team registry using the `team-governance` skill's member lookup capability, or via:
+```
+GET $AIMAESTRO_API/api/teams/{id}/members
 ```
 
 ## Validation Rules

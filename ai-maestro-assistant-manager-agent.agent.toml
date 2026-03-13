@@ -1,0 +1,60 @@
+# AI Maestro Assistant Manager Agent — Role-Plugin profile
+# Agent: ai-maestro-assistant-manager-agent
+# Generated: 2026-03-13
+
+[agent]
+name = "ai-maestro-assistant-manager-agent"
+source = "path"
+path = "agents/amama-assistant-manager-main-agent.md"
+
+[requirements]
+project_type = "library"
+tech_stack = ["markdown", "yaml", "json", "python"]
+
+[skills]
+primary = [
+    "amama-user-communication",
+    "amama-approval-workflows",
+    "amama-amcos-coordination",
+    "amama-role-routing",
+    "amama-status-reporting",
+    "amama-github-routing",
+]
+secondary = [
+    "amama-label-taxonomy",
+    "amama-session-memory",
+]
+
+[agents]
+recommended = ["amama-report-generator"]
+
+[commands]
+recommended = [
+    "amama-planning-status",
+    "amama-orchestration-status",
+    "amama-approve-plan",
+    "amama-respond-to-amcos",
+]
+
+[hooks]
+recommended = [
+    "amama-memory-load",
+    "amama-memory-save",
+    "amama-stop-check",
+]
+
+[dependencies]
+external_skills = [
+    "team-governance",
+    "agent-messaging",
+    "ai-maestro-agents-management",
+]
+
+[rules]
+recommended = []
+
+[mcp]
+recommended = []
+
+[lsp]
+recommended = []

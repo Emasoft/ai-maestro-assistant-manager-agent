@@ -54,22 +54,26 @@ User <-> MANAGER <-> COS <-> Members
 - Write code or run tests
 - Manage kanban boards
 
-## Kanban Reference
+## Task Status Reference
 
-| Column | Code | Label |
+AI Maestro uses 5 task statuses:
+
+| Status | Code | Label |
 |--------|------|-------|
 | Backlog | `backlog` | `status:backlog` |
-| Todo | `todo` | `status:todo` |
-| In Progress | `in-progress` | `status:in-progress` |
-| AI Review | `ai-review` | `status:ai-review` |
-| Human Review | `human-review` | `status:human-review` |
-| Merge/Release | `merge-release` | `status:merge-release` |
-| Done | `done` | `status:done` |
-| Blocked | `blocked` | `status:blocked` |
+| Pending | `pending` | `status:pending` |
+| In Progress | `in_progress` | `status:in-progress` |
+| Review | `review` | `status:review` |
+| Completed | `completed` | `status:completed` |
+
+## Agent Creation
+
+- **Predefined roles**: Use the AI Maestro simple wizard (`aimaestro-agent.sh`)
+- **Custom/specialized agents**: Route to Haephestos v2 for specialized agent type creation
 
 ## Session Lifecycle
 
-1. Verify AI Maestro connectivity: `GET /api/health`
+1. Verify AI Maestro connectivity: `GET /api/sessions`
 2. Check existing teams: `GET /api/teams`
 3. Process unread messages
 4. Announce readiness to user
