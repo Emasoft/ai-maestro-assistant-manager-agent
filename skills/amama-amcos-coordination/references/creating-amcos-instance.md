@@ -52,16 +52,14 @@ In v1, AMAMA spawned a new dedicated AMCOS instance. In v2:
 
 Assign the COS role via the Team API:
 
-```bash
-TEAM_ID="<team-id>"
-AGENT_ID="<agent-id>"
-
-curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"agentId\": \"$AGENT_ID\"
-  }"
 ```
+PATCH $AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff
+Body: {
+  "agentId": "$AGENT_ID"
+}
+```
+
+See the `team-governance` skill for full API details.
 
 **Expected Response:**
 
@@ -80,11 +78,12 @@ curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
 
 To unassign a COS (before reassigning to a different agent):
 
-```bash
-curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
-  -H "Content-Type: application/json" \
-  -d '{ "agentId": null }'
 ```
+PATCH $AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff
+Body: {"agentId": null}
+```
+
+See the `team-governance` skill for full API details.
 
 ### Naming Convention for COS-Assigned Agents
 
@@ -157,18 +156,19 @@ When the target agent is on a different host (remote AI Maestro instance), the a
 
 Submit a GovernanceRequest of type `assign-cos`:
 
-```bash
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "assign-cos",
-    "requestedBy": "amama-session-name",
-    "targetAgent": "<remote-agent-id>",
-    "targetTeam": "<team-id>",
-    "remoteHost": "<remote-aimaestro-url>",
-    "justification": "Team requires operational coordinator on remote host"
-  }'
 ```
+POST $AIMAESTRO_API/api/v1/governance/requests
+Body: {
+  "type": "assign-cos",
+  "requestedBy": "amama-session-name",
+  "targetAgent": "<remote-agent-id>",
+  "targetTeam": "<team-id>",
+  "remoteHost": "<remote-aimaestro-url>",
+  "justification": "Team requires operational coordinator on remote host"
+}
+```
+
+See the `team-governance` skill for full API details.
 
 **Expected Response:**
 

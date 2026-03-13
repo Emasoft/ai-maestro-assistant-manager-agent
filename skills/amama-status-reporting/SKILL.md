@@ -16,7 +16,7 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 
 ## Prerequisites
 
-- AI Maestro running, API reachable at `$AIMAESTRO_API` (default: `http://localhost:23000`)
+- AI Maestro running, API reachable at `$AIMAESTRO_API`
 - GitHub CLI (`gh`) installed for issue/PR status
 - `design/reports/` directory must exist (create if missing)
 
@@ -91,7 +91,7 @@ For the detailed step-by-step checklist, see `references/checklist.md`.
 
 ## Resources
 
-- **AI Maestro API** -- `$AIMAESTRO_API` (default: `http://localhost:23000`)
+- **AI Maestro API** -- `$AIMAESTRO_API`
 - **Task storage** -- `~/.aimaestro/teams/tasks-{teamId}.json`
 - **amama-role-routing SKILL** -- Agent routing
 - **amama-approval-workflows SKILL** -- Approval status

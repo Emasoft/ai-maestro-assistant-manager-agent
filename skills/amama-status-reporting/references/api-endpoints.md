@@ -19,31 +19,36 @@ All status data MUST be sourced from AI Maestro APIs, not from manual agent quer
 
 ## Query Examples
 
-```bash
-# Get all active agent sessions
-curl -s "$AIMAESTRO_API/api/sessions" | jq '.sessions[] | {name, status, uptime}'
-
-# Get agent health status
-curl -s "$AIMAESTRO_API/api/agents/health" | jq '.agents[] | {name, health, lastHeartbeat}'
-
-# Get team status
-curl -s "$AIMAESTRO_API/api/teams/$TEAM_ID" | jq '{name, members, status}'
-
-# Get team tasks (Kanban board)
-curl -s "$AIMAESTRO_API/api/teams/$TEAM_ID/tasks" | jq '.tasks[] | {id, title, status, assignee}'
 ```
+GET $AIMAESTRO_API/api/sessions
+Returns: [.sessions[] | {name, status, uptime}]
+
+GET $AIMAESTRO_API/api/agents/health
+Returns: [.agents[] | {name, health, lastHeartbeat}]
+
+GET $AIMAESTRO_API/api/teams/$TEAM_ID
+Returns: {name, members, status}
+
+GET $AIMAESTRO_API/api/teams/$TEAM_ID/tasks
+Returns: [.tasks[] | {id, title, status, assignee}]
+```
+
+See the `team-governance` skill for full API details.
 
 ## Task Query for Reports
 
 When generating status reports, query tasks by status to build Kanban summaries:
 
-```bash
-# Get all tasks grouped by status
-curl -s "$AIMAESTRO_API/api/teams/$TEAM_ID/tasks" | jq 'group_by(.status) | map({status: .[0].status, count: length, tasks: [.[].title]})'
-
-# Get only blocked/in-progress tasks
-curl -s "$AIMAESTRO_API/api/teams/$TEAM_ID/tasks" | jq '[.tasks[] | select(.status == "in_progress" or .status == "pending")]'
-
-# Get completed tasks for progress report
-curl -s "$AIMAESTRO_API/api/teams/$TEAM_ID/tasks" | jq '[.tasks[] | select(.status == "completed") | {title, completedAt, assignee}]'
 ```
+GET $AIMAESTRO_API/api/teams/$TEAM_ID/tasks
+Returns: group_by(.status) | map({status: .[0].status, count: length, tasks: [.[].title]})
+
+GET $AIMAESTRO_API/api/teams/$TEAM_ID/tasks
+Filter: .status == "in_progress" or .status == "pending"
+
+GET $AIMAESTRO_API/api/teams/$TEAM_ID/tasks
+Filter: .status == "completed"
+Returns: [{title, completedAt, assignee}]
+```
+
+See the `team-governance` skill for full API details.

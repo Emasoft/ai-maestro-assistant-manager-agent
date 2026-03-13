@@ -65,17 +65,12 @@ I'll sync back to CozoDB when it becomes available.
 
 **AMAMA Actions**:
 1. Detect preference expression
-2. Write to CozoDB:
-   ```bash
-   curl -X POST "$AIMAESTRO_API/api/memory/store" \
-     -d '{"agent": "amama-main", "relation": "user_preferences", "data": {"key": "response_length", "value": "concise", "source": "explicit"}}'
-   ```
-3. Write fallback to `user-preferences.md`:
+2. Write to file-based fallback `user-preferences.md`:
    ```markdown
    ### Communication Style
    - Response length: brief/concise (expressed 2025-01-30)
    ```
-4. Respond briefly:
+3. Respond briefly:
    ```markdown
    Got it - keeping responses brief from now on.
    ```
@@ -99,16 +94,11 @@ I'll sync back to CozoDB when it becomes available.
 **User Input**: "I need to step away for a while. Don't wait for me on the PR reviews."
 
 **AMAMA Actions**:
-1. Update CozoDB `availability_state`:
-   ```bash
-   curl -X POST "$AIMAESTRO_API/api/memory/store" \
-     -d '{"agent": "amama-main", "relation": "availability_state", "data": {"state": "away", "since": "2025-01-30T15:00:00Z", "notes": "Stepping away, do not wait on PR reviews"}}'
-   ```
-2. Update fallback `current.md`
-3. Adjust behavior:
+1. Update file-based fallback `current.md` with availability state
+2. Adjust behavior:
    - Queue non-critical items
    - Proceed with autonomous work where possible
-4. Acknowledge:
+3. Acknowledge:
    ```markdown
    Understood - I'll continue with autonomous work and queue items for your return.
    ```
@@ -117,11 +107,4 @@ I'll sync back to CozoDB when it becomes available.
 
 **Scenario**: User never explicitly stated a preference, but AMAMA needs to know.
 
-```bash
-# Query subconscious memory for format preferences
-curl -s "$AIMAESTRO_API/api/memory/search" \
-  -d '{"agent": "amama-main", "query": "user preferred output format for status reports", "limit": 3}'
-
-# Returns conversation snippets where user reacted to different formats
-# AMAMA infers: user consistently engaged more with tabular formats
-```
+AMAMA queries the file-based subconscious memory for conversation snippets where the user reacted to different formats. Based on engagement patterns, AMAMA infers that the user consistently prefers tabular formats for status reports.

@@ -48,17 +48,7 @@ This document describes the step-by-step procedure for registering agents, creat
 
 ### Registration API Call
 
-Register a new agent via the Agent Creation API:
-
-```bash
-curl -X POST "$AIMAESTRO_API/api/agents/register" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "agent-session-name",
-    "workingDirectory": "~/agents/agent-session-name/",
-    "role": "member"
-  }'
-```
+Register a new agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
 
 ### Agent Required Parameters
 
@@ -75,11 +65,12 @@ Additional optional fields may include:
 
 ### Verify Registration
 
-```bash
-curl -s "$AIMAESTRO_API/api/agents" | jq '.[] | select(.name == "agent-session-name")'
+```
+GET $AIMAESTRO_API/api/agents
 ```
 
-The agent should appear with `status: "registered"`.
+Filter for the specific agent by name.
+
 
 ---
 
@@ -89,16 +80,17 @@ The agent should appear with `status: "registered"`.
 
 Create a team via the Team Creation API:
 
-```bash
-curl -X POST "$AIMAESTRO_API/api/teams" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "team-name",
-    "description": "Team purpose and scope",
-    "type": "closed",
-    "agentIds": ["agent-id-1", "agent-id-2"]
-  }'
 ```
+POST $AIMAESTRO_API/api/teams
+Body: {
+  "name": "team-name",
+  "description": "Team purpose and scope",
+  "type": "closed",
+  "agentIds": ["agent-id-1", "agent-id-2"]
+}
+```
+
+See the `team-governance` skill for full API details.
 
 ### Team Required Parameters
 
@@ -120,15 +112,17 @@ curl -X POST "$AIMAESTRO_API/api/teams" \
 
 ### Verify Team Creation
 
-```bash
-curl -s "$AIMAESTRO_API/api/teams" | jq '.[] | select(.name == "team-name")'
 ```
+GET $AIMAESTRO_API/api/teams
+```
+
 
 Also verify the team registry file:
 
-```bash
-cat ~/.aimaestro/teams/registry.json | jq '.[] | select(.name == "team-name")'
 ```
+cat ~/.aimaestro/teams/registry.json
+```
+
 
 ---
 
@@ -136,16 +130,14 @@ cat ~/.aimaestro/teams/registry.json | jq '.[] | select(.name == "team-name")'
 
 After the team is created with at least one member agent, assign the COS role:
 
-```bash
-TEAM_ID="<team-id>"
-AGENT_ID="<agent-id>"
-
-curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"agentId\": \"$AGENT_ID\"
-  }"
 ```
+PATCH $AIMAESTRO_API/api/teams/{teamId}/chief-of-staff
+Body: {
+  "agentId": "<agent-id>"
+}
+```
+
+See the `team-governance` skill for full API details.
 
 See [creating-amcos-instance.md](creating-amcos-instance.md) for full COS assignment details including cross-host scenarios.
 
@@ -155,69 +147,61 @@ See [creating-amcos-instance.md](creating-amcos-instance.md) for full COS assign
 
 ### Step 1: Register Agent
 
-If the target agent is not already in the registry, register it:
-
-```bash
-AGENT_NAME="coordinator-alpha"
-
-curl -X POST "$AIMAESTRO_API/api/agents/register" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"name\": \"$AGENT_NAME\",
-    \"workingDirectory\": \"~/agents/$AGENT_NAME/\",
-    \"role\": \"member\"
-  }"
-```
+If the target agent is not already in the registry, register it using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
 
 **Verify**: `GET /api/agents` lists the agent.
+
 
 ### Step 2: Create Team
 
 Create the team and include the agent as a member:
 
-```bash
-TEAM_NAME="project-alpha-team"
-
-curl -X POST "$AIMAESTRO_API/api/teams" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"name\": \"$TEAM_NAME\",
-    \"description\": \"Development team for project alpha\",
-    \"type\": \"closed\",
-    \"agentIds\": [\"$AGENT_NAME\"]
-  }"
+```
+POST $AIMAESTRO_API/api/teams
+Body: {
+  "name": "project-alpha-team",
+  "description": "Development team for project alpha",
+  "type": "closed",
+  "agentIds": ["coordinator-alpha"]
+}
 ```
 
+See the `team-governance` skill for full API details.
+
+
 **Verify**: `GET /api/teams` lists the team. Note the returned `teamId`.
+
 
 ### Step 3: Assign COS Role
 
 Assign the COS role to the agent within the team:
 
-```bash
-TEAM_ID="<team-id-from-step-2>"
-
-curl -X PATCH "$AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"agentId\": \"$AGENT_NAME\"
-  }"
+```
+PATCH $AIMAESTRO_API/api/teams/{teamId}/chief-of-staff
+Body: {
+  "agentId": "coordinator-alpha"
+}
 ```
 
-**Verify**: `GET /api/teams/$TEAM_ID` shows `chiefOfStaff` set to the agent.
+See the `team-governance` skill for full API details.
+
+
+**Verify**: `GET /api/teams/{teamId}` shows `chiefOfStaff` set to the agent.
 
 ### Step 4: Send Initialization Message
 
 Notify the agent of its COS role using the `agent-messaging` skill:
 
-- **Recipient**: `$AGENT_NAME`
+- **Recipient**: `coordinator-alpha`
 - **Subject**: "COS Role Assignment"
 - **Content**:
   - `type`: `cos-role-assignment`
-  - `team_id`: `$TEAM_ID`
-  - `team_name`: `$TEAM_NAME`
+  - `team_id`: `team-id`
+  - `team_name`: `project-alpha-team`
   - `expected_role`: `chief-of-staff`
 - **Priority**: `high`
+
+See the `agent-messaging` skill for full messaging API details.
 
 ### Step 5: Verify COS Acknowledgment
 
@@ -232,6 +216,7 @@ Expected response content:
   "constraints_loaded": true
 }
 ```
+
 
 **Handling `constraints_loaded: false`**: If the COS agent responds with `constraints_loaded: false`, the agent accepted the role but failed to load its governance constraints. In this case:
 1. Send a `cos-reload-constraints` message to the COS agent
@@ -280,8 +265,8 @@ A successful team setup with COS assignment meets ALL of the following:
 - [ ] Agent registered in AI Maestro registry (`GET /api/agents` lists it)
 - [ ] Team created via `POST /api/teams` (returns team ID)
 - [ ] Team stored in `~/.aimaestro/teams/registry.json`
-- [ ] COS assigned via `PATCH /api/teams/$TEAM_ID/chief-of-staff`
-- [ ] `GET /api/teams/$TEAM_ID` confirms `chiefOfStaff` set correctly
+- [ ] COS assigned via `PATCH /api/teams/{teamId}/chief-of-staff`
+- [ ] `GET /api/teams/{teamId}` confirms `chiefOfStaff` set correctly
 - [ ] COS-assigned agent received and acknowledged role assignment message
 - [ ] Team and COS logged in `docs_dev/sessions/active-teams.md`
 
@@ -292,7 +277,7 @@ A successful team setup with COS assignment meets ALL of the following:
 **Cause**: AI Maestro service may be down or agent name collision
 
 **Solution**:
-1. Check AI Maestro health: `GET /api/health`
+1. Check AI Maestro sessions: `GET /api/sessions`
 2. Check for name collisions: `GET /api/agents?name=$AGENT_NAME`
 3. If collision, choose a different agent name with a suffix
 
@@ -311,8 +296,8 @@ A successful team setup with COS assignment meets ALL of the following:
 
 **Solution**:
 1. Verify agent is in the team's member list
-2. Check if team already has a COS: `GET /api/teams/$TEAM_ID`
-3. If team has existing COS, unassign first: `PATCH /api/teams/$TEAM_ID/chief-of-staff` with `agentId: null`
+2. Check if team already has a COS: `GET /api/teams/{teamId}`
+3. If team has existing COS, unassign first: `PATCH /api/teams/{teamId}/chief-of-staff` with `agentId: null`
 4. Verify team type is `closed` (open teams cannot have COS)
 
 ### No Response to Initialization Message

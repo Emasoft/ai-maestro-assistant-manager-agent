@@ -131,7 +131,7 @@ AI Maestro supports a **mesh of hosts**. When working across hosts:
 
 ### First-Time Setup
 When no teams exist yet:
-1. Verify AI Maestro connectivity (`GET /api/health`)
+1. Verify AI Maestro connectivity (`GET /api/sessions`)
 2. Inform user that no teams are configured
 3. Offer to create the first team when user provides a repository
 

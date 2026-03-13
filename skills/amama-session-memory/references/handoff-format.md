@@ -17,20 +17,8 @@ When AMAMA session ends or context compacts, a handoff record ensures continuity
 
 ## CozoDB Handoff Record
 
-```bash
-curl -X POST "$AIMAESTRO_API/api/memory/store" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agent": "'$SESSION_NAME'",
-    "relation": "session_handoffs",
-    "data": {
-      "session_id": "amama-20250130-001",
-      "summary": "User active on auth-module. PostgreSQL approved. 3 pending items.",
-      "resume_instructions": "Check pending DB schema choice. Maintain concise style. User prefers LGTM for approvals.",
-      "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
-    }
-  }'
-```
+> **Note**: Memory is file-based. Handoff records are stored as markdown files in `thoughts/shared/handoffs/amama/`.
+> See the `session-memory` skill for full details on file-based memory storage.
 
 ## Fallback Handoff Document Structure
 

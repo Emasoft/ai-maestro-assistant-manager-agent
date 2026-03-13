@@ -84,7 +84,7 @@ See [references/examples.md](references/examples.md) for detailed examples:
 ## Resources
 
 - **Related skills** - amama-approval-workflows, amama-user-communication
-- **Memory API** - `$AIMAESTRO_API/api/memory/`
+- **Memory** - CozoDB with file fallback
 
 ### Reference Documents
 

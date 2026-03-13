@@ -12,11 +12,11 @@ GovernanceRequests that remain pending for too long are automatically rejected t
 
 Check GovernanceRequest timestamps every hour to identify expired requests:
 
-```bash
-# Query pending governance requests older than 24 hours
-curl -s "$AIMAESTRO_API/api/v1/governance/requests?status=pending&olderThan=24h" \
-  -H "Content-Type: application/json"
 ```
+GET $AIMAESTRO_API/api/v1/governance/requests?status=pending&olderThan=24h
+```
+
+See the `team-governance` skill for full API details.
 
 ## Expiry Workflow Steps
 
@@ -31,14 +31,13 @@ Every hour, query for GovernanceRequests where:
 For each expired GovernanceRequest:
 
 1. **Reject via API**
-   ```bash
-   curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/{id}/reject" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "password": "<governance-password>",
-       "rejectedBy": "SYSTEM",
-       "reason": "EXPIRED: Request pending for more than 24 hours without dual-approval"
-     }'
+   ```
+   POST $AIMAESTRO_API/api/v1/governance/requests/{id}/reject
+   Body: {
+     "password": "<governance-password>",
+     "rejectedBy": "SYSTEM",
+     "reason": "EXPIRED: Request pending for more than 24 hours without dual-approval"
+   }
    ```
 
 2. **Update local state file**
@@ -71,6 +70,7 @@ For each expired GovernanceRequest:
 
 **Step 3: Notify MANAGER of Expirations (Optional)**
 
+
 If user preference is set to receive expiry notifications:
 ```
 GovernanceRequests Expired
@@ -83,7 +83,9 @@ The following governance requests were auto-rejected after 24 hours:
 These requests have been returned to the requesting agents. They can resubmit if still needed.
 ```
 
+
 ## Expiry Configuration
+
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -91,3 +93,4 @@ These requests have been returned to the requesting agents. They can resubmit if
 | `expiry_check_interval_minutes` | 60 | How often to check for expired |
 | `notify_user_on_expiry` | false | Send summary to MANAGER on expiry |
 | `allow_resubmission` | true | Requesting agent can resubmit after expiry |
+

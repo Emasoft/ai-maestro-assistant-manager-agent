@@ -11,58 +11,61 @@
 
 ## List Pending Requests
 
-```bash
-curl -s "$AIMAESTRO_API/api/v1/governance/requests?status=pending" \
-  -H "Content-Type: application/json"
 ```
+GET $AIMAESTRO_API/api/v1/governance/requests?status=pending
+```
+
+See the `team-governance` skill for full API details.
 
 ## Get a Specific Request
 
-```bash
-curl -s "$AIMAESTRO_API/api/v1/governance/requests/{id}" \
-  -H "Content-Type: application/json"
 ```
+GET $AIMAESTRO_API/api/v1/governance/requests/{id}
+```
+
+See the `team-governance` skill for full API details.
 
 ## Approve a Request (MANAGER only)
 
-```bash
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/{id}/approve" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "password": "<governance-password>",
-    "approvedBy": "MANAGER",
-    "conditions": [],
-    "notes": "<optional-notes>"
-  }'
+```
+POST $AIMAESTRO_API/api/v1/governance/requests/{id}/approve
+Body: {
+  "password": "<governance-password>",
+  "approvedBy": "MANAGER",
+  "conditions": [],
+  "notes": "<optional-notes>"
+}
 ```
 
 **Response on success**: Status transitions to `local-approved` or `dual-approved` (if remote already approved).
 
+See the `team-governance` skill for full API details.
+
 ## Reject a Request (MANAGER only)
 
-```bash
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/{id}/reject" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "password": "<governance-password>",
-    "rejectedBy": "MANAGER",
-    "reason": "<rejection-reason>"
-  }'
+```
+POST $AIMAESTRO_API/api/v1/governance/requests/{id}/reject
+Body: {
+  "password": "<governance-password>",
+  "rejectedBy": "MANAGER",
+  "reason": "<rejection-reason>"
+}
 ```
 
 **Response on success**: Status transitions to `rejected`. The operation is permanently blocked.
 
+See the `team-governance` skill for full API details.
+
 ## Submit a Transfer Request
 
-```bash
-curl -X POST "$AIMAESTRO_API/api/v1/governance/transfers" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agentId": "<agent-uuid>",
-    "fromTeamId": "<source-team-uuid>",
-    "toTeamId": "<destination-team-uuid>",
-    "note": "<transfer-justification>"
-  }'
+```
+POST $AIMAESTRO_API/api/v1/governance/transfers
+Body: {
+  "agentId": "<agent-uuid>",
+  "fromTeamId": "<source-team-uuid>",
+  "toTeamId": "<destination-team-uuid>",
+  "note": "<transfer-justification>"
+}
 ```
 
 **Response**: Creates a GovernanceRequest of type `transfer-agent` with status `pending`. Returns the request ID.
@@ -70,6 +73,8 @@ curl -X POST "$AIMAESTRO_API/api/v1/governance/transfers" \
 **Who can approve transfers**:
 - MANAGER (via governance password)
 - COS of the destination team (via their authority token)
+
+See the `team-governance` skill for full API details.
 
 ## Transfer Request Handling (M5)
 

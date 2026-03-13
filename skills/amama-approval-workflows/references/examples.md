@@ -8,9 +8,9 @@
 
 ## Example 1: Approving a Team Membership Request
 
-```bash
+```
 # 1. Poll for pending requests
-curl -s "$AIMAESTRO_API/api/v1/governance/requests?status=pending"
+GET $AIMAESTRO_API/api/v1/governance/requests?status=pending
 
 # Response includes:
 # {
@@ -35,18 +35,19 @@ curl -s "$AIMAESTRO_API/api/v1/governance/requests?status=pending"
 **Reason**: Needed for sprint 42 capacity
 
 # 3. MANAGER approves
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/gov-abc123/approve" \
-  -H "Content-Type: application/json" \
-  -d '{"password": "***", "approvedBy": "MANAGER", "notes": "Approved for sprint 42"}'
+POST $AIMAESTRO_API/api/v1/governance/requests/gov-abc123/approve
+Body: {"password": "***", "approvedBy": "MANAGER", "notes": "Approved for sprint 42"}
 
 # Response: {"id": "gov-abc123", "status": "local-approved", ...}
 ```
 
+See the `team-governance` skill for full API details.
+
 ## Example 2: Handling a Transfer Request
 
-```bash
+```
 # 1. Transfer request arrives
-curl -s "$AIMAESTRO_API/api/v1/governance/requests/gov-def456"
+GET $AIMAESTRO_API/api/v1/governance/requests/gov-def456
 
 # {
 #   "id": "gov-def456",
@@ -69,17 +70,18 @@ curl -s "$AIMAESTRO_API/api/v1/governance/requests/gov-def456"
 **Note**: Agent expertise better suited for gamma's mission
 
 # 3. MANAGER approves -> transitions to dual-approved -> executed
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/gov-def456/approve" \
-  -H "Content-Type: application/json" \
-  -d '{"password": "***", "approvedBy": "MANAGER"}'
+POST $AIMAESTRO_API/api/v1/governance/requests/gov-def456/approve
+Body: {"password": "***", "approvedBy": "MANAGER"}
 
 # Response: {"id": "gov-def456", "status": "dual-approved", ...}
 # System auto-executes the transfer -> status becomes "executed"
 ```
 
+See the `team-governance` skill for full API details.
+
 ## Example 3: Rejecting a Dangerous Request
 
-```bash
+```
 # 1. Delete-agent request arrives
 # {
 #   "id": "gov-ghi789",
@@ -92,9 +94,10 @@ curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/gov-def456/approve" \
 # }
 
 # 2. MANAGER rejects
-curl -X POST "$AIMAESTRO_API/api/v1/governance/requests/gov-ghi789/reject" \
-  -H "Content-Type: application/json" \
-  -d '{"password": "***", "rejectedBy": "MANAGER", "reason": "Agent-001 is still critical for monitoring"}'
+POST $AIMAESTRO_API/api/v1/governance/requests/gov-ghi789/reject
+Body: {"password": "***", "rejectedBy": "MANAGER", "reason": "Agent-001 is still critical for monitoring"}
 
 # Response: {"id": "gov-ghi789", "status": "rejected", ...}
 ```
+
+See the `team-governance` skill for full API details.

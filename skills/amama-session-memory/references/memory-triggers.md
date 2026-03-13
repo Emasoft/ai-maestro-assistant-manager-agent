@@ -96,17 +96,6 @@ AMAMA updates session memory based on user actions, not time intervals.
 4. Apply immediately to current session
 5. Confirm understanding if preference is major
 
-**Example CozoDB Write**:
-```bash
-curl -X POST "$AIMAESTRO_API/api/memory/store" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agent": "'$SESSION_NAME'",
-    "relation": "user_preferences",
-    "data": {"key": "response_length", "value": "concise", "source": "explicit-2025-01-30", "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-  }'
-```
-
 **Fallback file update** (`user-preferences.md`):
 ```markdown
 ## User Preferences - Updated
@@ -127,24 +116,6 @@ curl -X POST "$AIMAESTRO_API/api/memory/store" \
 3. If rejection, record reason for future reference
 4. Update any related pending items
 5. Index via subconscious memory for semantic retrieval
-
-**Example CozoDB Write**:
-```bash
-curl -X POST "$AIMAESTRO_API/api/memory/store" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agent": "'$SESSION_NAME'",
-    "relation": "decisions",
-    "data": {
-      "id": "'$(uuidgen)'",
-      "context": "Architect proposed PostgreSQL vs MySQL for user data",
-      "decision": "Selected PostgreSQL",
-      "reason": "We need JSON support and better concurrent writes",
-      "related_issues": ["#45", "#47"],
-      "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
-    }
-  }'
-```
 
 **Fallback Decision Log Entry** (`decision-log.md`):
 ```markdown

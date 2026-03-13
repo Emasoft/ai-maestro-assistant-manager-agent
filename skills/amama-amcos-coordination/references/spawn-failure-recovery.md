@@ -42,8 +42,8 @@ When COS (Chief of Staff) role assignment fails via the AI Maestro API, follow t
 
 #### Step 1: Verify AI Maestro API is Running
 
-```bash
-curl -s "http://localhost:23000/api/health" | jq .
+```
+GET $AIMAESTRO_API/api/sessions
 ```
 
 If AI Maestro API is down or not responding:
@@ -52,28 +52,30 @@ If AI Maestro API is down or not responding:
 
 #### Step 2: Verify the Target Agent is Registered
 
-```bash
-curl -s "http://localhost:23000/api/agents?name=<agent-name>" | jq .
+```
+GET $AIMAESTRO_API/api/agents?name=<agent-name>
 ```
 
 If the target agent is not registered:
-- Register the agent first via the AI Maestro API
+- Register the agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
 - Verify registration succeeded before proceeding
 
 #### Step 3: Verify the Team Exists and is Type `closed`
 
-```bash
-curl -s "http://localhost:23000/api/teams/<team-id>" | jq '{id, name, type, chief_of_staff}'
+```
+GET $AIMAESTRO_API/api/teams/<team-id>
 ```
 
 If the team does not exist or is not type `closed`:
 - Create the team or update its type as needed
 - Document the issue in session log
 
+See the `team-governance` skill for full API details.
+
 #### Step 4: Check if Team Already Has a COS Assigned
 
-```bash
-curl -s "http://localhost:23000/api/teams/<team-id>" | jq '.chief_of_staff'
+```
+GET $AIMAESTRO_API/api/teams/<team-id>
 ```
 
 If a COS is already assigned:
@@ -82,13 +84,14 @@ If a COS is already assigned:
 
 #### Step 5: Retry COS Assignment
 
-```bash
-curl -X PATCH "http://localhost:23000/api/teams/<team-id>/chief-of-staff" \
-  -H "Content-Type: application/json" \
-  -d '{"agentId": "<agent-id>"}'
+```
+PATCH $AIMAESTRO_API/api/teams/<team-id>/chief-of-staff
+Body: {"agentId": "<agent-id>"}
 ```
 
 Retry with the same agent, or if repeated failures occur, try assigning a different eligible agent.
+
+See the `team-governance` skill for full API details.
 
 Track retry count in the session state file `docs_dev/sessions/cos-assignment-retries.md` with timestamp, team ID, target agent, and attempt number:
 ```markdown
@@ -127,9 +130,9 @@ After 3 failed COS assignment attempts:
    - You can still interact with me for planning
 
    To fix:
-   1. Check AI Maestro API health: `curl -s http://localhost:23000/api/health`
-   2. Check agent registration: `curl -s http://localhost:23000/api/agents?name=<agent-name>`
-   3. Check team status: `curl -s http://localhost:23000/api/teams/<team-id>`
+   1. Check AI Maestro API health: `GET $AIMAESTRO_API/api/sessions`
+   2. Check agent registration: `GET $AIMAESTRO_API/api/agents?name=<agent-name>`
+   3. Check team status: `GET $AIMAESTRO_API/api/teams/<team-id>`
    4. Restart AI Maestro if needed
 
    Once fixed, I can retry COS assignment. Say "retry COS for <team-id>" when ready.
@@ -160,7 +163,7 @@ COS Assignment Fails
     |
     v
 Is AI Maestro API running? ──NO──> Alert user, STOP
-(GET /api/health)
+(GET /api/sessions)
     |
    YES
     v
@@ -237,7 +240,7 @@ When AMCOS or other agents fail to respond to messages.
    3. AI Maestro routing issue
 
    Actions you can take:
-   1. Check AMCOS agent status: `curl -s http://localhost:23000/api/agents?name=amcos-<project-name>`
+   1. Check AMCOS agent status: `GET $AIMAESTRO_API/api/agents?name=amcos-<project-name>`
    2. Check AMCOS logs (if available)
    3. Restart AMCOS if needed
 
@@ -256,6 +259,8 @@ When AMCOS or other agents fail to respond to messages.
    - Status: No response
    - Resolution: Escalated to user
    ```
+
+See the `agent-messaging` skill for full messaging API details.
 
 ---
 
@@ -364,24 +369,22 @@ When creating specialist agents (AMOA, AMAA, AMIA) fails.
 ### Recovery Procedure
 
 1. **Check AI Maestro API health**
-   ```bash
-   curl -s "http://localhost:23000/api/health" | jq .
+   ```
+   GET $AIMAESTRO_API/api/sessions
    ```
 
 2. **Verify agent is registered in AI Maestro**
-   ```bash
-   # Check if the agent exists in the registry
-   curl -s "http://localhost:23000/api/agents?name=<agent-name>" | jq .
+   ```
+   GET $AIMAESTRO_API/api/agents?name=<agent-name>
    ```
 
 3. **Check team membership**
-   ```bash
-   # Verify the agent's team assignment
-   curl -s "http://localhost:23000/api/teams/<team-id>" | jq '.members'
+   ```
+   GET $AIMAESTRO_API/api/teams/<team-id>
    ```
 
 4. **Retry agent registration**
-   - Re-register the agent via the AI Maestro API
+   - Register the agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
    - Verify the agent appears in the registry with correct status
    - Confirm the agent can receive messages
 
@@ -400,8 +403,8 @@ When creating specialist agents (AMOA, AMAA, AMIA) fails.
    - Team exists: <yes/no>
 
    Recommended actions:
-   1. Check AI Maestro API health: `curl -s http://localhost:23000/api/health`
-   2. Check agent registry: `curl -s http://localhost:23000/api/agents`
+   1. Check AI Maestro API health: `GET $AIMAESTRO_API/api/sessions`
+   2. Check agent registry: `GET $AIMAESTRO_API/api/agents`
    3. Review AI Maestro logs for registration errors
 
    Should I:
@@ -484,7 +487,7 @@ Attempted: Assigning COS role to amcos-inventory-system agent
 
 Error output: [paste relevant error]
 
-I recommend: Verify AI Maestro API is running by checking `GET /api/health`.
+I recommend: Verify AI Maestro API is running by checking `GET /api/sessions`.
 If down, restart it. Then I'll retry COS assignment.
 
 Should I retry once AI Maestro is confirmed running?
@@ -504,64 +507,4 @@ Should I retry once AI Maestro is confirmed running?
 ```
 Communication issue detected with AMCOS for inventory-system.
 
-I sent a work routing request 60 seconds ago but received no response.
-
-Status:
-- AI Maestro API: Running ✅
-- Message delivered: Yes ✅
-- AMCOS response: None ❌
-
-This could mean:
-- AMCOS session crashed
-- AMCOS is stuck processing another request
-- Messaging route is broken
-
-Can you check the AMCOS agent status? `curl -s http://localhost:23000/api/agents?name=amcos-inventory-system`
-
-Once you confirm AMCOS status, I can retry routing your request.
-```
-
-### Example 3: Conflicting Approval Requests
-
-**Scenario**: Two approvals arrive simultaneously
-
-**Your Actions**:
-1. Pause both
-2. Escalate immediately
-
-**Your Response to User**:
-```
-⚠️ Conflict Detected: Need Your Decision
-
-Project: inventory-system
-
-Request A (from AMOA via AMCOS):
-- Action: Deploy to staging
-- Risk: Medium (database migration included)
-
-Request B (from AMIA via AMCOS):
-- Action: Rollback staging (critical bug found)
-- Risk: High (data loss possible)
-
-These conflict! Both target staging environment.
-
-What should I do?
-1. Approve rollback first (safe, but delays deploy)
-2. Approve deploy first (risky if bug critical)
-3. Deny both and investigate the critical bug
-4. Something else?
-```
-
----
-
-## Summary
-
-Recovery from failures requires:
-
-1. **Systematic diagnosis** - Check AI Maestro API health, agent registry, team status
-2. **Automatic retries** - Up to 3 attempts with delays
-3. **Clear user escalation** - Provide diagnostic info and options
-4. **Comprehensive logging** - Audit trail for all failures
-5. **Timeliness** - Don't block indefinitely; escalate quickly
-
-**Key Principle**: When in doubt, escalate to user with clear options. Do NOT guess, assume, or hide failures.
+I sent a work

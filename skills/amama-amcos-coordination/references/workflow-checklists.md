@@ -19,18 +19,18 @@ When user requests a new project team:
 - [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
 - [ ] **Verify team name available** (no existing team with that name via `GET $AIMAESTRO_API/api/teams`)
 - [ ] **Create AI Maestro team** via the Team API:
-  ```bash
-  curl -X POST "$AIMAESTRO_API/api/teams" \
-    -H "Content-Type: application/json" \
-    -d '{"name": "<team-name>", "project": "<project-name>", "description": "<purpose>"}'
   ```
+  POST $AIMAESTRO_API/api/teams
+  Body: {"name": "<team-name>", "project": "<project-name>", "description": "<purpose>"}
+  ```
+  See the `team-governance` skill for full API details.
 - [ ] **Identify available registered agent** for COS role (see "Checklist: Assigning COS Role")
 - [ ] **Assign COS role** to the selected agent via the Team API:
-  ```bash
-  curl -X PATCH "$AIMAESTRO_API/api/teams/{team-id}/chief-of-staff" \
-    -H "Content-Type: application/json" \
-    -d '{"agentId": "<agent-id>"}'
   ```
+  PATCH $AIMAESTRO_API/api/teams/{team-id}/chief-of-staff
+  Body: {"agentId": "<agent-id>"}
+  ```
+  See the `team-governance` skill for full API details.
 - [ ] **Send health check ping** to the COS agent using the `agent-messaging` skill (mandatory)
 - [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
 - [ ] **Register team** in `docs_dev/projects/project-registry.md`
@@ -45,16 +45,16 @@ When assigning the Chief-of-Staff (COS) role to an existing registered agent:
 
 - [ ] **Determine AMCOS session name** (format: `amcos-<project-name>`)
 - [ ] **Identify available registered agent** suitable for COS role:
-  ```bash
-  curl -s "$AIMAESTRO_API/api/agents?status=available" | jq '.agents[]'
+  ```
+  GET $AIMAESTRO_API/api/agents?status=available
   ```
 - [ ] **Verify agent is registered and reachable** (agent must already exist in AI Maestro)
 - [ ] **Assign COS role** to the agent via the Team API:
-  ```bash
-  curl -X PATCH "$AIMAESTRO_API/api/teams/{team-id}/chief-of-staff" \
-    -H "Content-Type: application/json" \
-    -d '{"agentId": "<agent-id>"}'
   ```
+  PATCH $AIMAESTRO_API/api/teams/{team-id}/chief-of-staff
+  Body: {"agentId": "<agent-id>"}
+  ```
+  See the `team-governance` skill for full API details.
 - [ ] **Send cos-role-assignment message** to the agent using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project-name>`
   - **Subject**: "COS Role Assignment"
