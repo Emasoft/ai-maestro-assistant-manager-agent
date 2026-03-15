@@ -1,6 +1,6 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.5.2
+**Version**: 2.6.0
 
 Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/23blocks-OS/ai-maestro-plugins).
 
@@ -244,6 +244,18 @@ ai-maestro-assistant-manager-agent/
 ├── LICENSE                            # MIT License
 └── README.md
 ```
+
+## Recommended External Tools
+
+AMAMA agents should use these tools (when available) to conserve orchestrator context tokens:
+
+| Tool | Plugin / CLI | Purpose |
+|------|-------------|---------|
+| LLM Externalizer | `llm-externalizer` plugin (MCP) | Offload analysis/scanning to cheaper external LLMs |
+| Serena MCP | `serena-mcp` (MCP) | Symbol-aware code navigation and search |
+| TLDR | `tldr` CLI | Token-efficient code structure analysis |
+
+See the main agent's "Token-Efficient External Tools" section for usage details.
 
 ## Compatibility
 

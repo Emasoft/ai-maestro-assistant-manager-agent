@@ -54,7 +54,7 @@ external_skills = [
 recommended = []
 
 [mcp]
-recommended = []
+recommended = ["llm-externalizer", "serena-mcp"]
 
 [lsp]
 recommended = []
