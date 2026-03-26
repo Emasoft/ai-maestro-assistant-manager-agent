@@ -33,9 +33,9 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 5. Compile into report format and save to `design/reports/`
 6. Present formatted report to user
 
-Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See `references/task-system.md` for details.
+Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See [task-system](references/task-system.md) for details.
 
-For API query examples, see `references/api-endpoints.md`.
+For API query examples, see [api-endpoints](references/api-endpoints.md).
 
 ## Output
 
@@ -45,7 +45,7 @@ Reports are saved as Markdown to `design/reports/`:
 - `handoff-{date}.md` -- Handoff summary
 - `blockers-{date}.md` -- Blocker report
 
-For detailed report section formats, see `references/report-formats.md`.
+For detailed report section formats, see [report-formats](references/report-formats.md).
 
 ## Error Handling
 
@@ -74,7 +74,7 @@ For detailed report section formats, see `references/report-formats.md`.
 **Blockers**: AMIA unresponsive -- escalating
 ```
 
-For full examples including progress reports, see `references/report-formats.md`.
+For full examples including progress reports, see [report-formats](references/report-formats.md).
 
 ## Checklist
 
@@ -87,7 +87,8 @@ Copy this checklist and track your progress:
 - [ ] Compile report and save to `design/reports/`
 - [ ] Present formatted report to user
 
-For the detailed step-by-step checklist, see `references/checklist.md`.
+For the detailed step-by-step checklist, see [checklist](references/checklist.md).
+  - Status Reporting Checklist: verify API, query sessions, health, teams, tasks, GitHub, memory, compile, save, present
 
 ## Resources
 
@@ -96,7 +97,7 @@ For the detailed step-by-step checklist, see `references/checklist.md`.
 - **amama-role-routing SKILL** -- Agent routing
 - **amama-approval-workflows SKILL** -- Approval status
 - **amama-session-memory SKILL** -- Session memory access
-- `references/api-endpoints.md` -- Full API endpoint details and query examples
-- `references/task-system.md` -- Task system and Kanban status details
-- `references/report-formats.md` -- Report types, formats, sections, and full examples
-- `references/checklist.md` -- Step-by-step execution checklist
+- [api-endpoints](references/api-endpoints.md) -- Full API endpoint details and query examples
+- [task-system](references/task-system.md) -- Task system and Kanban status details
+- [report-formats](references/report-formats.md) -- Report types, formats, sections, and full examples
+- [checklist](references/checklist.md) -- Step-by-step execution checklist

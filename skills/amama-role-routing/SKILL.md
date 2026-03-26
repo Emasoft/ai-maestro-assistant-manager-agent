@@ -1,6 +1,6 @@
 ---
 name: amama-role-routing
-description: Use when routing user requests to specialist agents based on skills. Trigger with work delegation needs.
+description: Use when routing user requests to specialist agents. Trigger with work delegation needs.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Routes user requests to the appropriate specialist agent via AMCOS (chief-of-staff). AMAMA never contacts specialists directly. Only 3 governance roles: `manager`, `chief-of-staff`, `member`. Architect/Orchestrator/Integrator are specializations via `skills`/`tags`. See `references/governance-and-specializations.md`.
+Routes user requests to specialist agents via AMCOS. AMAMA never contacts specialists directly. Only 3 governance roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
 
 ## Prerequisites
 
@@ -51,7 +51,7 @@ Copy this checklist and track your progress:
 | "status", "progress", "update" | Handle directly | none |
 | "approve", "reject", "confirm" | Handle directly | approval_response |
 
-Full routing rules: `references/routing-rules.md`. Handoff protocol: `references/handoff-protocol.md`.
+Full routing rules: [routing-rules](references/routing-rules.md). Handoff protocol: [handoff-protocol](references/handoff-protocol.md).
 
 ## Output
 
@@ -100,8 +100,8 @@ User says: "What's the progress on the API?" -> intent "progress" -> handle dire
 
 ## Resources
 
-- Routing rules: `references/routing-rules.md`
-- Handoff protocol: `references/handoff-protocol.md`
-- Governance roles: `references/governance-and-specializations.md`
-- Design/orchestration routing: `references/design-and-orchestration-routing.md`
+- Routing rules: [routing-rules](references/routing-rules.md)
+- Handoff protocol: [handoff-protocol](references/handoff-protocol.md)
+- Governance roles: [governance-and-specializations](references/governance-and-specializations.md)
+- Design/orchestration routing: [design-and-orchestration-routing](references/design-and-orchestration-routing.md)
 - GitHub operations: see **amama-github-routing** skill

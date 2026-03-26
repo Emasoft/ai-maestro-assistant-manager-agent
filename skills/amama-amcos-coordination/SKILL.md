@@ -1,6 +1,6 @@
 ---
 name: amama-amcos-coordination
-description: Use when coordinating with the Chief of Staff (COS) for approval requests and autonomous operation delegation. Trigger with COS coordination requests.
+description: Use when coordinating with COS for approvals and delegation. Trigger with COS coordination requests.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Coordinates with COS-assigned agents (team coordinators). See [references/cos-definition.md](references/cos-definition.md).
+Coordinates with COS-assigned agents. See [cos-definition](references/cos-definition.md).
 
 ## Prerequisites
 
@@ -22,8 +22,8 @@ Coordinates with COS-assigned agents (team coordinators). See [references/cos-de
 
 ## Instructions
 
-1. **Assign COS** — `PATCH /api/teams/$TEAM_ID/chief-of-staff`. See `references/creating-amcos-instance.md`.
-2. **Create Teams/Agents** — `POST /api/agents/register`, `POST /api/teams`. See `references/creating-amcos-procedure.md`.
+1. **Assign COS** — `PATCH /api/teams/$TEAM_ID/chief-of-staff`. See [creating-amcos-instance](references/creating-amcos-instance.md).
+2. **Create Teams/Agents** — `POST /api/agents/register`, `POST /api/teams`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
   - Request Categories
@@ -43,7 +43,7 @@ Coordinates with COS-assigned agents (team coordinators). See [references/cos-de
   - Revocation Message
   - Revocation Reasons
   - Operations That ALWAYS Require AMAMA Approval
-6. **Completions** — Handle notifications. See `references/completion-notifications.md`.
+6. **Completions** — Handle notifications. See [completion-notifications](references/completion-notifications.md).
 7. **ACK** — Require ACK 30-60s. See [references/ack-protocol.md](references/ack-protocol.md).
   - ACK Timeout Requirements
   - ACK Message Format
@@ -74,9 +74,9 @@ See [references/error-handling.md](references/error-handling.md). Escalate on: d
 
 ## Examples
 
-**Input:** `PATCH /api/teams/team-backend/chief-of-staff` with `{"agentId":"amcos-chief-of-staff"}`
+**Input:** `PATCH /api/teams/team-1/chief-of-staff` with `{"agentId":"amcos-cos"}`
 
-**Output:** `{"team":"team-backend","chiefOfStaff":"amcos-chief-of-staff","status":"assigned"}`
+**Output:** `{"team":"team-1","chiefOfStaff":"amcos-cos","status":"assigned"}`
 
 See [references/workflow-examples.md](references/workflow-examples.md) for full examples.
   - Example 1: User Requests New Project
@@ -90,15 +90,15 @@ See [references/workflow-examples.md](references/workflow-examples.md) for full 
 ## Resources
 
 - [references/message-formats.md](references/message-formats.md) - JSON formats
-  - AMCOS Approval Request Format, Field Descriptions, AMAMA Response Format
-  - Autonomy Messages, Grant Message, Revoke Message
-  - Completion Notification Format, Field Descriptions
-- `references/ai-maestro-message-templates.md` - Templates
-- `references/success-criteria.md` - Success criteria
+  - Approval Request/Response Formats
+  - Autonomy Grant/Revoke Messages
+  - Completion Notification Format
+- [ai-maestro-message-templates](references/ai-maestro-message-templates.md) - Templates
+- [success-criteria](references/success-criteria.md) - Success criteria
 - [references/workflow-checklists.md](references/workflow-checklists.md) - Checklists
   - Checklist: Creating New Team
   - Checklist: Assigning COS Role
   - Checklist: Processing AMCOS Approval Request
   - Checklist: Routing User Request to AMCOS
   - Checklist: Providing Status to User
-- `references/spawn-failure-recovery.md` - Recovery
+- [spawn-failure-recovery](references/spawn-failure-recovery.md) - Recovery

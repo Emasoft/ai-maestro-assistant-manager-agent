@@ -54,4 +54,6 @@ Cargo.lock
 .tldr_session_*
 .claude/
 .rechecker/
+.serena/
 llm_externalizer_output/
+rck-*.md

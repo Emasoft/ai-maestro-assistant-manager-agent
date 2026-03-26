@@ -1,6 +1,6 @@
 ---
 name: amama-label-taxonomy
-description: Use when managing GitHub issue labels, priorities, or status taxonomy. Trigger with label or triage requests.
+description: Use when managing GitHub issue labels or priorities. Trigger with label or triage requests.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Label taxonomy for the Assistant Manager Agent (AMAMA). Manages priority labels, initial status labels, and translates label states into user messages.
+Label taxonomy for AMAMA. Manages priority labels, status labels, and translates label states into user messages.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ Label taxonomy for the Assistant Manager Agent (AMAMA). Manages priority labels,
 **Monitors only**: `status:pending|in_progress|review|completed`, `assign:*`.
 **Never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
 
-See `references/label-tables.md` for full label tables and approval authority.
+See [label-tables](references/label-tables.md) for full label tables and approval authority.
 
 **Key commands**:
 
@@ -50,7 +50,7 @@ gh issue edit $NUM --add-label "status:blocked"
 gh issue list --label "status:in-progress" --json number,title,labels
 ```
 
-See `references/commands-and-patterns.md` for all commands and patterns.
+See [commands-and-patterns](references/commands-and-patterns.md) for all commands and patterns.
 
 ## Checklist
 
@@ -106,12 +106,12 @@ gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
 
 **Response**: "Priority updated to high for issue #45."
 
-See `references/commands-and-patterns.md` for more examples.
+See [commands-and-patterns](references/commands-and-patterns.md) for more examples.
 
 ## Resources
 
-- `references/label-tables.md` -- Label tables, kanban columns, approval authority
-- `references/commands-and-patterns.md` -- Commands, patterns, examples
+- [label-tables](references/label-tables.md) -- Label tables, kanban columns, approval authority
+- [commands-and-patterns](references/commands-and-patterns.md) -- Commands, patterns, examples
 - **AGENT_OPERATIONS.md** -- Agent operational patterns
 - **amama-status-reporting** -- Status communication
 - **amama-user-communication** -- Communication style
