@@ -6,14 +6,10 @@ on:
       - 'v*.*.*'
 
 jobs:
-  release:
+  validate-before-release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,22 +19,55 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Validate plugin
-        env:
-          CLAUDE_PRIVATE_USERNAMES: emanuelesabetta
+      - name: CPV validation gate
         run: |
-          set +e
-          uv run --with pyyaml --with types-PyYAML python scripts/validate_plugin.py . --verbose
-          exit_code=$?
-          set -e
-          if [ $exit_code -le 2 ] && [ $exit_code -ne 0 ]; then
-            echo "Validation FAILED (exit code: $exit_code)"
-            exit $exit_code
+          echo "=== Pre-release validation ==="
+          uvx --from git+https://github.com/Emasoft/claude-plugins-validation --with pyyaml cpv-validate . --verbose
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "BLOCKED: Plugin validation failed — cannot release"
+            exit $EXIT_CODE
           fi
+
+  release:
+    needs: validate-before-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' .claude-plugin/plugin.json)
+          NAME=$(jq -r '.name' .claude-plugin/plugin.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" HEAD)
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..HEAD)
+          fi
+          echo "changelog<<CHANGELOG_EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "CHANGELOG_EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: "${{ steps.version.outputs.name }} v${{ steps.version.outputs.version }}"
+          body: |
+            ## ${{ steps.version.outputs.name }} v${{ steps.version.outputs.version }}
+
+            ### Changes
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
