@@ -87,17 +87,24 @@ Copy this checklist and track your progress:
 - [ ] Compile report and save to `design/reports/`
 - [ ] Present formatted report to user
 
-For the detailed step-by-step checklist, see [checklist](references/checklist.md).
-  - Status Reporting Checklist: verify API, query sessions, health, teams, tasks, GitHub, memory, compile, save, present
-
 ## Resources
 
-- **AI Maestro API** -- `$AIMAESTRO_API`
-- **Task storage** -- `~/.aimaestro/teams/tasks-{teamId}.json`
-- **amama-role-routing SKILL** -- Agent routing
-- **amama-approval-workflows SKILL** -- Approval status
-- **amama-session-memory SKILL** -- Session memory access
-- [api-endpoints](references/api-endpoints.md) -- Full API endpoint details and query examples
+- [api-endpoints](references/api-endpoints.md) -- API endpoint details and query examples
 - [task-system](references/task-system.md) -- Task system and Kanban status details
-- [report-formats](references/report-formats.md) -- Report types, formats, sections, and full examples
+- [report-formats](references/report-formats.md) -- Report types, formats, and full examples
 - [checklist](references/checklist.md) -- Step-by-step execution checklist
+  - Status Reporting Checklist
+  - Table of Contents
+  - Determine report type
+  - Verify AI Maestro API reachable
+  - Query sessions endpoint
+  - Query agents health endpoint
+  - Query teams endpoint
+  - Query teams tasks endpoint
+  - Verify GitHub CLI
+  - Query GitHub issues and PRs
+  - Read session memory files
+  - Compile into report format
+  - Create reports directory
+  - Save report to file
+  - Present report to user
