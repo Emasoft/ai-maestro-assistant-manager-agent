@@ -22,8 +22,8 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 
 ## Instructions
 
-1. **Recommend COS** — Suggest agents for COS role to the user. USER assigns COS via dashboard. See [creating-amcos-instance](references/creating-amcos-instance.md).
-2. **Register Agents** — `POST /api/agents/register`. Request user to create team via dashboard. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
+1. **Recommend COS** — Suggest agents for COS role. USER assigns via dashboard. See [creating-amcos-instance](references/creating-amcos-instance.md).
+2. **Register Agents** — `POST /api/agents/register`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
   - Request Categories

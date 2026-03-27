@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Routes user requests to specialist agents. AMAMA CAN message any agent directly. Routing via AMCOS is preferred for delegation but not required. Only 3 governance roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
+Routes requests to specialist agents. AMAMA can message directly; routing via AMCOS preferred but not required. 3 roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
 
 ## Prerequisites
 
@@ -76,7 +76,7 @@ Full routing rules: [routing-rules](references/routing-rules.md). Handoff protoc
 
 User says: "Design an auth system with OAuth2 support"
 
-Intent matched: "design" -> route to AMCOS for AMAA delegation (or directly to AMAA if urgent). AI Maestro message sent:
+Intent: "design" -> route to AMCOS for AMAA (or direct if urgent). Message sent:
 
 ```json
 {
@@ -103,5 +103,5 @@ User says: "What's the progress on the API?" -> intent "progress" -> handle dire
 - Routing rules: [routing-rules](references/routing-rules.md)
 - Handoff protocol: [handoff-protocol](references/handoff-protocol.md)
 - Governance roles: [governance-and-specializations](references/governance-and-specializations.md)
-- Design/orchestration routing: [design-and-orchestration-routing](references/design-and-orchestration-routing.md)
-- GitHub operations: see **amama-github-routing** skill
+- Design/orch routing: [design-and-orchestration-routing](references/design-and-orchestration-routing.md)
+- GitHub ops: see **amama-github-routing** skill
