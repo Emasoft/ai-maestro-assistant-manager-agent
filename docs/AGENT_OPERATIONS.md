@@ -27,7 +27,7 @@ User <-> MANAGER <-> COS <-> Members
 ```
 
 - MANAGER never spawns agents directly
-- MANAGER assigns COS to teams; COS coordinates members
+- USER assigns COS to teams via dashboard; MANAGER recommends COS candidates; COS coordinates members
 - All governance approvals go through GovernanceRequest API
 
 ## Message Priority

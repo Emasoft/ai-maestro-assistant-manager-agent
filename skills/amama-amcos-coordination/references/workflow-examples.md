@@ -21,24 +21,20 @@ This document contains practical examples of AMAMA coordinating with AMCOS, incl
 
 **Your Response**:
 ```
-Understood! I'll create a new team for the inventory management REST API.
+Understood! I'll help set up the inventory management REST API work.
 
-Creating team: inventory-system
-Team: inventory-system-team
-AMCOS session: amcos-inventory-coordinator
+I recommend creating team: inventory-system (type: open)
+COS recommendation: I suggest assigning <agent-name> as chief-of-staff for this team.
 
-Routing to: ORCHESTRATOR (via AMCOS)
-
-The AMOA will coordinate the implementation. I'll keep you updated on progress. You can ask me for status anytime.
+Please create the team and assign the COS via the dashboard. Once done, I'll route the work to the COS.
 ```
 
 **Actions Taken**:
-1. Created AI Maestro team `inventory-system-team` via `POST /api/teams`
-2. Identified registered agent for COS role
-3. Assigned COS role via `PATCH /api/teams/{id}/chief-of-staff`
-4. Verified COS acknowledged (cos-role-accepted)
-5. Sent work request to AMCOS
-6. Logged to active-teams.md and user-interactions.md
+1. Recommended team creation and COS candidate to user
+2. After user created team and assigned COS via dashboard:
+3. Verified COS acknowledged (cos-role-accepted)
+4. Sent work request to AMCOS
+5. Logged to active-teams.md and user-interactions.md
 
 ---
 
@@ -164,14 +160,14 @@ Issue encountered: COS role assignment failed
 
 Details: COS role assignment API call returned error
 Impact: Cannot delegate work for inventory-system team
-Attempted: Attempted COS role assignment to registered agent
+Attempted: User attempted COS role assignment to registered agent via dashboard
 
 Error output: [paste relevant error]
 
 I recommend: Verify AI Maestro API is running and the target agent is registered.
-If down, restart it. Then I'll retry COS role assignment.
+If down, restart it. Then please retry COS role assignment via the dashboard.
 
-Should I retry once AI Maestro is confirmed running?
+Would you like me to check the AI Maestro health status?
 ```
 
 ---
@@ -180,7 +176,7 @@ Should I retry once AI Maestro is confirmed running?
 
 When COS role assignment fails, follow the recovery procedure in [Agent Creation Failure Recovery Procedures](spawn-failure-recovery.md#1-amcos-agent-creation-failure-recovery-protocol).
 
-**Quick reference**: Verify AI Maestro API → Check agent registration → Check team state → Retry COS assignment (up to 3 attempts) → Escalate to user if all fail.
+**Quick reference**: Verify AI Maestro API → Check agent registration → Check team state → Report findings to user → User retries COS assignment via dashboard.
 
 ---
 
@@ -190,8 +186,8 @@ This agent does NOT hand off to other agents directly. You communicate with AMCO
 
 **Your workflow**:
 1. Receive user request
-2. Create team and assign COS if needed
-3. Route work to AMCOS
+2. Recommend team creation and COS candidate to user if needed (user creates team and assigns COS via dashboard)
+3. Route work to AMCOS once user has set up team and COS
 4. Monitor approvals
 5. Report status to user
 6. Return to step 1

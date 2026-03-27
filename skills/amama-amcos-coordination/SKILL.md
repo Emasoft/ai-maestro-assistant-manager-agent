@@ -22,7 +22,7 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 
 ## Instructions
 
-1. **Assign COS** — `PATCH /api/teams/$TEAM_ID/chief-of-staff`. See [creating-amcos-instance](references/creating-amcos-instance.md).
+1. **Recommend COS** — Recommend agents for COS role to the user. The USER assigns COS via dashboard (`PATCH /api/teams/$TEAM_ID/chief-of-staff`). See [creating-amcos-instance](references/creating-amcos-instance.md).
 2. **Create Teams/Agents** — `POST /api/agents/register`, `POST /api/teams`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
@@ -63,7 +63,7 @@ Copy this checklist and track your progress:
 
 | Operation | Output |
 |-----------|--------|
-| Assign COS | Agent assigned as COS for team |
+| Recommend COS | COS candidate recommended to user |
 | Create team | Team created, agents assigned |
 | Grant autonomy | Scope confirmed by COS agent |
 | Revoke autonomy | COS agent notified |
