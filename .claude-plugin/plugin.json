@@ -1,6 +1,6 @@
 {
   "name": "ai-maestro-assistant-manager-agent",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "User's right hand - sole interlocutor with user, directs other roles. Requires AI Maestro for inter-agent messaging.",
   "author": {
     "name": "Emasoft",
