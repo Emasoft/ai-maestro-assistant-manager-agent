@@ -23,7 +23,7 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 ## Instructions
 
 1. **Recommend COS** — Suggest agents for COS role to the user. USER assigns COS via dashboard. See [creating-amcos-instance](references/creating-amcos-instance.md).
-2. **Create Teams/Agents** — `POST /api/agents/register`, `POST /api/teams`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
+2. **Register Agents** — `POST /api/agents/register`. Request user to create team via dashboard. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
   - Request Categories
@@ -64,7 +64,7 @@ Copy this checklist and track your progress:
 | Operation | Output |
 |-----------|--------|
 | Recommend COS | COS candidate recommended to user |
-| Create team | Team created, agents assigned |
+| Request team creation | Team creation request sent to user |
 | Grant autonomy | Scope confirmed by COS agent |
 | Revoke autonomy | COS agent notified |
 
@@ -74,9 +74,9 @@ See [references/error-handling.md](references/error-handling.md). Escalate on: d
 
 ## Examples
 
-**Input:** `PATCH /api/teams/team-1/chief-of-staff` with `{"agentId":"amcos-cos"}`
+**Input:** User assigns COS via dashboard for team-1 with agent amcos-cos
 
-**Output:** `{"team":"team-1","chiefOfStaff":"amcos-cos","status":"assigned"}`
+**Output:** AMAMA verifies assignment: `GET /api/teams/team-1` returns `{"chiefOfStaff":"amcos-cos","status":"assigned"}`
 
 See [references/workflow-examples.md](references/workflow-examples.md) for full examples.
   - Example 1: User Requests New Project

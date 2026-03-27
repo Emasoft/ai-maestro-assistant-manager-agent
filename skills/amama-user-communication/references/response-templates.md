@@ -25,7 +25,7 @@ Creating project: <project-name>
 Location: <full-path>
 AMCOS session: amcos-<project-name>-coordinator
 
-Routing to: <SPECIALIST> (via AMCOS)
+Routing to: <SPECIALIST> (via AMCOS, or directly if urgent)
 
 I'll keep you updated on progress. You can ask me for status anytime.
 ```

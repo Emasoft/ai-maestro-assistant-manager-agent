@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Routes user requests to specialist agents via AMCOS. AMAMA never contacts specialists directly. Only 3 governance roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
+Routes user requests to specialist agents. AMAMA CAN message any agent directly. Routing via AMCOS is preferred for delegation but not required. Only 3 governance roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ Copy this checklist and track your progress:
 - [ ] Send via AI Maestro
 - [ ] Track and report
 
-**Routing targets** (all `role: member`, routed via AMCOS):
+**Routing targets** (all `role: member`, preferably routed via AMCOS for delegation, or directly if urgent):
 - **AMAA** (`amaa-`) -- architect specialization
 - **AMOA** (`amoa-`) -- orchestrator specialization
 - **AMIA** (`amia-`) -- integrator specialization
@@ -76,7 +76,7 @@ Full routing rules: [routing-rules](references/routing-rules.md). Handoff protoc
 
 User says: "Design an auth system with OAuth2 support"
 
-Intent matched: "design" -> route to AMCOS for AMAA. AI Maestro message sent:
+Intent matched: "design" -> route to AMCOS for AMAA delegation (or directly to AMAA if urgent). AI Maestro message sent:
 
 ```json
 {

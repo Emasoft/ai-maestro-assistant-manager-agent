@@ -17,7 +17,7 @@ User: "I need to implement a new authentication module for the project. It shoul
 
 AMAMA Response: "I understand you need a new authentication module with OAuth2 and JWT support. Let me route this to the Orchestrator for implementation.
 
-Creating handoff file and routing to AMCOS, which will coordinate with the Orchestrator agent to implement the authentication module with the specified requirements."
+Creating handoff file and routing to AMCOS for delegation to the Orchestrator agent, or directly to the Orchestrator if urgent. The authentication module will be implemented with the specified requirements."
 ```
 
 ## Workflow 2: Granting AMCOS Autonomous Mode

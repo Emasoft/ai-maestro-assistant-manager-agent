@@ -13,8 +13,8 @@ Procedure for routing work between AMAMA, AMCOS, and specialist agents.
 
 1. Create handoff .md file with UUID
 2. Include all relevant context
-3. Send via AI Maestro message to AMCOS
-4. AMCOS routes to appropriate specialist
+3. Send via AI Maestro message to AMCOS (preferred) or directly to specialist if urgent
+4. AMCOS routes to appropriate specialist (when routing via AMCOS)
 5. Track handoff status
 6. Report completion to user
 

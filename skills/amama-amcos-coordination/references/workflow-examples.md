@@ -158,16 +158,16 @@ Health: Yellow (blocked on external dependency)
 ```
 Issue encountered: COS role assignment failed
 
-Details: COS role assignment API call returned error
+Details: COS role assignment via dashboard returned error
 Impact: Cannot delegate work for inventory-system team
-Attempted: User attempted COS role assignment to registered agent via dashboard
+Attempted: COS role assignment to registered agent via dashboard
 
 Error output: [paste relevant error]
 
 I recommend: Verify AI Maestro API is running and the target agent is registered.
 If down, restart it. Then please retry COS role assignment via the dashboard.
 
-Would you like me to check the AI Maestro health status?
+Would you like me to run diagnostic checks on the AI Maestro health status?
 ```
 
 ---
@@ -176,7 +176,7 @@ Would you like me to check the AI Maestro health status?
 
 When COS role assignment fails, follow the recovery procedure in [Agent Creation Failure Recovery Procedures](spawn-failure-recovery.md#1-amcos-agent-creation-failure-recovery-protocol).
 
-**Quick reference**: Verify AI Maestro API → Check agent registration → Check team state → Report findings to user → User retries COS assignment via dashboard.
+**Quick reference**: Verify AI Maestro API → Check agent registration → Check team state → Report findings to user → User retries COS assignment via the dashboard.
 
 ---
 

@@ -59,7 +59,8 @@ USER <-> AMAMA (Assistant Manager) <-> AMCOS (Chief of Staff) <-> AMAA (Architec
 
 **CRITICAL**:
 - AMAMA is the ONLY agent that communicates directly with the USER
-- AMCOS manages agent lifecycle and sits between AMAMA and specialist agents
-- AMAA, AMOA, and AMIA do NOT communicate directly with each other or with AMAMA
-- All specialist agent operations flow through AMCOS
+- AMAMA has UNRESTRICTED messaging -- it CAN message any agent directly (MANAGER privilege)
+- AMCOS manages agent lifecycle and is the preferred route for delegating work to specialists
+- AMAA, AMOA, and AMIA CAN communicate with AMAMA when AMAMA contacts them directly
+- Routing via AMCOS is preferred for delegation but not required -- AMAMA may contact specialists directly if urgent
 - All specialist agents use governance `role: 'member'` -- their specialization is metadata, not a governance concept

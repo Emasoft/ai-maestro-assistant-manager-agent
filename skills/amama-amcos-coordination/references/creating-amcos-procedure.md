@@ -32,7 +32,7 @@
 
 ## Overview
 
-This document describes the step-by-step procedure for registering agents, creating teams, and assigning the COS (Chief of Staff) role. AMAMA (Assistant Manager) is the ONLY agent authorized to perform these operations.
+This document describes the step-by-step procedure for registering agents and coordinating team setup with the user. ONLY the USER can create teams and assign COS roles. AMAMA recommends and requests these actions from the user.
 
 ## Key Principles
 
@@ -40,7 +40,7 @@ This document describes the step-by-step procedure for registering agents, creat
 2. **Teams organize agents** - Teams group agents and define coordination boundaries
 3. **One COS per closed team** - Each closed team can have exactly one COS-assigned agent
 4. **Team registry is persistent** - Teams are stored in `~/.aimaestro/teams/registry.json`
-5. **AMAMA is the authority** - Only AMAMA can create teams and assign COS roles
+5. **USER is the authority** - Only the USER can create teams and assign COS roles. AMAMA recommends and requests these actions from the user.
 
 ---
 
@@ -76,21 +76,9 @@ Filter for the specific agent by name.
 
 ## Team Creation
 
-### Team Creation API Call
+### Team Creation (USER-ONLY)
 
-Create a team via the Team Creation API:
-
-```
-POST $AIMAESTRO_API/api/teams
-Body: {
-  "name": "team-name",
-  "description": "Team purpose and scope",
-  "type": "closed",
-  "agentIds": ["agent-id-1", "agent-id-2"]
-}
-```
-
-See the `team-governance` skill for full API details.
+**AMAMA cannot create teams.** Request the user to create the team via the AI Maestro dashboard. Provide the user with the recommended team name, description, type, and member agents so they can create it.
 
 ### Team Required Parameters
 
@@ -112,34 +100,20 @@ See the `team-governance` skill for full API details.
 
 ### Verify Team Creation
 
+After the user creates the team, verify it exists:
+
 ```
 GET $AIMAESTRO_API/api/teams
 ```
 
 
-Also verify the team registry file:
-
-```
-cat ~/.aimaestro/teams/registry.json
-```
-
-
 ---
 
-## COS Assignment
+## COS Assignment (USER-ONLY)
 
-After the team is created with at least one member agent, assign the COS role:
+**AMAMA cannot assign COS roles.** After the user creates the team, recommend a COS candidate and request the user to assign COS via the AI Maestro dashboard.
 
-```
-PATCH $AIMAESTRO_API/api/teams/{teamId}/chief-of-staff
-Body: {
-  "agentId": "<agent-id>"
-}
-```
-
-See the `team-governance` skill for full API details.
-
-See [creating-amcos-instance.md](creating-amcos-instance.md) for full COS assignment details including cross-host scenarios.
+See [creating-amcos-instance.md](creating-amcos-instance.md) for COS role details including cross-host scenarios.
 
 ---
 
@@ -152,41 +126,26 @@ If the target agent is not already in the registry, register it using `aimaestro
 **Verify**: `GET /api/agents` lists the agent.
 
 
-### Step 2: Create Team
+### Step 2: Request User to Create Team
 
-Create the team and include the agent as a member:
+**AMAMA cannot create teams.** Request the user to create the team via the dashboard with the recommended configuration:
 
-```
-POST $AIMAESTRO_API/api/teams
-Body: {
-  "name": "project-alpha-team",
-  "description": "Development team for project alpha",
-  "type": "closed",
-  "agentIds": ["coordinator-alpha"]
-}
-```
+- **Recommended name**: `project-alpha-team`
+- **Recommended description**: "Development team for project alpha"
+- **Recommended type**: `closed`
+- **Recommended members**: `coordinator-alpha`
 
-See the `team-governance` skill for full API details.
+**Verify**: After the user creates the team, confirm via `GET /api/teams`. Note the returned `teamId`.
 
 
-**Verify**: `GET /api/teams` lists the team. Note the returned `teamId`.
+### Step 3: Request User to Assign COS Role
 
+**AMAMA cannot assign COS roles.** Recommend a COS candidate and request the user to assign COS via the dashboard.
 
-### Step 3: Assign COS Role
+- **Recommended COS**: `coordinator-alpha`
+- **Team**: The team created in Step 2
 
-Assign the COS role to the agent within the team:
-
-```
-PATCH $AIMAESTRO_API/api/teams/{teamId}/chief-of-staff
-Body: {
-  "agentId": "coordinator-alpha"
-}
-```
-
-See the `team-governance` skill for full API details.
-
-
-**Verify**: `GET /api/teams/{teamId}` shows `chiefOfStaff` set to the agent.
+**Verify**: After the user assigns COS, confirm via `GET /api/teams/{teamId}` that `chiefOfStaff` is set to the agent.
 
 ### Step 4: Send Initialization Message
 
@@ -263,9 +222,9 @@ The COS-assigned agent is now available to coordinate specialist agents within t
 A successful team setup with COS assignment meets ALL of the following:
 
 - [ ] Agent registered in AI Maestro registry (`GET /api/agents` lists it)
-- [ ] Team created via `POST /api/teams` (returns team ID)
+- [ ] User created team via dashboard (team ID available via `GET /api/teams`)
 - [ ] Team stored in `~/.aimaestro/teams/registry.json`
-- [ ] COS assigned via `PATCH /api/teams/{teamId}/chief-of-staff`
+- [ ] User assigned COS via dashboard
 - [ ] `GET /api/teams/{teamId}` confirms `chiefOfStaff` set correctly
 - [ ] COS-assigned agent received and acknowledged role assignment message
 - [ ] Team and COS logged in `docs_dev/sessions/active-teams.md`
@@ -297,8 +256,9 @@ A successful team setup with COS assignment meets ALL of the following:
 **Solution**:
 1. Verify agent is in the team's member list
 2. Check if team already has a COS: `GET /api/teams/{teamId}`
-3. If team has existing COS, unassign first: `PATCH /api/teams/{teamId}/chief-of-staff` with `agentId: null`
+3. If team has existing COS, request user to unassign the current COS via dashboard first
 4. Verify team type is `closed` (open teams cannot have COS)
+5. Request user to retry COS assignment via dashboard
 
 ### No Response to Initialization Message
 
