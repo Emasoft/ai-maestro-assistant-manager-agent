@@ -1,6 +1,6 @@
 ---
 name: amama-role-routing
-description: Use when routing user requests to specialist agents. Trigger with work delegation needs.
+description: Use when routing user requests to specialist agents based on skills. Trigger with work delegation needs.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Routes requests to specialist agents. AMAMA can message directly; routing via AMCOS preferred but not required. 3 roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
+Routes user requests to the appropriate specialist agent via AMCOS (chief-of-staff). AMAMA never contacts specialists directly. 4 governance titles: `MANAGER`, `CHIEF-OF-STAFF`, `ORCHESTRATOR`, `MEMBER`. ORCHESTRATOR is a governance title (primary kanban manager), not just a specialization. Architect/Integrator are specializations via `skills`/`tags`. See `references/governance-and-specializations.md`.
 
 ## Prerequisites
 
@@ -37,10 +37,10 @@ Copy this checklist and track your progress:
 - [ ] Send via AI Maestro
 - [ ] Track and report
 
-**Routing targets** (all `role: member`, preferably routed via AMCOS for delegation, or directly if urgent):
-- **AMAA** (`amaa-`) -- architect specialization
-- **AMOA** (`amoa-`) -- orchestrator specialization
-- **AMIA** (`amia-`) -- integrator specialization
+**Routing targets** (routed via AMCOS):
+- **AMAA** (`amaa-`) -- MEMBER title, architect specialization
+- **AMOA** (`amoa-`) -- ORCHESTRATOR title, primary kanban manager
+- **AMIA** (`amia-`) -- MEMBER title, integrator specialization
 
 | Intent Pattern | Route To | Handoff Type |
 |----------------|----------|--------------|
@@ -51,7 +51,7 @@ Copy this checklist and track your progress:
 | "status", "progress", "update" | Handle directly | none |
 | "approve", "reject", "confirm" | Handle directly | approval_response |
 
-Full routing rules: [routing-rules](references/routing-rules.md). Handoff protocol: [handoff-protocol](references/handoff-protocol.md).
+Full routing rules: `references/routing-rules.md`. Handoff protocol: `references/handoff-protocol.md`.
 
 ## Output
 
@@ -76,7 +76,7 @@ Full routing rules: [routing-rules](references/routing-rules.md). Handoff protoc
 
 User says: "Design an auth system with OAuth2 support"
 
-Intent: "design" -> route to AMCOS for AMAA (or direct if urgent). Message sent:
+Intent matched: "design" -> route to AMCOS for AMAA. AI Maestro message sent:
 
 ```json
 {
@@ -100,8 +100,8 @@ User says: "What's the progress on the API?" -> intent "progress" -> handle dire
 
 ## Resources
 
-- Routing rules: [routing-rules](references/routing-rules.md)
-- Handoff protocol: [handoff-protocol](references/handoff-protocol.md)
-- Governance roles: [governance-and-specializations](references/governance-and-specializations.md)
-- Design/orch routing: [design-and-orchestration-routing](references/design-and-orchestration-routing.md)
-- GitHub ops: see **amama-github-routing** skill
+- Routing rules: `references/routing-rules.md`
+- Handoff protocol: `references/handoff-protocol.md`
+- Governance roles: `references/governance-and-specializations.md`
+- Design/orchestration routing: `references/design-and-orchestration-routing.md`
+- GitHub operations: see **amama-github-routing** skill

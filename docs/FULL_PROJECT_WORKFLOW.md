@@ -6,21 +6,21 @@
 
 | Step | Actor | Action | API |
 |------|-------|--------|-----|
-| 1 | Manager | Create GitHub repo + team | `POST /api/teams` |
-| 2 | Manager | Assign COS to team | `PATCH /api/teams/{id}/chief-of-staff` |
-| 3 | COS | Propose member roster | GovernanceRequest to manager |
-| 4 | Manager | Approve roster | `POST /api/v1/governance/requests/{id}/approve` |
+| 1 | MANAGER | Create GitHub repo + team | `POST /api/teams` |
+| 2 | MANAGER | Assign COS to team | `PATCH /api/teams/{id}/chief-of-staff` |
+| 3 | COS | Propose member roster | GovernanceRequest to MANAGER |
+| 4 | MANAGER | Approve roster | `POST /api/v1/governance/requests/{id}/approve` |
 | 5 | COS | Add members to team | `POST /api/teams/{id}/members` |
 
 ### Phase 2: Design
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 6 | Manager | Send requirements to COS |
+| 6 | MANAGER | Send requirements to COS |
 | 7 | COS | Assign design task to architect-skilled member |
 | 8 | Member | Create design document |
 | 9 | COS | Forward design to manager |
-| 10 | Manager | Get user approval; send approved design to COS |
+| 10 | MANAGER | Get user approval; send approved design to COS |
 
 ### Phase 3: Task Planning
 

@@ -27,7 +27,7 @@
 
 ### Task Sync Required
 - AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
-- Task file: ~/.aimaestro/teams/tasks-{teamId}.json
+- Task file: $AGENT_DIR/teams/tasks-{teamId}.json
 ```
 
 ## For AMAA (Architect) Design-GitHub Handoffs
@@ -50,7 +50,7 @@
 
 ### Task Sync Required
 - AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
-- Task file: ~/.aimaestro/teams/tasks-{teamId}.json
+- Task file: $AGENT_DIR/teams/tasks-{teamId}.json
 ```
 
 ## For AMOA (Orchestrator) Module-GitHub Handoffs
@@ -73,7 +73,7 @@
 
 ### Task Sync Required
 - AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
-- Task file: ~/.aimaestro/teams/tasks-{teamId}.json
+- Task file: $AGENT_DIR/teams/tasks-{teamId}.json
 ```
 
 ## UUID Tracking Across GitHub Operations
@@ -110,8 +110,10 @@ TEAM: backend
 ### Searching by UUID
 
 AMAMA can find GitHub items by UUID using:
+All gh commands MUST include `--repo "$OWNER/$REPO"` to target the correct repository.
+
 ```bash
-gh issue list --search "AMAMA-LINK: design-uuid=abc123"
-gh pr list --search "Design UUID: abc123"
-gh issue list --label "team:backend" --search "AMAMA-LINK: module-uuid=def456"
+gh issue list --repo "$OWNER/$REPO" --search "AMAMA-LINK: design-uuid=abc123"
+gh pr list --repo "$OWNER/$REPO" --search "Design UUID: abc123"
+gh issue list --repo "$OWNER/$REPO" --label "team:backend" --search "AMAMA-LINK: module-uuid=def456"
 ```

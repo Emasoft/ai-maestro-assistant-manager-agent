@@ -1,15 +1,15 @@
 # Handoff Document Template
 
-This template defines the standard format for handoff documents between roles in the 4-plugin architecture.
+This template defines the standard format for handoff documents between titles in the AI Maestro governance model.
 
 ## Plugin Prefixes
 
-| Plugin | Prefix | Full Name |
-|--------|--------|-----------|
-| Assistant Manager | `amama-` | AI Maestro Assistant Manager Agent |
-| Architect | `amaa-` | AI Maestro Architect Agent |
-| Orchestrator | `amoa-` | AI Maestro Orchestrator Agent |
-| Integrator | `amia-` | AI Maestro Integrator Agent |
+| Agent | Prefix | Full Name | Governance Title |
+|-------|--------|-----------|------------------|
+| Assistant Manager | `amama-` | AI Maestro Assistant Manager Agent | MANAGER |
+| Orchestrator | `amoa-` | AI Maestro Orchestrator Agent | ORCHESTRATOR |
+| Architect | `amaa-` | AI Maestro Architect Agent | MEMBER |
+| Integrator | `amia-` | AI Maestro Integrator Agent | MEMBER |
 
 ## Handoff File Format
 

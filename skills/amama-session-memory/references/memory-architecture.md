@@ -18,7 +18,7 @@ AMAMA session memory uses a tiered storage architecture with AI Maestro as the p
 
 ### Tier 1: AI Maestro CozoDB Agent Database
 
-**Location**: `~/.aimaestro/agents/<agent-id>/memory.cozo`
+**Location**: `$AGENT_DIR/db/memory.cozo`
 
 CozoDB stores structured memory records with semantic indexing. Each memory entry is a typed relation:
 

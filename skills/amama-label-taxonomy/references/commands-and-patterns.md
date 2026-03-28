@@ -10,9 +10,11 @@
 
 ### When User Creates Request
 
+All gh commands MUST include `--repo "$OWNER/$REPO"` to target the correct repository.
+
 ```bash
 # Create issue with initial labels
-gh issue create \
+gh issue create --repo "$OWNER/$REPO" \
   --title "$USER_REQUEST_TITLE" \
   --body "$USER_REQUEST_BODY" \
   --label "status:backlog" \
@@ -24,38 +26,38 @@ gh issue create \
 
 ```bash
 # Update priority
-gh issue edit $ISSUE_NUMBER --remove-label "priority:normal" --add-label "priority:high"
+gh issue edit $ISSUE_NUMBER --repo "$OWNER/$REPO" --remove-label "priority:normal" --add-label "priority:high"
 ```
 
 ### When User Puts on Hold
 
 ```bash
 # Mark blocked
-gh issue edit $ISSUE_NUMBER --remove-label "status:in-progress" --add-label "status:blocked"
+gh issue edit $ISSUE_NUMBER --repo "$OWNER/$REPO" --remove-label "status:in-progress" --add-label "status:blocked"
 ```
 
 ### When Facilitating Human Review
 
 ```bash
 # Present the task to the user for review (escalated from Review)
-gh issue view $ISSUE_NUMBER --json title,body,labels
+gh issue view $ISSUE_NUMBER --repo "$OWNER/$REPO" --json title,body,labels
 # After user approves:
-gh issue edit $ISSUE_NUMBER --remove-label "status:review" --add-label "status:completed"
+gh issue edit $ISSUE_NUMBER --repo "$OWNER/$REPO" --remove-label "status:review" --add-label "status:completed"
 # After user requests changes:
-gh issue edit $ISSUE_NUMBER --remove-label "status:review" --add-label "status:in-progress"
+gh issue edit $ISSUE_NUMBER --repo "$OWNER/$REPO" --remove-label "status:review" --add-label "status:in-progress"
 ```
 
 ### When Generating Status Report
 
 ```bash
 # Get all active issues for user
-gh issue list --label "status:in-progress" --json number,title,labels
+gh issue list --repo "$OWNER/$REPO" --label "status:in-progress" --json number,title,labels
 
 # Get issues in review
-gh issue list --label "status:review" --json number,title,labels
+gh issue list --repo "$OWNER/$REPO" --label "status:review" --json number,title,labels
 
 # Get completed issues
-gh issue list --label "status:completed" --state closed --json number,title
+gh issue list --repo "$OWNER/$REPO" --label "status:completed" --state closed --json number,title
 ```
 
 ---
@@ -98,7 +100,7 @@ The implementation agent is actively working on this task.
 
 **AMAMA actions**:
 ```bash
-gh issue create \
+gh issue create --repo "$OWNER/$REPO" \
   --title "Login page broken" \
   --body "User reported urgent login page issue" \
   --label "type:bug" \
@@ -114,7 +116,7 @@ gh issue create \
 
 **AMAMA actions**:
 ```bash
-gh issue list --label "component:auth" --json number,title,labels
+gh issue list --repo "$OWNER/$REPO" --label "component:auth" --json number,title,labels
 ```
 
 **User response**:
@@ -138,7 +140,7 @@ gh issue list --label "component:auth" --json number,title,labels
 
 **AMAMA actions**:
 ```bash
-gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
+gh issue edit 45 --repo "$OWNER/$REPO" --remove-label "priority:normal" --add-label "priority:high"
 ```
 
 **User response**: "Priority updated to high for issue #45."

@@ -18,7 +18,7 @@ Routes GitHub operations to specialists via `team:{teamId}` labels, syncing to `
 
 - GitHub CLI (`gh`) installed and authenticated
 - AI Maestro messaging system running
-- Task files at `~/.aimaestro/teams/tasks-{teamId}.json`
+- Task files at `$AGENT_DIR/teams/tasks-{teamId}.json`
 - AMIA, AMAA, and AMOA agents available
 
 ## Instructions
@@ -29,7 +29,7 @@ Routes GitHub operations to specialists via `team:{teamId}` labels, syncing to `
 4. Consult the decision tree for the operation type
 5. Prepare handoff with required fields and team label
 6. Route via AI Maestro to the target agent (all routing goes through COS)
-7. Sync status to `tasks-{teamId}.json`
+7. Sync status to `$AGENT_DIR/teams/tasks-{teamId}.json`
 8. Track handoff status and verify completion
 
 Default: AMIA. Route to AMAA/AMOA only with design/module context. PRs/releases always AMIA.

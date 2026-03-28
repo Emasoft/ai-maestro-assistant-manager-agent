@@ -1,6 +1,6 @@
 ---
 name: amama-label-taxonomy
-description: Use when managing GitHub issue labels or priorities. Trigger with label or triage requests.
+description: Use when managing GitHub issue labels, priorities, or status taxonomy. Trigger with label or triage requests.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Label taxonomy for AMAMA. Manages priority labels, status labels, and translates label states into user messages.
+Label taxonomy for the Assistant Manager Agent (AMAMA). Manages priority labels, initial status labels, and translates label states into user messages.
 
 ## Prerequisites
 
@@ -34,23 +34,25 @@ Label taxonomy for AMAMA. Manages priority labels, status labels, and translates
 **Monitors only**: `status:pending|in_progress|review|completed`, `assign:*`.
 **Never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
 
-See [label-tables](references/label-tables.md) for full label tables and approval authority.
+See `references/label-tables.md` for full label tables and approval authority.
 
 **Key commands**:
 
+**All gh commands MUST include `--repo "$OWNER/$REPO"`** to target the correct repository.
+
 ```bash
 # Create issue
-gh issue create --title "$TITLE" --body "$BODY" \
+gh issue create --repo "$OWNER/$REPO" --title "$TITLE" --body "$BODY" \
   --label "status:backlog" --label "priority:$PRI" --label "type:$TYPE"
 # Change priority
-gh issue edit $NUM --remove-label "priority:normal" --add-label "priority:high"
+gh issue edit $NUM --repo "$OWNER/$REPO" --remove-label "priority:normal" --add-label "priority:high"
 # Block/unblock
-gh issue edit $NUM --add-label "status:blocked"
+gh issue edit $NUM --repo "$OWNER/$REPO" --add-label "status:blocked"
 # Status report
-gh issue list --label "status:in-progress" --json number,title,labels
+gh issue list --repo "$OWNER/$REPO" --label "status:in-progress" --json number,title,labels
 ```
 
-See [commands-and-patterns](references/commands-and-patterns.md) for all commands and patterns.
+See `references/commands-and-patterns.md` for all commands and patterns.
 
 ## Checklist
 
@@ -89,7 +91,7 @@ Copy this checklist and track your progress:
 **User**: "The login page is broken, fix it urgently!"
 
 ```bash
-gh issue create --title "Login page broken" \
+gh issue create --repo "$OWNER/$REPO" --title "Login page broken" \
   --body "User reported urgent login page issue" \
   --label "type:bug" --label "priority:critical" --label "status:backlog"
 ```
@@ -101,17 +103,17 @@ gh issue create --title "Login page broken" \
 **User**: "Make that password reset high priority too."
 
 ```bash
-gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
+gh issue edit 45 --repo "$OWNER/$REPO" --remove-label "priority:normal" --add-label "priority:high"
 ```
 
 **Response**: "Priority updated to high for issue #45."
 
-See [commands-and-patterns](references/commands-and-patterns.md) for more examples.
+See `references/commands-and-patterns.md` for more examples.
 
 ## Resources
 
-- [label-tables](references/label-tables.md) -- Label tables, kanban columns, approval authority
-- [commands-and-patterns](references/commands-and-patterns.md) -- Commands, patterns, examples
+- `references/label-tables.md` -- Label tables, kanban columns, approval authority
+- `references/commands-and-patterns.md` -- Commands, patterns, examples
 - **AGENT_OPERATIONS.md** -- Agent operational patterns
 - **amama-status-reporting** -- Status communication
 - **amama-user-communication** -- Communication style

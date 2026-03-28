@@ -1,55 +1,64 @@
 # AI Maestro Role Boundaries
 
-## 3-Role System
+## 4-Title System
 
-| Role | Singleton | Scope | Primary Function |
-|------|-----------|-------|------------------|
-| `manager` | Yes (per host) | Organization-wide | User interface, approval authority |
-| `chief-of-staff` | One per closed team | Team-scoped | Agent coordination within team |
-| `member` | Many per team | Task-scoped | Execution; skills determine specialization |
+| Title | Singleton | Scope | Primary Function |
+|-------|-----------|-------|------------------|
+| `MANAGER` | Yes (per host) | Organization-wide | User interface, approval authority |
+| `CHIEF-OF-STAFF` | One per team | Team-scoped | Agent coordination within team |
+| `ORCHESTRATOR` | One per team | Team-scoped | Primary kanban manager, task distribution |
+| `MEMBER` | Many per team | Task-scoped | Execution; skills determine specialization |
 
-## Role Hierarchy
+## Title Hierarchy
 
 ```
-User <-> manager <-> chief-of-staff <-> member(s)
+User <-> MANAGER <-> CHIEF-OF-STAFF <-> ORCHESTRATOR <-> MEMBER(s)
+                                    \-> MEMBER(s)
+ORCHESTRATOR can also message MANAGER directly (no COS relay needed)
 ```
 
 ## Permission Matrix
 
-| Action | manager | chief-of-staff | member |
-|--------|---------|----------------|--------|
-| Talk to user | YES | NO | NO |
-| Create teams | YES | NO | NO |
-| Assign COS to team | YES | NO | NO |
-| Approve GovernanceRequests | YES | NO | NO |
-| Coordinate team members | NO | YES | NO |
-| Submit GovernanceRequests | NO | YES | NO |
-| Assign tasks to members | NO | YES | NO |
-| Manage kanban | NO | YES | NO |
-| Request agent replacement | NO | YES | NO |
-| Execute tasks | NO | NO | YES |
-| Create PRs | NO | NO | YES |
-| Report progress to COS | NO | NO | YES |
+| Action | MANAGER | CHIEF-OF-STAFF | ORCHESTRATOR | MEMBER |
+|--------|---------|----------------|--------------|--------|
+| Talk to user | YES | NO | NO | NO |
+| Create teams | YES | NO | NO | NO |
+| Assign COS to team | YES | NO | NO | NO |
+| Approve GovernanceRequests | YES | NO | NO | NO |
+| Coordinate team members | NO | YES | YES | NO |
+| Submit GovernanceRequests | NO | YES | NO | NO |
+| Assign tasks to members | NO | NO | YES | NO |
+| Manage kanban (primary) | NO | NO | YES | NO |
+| Manage kanban (secondary) | YES | YES | — | NO |
+| Request agent replacement | NO | YES | NO | NO |
+| Message MANAGER directly | — | YES | YES | NO |
+| Execute tasks | NO | NO | NO | YES |
+| Create PRs | NO | NO | NO | YES |
+| Report progress | NO | NO | YES (to COS/MANAGER) | YES (to ORCHESTRATOR) |
 
 ## Governance Flow
 
 ```
-member needs X -> COS submits GovernanceRequest -> manager approves/rejects
+MEMBER needs X -> ORCHESTRATOR escalates -> COS submits GovernanceRequest -> MANAGER approves/rejects
 ```
 
-All significant operations require GovernanceRequest approval from manager.
+All significant operations require GovernanceRequest approval from MANAGER.
 
-## Team Types
+## Teams
 
-| Type | COS Required | Description |
-|------|-------------|-------------|
-| `open` | No | Loose coordination, no COS |
-| `closed` | Yes | Formal coordination via assigned COS |
+**All teams are closed.** There are no open teams. Each agent belongs to at most ONE team at a time.
+
+| Property | Value |
+|----------|-------|
+| COS Required | Yes (one per team) |
+| Description | Formal coordination via assigned COS |
 
 ## Key Constraints
 
-- Manager NEVER executes technical work
+- MANAGER NEVER executes technical work
 - COS NEVER communicates with user directly
-- Members NEVER bypass COS to reach manager
-- Skills on a member determine its specialization (architect, implementer, tester, etc.)
-- One COS per closed team; manager can reassign COS between teams
+- MEMBERs NEVER bypass COS to reach MANAGER (except ORCHESTRATOR, which can message MANAGER directly)
+- ORCHESTRATOR is the PRIMARY kanban manager; COS and MANAGER are secondary
+- Skills on a MEMBER determine its specialization (architect, implementer, tester, etc.)
+- One COS per team; MANAGER can reassign COS between teams
+- Each agent belongs to at most ONE team at a time

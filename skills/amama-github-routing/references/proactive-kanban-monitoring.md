@@ -24,8 +24,8 @@ AMAMA must proactively monitor GitHub Project boards to detect changes that may 
 Poll the GitHub Project API every 5 minutes for changes to project cards:
 
 ```bash
-# Get project items with status
-gh project item-list <PROJECT_NUMBER> --owner Emasoft --format json | jq '
+# Get project items with status (use amp-kanban-list.sh when available)
+gh project item-list <PROJECT_NUMBER> --owner "$OWNER" --format json | jq '
   .items[] | {
     id: .id,
     title: .title,
@@ -50,15 +50,15 @@ gh project item-list <PROJECT_NUMBER> --owner Emasoft --format json | jq '
 
 **Step 1: Capture Snapshot**
 ```bash
-# Store current state
-gh project item-list <PROJECT_NUMBER> --owner Emasoft --format json > /tmp/kanban-snapshot-$(date +%s).json
+# Store current state (inside agent folder, NEVER in /tmp/)
+gh project item-list <PROJECT_NUMBER> --owner "$OWNER" --format json > "$AGENT_DIR/tmp/kanban-snapshot-$(date +%s).json"
 ```
 
 **Step 2: Compare with Previous Snapshot**
 ```bash
 # Compare snapshots to find changes
-diff <(jq -S '.items' /tmp/kanban-snapshot-previous.json) \
-     <(jq -S '.items' /tmp/kanban-snapshot-current.json)
+diff <(jq -S '.items' "$AGENT_DIR/tmp/kanban-snapshot-previous.json") \
+     <(jq -S '.items' "$AGENT_DIR/tmp/kanban-snapshot-current.json")
 ```
 
 **Step 3: Process Detected Changes**
@@ -87,8 +87,8 @@ For each detected change:
 **Step 4: Update Internal State**
 ```bash
 # Update tracking file
-echo "Last sync: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> docs_dev/kanban/sync-log.md
-mv /tmp/kanban-snapshot-current.json /tmp/kanban-snapshot-previous.json
+echo "Last sync: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$AGENT_DIR/reports/kanban-sync-log.md"
+mv "$AGENT_DIR/tmp/kanban-snapshot-current.json" "$AGENT_DIR/tmp/kanban-snapshot-previous.json"
 ```
 
 ### Kanban Monitoring Checklist
@@ -107,5 +107,5 @@ mv /tmp/kanban-snapshot-current.json /tmp/kanban-snapshot-previous.json
 |-------|-------|------------|
 | `gh` command fails | Authentication expired | Re-authenticate with `gh auth login` |
 | No previous snapshot | First run or file deleted | Create initial snapshot, skip comparison |
-| Project not found | Invalid project number | Verify project exists with `gh project list --owner Emasoft` |
+| Project not found | Invalid project number | Verify project exists with `gh project list --owner "$OWNER"` |
 | Rate limit exceeded | Too many API calls | Increase polling interval to 10 minutes |

@@ -52,9 +52,9 @@ User notified: "Routing your request to AMCOS, who will coordinate with AMOA to 
 - [ ] Project directory created at specified/clarified location
 - [ ] Git repository initialized
 - [ ] Initial project structure created (README.md, .gitignore)
-- [ ] User created AI Maestro team for this project via dashboard
+- [ ] AI Maestro team created for this project
 - [ ] AMCOS agent created for this project with correct working directory
-- [ ] User assigned COS role to AMCOS agent via dashboard
+- [ ] COS role assigned to AMCOS agent via team governance
 - [ ] AMCOS responding to health check ping
 - [ ] Project registered in `docs_dev/projects/project-registry.md`
 - [ ] User notified of project creation and AMCOS readiness
@@ -83,7 +83,7 @@ Verify AMCOS is alive by sending a health check ping using the `agent-messaging`
 **Completion Checklist:**
 
 - [ ] Agent creation command succeeded (exit code 0) via the `ai-maestro-agents-management` skill
-- [ ] User assigned COS role via dashboard
+- [ ] COS role assigned via `PATCH /api/teams/{id}/chief-of-staff`
 - [ ] AMCOS session registered in AI Maestro (visible in agent list)
 - [ ] AMCOS main agent loaded with correct role constraints
 - [ ] AMCOS plugins loaded (verify via plugin list if possible)

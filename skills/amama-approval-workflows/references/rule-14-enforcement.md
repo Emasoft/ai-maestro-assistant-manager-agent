@@ -67,8 +67,8 @@ Every governance operation that could affect user requirements MUST be routed th
 |-----------------------------|----------------------|---------------------|
 | Adding an agent to a team changes team composition, which may affect delivery capacity and requirement timelines | `add-to-team` | Team composition is a constraint the user sets; changing it without approval could compromise delivery commitments |
 | Removing an agent from a team reduces capacity | `remove-from-team` | May cause requirement delays or scope gaps that violate the user's timeline constraints |
-| Assigning a COS changes the authority structure (USER-ONLY) | `assign-cos` | COS has approval power over team operations; only the USER can assign COS -- AMAMA cannot approve or execute this operation |
-| Removing a COS removes a governance checkpoint (USER-ONLY) | `remove-cos` | Weakens the approval chain that protects requirement immutability; only the USER can remove COS -- AMAMA cannot approve or execute this operation |
+| Assigning a COS changes the authority structure | `assign-cos` | COS has approval power over team operations; changing COS without user consent could allow unauthorized requirement changes |
+| Removing a COS removes a governance checkpoint | `remove-cos` | Weakens the approval chain that protects requirement immutability |
 | Transferring an agent between teams | `transfer-agent` | Affects both source team capacity (may block requirements) and destination team dynamics (may alter priorities) |
 | Creating a new agent provisions new capabilities | `create-agent` | New agents consume resources and may shift team focus away from existing requirements |
 | Deleting an agent removes capabilities permanently | `delete-agent` | May destroy institutional knowledge or capability needed for current requirements |

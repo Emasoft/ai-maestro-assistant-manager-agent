@@ -15,7 +15,7 @@ POST $AIMAESTRO_API/api/v1/governance/password
 Body: {"password": "<governance-password>"}
 ```
 
-- The password is bcrypt-hashed and stored in `~/.aimaestro/governance.json`
+- The password is bcrypt-hashed and stored server-side by AI Maestro
 - To change the password, provide `currentPassword` and `password` in the request body
 
 See the `team-governance` skill for full API details.

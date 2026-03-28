@@ -37,9 +37,9 @@ pending --> remote-approved --> dual-approved --> executed
 
 ## Plugin Prefix Reference
 
-| Role | Prefix | Plugin Name |
-|------|--------|-------------|
-| Assistant Manager | `amama-` | AI Maestro Assistant Manager Agent |
-| Architect | `amaa-` | AI Maestro Architect Agent |
-| Orchestrator | `amoa-` | AI Maestro Orchestrator Agent |
-| Integrator | `amia-` | AI Maestro Integrator Agent |
+| Title | Prefix | Plugin Name |
+|-------|--------|-------------|
+| MANAGER | `amama-` | AI Maestro Assistant Manager Agent |
+| ORCHESTRATOR | `amoa-` | AI Maestro Orchestrator Agent |
+| MEMBER (Architect) | `amaa-` | AI Maestro Architect Agent |
+| MEMBER (Integrator) | `amia-` | AI Maestro Integrator Agent |

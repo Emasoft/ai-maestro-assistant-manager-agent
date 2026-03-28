@@ -13,25 +13,27 @@ Requires **[AI Maestro](https://github.com/23blocks-OS/ai-maestro) >= 0.26.0** f
 ## Communication Hierarchy
 
 ```
-USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (member)
-                                                    <-> AMAA  (architect skills)
-                                                    <-> AMOA  (orchestrator skills)
-                                                    <-> AMIA  (integrator skills)
+USER <-> AMAMA (MANAGER) <-> AMCOS (CHIEF-OF-STAFF) <-> AMOA (ORCHESTRATOR) <-> AMAA (MEMBER, architect)
+                                                     <-> AMIA (MEMBER, integrator)
+                          <-> AMOA can message MANAGER directly (no COS relay needed)
 ```
 
-**Key principle**: AMAMA **never** communicates directly with specialist agents. All specialist routing goes through AMCOS.
+**Key principle**: AMAMA **never** communicates directly with MEMBER agents. All MEMBER routing goes through AMCOS. ORCHESTRATOR can message MANAGER directly.
 
-## Governance Model (v2)
+## Governance Model (v3)
 
-AI Maestro defines exactly 3 governance roles:
+AI Maestro defines exactly **4 governance titles**:
 
-| Role | Agent | Purpose |
-|------|-------|---------|
-| `manager` | AMAMA | Team manager, sole user contact, full admin authority |
-| `chief-of-staff` | AMCOS | Agent lifecycle, permissions, failure recovery |
-| `member` | AMAA, AMOA, AMIA | All specialist agents (specialization via skills/tags, NOT the role field) |
+| Title | Agent | Purpose | Kanban Access |
+|-------|-------|---------|---------------|
+| `MANAGER` | AMAMA | Singleton. Full authority over all teams and agents. Sole user contact. | Can manage (secondary) |
+| `CHIEF-OF-STAFF` | AMCOS | Leads a team. Manages membership, routes external messages. | Can manage (secondary) |
+| `ORCHESTRATOR` | AMOA | Primary kanban manager. Direct MANAGER communication. Task distribution. | **Primary manager** |
+| `MEMBER` | AMAA, AMIA, etc. | Default. Standard team member. Reports to Orchestrator. | View only |
 
-**COS Assignment Model**: AMAMA does NOT spawn new AMCOS instances. Instead, AMAMA assigns the `chief-of-staff` governance role to an already-running registered agent via `PATCH /api/teams/{id}/chief-of-staff`.
+**All teams are closed** -- no "open" teams exist. Each agent belongs to at most ONE team at a time.
+
+**COS Assignment Model**: AMAMA does NOT spawn new AMCOS instances. Instead, AMAMA assigns the `chief-of-staff` governance title to an already-running registered agent via `PATCH /api/teams/{id}/chief-of-staff`.
 
 ## Two-Track Approval System
 
@@ -117,13 +119,13 @@ All AMCOS requests use the format: `amcos-req-<uuid>` (e.g., `amcos-req-a1b2c3d4
 
 ## Plugin Abbreviations
 
-| Abbreviation | Full Name | Governance Role |
-|-------------|-----------|-----------------|
-| AMAMA | AI Maestro Assistant Manager Agent | `manager` |
-| AMCOS | AI Maestro Chief-of-Staff | `chief-of-staff` |
-| AMAA | AI Maestro Architect Agent | `member` (architect specialization) |
-| AMOA | AI Maestro Orchestrator Agent | `member` (orchestrator specialization) |
-| AMIA | AI Maestro Integrator Agent | `member` (integrator specialization) |
+| Abbreviation | Full Name | Governance Title |
+|-------------|-----------|------------------|
+| AMAMA | AI Maestro Assistant Manager Agent | `MANAGER` |
+| AMCOS | AI Maestro Chief-of-Staff | `CHIEF-OF-STAFF` |
+| AMOA | AI Maestro Orchestrator Agent | `ORCHESTRATOR` |
+| AMAA | AI Maestro Architect Agent | `MEMBER` (architect specialization) |
+| AMIA | AI Maestro Integrator Agent | `MEMBER` (integrator specialization) |
 
 ## Installation
 

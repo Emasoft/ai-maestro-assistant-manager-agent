@@ -16,7 +16,7 @@ AMAMA retrieves session memory based on state changes, not time intervals.
 **Condition**: AMAMA agent initializes or resumes after compaction.
 
 **Actions**:
-1. Check CozoDB connectivity at `~/.aimaestro/agents/<agent-id>/`
+1. Check CozoDB connectivity at `$AGENT_DIR/db/`
 2. If CozoDB available:
    a. Query `session_handoffs` for latest handoff record
    b. Query `user_preferences` for all active preferences

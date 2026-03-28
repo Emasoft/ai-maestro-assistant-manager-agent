@@ -1,4 +1,4 @@
-# Assigning the COS Role (USER Exclusive Responsibility)
+# Assigning the COS Role (AMAMA Exclusive Responsibility)
 
 ## Table of Contents
 - [1. Why AMAMA Assigns the COS Role](#1-why-amama-assigns-the-cos-role)
@@ -20,20 +20,20 @@
 
 ---
 
-## 1. Why the USER Assigns the COS Role
+## 1. Why AMAMA Assigns the COS Role
 
-The USER is the ONLY entity authorized to assign the COS (Chief of Staff) role. AMAMA recommends COS candidates but cannot perform the assignment. This ensures:
+AMAMA is the ONLY agent authorized to assign the COS (Chief of Staff) role. This ensures:
 
-1. **User authority** - Only the user can designate operational coordinators
-2. **Role constraint enforcement** - The COS role is assigned with proper governance via the dashboard
-3. **Audit trail** - All COS assignments are traceable to user action
-4. **No rogue coordinators** - No agent (including AMAMA) can assign the COS role
+1. **Single point of authority** - Only the user's representative can designate an operational coordinator
+2. **Role constraint enforcement** - The COS role is assigned with proper governance via the Team API
+3. **Audit trail** - All COS assignments are traceable to AMAMA approval
+4. **No rogue coordinators** - An agent cannot self-assign the COS role
 
 ### Key Difference from v1 (Spawning AMCOS)
 
 In v1, AMAMA spawned a new dedicated AMCOS instance. In v2:
 - The target agent must **already exist** in the AI Maestro agent registry
-- The USER **assigns the COS role** to that agent within a specific team via the dashboard
+- AMAMA **assigns the COS role** to that agent within a specific team
 - The agent retains its original identity but gains COS responsibilities
 - No new process/session is spawned; the existing agent is augmented
 
@@ -44,19 +44,46 @@ In v1, AMAMA spawned a new dedicated AMCOS instance. In v2:
 ### Prerequisites
 
 1. The target agent must be registered in AI Maestro (`GET /api/agents` must list it)
-2. A team must exist (`GET /api/teams` must list it) with type `closed`
-3. The team must not already have a COS assigned (one COS per closed team)
+2. A team must exist (`GET /api/teams` must list it) -- all teams are closed
+3. The team must not already have a COS assigned (one COS per team)
 4. The target agent should be a member of the team
 
-### Assignment (USER-ONLY)
+### Assignment API Call
 
-**AMAMA cannot assign COS roles.** Recommend a COS candidate to the user and request them to assign COS via the AI Maestro dashboard.
+Assign the COS role via the Team API:
 
-**Verify**: After the user assigns COS, confirm the team's `chiefOfStaff` field is set by checking `GET /api/teams/$TEAM_ID`.
+```
+PATCH $AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff
+Body: {
+  "agentId": "$AGENT_ID"
+}
+```
 
-### Unassigning COS (USER-ONLY)
+See the `team-governance` skill for full API details.
 
-**AMAMA cannot unassign COS roles.** If a COS needs to be removed or replaced, request the user to unassign COS via the AI Maestro dashboard.
+**Expected Response:**
+
+```json
+{
+  "teamId": "<team-id>",
+  "chiefOfStaff": "<agent-id>",
+  "assignedBy": "amama-session-name",
+  "assignedAt": "2026-02-27T10:00:00Z"
+}
+```
+
+**Verify**: confirm the team's `chiefOfStaff` field is set by checking `GET /api/teams/$TEAM_ID`.
+
+### Unassigning COS
+
+To unassign a COS (before reassigning to a different agent):
+
+```
+PATCH $AIMAESTRO_API/api/teams/$TEAM_ID/chief-of-staff
+Body: {"agentId": null}
+```
+
+See the `team-governance` skill for full API details.
 
 ### Naming Convention for COS-Assigned Agents
 
@@ -71,11 +98,10 @@ However, for clarity in messaging and logs, AMAMA may refer to the agent as:
 
 | Scenario | Action |
 |----------|--------|
-| **New team created** | Assign COS when a closed team needs an operational coordinator |
+| **New team created** | Assign COS when a team needs an operational coordinator |
 | **Previous COS unresponsive** | Unassign current COS, assign role to a different agent |
 | **Team restructuring** | Reassign COS as team composition changes |
-| **Never duplicate** | Only ONE COS per closed team at any time |
-| **Open teams** | Open teams do not have a COS; coordination is ad-hoc |
+| **Never duplicate** | Only ONE COS per team at any time |
 
 ---
 
@@ -108,7 +134,7 @@ Send a COS role notification to the agent using the `agent-messaging` skill:
 - [ ] Agent exists in AI Maestro registry
 - [ ] Team exists and is of type `closed`
 - [ ] Team does not already have a COS (or previous COS was unassigned)
-- [ ] User assigned COS via dashboard
+- [ ] `PATCH /api/teams/$TEAM_ID/chief-of-staff` succeeded
 - [ ] `GET /api/teams/$TEAM_ID` confirms `chiefOfStaff` set to correct agent
 - [ ] Initialization message sent to agent
 - [ ] Agent acknowledged COS role

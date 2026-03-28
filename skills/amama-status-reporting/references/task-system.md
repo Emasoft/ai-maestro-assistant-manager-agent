@@ -9,7 +9,7 @@ AI Maestro maintains its own task system, separate from GitHub Issues. Tasks are
 
 ## Task Storage
 
-Tasks are stored in: `~/.aimaestro/teams/tasks-{teamId}.json`
+Tasks are stored in: `$AGENT_DIR/teams/tasks-{teamId}.json`
 
 ## Task Statuses (Kanban)
 

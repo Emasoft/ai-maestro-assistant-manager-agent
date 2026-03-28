@@ -8,9 +8,9 @@
 - [Handle Directly (no routing)](#handle-directly-no-routing)
 <!-- /TOC -->
 
-**IMPORTANT**: AMAMA CAN message any agent directly. Routing via AMCOS is preferred for delegation but not required. When a routing rule says "route to AMAA/AMOA/AMIA", it means: preferably create a handoff, send it to AMCOS for delegation, and AMCOS delegates to the appropriate specialist. However, AMAMA may contact specialists directly if urgent or if AMCOS is unavailable.
+**IMPORTANT**: All specialist routing goes through AMCOS (chief-of-staff). AMAMA never communicates directly with specialist agents. When a routing rule says "route to AMAA/AMOA/AMIA", it means: create a handoff, send it to AMCOS, and AMCOS delegates to the appropriate specialist.
 
-## Route to AMAA (Architect specialization, `role: member`)
+## Route to AMAA (Architect specialization, governance title: `MEMBER`)
 
 1. **New project/feature design needed**
    - User says: "Design a...", "Plan how to...", "Create architecture for..."
@@ -28,7 +28,7 @@
    - User says: "Break down...", "Modularize...", "Plan implementation of..."
    - Action: Create handoff, send to AMCOS for AMAA delegation
 
-## Route to AMOA (Orchestrator specialization, `role: member`)
+## Route to AMOA (Orchestrator, governance title: `ORCHESTRATOR`)
 
 1. **Implementation ready to start**
    - Condition: Approved design/plan exists
@@ -46,7 +46,7 @@
    - Condition: Orchestration in progress, need intervention
    - Action: Forward message to AMCOS for AMOA
 
-## Route to AMIA (Integrator specialization, `role: member`)
+## Route to AMIA (Integrator specialization, governance title: `MEMBER`)
 
 1. **Work ready for integration**
    - Condition: Orchestrator agent signals completion
@@ -64,12 +64,12 @@
    - User says: "Prepare release...", "Merge...", "Deploy..."
    - Action: Create handoff, send to AMCOS for AMIA delegation
 
-## Route to AMCOS (Chief of Staff -- governance role: `chief-of-staff`)
+## Route to AMCOS (Chief of Staff -- governance title: `CHIEF-OF-STAFF`)
 
 1. **Agent lifecycle operations needed**
    - User says: "Spawn a new agent", "Create agent for...", "Start new session"
    - Action: Create handoff with agent requirements, route to AMCOS
-   - **IMPORTANT**: When AMCOS creates new agents, it MUST set `role: 'member'` for all specialist agents. Specialization is expressed via `skills` and `tags`, never via the `role` field.
+   - **IMPORTANT**: When AMCOS creates new agents, it MUST set the correct governance title: `ORCHESTRATOR` for orchestrator agents, `MEMBER` for all other specialist agents. Specialization is expressed via `skills` and `tags`, never via the `title` field (except ORCHESTRATOR which IS a governance title).
 
 2. **Agent termination required**
    - User says: "Terminate agent", "Stop session", "Kill agent"

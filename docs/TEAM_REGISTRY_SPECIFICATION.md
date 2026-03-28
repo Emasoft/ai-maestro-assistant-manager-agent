@@ -4,8 +4,8 @@
 
 | Item | Path |
 |------|------|
-| Global registry | `~/.aimaestro/teams/registry.json` |
-| Per-repo registry | `<repo-root>/.aimaestro/team-registry.json` |
+| Team registry | Managed by AI Maestro server (query via API) |
+| Local cache | `$AGENT_DIR/teams/registry.json` |
 
 ## API
 
@@ -22,9 +22,10 @@
 
 ## Team Types
 
+**All teams are closed.** There are no open teams. Each agent belongs to at most ONE team.
+
 | Type | COS | Description |
 |------|-----|-------------|
-| `open` | Optional | Loose coordination |
 | `closed` | Required | Formal COS-managed coordination |
 
 ## Registry Schema (registry.json)
@@ -50,13 +51,14 @@
 }
 ```
 
-## Roles in Registry
+## Titles in Registry
 
-| Role | Count per Team | Notes |
-|------|---------------|-------|
-| `manager` | 0 (org-wide) | Not listed in team; singleton |
-| `chief-of-staff` | 0 or 1 | Required for closed teams |
-| `member` | 1+ | Skills field determines specialization |
+| Title | Count per Team | Notes |
+|-------|---------------|-------|
+| `MANAGER` | 0 (org-wide) | Not listed in team; singleton |
+| `CHIEF-OF-STAFF` | 1 | Required for every team |
+| `ORCHESTRATOR` | 0 or 1 | Primary kanban manager |
+| `MEMBER` | 1+ | Skills field determines specialization |
 
 ## Agent Naming
 
@@ -88,5 +90,6 @@ GET $AIMAESTRO_API/api/teams/{id}/members
 
 - Team name must be globally unique
 - Agent name must be unique within team
-- Closed teams must have exactly one COS
+- All teams are closed and must have exactly one COS
 - At least one member per team
+- Each agent belongs to at most one team

@@ -112,11 +112,11 @@ All reports MUST include a **Requirement Compliance** section tracing features t
 
 > **For query syntax and examples**, see amama-status-reporting skill Section 3.
 
-**GitHub (read-only):**
+**GitHub (read-only):** All gh commands MUST include `--repo "$OWNER/$REPO"` to target the correct repository.
 ```bash
-gh project item-list <project-number> --format json
-gh issue list --repo <repo> --json number,title,state,labels,milestone
-gh pr view <number> --json reviewDecision,mergeable
+gh project item-list <project-number> --owner "$OWNER" --format json
+gh issue list --repo "$OWNER/$REPO" --json number,title,state,labels,milestone
+gh pr view <number> --repo "$OWNER/$REPO" --json reviewDecision,mergeable
 ```
 
 **AI Maestro Messages:**

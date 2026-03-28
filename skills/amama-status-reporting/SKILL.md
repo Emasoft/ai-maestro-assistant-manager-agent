@@ -33,9 +33,9 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 5. Compile into report format and save to `design/reports/`
 6. Present formatted report to user
 
-Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See [task-system](references/task-system.md) for details.
+Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See `references/task-system.md` for details.
 
-For API query examples, see [api-endpoints](references/api-endpoints.md).
+For API query examples, see `references/api-endpoints.md`.
 
 ## Output
 
@@ -45,7 +45,7 @@ Reports are saved as Markdown to `design/reports/`:
 - `handoff-{date}.md` -- Handoff summary
 - `blockers-{date}.md` -- Blocker report
 
-For detailed report section formats, see [report-formats](references/report-formats.md).
+For detailed report section formats, see `references/report-formats.md`.
 
 ## Error Handling
 
@@ -74,7 +74,7 @@ For detailed report section formats, see [report-formats](references/report-form
 **Blockers**: AMIA unresponsive -- escalating
 ```
 
-For full examples including progress reports, see [report-formats](references/report-formats.md).
+For full examples including progress reports, see `references/report-formats.md`.
 
 ## Checklist
 
@@ -87,24 +87,16 @@ Copy this checklist and track your progress:
 - [ ] Compile report and save to `design/reports/`
 - [ ] Present formatted report to user
 
+For the detailed step-by-step checklist, see `references/checklist.md`.
+
 ## Resources
 
-- [api-endpoints](references/api-endpoints.md) -- API endpoint details and query examples
-- [task-system](references/task-system.md) -- Task system and Kanban status details
-- [report-formats](references/report-formats.md) -- Report types, formats, and full examples
-- [checklist](references/checklist.md) -- Step-by-step execution checklist
-  - Status Reporting Checklist
-  - Table of Contents
-  - Determine report type
-  - Verify AI Maestro API reachable
-  - Query sessions endpoint
-  - Query agents health endpoint
-  - Query teams endpoint
-  - Query teams tasks endpoint
-  - Verify GitHub CLI
-  - Query GitHub issues and PRs
-  - Read session memory files
-  - Compile into report format
-  - Create reports directory
-  - Save report to file
-  - Present report to user
+- **AI Maestro API** -- `$AIMAESTRO_API`
+- **Task storage** -- `$AGENT_DIR/teams/tasks-{teamId}.json`
+- **amama-role-routing SKILL** -- Agent routing
+- **amama-approval-workflows SKILL** -- Approval status
+- **amama-session-memory SKILL** -- Session memory access
+- `references/api-endpoints.md` -- Full API endpoint details and query examples
+- `references/task-system.md` -- Task system and Kanban status details
+- `references/report-formats.md` -- Report types, formats, sections, and full examples
+- `references/checklist.md` -- Step-by-step execution checklist

@@ -47,13 +47,3 @@ Thumbs.db
 # Rust
 target/
 Cargo.lock
-
-# Local tool artifacts
-.tldr/
-.tldrignore
-.tldr_session_*
-.claude/
-.rechecker/
-.serena/
-llm_externalizer_output/
-rck-*.md

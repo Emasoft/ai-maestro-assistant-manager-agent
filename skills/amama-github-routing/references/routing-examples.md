@@ -40,7 +40,7 @@
 
 ### Task Sync Required
 - AI Maestro task status to set: backlog
-- Task file: ~/.aimaestro/teams/tasks-backend.json
+- Task file: $AGENT_DIR/teams/tasks-backend.json
 
 # Output
 [ROUTED] GitHub issue → AMIA
@@ -63,7 +63,7 @@ Reference: #52
 4. Route to: AMIA
 
 # Task sync
-Update ~/.aimaestro/teams/tasks-backend.json:
+Update $AGENT_DIR/teams/tasks-backend.json:
 - Task linked to #45: status "in_progress" → "review"
 - Append to statusHistory
 
@@ -88,7 +88,7 @@ Reference: #45
 4. Route to: AMAA
 
 # Task sync
-Create entry in ~/.aimaestro/teams/tasks-design.json with status: backlog
+Create entry in $AGENT_DIR/teams/tasks-design.json with status: backlog
 
 # Output
 [ROUTED] GitHub kanban → AMAA

@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Role | `manager` |
+| Title | `MANAGER` |
 | Singleton | Yes (one per host) |
 | Session prefix | `manager-` |
 | User-facing | Yes (sole user interface) |
@@ -27,7 +27,7 @@ User <-> MANAGER <-> COS <-> Members
 ```
 
 - MANAGER never spawns agents directly
-- USER assigns COS to teams via dashboard; MANAGER recommends COS candidates; COS coordinates members
+- MANAGER assigns COS to teams; COS coordinates members
 - All governance approvals go through GovernanceRequest API
 
 ## Message Priority
@@ -52,7 +52,7 @@ User <-> MANAGER <-> COS <-> Members
 - Execute technical tasks
 - Spawn agents directly
 - Write code or run tests
-- Manage kanban boards
+- Manage kanban boards as primary (ORCHESTRATOR is the primary kanban manager; MANAGER is secondary)
 
 ## Task Status Reference
 

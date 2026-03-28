@@ -16,7 +16,7 @@ Maintains user relationship continuity across sessions. Uses CozoDB (primary) wi
 
 ## Prerequisites
 
-1. AI Maestro with CozoDB at `~/.aimaestro/agents/<agent-id>/`
+1. AI Maestro with CozoDB at `$AGENT_DIR/db/`
 2. Subconscious memory indexing service running
 3. File access for `thoughts/shared/handoffs/amama/`
 

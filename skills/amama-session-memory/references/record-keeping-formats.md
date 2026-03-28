@@ -62,9 +62,9 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 
 | Project Name | Path | Orchestrator Session | Created | Status |
 |--------------|------|----------------------|---------|--------|
-| inventory-system | /Users/user/Code/inventory-system | orchestrator-inventory-system | 2026-02-04 | active |
-| data-pipeline | /Users/user/Code/data-pipeline | orchestrator-data-pipeline | 2026-02-03 | active |
-| auth-service | /Users/user/Code/auth-service | orchestrator-auth-service | 2026-01-28 | archived |
+| inventory-system | $AGENT_DIR/repos/inventory-system | orchestrator-inventory-system | 2026-02-04 | active |
+| data-pipeline | $AGENT_DIR/repos/data-pipeline | orchestrator-data-pipeline | 2026-02-03 | active |
+| auth-service | $AGENT_DIR/repos/auth-service | orchestrator-auth-service | 2026-01-28 | archived |
 
 ## Project: inventory-system
 - **Created**: 2026-02-04 14:30:22
@@ -159,13 +159,13 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 
 | Session Name | Project | Working Directory | Launched | Last Ping | Status |
 |--------------|---------|-------------------|----------|-----------|--------|
-| orchestrator-inventory-system | inventory-system | /Users/user/Code/inventory-system | 2026-02-04 14:30 | 2026-02-04 16:15 | alive |
-| orchestrator-data-pipeline | data-pipeline | /Users/user/Code/data-pipeline | 2026-02-03 10:22 | 2026-02-04 16:10 | alive |
+| orchestrator-inventory-system | inventory-system | $AGENT_DIR/repos/inventory-system | 2026-02-04 14:30 | 2026-02-04 16:15 | alive |
+| orchestrator-data-pipeline | data-pipeline | $AGENT_DIR/repos/data-pipeline | 2026-02-03 10:22 | 2026-02-04 16:10 | alive |
 
 ## Session: orchestrator-inventory-system
 - **Launched**: 2026-02-04 14:30:22
 - **Plugins**: ai-maestro-assistant-manager
-- **Working Dir**: /Users/user/Code/inventory-system
+- **Working Dir**: $AGENT_DIR/repos/inventory-system
 - **Last Health Check**: 2026-02-04 16:15:44 (ALIVE)
 - **Active Specialists**: AMOA, AMIA
 - **Current Tasks**: Implementing REST API (8/12 tasks complete)
@@ -210,7 +210,7 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 - **User Request**: "Build a REST API for inventory management"
 - **Your Response**: "I'll create a new project called 'inventory-system' and route this to AMOA via the orchestrator for implementation."
 - **Actions Taken**:
-  - Created project at /Users/user/Code/inventory-system
+  - Created project at $AGENT_DIR/repos/inventory-system
   - Launched orchestrator-inventory-system
   - Routed work request to AMOA
 - **User Acknowledgment**: "Great, keep me posted on progress"

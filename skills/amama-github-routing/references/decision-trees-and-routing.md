@@ -141,7 +141,7 @@ LINK     LINK     │ Route to │   │ Route to │
         └──────────┘   └──────────┘
 ```
 
-**All card movements MUST be synced to `~/.aimaestro/teams/tasks-{teamId}.json`.**
+**All card movements MUST be synced to `$AGENT_DIR/teams/tasks-{teamId}.json`.**
 
 ### Kanban Routing Matrix
 
@@ -163,7 +163,7 @@ When a Kanban card moves:
 1. Identify the GitHub issue linked to the card
 2. Determine the team from the issue's `team:{teamId}` label
 3. Map the target Kanban column to an AI Maestro status
-4. Update `~/.aimaestro/teams/tasks-{teamId}.json`:
+4. Update `$AGENT_DIR/teams/tasks-{teamId}.json`:
    - Set `status` to the new AI Maestro status
    - Append to `statusHistory`
    - Update `updatedAt` timestamp

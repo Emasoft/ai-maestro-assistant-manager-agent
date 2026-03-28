@@ -60,14 +60,14 @@ If the target agent is not registered:
 - Register the agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
 - Verify registration succeeded before proceeding
 
-#### Step 3: Verify the Team Exists and is Type `closed`
+#### Step 3: Verify the Team Exists
 
 ```
 GET $AIMAESTRO_API/api/teams/<team-id>
 ```
 
-If the team does not exist or is not type `closed`:
-- Escalate to user: request user to create the team or update its type via dashboard
+If the team does not exist:
+- Create the team (all teams are closed)
 - Document the issue in session log
 
 See the `team-governance` skill for full API details.
@@ -82,40 +82,60 @@ If a COS is already assigned:
 - Determine if re-assignment is needed (e.g., replacing a non-responsive COS)
 - If the existing COS is functioning, no action needed
 
-#### Step 5: Escalate to User for COS Assignment
+#### Step 5: Retry COS Assignment
 
-**AMAMA cannot assign COS roles.** Report the verification findings to the user and request them to assign COS via the dashboard.
+```
+PATCH $AIMAESTRO_API/api/teams/<team-id>/chief-of-staff
+Body: {"agentId": "<agent-id>"}
+```
 
-Provide the user with:
-- The team ID and recommended COS agent
-- Any issues found during verification (API health, agent registration, team state)
-- Recommended actions to resolve issues before attempting COS assignment
+Retry with the same agent, or if repeated failures occur, try assigning a different eligible agent.
 
-Track escalation in the session state file `docs_dev/sessions/cos-assignment-retries.md` with timestamp, team ID, target agent, and findings.
+See the `team-governance` skill for full API details.
 
-#### Step 6: If COS Assignment Continues to Fail
+Track retry count in the session state file `docs_dev/sessions/cos-assignment-retries.md` with timestamp, team ID, target agent, and attempt number:
+```markdown
+## COS Assignment Retry: <timestamp>
+- Team ID: <team-id>
+- Target Agent: <agent-name>
+- Attempt: <1|2|3>
+- Result: <success|error-details>
+```
 
-If the user reports COS assignment failures:
+#### Step 6: If 3 Retries Fail
+
+After 3 failed COS assignment attempts:
 
 1. **Team continues WITHOUT COS**
-   - The team still exists in AI Maestro -- it just lacks a COS
+   - The team still exists in AI Maestro — it just lacks a COS
    - AMAMA can still receive user requests
    - AMAMA cannot delegate to specialists until a COS is assigned
 
-2. **Provide Diagnostic Info to User**
+2. **Notify User**
    ```
-   COS Assignment Diagnostics
+   COS Assignment Failed After 3 Attempts
 
    Team: <team-id>
    Target Agent: <agent-name>
    Status: Team exists WITHOUT COS coordination
 
-   Diagnostic checks:
-   1. AI Maestro API health: `GET $AIMAESTRO_API/api/sessions`
-   2. Agent registration: `GET $AIMAESTRO_API/api/agents?name=<agent-name>`
-   3. Team status: `GET $AIMAESTRO_API/api/teams/<team-id>`
+   Attempted:
+   - Attempt 1: <error>
+   - Attempt 2: <error>
+   - Attempt 3: <error>
 
-   Please retry COS assignment via the dashboard once issues are resolved.
+   Impact:
+   - Cannot delegate to specialist agents (AMOA, AMAA, AMIA)
+   - Team structure is intact in AI Maestro
+   - You can still interact with me for planning
+
+   To fix:
+   1. Check AI Maestro API health: `GET $AIMAESTRO_API/api/sessions`
+   2. Check agent registration: `GET $AIMAESTRO_API/api/agents?name=<agent-name>`
+   3. Check team status: `GET $AIMAESTRO_API/api/teams/<team-id>`
+   4. Restart AI Maestro if needed
+
+   Once fixed, I can retry COS assignment. Say "retry COS for <team-id>" when ready.
    ```
 
 3. **Log Failure**
@@ -124,9 +144,17 @@ If the user reports COS assignment failures:
    ## COS Assignment Failure: <timestamp>
    - Team: <team-id>
    - Target Agent: <agent-name>
-   - Issues found: <diagnostic details>
-   - Resolution: Awaiting user to assign COS via dashboard
+   - Attempts: 3
+   - Errors: <error details>
+   - Resolution: Awaiting user intervention
    ```
+
+#### Step 7: Allow User Manual Fix and Retry
+
+When user says "retry COS for <team-id>":
+1. Re-run verification steps (API health, agent registration, team status)
+2. Attempt COS assignment with same or different agent
+3. Report success or escalate again if still failing
 
 ### Recovery Decision Tree
 
@@ -144,7 +172,7 @@ Is target agent registered? ──NO──> Register agent first, RETRY
     |
    YES
     v
-Does team exist and type=closed? ──NO──> Escalate to user: request team creation/fix via dashboard
+Does team exist? ──NO──> Create team, RETRY
 (GET /api/teams/<team-id>)
     |
    YES
@@ -154,10 +182,15 @@ Does team already have COS? ──YES──> Verify if re-assignment needed
     |
    NO
     v
-Escalate to user: request COS assignment via dashboard
-Provide diagnostic info and recommended COS candidate
-Log findings
-Wait for user to assign COS via dashboard
+Retry count < 3? ──YES──> Wait 10 seconds, RETRY COS assignment
+(Track in docs_dev/sessions/cos-assignment-retries.md)
+    |
+   NO
+    v
+Team continues WITHOUT COS
+Notify user with diagnostic info
+Log failure
+Wait for user to fix and request retry
 ```
 
 ---
@@ -455,9 +488,9 @@ Attempted: Assigning COS role to amcos-inventory-system agent
 Error output: [paste relevant error]
 
 I recommend: Verify AI Maestro API is running by checking `GET /api/sessions`.
-If down, restart it. Then please retry COS assignment via the dashboard.
+If down, restart it. Then I'll retry COS assignment.
 
-Would you like me to check the AI Maestro health status?
+Should I retry once AI Maestro is confirmed running?
 ```
 
 ### Example 2: AMCOS Not Responding to Routing Request

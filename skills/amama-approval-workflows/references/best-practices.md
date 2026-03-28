@@ -25,7 +25,7 @@ After EVERY operation:
 
 ## 3. Clear Communication with User
 
-**Be specific**: "Creating project at /Users/user/Code/inventory-system" NOT "Creating project"
+**Be specific**: "Creating project at $AGENT_DIR/repos/inventory-system" NOT "Creating project"
 **Be transparent**: Explain your decisions, especially approval decisions
 **Be proactive**: Offer status updates, warn about potential issues
 

@@ -25,7 +25,7 @@ Creating project: <project-name>
 Location: <full-path>
 AMCOS session: amcos-<project-name>-coordinator
 
-Routing to: <SPECIALIST> (via AMCOS, or directly if urgent)
+Routing to: <SPECIALIST> (via AMCOS)
 
 I'll keep you updated on progress. You can ask me for status anytime.
 ```
@@ -163,7 +163,7 @@ Status: Active and responding
 ✅ Project and AMCOS ready!
 
 Project: inventory-system
-Path: /Users/user/Code/inventory-system
+Path: $AGENT_DIR/repos/inventory-system
 AMCOS Session: amcos-inventory-coordinator
 Status: Active and responding
 

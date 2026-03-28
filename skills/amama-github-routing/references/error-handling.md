@@ -44,7 +44,7 @@ If task file sync fails:
 1. Log the failure with timestamp and intended state change
 2. Queue the sync for retry
 3. On next successful operation, reconcile queued syncs
-4. If task file is corrupted, rebuild from GitHub issue state using `gh issue list --label "team:${TEAM_ID}" --state all --json` and jq
+4. If task file is corrupted, rebuild from GitHub issue state using `gh issue list --repo "$OWNER/$REPO" --label "team:${TEAM_ID}" --state all --json` and jq
 
 ## Cross-Team Boundary Violation
 

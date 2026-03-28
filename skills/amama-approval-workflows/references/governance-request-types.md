@@ -61,13 +61,11 @@ Approve adding this agent to the team?
 }
 ```
 
-## 3. assign-cos (USER-ONLY)
+## 3. assign-cos
 
 **Trigger**: A COS (Chief of Staff) role needs to be assigned to an agent for a team.
 
-**USER-ONLY OPERATION**: Only the user can assign COS roles. AMAMA can receive and forward the user's decision but cannot approve or execute COS assignment. The user performs this action via the AI Maestro dashboard.
-
-**Request payload** (for reference only -- executed by user, not by AMAMA):
+**Request payload**:
 ```json
 {
   "type": "assign-cos",
@@ -78,13 +76,11 @@ Approve adding this agent to the team?
 }
 ```
 
-## 4. remove-cos (USER-ONLY)
+## 4. remove-cos
 
 **Trigger**: A COS role needs to be revoked from an agent.
 
-**USER-ONLY OPERATION**: Only the user can remove COS roles. AMAMA can receive and forward the user's decision but cannot approve or execute COS removal. The user performs this action via the AI Maestro dashboard.
-
-**Request payload** (for reference only -- executed by user, not by AMAMA):
+**Request payload**:
 ```json
 {
   "type": "remove-cos",

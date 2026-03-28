@@ -7,7 +7,7 @@
 - [Bidirectional Sync Rules](#bidirectional-sync-rules)
 - [Status Mapping: GitHub Kanban Columns to AI Maestro Statuses](#status-mapping-github-kanban-columns-to-ai-maestro-statuses)
 
-All Kanban card movements and issue status changes must be synced with AI Maestro's task system at `~/.aimaestro/teams/tasks-{teamId}.json`.
+All Kanban card movements and issue status changes must be synced with AI Maestro's task system at `$AGENT_DIR/teams/tasks-{teamId}.json`.
 
 ## Task Status Model
 
@@ -23,7 +23,7 @@ AI Maestro uses a 5-status pipeline for all tasks:
 
 ## Task File Format
 
-**Location**: `~/.aimaestro/teams/tasks-{teamId}.json`
+**Location**: `$AGENT_DIR/teams/tasks-{teamId}.json`
 
 ```json
 {
@@ -58,7 +58,7 @@ Every GitHub status change triggers a sync to the task file:
 
 ```bash
 # Read current task state
-TASK_FILE="$HOME/.aimaestro/teams/tasks-${TEAM_ID}.json"
+TASK_FILE="$AGENT_DIR/teams/tasks-${TEAM_ID}.json"
 
 # Update task status (using jq for atomic JSON update)
 jq --arg taskId "$TASK_ID" --arg newStatus "$NEW_STATUS" --arg actor "$SESSION_NAME" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
@@ -74,7 +74,7 @@ jq --arg taskId "$TASK_ID" --arg newStatus "$NEW_STATUS" --arg actor "$SESSION_N
 
 | Direction | Trigger | Action |
 |-----------|---------|--------|
-| GitHub to AI Maestro | Kanban card moved | Update `tasks-{teamId}.json` with new status |
+| GitHub to AI Maestro | Kanban card moved | Update `$AGENT_DIR/teams/tasks-{teamId}.json` with new status |
 | GitHub to AI Maestro | Issue closed | Set task status to `completed` |
 | GitHub to AI Maestro | Issue reopened | Set task status to `in_progress` |
 | AI Maestro to GitHub | Task status changed via API | Move corresponding Kanban card |
@@ -91,4 +91,4 @@ jq --arg taskId "$TASK_ID" --arg newStatus "$NEW_STATUS" --arg actor "$SESSION_N
 | Done / Closed | `completed` |
 
 If a GitHub project uses custom column names, AMAMA must maintain a mapping in:
-`~/.aimaestro/teams/kanban-column-map-{teamId}.json`
+`$AGENT_DIR/teams/kanban-column-map-{teamId}.json`

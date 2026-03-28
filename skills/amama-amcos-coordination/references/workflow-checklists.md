@@ -18,17 +18,26 @@ When user requests a new project team:
 - [ ] **Parse user request** for project name, purpose, and requirements
 - [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
 - [ ] **Verify team name available** (no existing team with that name via `GET $AIMAESTRO_API/api/teams`)
-- [ ] **Request user to create team via dashboard** with recommended name, project, and description
-- [ ] **Verify team created** by user via `GET $AIMAESTRO_API/api/teams`
+- [ ] **Create AI Maestro team** via the Team API:
+  ```
+  POST $AIMAESTRO_API/api/teams
+  Body: {"name": "<team-name>", "project": "<project-name>", "description": "<purpose>"}
+  ```
+  See the `team-governance` skill for full API details.
 - [ ] **Identify available registered agent** for COS role (see "Checklist: Assigning COS Role")
-- [ ] **Request user to assign COS role** to the selected agent via dashboard
+- [ ] **Assign COS role** to the selected agent via the Team API:
+  ```
+  PATCH $AIMAESTRO_API/api/teams/{team-id}/chief-of-staff
+  Body: {"agentId": "<agent-id>"}
+  ```
+  See the `team-governance` skill for full API details.
 - [ ] **Send health check ping** to the COS agent using the `agent-messaging` skill (mandatory)
 - [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
 - [ ] **Register team** in `docs_dev/projects/project-registry.md`
 - [ ] **Report to user** with team ID and AMCOS session name
 - [ ] **Log session creation** in `docs_dev/sessions/active-amcos-sessions.md`
 
-**Success Criteria**: User created AI Maestro team via dashboard, user assigned COS role via dashboard, AMCOS responds to health ping, team registered in logs.
+**Success Criteria**: AI Maestro team created via API, COS role assigned, AMCOS responds to health ping, team registered in logs.
 
 ## Checklist: Assigning COS Role
 
@@ -40,7 +49,12 @@ When assigning the Chief-of-Staff (COS) role to an existing registered agent:
   GET $AIMAESTRO_API/api/agents?status=available
   ```
 - [ ] **Verify agent is registered and reachable** (agent must already exist in AI Maestro)
-- [ ] **Request user to assign COS role** to the agent via the dashboard
+- [ ] **Assign COS role** to the agent via the Team API:
+  ```
+  PATCH $AIMAESTRO_API/api/teams/{team-id}/chief-of-staff
+  Body: {"agentId": "<agent-id>"}
+  ```
+  See the `team-governance` skill for full API details.
 - [ ] **Send cos-role-assignment message** to the agent using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project-name>`
   - **Subject**: "COS Role Assignment"
@@ -57,7 +71,7 @@ When assigning the Chief-of-Staff (COS) role to an existing registered agent:
 - [ ] **Register AMCOS session** in active sessions log
 - [ ] **Report AMCOS ready** to user
 
-**Success Criteria**: User assigned COS role via dashboard, agent accepted role, responds to health ping, registered in logs.
+**Success Criteria**: COS role assigned via Team API, agent accepted role, responds to health ping, registered in logs.
 
 ## Checklist: Processing AMCOS Approval Request
 
@@ -106,7 +120,7 @@ When user gives a work request:
 - [ ] **Verify AMCOS exists and is alive**
   - Check active sessions log
   - Send health ping (mandatory every time)
-  - Request user to assign COS role via dashboard if no AMCOS exists for this project
+  - Assign COS role if no AMCOS exists for this project
 - [ ] **Format work request** for AMCOS
 - [ ] **Send request** to AMCOS using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project>`

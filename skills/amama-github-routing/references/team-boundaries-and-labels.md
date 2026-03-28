@@ -18,15 +18,17 @@ All GitHub issues must be tagged with a team label to enforce team boundaries. T
 
 When creating or routing an issue:
 
+All gh commands MUST include `--repo "$OWNER/$REPO"` to target the correct repository.
+
 ```bash
 # Add team label on issue creation
-gh issue create --title "Fix login timeout" --label "bug,team:backend"
+gh issue create --repo "$OWNER/$REPO" --title "Fix login timeout" --label "bug,team:backend"
 
 # Add team label to existing issue
-gh issue edit 42 --add-label "team:frontend"
+gh issue edit 42 --repo "$OWNER/$REPO" --add-label "team:frontend"
 
 # Query issues for a specific team
-gh issue list --label "team:backend"
+gh issue list --repo "$OWNER/$REPO" --label "team:backend"
 ```
 
 ## Team Boundary Enforcement Decision
