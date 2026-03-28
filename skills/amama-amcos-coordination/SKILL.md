@@ -1,6 +1,6 @@
 ---
 name: amama-amcos-coordination
-description: Use when coordinating with COS for approvals and delegation. Trigger with COS coordination requests.
+description: Use when coordinating with the Chief of Staff (COS) for approval requests, autonomous operation delegation, and project oversight. Trigger with COS coordination requests or project management tasks.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Coordinates with COS-assigned agents. See [cos-definition](references/cos-definition.md).
+Coordinates with COS-assigned agents (team coordinators). See [references/cos-definition.md](references/cos-definition.md).
 
 ## Prerequisites
 
@@ -22,8 +22,8 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 
 ## Instructions
 
-1. **Recommend COS** — Suggest agents for COS role. USER assigns via dashboard. See [creating-amcos-instance](references/creating-amcos-instance.md).
-2. **Register Agents** — `POST /api/agents/register`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
+1. **Assign COS** — `PATCH /api/teams/$TEAM_ID/chief-of-staff`. See `references/creating-amcos-instance.md`.
+2. **Create Teams/Agents** — `POST /api/agents/register`, `POST /api/teams`. See `references/creating-amcos-procedure.md`.
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
   - Request Categories
@@ -43,7 +43,7 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
   - Revocation Message
   - Revocation Reasons
   - Operations That ALWAYS Require AMAMA Approval
-6. **Completions** — Handle notifications. See [completion-notifications](references/completion-notifications.md).
+6. **Completions** — Handle notifications. See `references/completion-notifications.md`.
 7. **ACK** — Require ACK 30-60s. See [references/ack-protocol.md](references/ack-protocol.md).
   - ACK Timeout Requirements
   - ACK Message Format
@@ -59,14 +59,51 @@ Copy this checklist and track your progress:
 - [ ] Wait for ACK (30-60s)
 - [ ] Log result and update state
 
+## Project Oversight
+
+Use AI Maestro project scripts to monitor and manage team projects.
+
+### Monitoring Active Work
+
+1. **Check project status** — Run `amp-project-info.sh` to get current project state, GitHub issues, and milestones.
+2. **Review Orchestrator reports** — The Orchestrator sends progress reports via AMP. Read and evaluate them for blockers, delays, or scope drift.
+3. **Check active work items** — Run `amp-kanban-list.sh --status in_progress` to see what is currently being worked on across the team.
+4. **Resolve escalated blockers** — When the Orchestrator escalates a blocker, evaluate and decide: unblock, reassign, or escalate to the user.
+
+### Creating New Projects
+
+When the user requests a new project, provide COS with a structured brief using this template:
+
+```
+Project: <name>
+Description: <what it does>
+GitHub org: <org-name>
+Repos needed: <list or "Architect will decide">
+Key requirements: <bullet points>
+Timeline: <milestone dates>
+```
+
+Send the project brief to COS via AMP. COS will coordinate with Architect and Orchestrator to set up the project infrastructure.
+
+### Project Oversight Checklist
+
+- [ ] Run `amp-project-info.sh` to check project status
+- [ ] Review latest Orchestrator progress report (AMP inbox)
+- [ ] Run `amp-kanban-list.sh --status in_progress` for active work
+- [ ] Identify and resolve any escalated blockers
+- [ ] For new projects, prepare and send project brief to COS
+
 ## Output
 
 | Operation | Output |
 |-----------|--------|
-| Recommend COS | COS candidate recommended to user |
-| Request team creation | Team creation request sent to user |
+| Assign COS | Agent assigned as COS for team |
+| Create team | Team created, agents assigned |
 | Grant autonomy | Scope confirmed by COS agent |
 | Revoke autonomy | COS agent notified |
+| Project status | Current state from `amp-project-info.sh` |
+| Active work | In-progress items from `amp-kanban-list.sh` |
+| New project | Project brief sent to COS via AMP |
 
 ## Error Handling
 
@@ -74,9 +111,9 @@ See [references/error-handling.md](references/error-handling.md). Escalate on: d
 
 ## Examples
 
-**Input:** User assigns COS via dashboard for team-1 with agent amcos-cos
+**Input:** `PATCH /api/teams/team-backend/chief-of-staff` with `{"agentId":"amcos-chief-of-staff"}`
 
-**Output:** AMAMA verifies assignment: `GET /api/teams/team-1` returns `{"chiefOfStaff":"amcos-cos","status":"assigned"}`
+**Output:** `{"team":"team-backend","chiefOfStaff":"amcos-chief-of-staff","status":"assigned"}`
 
 See [references/workflow-examples.md](references/workflow-examples.md) for full examples.
   - Example 1: User Requests New Project
@@ -90,15 +127,15 @@ See [references/workflow-examples.md](references/workflow-examples.md) for full 
 ## Resources
 
 - [references/message-formats.md](references/message-formats.md) - JSON formats
-  - Approval Request/Response Formats
-  - Autonomy Grant/Revoke Messages
-  - Completion Notification Format
-- [ai-maestro-message-templates](references/ai-maestro-message-templates.md) - Templates
-- [success-criteria](references/success-criteria.md) - Success criteria
+  - AMCOS Approval Request Format, Field Descriptions, AMAMA Response Format
+  - Autonomy Messages, Grant Message, Revoke Message
+  - Completion Notification Format, Field Descriptions
+- `references/ai-maestro-message-templates.md` - Templates
+- `references/success-criteria.md` - Success criteria
 - [references/workflow-checklists.md](references/workflow-checklists.md) - Checklists
   - Checklist: Creating New Team
   - Checklist: Assigning COS Role
   - Checklist: Processing AMCOS Approval Request
   - Checklist: Routing User Request to AMCOS
   - Checklist: Providing Status to User
-- [spawn-failure-recovery](references/spawn-failure-recovery.md) - Recovery
+- `references/spawn-failure-recovery.md` - Recovery
