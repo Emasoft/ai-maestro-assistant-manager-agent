@@ -6,6 +6,8 @@
 name = "ai-maestro-assistant-manager-agent"
 source = "path"
 path = "agents/amama-assistant-manager-main-agent.md"
+compatible-titles = ["MANAGER"]
+compatible-clients = ["claude-code"]
 
 [requirements]
 project_type = "library"
