@@ -64,12 +64,12 @@
    - User says: "Prepare release...", "Merge...", "Deploy..."
    - Action: Create handoff, send to AMCOS for AMIA delegation
 
-## Route to AMCOS (Chief of Staff -- governance role: `chief-of-staff`)
+## Route to AMCOS (Chief of Staff -- governance title: `chief-of-staff`)
 
 1. **Agent lifecycle operations needed**
    - User says: "Spawn a new agent", "Create agent for...", "Start new session"
    - Action: Create handoff with agent requirements, route to AMCOS
-   - **IMPORTANT**: When AMCOS creates new agents, it MUST set `role: 'member'` for all specialist agents. Specialization is expressed via `skills` and `tags`, never via the `role` field.
+   - **IMPORTANT**: When AMCOS creates new agents, it MUST set `role: 'member'` for all specialist agents. Specialization is expressed via `skills` and `tags`, never via the `title` field.
 
 2. **Agent termination required**
    - User says: "Terminate agent", "Stop session", "Kill agent"

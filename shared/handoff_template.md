@@ -13,13 +13,13 @@ This template defines the standard format for handoff documents between roles in
 
 ## Handoff File Format
 
-**Note on `amcos` in role fields**: The value `amcos` refers to the COS governance role, not the agent's session identity. In v2, any registered agent can be assigned the COS role — its session name may differ (e.g., `coordinator-alpha`). Use `amcos` in `from_role`/`to_role` to indicate the agent is acting in its COS capacity. The actual recipient session name is resolved via the team's `chief_of_staff` field in the AI Maestro API.
+**Note on `amcos` in role fields**: The value `amcos` refers to the COS governance title, not the agent's session identity. In v2, any registered agent can be assigned the COS role — its session name may differ (e.g., `coordinator-alpha`). Use `amcos` in `from_title`/`to_title` to indicate the agent is acting in its COS capacity. The actual recipient session name is resolved via the team's `chief_of_staff` field in the AI Maestro API.
 
 ```yaml
 ---
 uuid: "handoff-{uuid}"
-from_role: "amama" | "amcos" | "amaa" | "amoa" | "amia"
-to_role: "amama" | "amcos" | "amaa" | "amoa" | "amia"
+from_title: "amama" | "amcos" | "amaa" | "amoa" | "amia"
+to_title: "amama" | "amcos" | "amaa" | "amoa" | "amia"
 created: "ISO-8601 timestamp"
 github_issue: "#issue_number"  # Optional
 subject: "Brief description"

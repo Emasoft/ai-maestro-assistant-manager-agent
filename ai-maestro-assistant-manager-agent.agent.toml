@@ -5,7 +5,7 @@
 [agent]
 name = "ai-maestro-assistant-manager-agent"
 source = "path"
-path = "agents/amama-assistant-manager-main-agent.md"
+path = "agents/ai-maestro-assistant-manager-agent-main-agent.md"
 compatible-titles = ["MANAGER"]
 compatible-clients = ["claude-code"]
 

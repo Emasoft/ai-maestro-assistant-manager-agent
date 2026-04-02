@@ -24,5 +24,5 @@ MAX_HANDOFF_SIZE_KB = 100
 # Governance roles (AI Maestro defines exactly 3)
 VALID_GOVERNANCE_ROLES = frozenset(["manager", "chief-of-staff", "member"])
 
-# Agent specializations (expressed via skills/tags, NOT via governance role)
+# Agent specializations (expressed via skills/tags, NOT via governance title)
 VALID_SPECIALIZATIONS = frozenset(["architect", "orchestrator", "integrator"])

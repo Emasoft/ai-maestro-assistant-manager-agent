@@ -1,14 +1,14 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.6.0
+**Version**: 2.6.7
 
-Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/23blocks-OS/ai-maestro-plugins).
+Part of the [AI Maestro](https://github.com/Emasoft/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/Emasoft/ai-maestro-plugins).
 
 ## Overview
 
 The AI Maestro Assistant Manager Agent (AMAMA) is the **user's right hand** -- the sole interlocutor with the user. It receives user requests, clarifies requirements, routes work to appropriate specialist agents via the Chief-of-Staff (AMCOS), and presents results back to the user.
 
-Requires **[AI Maestro](https://github.com/23blocks-OS/ai-maestro) >= 0.26.0** for inter-agent messaging, governance APIs, and team management.
+Requires **[AI Maestro](https://github.com/Emasoft/ai-maestro) >= 0.26.0** for inter-agent messaging, governance APIs, and team management.
 
 ## Communication Hierarchy
 
@@ -23,7 +23,7 @@ USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (membe
 
 ## Governance Model (v2)
 
-AI Maestro defines exactly 3 governance roles:
+AI Maestro defines exactly 3 governance titles:
 
 | Role | Agent | Purpose |
 |------|-------|---------|
@@ -31,7 +31,7 @@ AI Maestro defines exactly 3 governance roles:
 | `chief-of-staff` | AMCOS | Agent lifecycle, permissions, failure recovery |
 | `member` | AMAA, AMOA, AMIA | All specialist agents (specialization via skills/tags, NOT the role field) |
 
-**COS Assignment Model**: AMAMA does NOT spawn new AMCOS instances. Instead, AMAMA assigns the `chief-of-staff` governance role to an already-running registered agent via `PATCH /api/teams/{id}/chief-of-staff`.
+**COS Assignment Model**: AMAMA does NOT spawn new AMCOS instances. Instead, AMAMA assigns the `chief-of-staff` governance title to an already-running registered agent via `PATCH /api/teams/{id}/chief-of-staff`.
 
 ## Two-Track Approval System
 

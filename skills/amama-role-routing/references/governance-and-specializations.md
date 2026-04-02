@@ -8,7 +8,7 @@
 
 ## Governance Roles
 
-AI Maestro defines exactly **3 governance roles**:
+AI Maestro defines exactly **3 governance titles**:
 
 | Governance Role | Purpose |
 |-----------------|---------|
@@ -16,21 +16,21 @@ AI Maestro defines exactly **3 governance roles**:
 | `chief-of-staff` | Agent lifecycle, permissions, failure recovery |
 | `member` | All other agents -- the default role |
 
-**Architect**, **Orchestrator**, and **Integrator** are NOT governance roles. They are **plugin-level specializations** expressed through agent skills, metadata, and tags. When creating or registering agents, always set `role: 'member'` for all non-COS agents. The specialization (architect, orchestrator, integrator) is conveyed via the agent's `skills` array and `tags` metadata, not the `role` field.
+**Architect**, **Orchestrator**, and **Integrator** are NOT governance titles. They are **plugin-level specializations** expressed through agent skills, metadata, and tags. When creating or registering agents, always set `role: 'member'` for all non-COS agents. The specialization (architect, orchestrator, integrator) is conveyed via the agent's `skills` array and `tags` metadata, not the `title` field.
 
 ```jsonc
-// CORRECT -- specialization via skills/tags, governance role is 'member'
+// CORRECT -- specialization via skills/tags, governance title is 'member'
 {
   "name": "amaa-architect",
-  "role": "member",
+  "title": "member",
   "skills": ["architecture", "design", "requirements-analysis"],
   "tags": ["specialization:architect"]
 }
 
-// WRONG -- do NOT use specialization names as governance roles
+// WRONG -- do NOT use specialization names as governance titles
 {
   "name": "amaa-architect",
-  "role": "architect"  // <- INVALID: not a governance role
+  "title": "architect"  // <- INVALID: not a governance title
 }
 ```
 
