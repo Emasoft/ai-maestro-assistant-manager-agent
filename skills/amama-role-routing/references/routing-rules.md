@@ -1,12 +1,11 @@
 # Detailed Routing Rules
 
-<!-- TOC -->
+## Table of Contents
 - [Route to AMAA (Architect)](#route-to-amaa-architect-specialization-role-member)
 - [Route to AMOA (Orchestrator)](#route-to-amoa-orchestrator-specialization-role-member)
 - [Route to AMIA (Integrator)](#route-to-amia-integrator-specialization-role-member)
 - [Route to AMCOS (Chief of Staff)](#route-to-amcos-chief-of-staff----governance-role-chief-of-staff)
 - [Handle Directly (no routing)](#handle-directly-no-routing)
-<!-- /TOC -->
 
 **IMPORTANT**: AMAMA CAN message any agent directly. Routing via AMCOS is preferred for delegation but not required. When a routing rule says "route to AMAA/AMOA/AMIA", it means: preferably create a handoff, send it to AMCOS for delegation, and AMCOS delegates to the appropriate specialist. However, AMAMA may contact specialists directly if urgent or if AMCOS is unavailable.
 

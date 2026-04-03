@@ -1,11 +1,10 @@
 # Report Types and Formats - Detailed Reference
 
-<!-- TOC -->
+## Table of Contents
 - [Report Types](#report-types)
 - [Output Locations](#output-locations)
 - [Report Sections](#report-sections)
 - [Full Examples](#full-examples)
-<!-- /TOC -->
 
 ## Report Types
 

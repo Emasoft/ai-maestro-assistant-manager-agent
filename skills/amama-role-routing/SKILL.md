@@ -1,6 +1,6 @@
 ---
 name: amama-role-routing
-description: Use when routing user requests to specialist agents. Trigger with work delegation needs.
+description: Use when routing user requests to specialist agents. Trigger with work delegation needs. Loaded by ai-maestro-assistant-manager-agent-main-agent
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -12,7 +12,7 @@ user-invocable: false
 
 ## Overview
 
-Routes requests to specialist agents. AMAMA can message directly; routing via AMCOS preferred but not required. 3 roles: `manager`, `chief-of-staff`, `member`. See [governance-and-specializations](references/governance-and-specializations.md).
+Routes requests to specialist agents. AMAMA can message directly; routing via AMCOS preferred but not required. 3 governance roles: `manager`, `chief-of-staff`, `member`.
 
 ## Prerequisites
 
@@ -51,7 +51,7 @@ Copy this checklist and track your progress:
 | "status", "progress", "update" | Handle directly | none |
 | "approve", "reject", "confirm" | Handle directly | approval_response |
 
-Full routing rules: [routing-rules](references/routing-rules.md). Handoff protocol: [handoff-protocol](references/handoff-protocol.md).
+See routing-rules.md and handoff-protocol.md in Resources.
 
 ## Output
 
@@ -72,36 +72,26 @@ Full routing rules: [routing-rules](references/routing-rules.md). Handoff protoc
 
 ## Examples
 
-**Example 1 -- Design request routed to AMCOS:**
+**Input:** User says "Design an auth system"
+**Output:** Intent "design" → route to AMCOS for AMAA. Handoff saved, message sent.
 
-User says: "Design an auth system with OAuth2 support"
-
-Intent: "design" -> route to AMCOS for AMAA (or direct if urgent). Message sent:
-
-```json
-{
-  "to": "amcos-chief-of-staff",
-  "subject": "Work request: Design auth system",
-  "priority": "normal",
-  "content": {
-    "type": "work_request",
-    "message": "Route to AMAA: Design auth system with OAuth2 support",
-    "handoff_id": "handoff-a1b2c3-amama-to-amcos.md",
-    "target_specialist": "amaa-architect"
-  }
-}
-```
-
-Handoff file saved to `docs_dev/handoffs/handoff-a1b2c3-amama-to-amcos.md`.
-
-**Example 2 -- Status request handled directly:**
-
-User says: "What's the progress on the API?" -> intent "progress" -> handle directly. No handoff. Query agents and respond with status summary.
+**Input:** User says "What's the progress?"
+**Output:** Intent "progress" → handle directly. No handoff needed.
 
 ## Resources
 
-- Routing rules: [routing-rules](references/routing-rules.md)
-- Handoff protocol: [handoff-protocol](references/handoff-protocol.md)
-- Governance roles: [governance-and-specializations](references/governance-and-specializations.md)
-- Design/orch routing: [design-and-orchestration-routing](references/design-and-orchestration-routing.md)
-- GitHub ops: see **amama-github-routing** skill
+- [routing-rules](references/routing-rules.md)
+  - Route to AMAA
+  - Route to AMOA
+  - Route to AMIA
+  - Route to AMCOS
+  - Handle Directly
+- [handoff-protocol](references/handoff-protocol.md)
+  - Steps
+  - File Naming Convention
+  - Storage Location
+  - Checklist
+- [governance-and-specializations](references/governance-and-specializations.md)
+  - Governance Roles
+  - Plugin Prefix Reference
+  - Communication Hierarchy

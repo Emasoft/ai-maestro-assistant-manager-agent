@@ -1,6 +1,6 @@
 ---
 name: amama-amcos-coordination
-description: Use when coordinating with COS for approvals and delegation. Trigger with COS coordination requests.
+description: Use when coordinating with COS for approvals and delegation. Trigger with COS coordination requests. Loaded by ai-maestro-assistant-manager-agent-main-agent
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -53,19 +53,17 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 Copy this checklist and track your progress:
 
 - [ ] Identify operation type
-- [ ] Verify target agent is registered
-- [ ] Prepare API payload
-- [ ] Execute API call or send message
-- [ ] Wait for ACK (30-60s)
-- [ ] Log result and update state
+- [ ] Verify target agent registered
+- [ ] Prepare and execute API call
+- [ ] Wait for ACK (30-60s), log result
 
 ## Output
 
 | Operation | Output |
 |-----------|--------|
 | Recommend COS | COS candidate recommended to user |
-| Request team creation | Team creation request sent to user |
-| Grant autonomy | Scope confirmed by COS agent |
+| Request team | Team creation request sent |
+| Grant autonomy | Scope confirmed by COS |
 | Revoke autonomy | COS agent notified |
 
 ## Error Handling

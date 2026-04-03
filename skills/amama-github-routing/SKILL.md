@@ -1,6 +1,6 @@
 ---
 name: amama-github-routing
-description: Use when routing GitHub operations (issues, PRs, projects, releases) to specialists via team labels. Trigger with GitHub requests.
+description: Use when routing GitHub operations (issues, PRs, projects, releases) to specialists via team labels. Trigger with GitHub requests. Loaded by ai-maestro-assistant-manager-agent-main-agent
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -36,12 +36,10 @@ Default: AMIA. Route to AMAA/AMOA only with design/module context. PRs/releases 
 
 Copy this checklist and track your progress:
 
-- [ ] Identify operation type
-- [ ] Apply team label
+- [ ] Identify type, apply team label
 - [ ] Consult decision tree
 - [ ] Prepare and send handoff
-- [ ] Sync task file
-- [ ] Verify completion
+- [ ] Sync task file, verify completion
 
 ## Output
 
@@ -55,9 +53,9 @@ Reference: {tracking_id}
 ## Error Handling
 
 - **Ambiguous routing**: Default to AMIA, ask user if unclear
-- **Missing team label**: Infer from ownership; do NOT route until applied
-- **Agent unavailable**: Queue handoff, notify user, retry, escalate on failure
-- **Task sync failure**: Log, queue retry, reconcile on next success
+- **Missing team label**: Infer from ownership; do NOT route until set
+- **Agent unavailable**: Queue handoff, notify user, retry
+- **Task sync failure**: Log, queue retry, reconcile
 - **Cross-team violation**: Block, log, escalate
 
 See error-handling.md for full procedures.

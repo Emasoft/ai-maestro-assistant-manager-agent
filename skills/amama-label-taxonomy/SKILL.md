@@ -1,6 +1,6 @@
 ---
 name: amama-label-taxonomy
-description: Use when managing GitHub issue labels or priorities. Trigger with label or triage requests.
+description: Use when managing GitHub issue labels or priorities. Trigger with label or triage requests. Loaded by ai-maestro-assistant-manager-agent-main-agent.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -34,7 +34,7 @@ Label taxonomy for AMAMA. Manages priority labels, status labels, and translates
 **Monitors only**: `status:pending|in_progress|review|completed`, `assign:*`.
 **Never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
 
-See [label-tables](references/label-tables.md) for full label tables and approval authority.
+See label-tables reference for full label tables and approval authority.
 
 **Key commands**:
 
@@ -50,7 +50,7 @@ gh issue edit $NUM --add-label "status:blocked"
 gh issue list --label "status:in-progress" --json number,title,labels
 ```
 
-See [commands-and-patterns](references/commands-and-patterns.md) for all commands and patterns.
+See commands-and-patterns reference for all commands and patterns.
 
 ## Checklist
 
@@ -106,14 +106,10 @@ gh issue edit 45 --remove-label "priority:normal" --add-label "priority:high"
 
 **Response**: "Priority updated to high for issue #45."
 
-See [commands-and-patterns](references/commands-and-patterns.md) for more examples.
+See commands-and-patterns reference for more examples.
 
 ## Resources
 
-- [label-tables](references/label-tables.md) -- Label tables, kanban columns, approval authority
-- [commands-and-patterns](references/commands-and-patterns.md) -- Commands, patterns, examples
-- **AGENT_OPERATIONS.md** -- Agent operational patterns
-- **amama-status-reporting** -- Status communication
-- **amama-user-communication** -- Communication style
-- **amama-role-routing** -- Role delegation
+- [label-tables](references/label-tables.md): Priority Labels, Kanban Columns (Canonical 5-Status Model), Status Labels AMAMA Updates, Labels AMAMA Monitors, Labels AMAMA Never Sets, AMAMA's Approval Authority
+- [commands-and-patterns](references/commands-and-patterns.md): Label Commands, User Communication Patterns, Full Examples
 

@@ -1,10 +1,9 @@
 # AI Maestro Status APIs - Detailed Reference
 
-<!-- TOC -->
+## Table of Contents
 - [API Endpoints](#api-endpoints)
 - [Query Examples](#query-examples)
 - [Task Query for Reports](#task-query-for-reports)
-<!-- /TOC -->
 
 All status data MUST be sourced from AI Maestro APIs, not from manual agent queries or guesswork.
 

@@ -1,9 +1,8 @@
 # Design Document & Module Orchestration Routing
 
-<!-- TOC -->
+## Table of Contents
 - [Design Document Routing](#design-document-routing)
 - [Module Orchestration Routing](#module-orchestration-routing)
-<!-- /TOC -->
 
 ## Design Document Routing
 

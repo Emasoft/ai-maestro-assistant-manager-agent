@@ -1,10 +1,9 @@
 # AMAMA Label Commands & Communication Patterns
 
-<!-- TOC -->
+## Table of Contents
 - [Label Commands](#label-commands)
 - [User Communication Patterns](#user-communication-patterns)
 - [Full Examples](#full-examples)
-<!-- /TOC -->
 
 ## Label Commands
 

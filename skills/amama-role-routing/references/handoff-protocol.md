@@ -1,11 +1,10 @@
 # Handoff Protocol
 
-<!-- TOC -->
+## Table of Contents
 - [Steps](#steps)
 - [File Naming Convention](#file-naming-convention)
 - [Storage Location](#storage-location)
 - [Checklist](#checklist)
-<!-- /TOC -->
 
 ## Steps
 

@@ -1,13 +1,12 @@
 # AMAMA Label Tables Reference
 
-<!-- TOC -->
+## Table of Contents
 - [Priority Labels](#priority-labels-priority)
 - [Kanban Columns (Canonical 5-Status Model)](#kanban-columns-canonical-5-status-model)
 - [Status Labels AMAMA Updates](#status-labels-amama-updates)
 - [Labels AMAMA Monitors](#labels-amama-monitors)
 - [Labels AMAMA Never Sets](#labels-amama-never-sets)
 - [AMAMA's Approval Authority](#amamas-approval-authority)
-<!-- /TOC -->
 
 ## Priority Labels (`priority:*`)
 

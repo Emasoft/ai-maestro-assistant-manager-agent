@@ -46,7 +46,7 @@ AI Maestro defines exactly 3 governance titles:
 
 | Agent | File | Description |
 |-------|------|-------------|
-| Assistant Manager | `agents/amama-assistant-manager-main-agent.md` | Main AMAMA agent -- user communication, routing, approvals, team management |
+| Assistant Manager | `agents/ai-maestro-assistant-manager-agent-main-agent.md` | Main AMAMA agent -- user communication, routing, approvals, team management |
 | Report Generator | `agents/amama-report-generator.md` | Generates formatted status reports for user |
 
 ### Commands

@@ -33,9 +33,9 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 5. Compile into report format and save to `design/reports/`
 6. Present formatted report to user
 
-Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See [task-system](references/task-system.md) for details.
+Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See task-system reference for details.
 
-For API query examples, see [api-endpoints](references/api-endpoints.md).
+For API query examples, see api-endpoints reference.
 
 ## Output
 
@@ -45,7 +45,7 @@ Reports are saved as Markdown to `design/reports/`:
 - `handoff-{date}.md` -- Handoff summary
 - `blockers-{date}.md` -- Blocker report
 
-For detailed report section formats, see [report-formats](references/report-formats.md).
+For detailed report section formats, see report-formats reference.
 
 ## Error Handling
 
@@ -74,7 +74,7 @@ For detailed report section formats, see [report-formats](references/report-form
 **Blockers**: AMIA unresponsive -- escalating
 ```
 
-For full examples including progress reports, see [report-formats](references/report-formats.md).
+For full examples including progress reports, see report-formats reference.
 
 ## Checklist
 
@@ -90,8 +90,17 @@ Copy this checklist and track your progress:
 ## Resources
 
 - [api-endpoints](references/api-endpoints.md) -- API endpoint details and query examples
+  - API Endpoints
+  - Query Examples
+  - Task Query for Reports
 - [task-system](references/task-system.md) -- Task system and Kanban status details
+  - Task Storage
+  - Task Statuses (Kanban)
 - [report-formats](references/report-formats.md) -- Report types, formats, and full examples
+  - Report Types
+  - Output Locations
+  - Report Sections
+  - Full Examples
 - [checklist](references/checklist.md) -- Step-by-step execution checklist
   - Status Reporting Checklist
   - Table of Contents

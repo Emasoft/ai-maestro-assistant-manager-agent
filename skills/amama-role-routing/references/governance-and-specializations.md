@@ -1,10 +1,9 @@
 # Governance Roles vs. Agent Specializations
 
-<!-- TOC -->
+## Table of Contents
 - [Governance Roles](#governance-roles)
 - [Plugin Prefix Reference](#plugin-prefix-reference)
 - [Communication Hierarchy](#communication-hierarchy)
-<!-- /TOC -->
 
 ## Governance Roles
 

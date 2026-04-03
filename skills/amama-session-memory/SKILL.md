@@ -1,6 +1,6 @@
 ---
 name: amama-session-memory
-description: Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start or preference changes.
+description: Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start or preference changes. Loaded by ai-maestro-assistant-manager-agent-main-agent
 version: 2.3.3
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -35,10 +35,8 @@ Maintains user relationship continuity across sessions. Uses CozoDB (primary) wi
 Copy this checklist and track your progress:
 
 - [ ] Check CozoDB / initialize storage
-- [ ] Load context
-- [ ] Detect preferences and patterns
-- [ ] Record decisions
-- [ ] Track pending items
+- [ ] Load context, detect preferences
+- [ ] Record decisions, track pending items
 - [ ] Write handoffs at session end
 
 ## Output
@@ -109,6 +107,3 @@ See [references/examples.md](references/examples.md) for detailed examples:
   - Example 6: Semantic Search for Implicit Preferences
 - record-keeping-formats.md (references/record-keeping-formats.md) - Record formats
 
----
-
-**Version**: 2.3.3 | **Updated**: 2026-03-08
