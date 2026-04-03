@@ -122,7 +122,7 @@ gh pr view <number> --json reviewDecision,mergeable
 ```
 
 **AI Maestro Messages:**
-Check your inbox using the `agent-messaging` skill. Process all unread messages before proceeding.
+Request message data from the main agent (AMAMA). As a sub-agent, you MUST NOT use AMP directly — the main agent reads messages and passes relevant data to you.
 
 **Local files:**
 - `docs_dev/TODO.md` - Task checklists
