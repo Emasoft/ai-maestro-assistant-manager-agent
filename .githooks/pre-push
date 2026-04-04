@@ -1,115 +1,29 @@
 #!/usr/bin/env bash
-# pre-push hook - Validate plugin before allowing push
+# pre-push hook: blocks git push unless invoked by publish.py
 #
-# Runs CPV (Claude Plugins Validation) in strict mode.
-# Exit codes: 0=PASS, 1=CRITICAL, 2=MAJOR, 3=MINOR
-# Quality gate: CRITICAL and MAJOR block push. MINOR allowed.
+# publish.py sets CPV_PUBLISH_PIPELINE=1 before pushing.
+# Direct `git push` without publish.py is BLOCKED.
 #
-# To install:
-#   mkdir -p .git/hooks && cp .githooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
-#
-# To bypass (NOT RECOMMENDED):
-#   git push --no-verify
+# Install: cp .githooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+# Or:      git config core.hooksPath .githooks
 
-set -euo pipefail
-
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-
-echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}  Pre-push Plugin Validation (CPV)${NC}"
-echo -e "${BLUE}========================================${NC}"
-echo ""
-
-REMOTE="$1"
-URL="$2"
-
-echo -e "${BLUE}Pushing to:${NC} ${REMOTE} (${URL})"
-echo ""
-
-while read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA; do
-    if [ "${LOCAL_SHA}" = "0000000000000000000000000000000000000000" ]; then
-        echo -e "${GREEN}Branch deletion detected. No validation needed.${NC}"
-        continue
-    fi
-
-    if [ "${REMOTE_SHA}" = "0000000000000000000000000000000000000000" ]; then
-        CHANGED_FILES=$(git diff --name-only "${LOCAL_SHA}" HEAD~10 2>/dev/null || git ls-tree -r --name-only "${LOCAL_SHA}")
-    else
-        CHANGED_FILES=$(git diff --name-only "${REMOTE_SHA}..${LOCAL_SHA}" 2>/dev/null || true)
-    fi
-
-    PLUGIN_FILES_CHANGED=false
-    while IFS= read -r file; do
-        case "${file}" in
-            .claude-plugin/*|agents/*|commands/*|skills/*|hooks/*|scripts/*.py|scripts/*.sh|*.mcp.json)
-                PLUGIN_FILES_CHANGED=true
-                ;;
-        esac
-    done <<< "${CHANGED_FILES}"
-
-    if [ "${PLUGIN_FILES_CHANGED}" = false ]; then
-        echo -e "${GREEN}No plugin files changed. Skipping validation.${NC}"
-        exit 0
-    fi
-done
-
-echo -e "${BLUE}Running CPV validation...${NC}"
-echo ""
-
-cd "${REPO_ROOT}"
-
-set +e
-if command -v uvx &> /dev/null; then
-    uvx --from git+https://github.com/Emasoft/claude-plugins-validation --with pyyaml cpv-validate . --verbose 2>&1
-else
-    echo -e "${RED}ERROR: uvx not found. Install uv to run CPV validation.${NC}"
-    exit 1
+if [ "${CPV_PUBLISH_PIPELINE:-}" = "1" ]; then
+    exit 0
 fi
-VALIDATION_EXIT_CODE=$?
-set -e
 
 echo ""
-
-case ${VALIDATION_EXIT_CODE} in
-    0)
-        echo -e "${GREEN}========================================${NC}"
-        echo -e "${GREEN}  PASSED: All validation checks passed${NC}"
-        echo -e "${GREEN}  Push allowed.${NC}"
-        echo -e "${GREEN}========================================${NC}"
-        exit 0
-        ;;
-    1)
-        echo -e "${RED}========================================${NC}"
-        echo -e "${RED}  BLOCKED: CRITICAL issues found${NC}"
-        echo -e "${RED}  Fix ALL issues before pushing.${NC}"
-        echo -e "${RED}========================================${NC}"
-        exit 1
-        ;;
-    2)
-        echo -e "${RED}========================================${NC}"
-        echo -e "${RED}  BLOCKED: MAJOR issues found${NC}"
-        echo -e "${RED}  Fix ALL issues before pushing.${NC}"
-        echo -e "${RED}========================================${NC}"
-        exit 1
-        ;;
-    3)
-        echo -e "${YELLOW}========================================${NC}"
-        echo -e "${YELLOW}  WARNING: MINOR issues found${NC}"
-        echo -e "${YELLOW}  Push allowed (minor issues only).${NC}"
-        echo -e "${YELLOW}========================================${NC}"
-        exit 0
-        ;;
-    *)
-        echo -e "${RED}========================================${NC}"
-        echo -e "${RED}  ERROR: Validation failed (exit ${VALIDATION_EXIT_CODE})${NC}"
-        echo -e "${RED}  Please check the validation output.${NC}"
-        echo -e "${RED}========================================${NC}"
-        exit 1
-        ;;
-esac
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║  BLOCKED: Direct git push is not allowed.                   ║"
+echo "║                                                              ║"
+echo "║  Use the publish pipeline instead:                           ║"
+echo "║    uv run python scripts/publish.py --patch                  ║"
+echo "║    uv run python scripts/publish.py --minor                  ║"
+echo "║    uv run python scripts/publish.py --major                  ║"
+echo "║                                                              ║"
+echo "║  The pipeline runs: test → lint → validate → bump → push    ║"
+echo "║                                                              ║"
+echo "║  To bypass (emergency only):                                 ║"
+echo "║    CPV_PUBLISH_PIPELINE=1 git push origin HEAD               ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+exit 1
