@@ -252,6 +252,44 @@ REPORTING RULES:
 > For full approval decision guidance, see **amama-approval-workflows/references/best-practices.md**
 > For best practices, see **amama-approval-workflows/references/best-practices.md**
 
+## AI Maestro REST API Quick Reference
+
+**Authentication (Phase 1):** API calls without auth headers are treated as system-owner requests with full MANAGER privileges. You do NOT need `X-Agent-Id` or `Authorization` headers for localhost API calls. Simply omit all auth headers.
+
+**Response structure** — all endpoints wrap data in a named key:
+
+| Endpoint | Response structure | jq path |
+|----------|-------------------|---------|
+| `GET /api/teams` | `{ teams: [...] }` | `.teams[]` |
+| `GET /api/teams/{id}` | `{ team: {...} }` | `.team` |
+| `POST /api/teams` | `{ team: {...} }` | `.team` |
+| `GET /api/agents` | `{ agents: [...] }` | `.agents[]` |
+| `GET /api/agents/{id}` | `{ agent: {...} }` | `.agent` |
+| `POST /api/agents` | `{ agent: {...} }` | `.agent` |
+| `PATCH /api/agents/{id}` | `{ agent: {...} }` | `.agent` |
+| `GET /api/governance` | `{ hasManager, managerId, ... }` | direct (flat) |
+
+**Creating agents with titles in one call:**
+```bash
+curl -s -X POST http://localhost:23000/api/agents \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-agent", "client": "claude", "teamId": "TEAM_ID", "governanceTitle": "architect"}'
+```
+The `governanceTitle` field is applied after the team join, so the agent gets the correct title without a separate PATCH call.
+
+**Useful patterns:**
+```bash
+# List team agent IDs
+curl -s http://localhost:23000/api/teams/TEAM_ID | jq -r '.team.agentIds[]'
+
+# Get agent title
+curl -s http://localhost:23000/api/agents/AGENT_ID | jq -r '.agent.governanceTitle'
+
+# Create team
+curl -s -X POST http://localhost:23000/api/teams -H "Content-Type: application/json" \
+  -d '{"name": "team-name", "type": "closed"}'
+```
+
 ## AI Maestro Communication
 
 All inter-agent communication uses the AMP (AI Maestro Protocol) messaging standard. Use the `agent-messaging` skill for all messaging operations.
