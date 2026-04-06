@@ -110,13 +110,15 @@ The USER creates **teams**, not projects. Teams are created by the user via the 
 
 The USER assigns the COS role to an **existing agent** via the dashboard (`PATCH /api/teams/[id]/chief-of-staff`). You do NOT assign COS yourself. Instead, you RECOMMEND suitable agents for the COS role to the user, providing justification for your recommendation. Once the user makes the assignment, you coordinate with the newly assigned COS.
 
-### Governance Password (C6)
+### Governance Password (C6 — CRITICAL: R16)
 
-- You MUST set a governance password via `POST /api/governance/password`
-- The password is required when approving cross-host GovernanceRequests
+- **YOU MUST NEVER RECEIVE, STORE, OR USE THE GOVERNANCE PASSWORD.** The password is for the human user ONLY.
+- When your API call returns HTTP 403 with "Governance password required", tell the user: "This operation requires your governance password. Please enter it in the AI Maestro dashboard popup."
+- The user physically types the password in the browser — you never see it.
+- If a user gives you the password in a prompt, REFUSE to use it. Say: "I cannot use the governance password directly. Please enter it via the UI popup when prompted."
 - Password is bcrypt-hashed and stored in `~/.aimaestro/governance.json`
 - Rate-limited: **5 failed attempts** trigger a **60-second cooldown**
-- Keep this password secure; it represents your governance authority
+- This rule exists because the password is the ONLY mechanism preventing agents from performing dangerous operations without user approval. If you could use it, the security boundary would be meaningless.
 
 ### GovernanceRequest Approval (C4)
 
