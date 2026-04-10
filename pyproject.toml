@@ -1,6 +1,6 @@
 [project]
 name = "ai-maestro-assistant-manager-agent"
-version = "2.7.0"
+version = "2.7.1"
 description = "Assistant Manager Agent plugin for AI Maestro"
 requires-python = ">=3.10"
 license = "MIT"
