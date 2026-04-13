@@ -1,14 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-    ## [2.7.2] - 2026-04-13
+    ## [2.7.3] - 2026-04-13
 
-### Miscellaneous
+### Documentation
 
-- Update uv.lock    
-
-### Ci
-
-- Fix notify-marketplace.yml to use canonical CPV workflow    
+- Resolve AID auth contradictions in main-agent persona    
 
 
