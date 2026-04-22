@@ -58,5 +58,9 @@ Cargo.lock
 llm_externalizer_output/
 rck-*.md
 
+# Agent / tool reports (may contain private data — never commit)
+/reports/
+/reports_dev/
+
 # git-cliff scratch — ephemeral release notes between bump and push
 .git-cliff-release-notes.md
