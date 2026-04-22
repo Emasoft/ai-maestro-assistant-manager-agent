@@ -1,6 +1,6 @@
 ---
 name: amama-status-reporting
-description: Use when generating status reports. Queries AI Maestro APIs (sessions, health, teams, tasks) for live data. Trigger with status report requests.
+description: Use when generating status reports. Queries AI Maestro APIs (sessions, agents, teams, tasks) for live data. Trigger with status report requests.
 version: 2.3.2
 compatibility: Requires AI Maestro installed.
 context: fork
@@ -24,8 +24,8 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 
 1. Determine report type: quick status, progress, handoff summary, or blocker
 2. Query AI Maestro APIs for live data:
-   - `GET /api/sessions` -- agent sessions and status
-   - `GET /api/agents/health` -- agent health (alive/unresponsive/crashed)
+   - `GET /api/sessions` -- agent sessions and liveness (active/inactive — proxies agent health)
+   - `GET /api/agents` -- registered agents (filter response client-side by `status` field)
    - `GET /api/teams/{id}` -- team config and members
    - `GET /api/teams/{id}/tasks` -- tasks with Kanban statuses
 3. Query GitHub for issue/PR status via `gh` CLI
@@ -53,7 +53,7 @@ For detailed report section formats, see report-formats reference.
 |-------|------------|
 | API unreachable | Start AI Maestro, report to user |
 | No active sessions | Report "no active agent sessions" |
-| Agent health: crashed | Escalate to AMCOS for recovery |
+| Session inactive / stale | Escalate to AMCOS for recovery |
 | Team/task 404 | Verify team ID, create if needed |
 | GitHub API failure | Use cached data, note staleness |
 | Report dir missing | Create `design/reports/` automatically |
@@ -81,7 +81,7 @@ For full examples including progress reports, see report-formats reference.
 Copy this checklist and track your progress:
 
 - [ ] Determine report type (quick status, progress, handoff, blocker)
-- [ ] Query AI Maestro APIs for sessions, health, teams, tasks
+- [ ] Query AI Maestro APIs for sessions, agents, teams, tasks
 - [ ] Query GitHub for issue/PR status via `gh` CLI
 - [ ] Read session memory files for context
 - [ ] Compile report and save to `design/reports/`
@@ -107,7 +107,7 @@ Copy this checklist and track your progress:
   - Determine report type
   - Verify AI Maestro API reachable
   - Query sessions endpoint
-  - Query agents health endpoint
+  - Query agents endpoint
   - Query teams endpoint
   - Query teams tasks endpoint
   - Verify GitHub CLI

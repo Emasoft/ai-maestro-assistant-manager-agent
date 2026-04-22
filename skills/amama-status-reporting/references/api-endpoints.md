@@ -11,10 +11,12 @@ All status data MUST be sourced from AI Maestro APIs, not from manual agent quer
 
 | Endpoint | Method | Purpose | Returns |
 |----------|--------|---------|---------|
-| `/api/sessions` | GET | Agent session status | All active/inactive sessions with metadata |
-| `/api/agents/health` | GET | Agent health checks | Health status per agent (alive, unresponsive, crashed) |
+| `/api/sessions` | GET | Agent session liveness | All active/inactive sessions with metadata (proxies agent health) |
+| `/api/agents` | GET | Registered agents | Full agent list; filter response client-side by `status` |
 | `/api/teams/{id}` | GET | Team status | Team config, members, current state |
 | `/api/teams/{id}/tasks` | GET | Task status (Kanban) | All tasks for team with statuses |
+
+> **Note:** There is no `/api/agents/health` endpoint — session liveness from `/api/sessions` (`status: active | inactive`) is the authoritative health signal. Agent-level state comes from `/api/agents`, which you filter client-side.
 
 ## Query Examples
 
@@ -22,8 +24,9 @@ All status data MUST be sourced from AI Maestro APIs, not from manual agent quer
 GET $AIMAESTRO_API/api/sessions
 Returns: [.sessions[] | {name, status, uptime}]
 
-GET $AIMAESTRO_API/api/agents/health
-Returns: [.agents[] | {name, health, lastHeartbeat}]
+GET $AIMAESTRO_API/api/agents
+Returns: [.agents[] | {name, status, lastHeartbeat}]
+# Filter client-side, e.g. jq '.agents[] | select(.status == "available")'
 
 GET $AIMAESTRO_API/api/teams/$TEAM_ID
 Returns: {name, members, status}

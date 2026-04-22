@@ -10,7 +10,7 @@
 
 | Type | Frequency | Content | Primary Data Source |
 |------|-----------|---------|---------------------|
-| Quick Status | On demand | Current state summary | `/api/sessions` + `/api/agents/health` |
+| Quick Status | On demand | Current state summary | `/api/sessions` + `/api/agents` |
 | Progress Report | Daily/Weekly | Work completed, in progress, blocked | `/api/teams/{id}/tasks` + GitHub |
 | Handoff Summary | On transition | What was handed to whom | `/api/sessions` + handoff files |
 | Blocker Report | As needed | What's blocking progress | `/api/teams/{id}/tasks` (pending/in_progress) |
@@ -30,7 +30,7 @@
 
 ### Quick Status Format
 - Agent sessions: online/offline counts (from `/api/sessions`)
-- Agent health: alive/unresponsive/crashed (from `/api/agents/health`)
+- Session liveness: active/inactive (from `/api/sessions` — proxies agent health; no dedicated `/api/agents/health` endpoint exists)
 - Current active tasks (from `/api/teams/{id}/tasks` where status = `in_progress`)
 - Next milestone
 - Blockers (if any)
@@ -43,9 +43,9 @@
   - Tasks `in_progress`: count, titles, assignees
   - Tasks in `review`: count and titles
   - Tasks `completed` (this period): count, titles, completion dates
-- **Agent Status** (from `/api/sessions` + `/api/agents/health`):
+- **Agent Status** (from `/api/sessions` + `/api/agents`):
   - Active sessions with uptime
-  - Agent health issues (if any)
+  - Stale / inactive sessions (if any — these proxy "unresponsive" agents)
 - **GitHub Status**: Issues closed, PRs merged (from `gh` CLI)
 - Risks identified
 
@@ -57,18 +57,13 @@
 ## Quick Status - 2025-01-30
 
 ### Agent Sessions
-| Agent | Status | Uptime |
-|-------|--------|--------|
-| amaa-architect | active | 2h 15m |
-| amoa-orchestrator | active | 1h 42m |
-| amia-integrator | inactive | — |
+| Agent | Status | Uptime | Last Heartbeat |
+|-------|--------|--------|----------------|
+| amaa-architect | active | 2h 15m | 30s ago |
+| amoa-orchestrator | active | 1h 42m | 15s ago |
+| amia-integrator | inactive | — | 45m ago |
 
-### Agent Health
-| Agent | Health | Last Heartbeat |
-|-------|--------|----------------|
-| amaa-architect | alive | 30s ago |
-| amoa-orchestrator | alive | 15s ago |
-| amia-integrator | unresponsive | 45m ago |
+Session status proxies agent health: `active` with recent heartbeat = alive, `inactive` with stale heartbeat = unresponsive. There is no separate `/api/agents/health` endpoint.
 
 ### Task Kanban
 | Status | Count | Tasks |
@@ -107,10 +102,10 @@
 - OAuth2 integration
 - Rate limiting
 
-### Agent Health
-- AMAA: alive, uptime 48h
-- AMOA: alive, uptime 36h
-- AMIA: alive, uptime 12h
+### Agent Sessions
+- AMAA: active, uptime 48h (heartbeat 20s ago)
+- AMOA: active, uptime 36h (heartbeat 10s ago)
+- AMIA: active, uptime 12h (heartbeat 5s ago)
 
 ### GitHub Status
 - Issues closed: #45 (auth design), #46 (login impl)

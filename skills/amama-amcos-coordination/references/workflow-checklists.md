@@ -37,7 +37,8 @@ When assigning the Chief-of-Staff (COS) role to an existing registered agent:
 - [ ] **Determine AMCOS session name** (format: `amcos-<project-name>`)
 - [ ] **Identify available registered agent** suitable for COS role:
   ```
-  GET $AIMAESTRO_API/api/agents?status=available
+  GET $AIMAESTRO_API/api/agents
+  # Filter response client-side, e.g. jq '.agents[] | select(.status == "available")'
   ```
 - [ ] **Verify agent is registered and reachable** (agent must already exist in AI Maestro)
 - [ ] **Request user to assign COS role** to the agent via the dashboard
