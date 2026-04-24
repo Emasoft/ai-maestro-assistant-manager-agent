@@ -24,8 +24,8 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 
 1. Determine report type: quick status, progress, handoff summary, or blocker
 2. Query AI Maestro APIs for live data:
-   - `GET /api/sessions` -- agent sessions and liveness (active/inactive — proxies agent health)
-   - `GET /api/agents` -- registered agents (filter response client-side by `status` field)
+   - `GET /api/sessions` -- session liveness (proxies agent health; no `/api/agents/health` endpoint)
+   - `GET /api/agents` -- registered agents (filter client-side by `status`)
    - `GET /api/teams/{id}` -- team config and members
    - `GET /api/teams/{id}/tasks` -- tasks with Kanban statuses
 3. Query GitHub for issue/PR status via `gh` CLI
