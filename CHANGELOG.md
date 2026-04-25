@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-    ## [2.7.8] - 2026-04-25
+    ## [2.7.9] - 2026-04-25
 
 ### Miscellaneous
 
