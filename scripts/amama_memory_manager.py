@@ -18,8 +18,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from amama_report_writer import ReportWriter
-
 from amama_memory_operations import (
     add_decision,
     add_pattern,
@@ -36,6 +34,7 @@ from amama_memory_operations import (
     set_focus,
     write_file_safely,
 )
+from amama_report_writer import ReportWriter
 
 
 @dataclass

@@ -20,7 +20,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import yaml
-
 from amama_report_writer import ReportWriter
 
 # Plan phase state file location
