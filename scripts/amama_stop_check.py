@@ -387,5 +387,9 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":
+def _entry() -> None:
     sys.exit(main())
+
+
+if __name__ == "__main__":
+    _entry()
