@@ -1,6 +1,15 @@
 # State thresholds — reference
 
-The single source of truth for availability-state boundaries used by both `amama-presence-tracker` (read-side, this phase) and the upcoming `/amama-set-availability` slash command (phase 2). All times are computed against `~/.aimaestro/host-state/last-user-input.ts`, the host-global epoch written by the PRESENCE sister plugin (phase 3).
+## Table of Contents
+
+- [State table](#state-table)
+- [Override TTL semantics](#override-ttl-semantics)
+- [Override file format (phase 2)](#override-file-format-phase-2)
+- [Phase-1 default behavior](#phase-1-default-behavior)
+- [NTP-skew clamp](#ntp-skew-clamp)
+- [Crisis cross-reference](#crisis-cross-reference)
+
+The single source of truth for availability-state boundaries used by both amama-presence-tracker (read-side, this phase) and the upcoming `/amama-set-availability` slash command (phase 2). All times are computed against `~/.aimaestro/host-state/last-user-input.ts`, the host-global epoch written by the PRESENCE sister plugin (phase 3).
 
 ## State table
 

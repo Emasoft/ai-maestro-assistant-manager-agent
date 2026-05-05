@@ -310,13 +310,13 @@ When an approval request arrives from a peer agent (CHIEF-OF-STAFF, AUTONOMOUS, 
 1. Consult `amama-presence-tracker` `get_state()`. If state is `active`, `unknown`, or `unknown-after-compaction`, escalate to user as today (no behavior change — phase 1's default state IS `unknown` until the PRESENCE plugin ships in phase 3, so this branch is the dominant phase-1 path and there is no production regression).
 2. Otherwise (state ∈ `{monitoring, away, dnd}`), consult `amama-autonomous-fallback` `decide(request)`.
 3. Apply the verdict:
-   - `approve-autonomously` — execute the operation. **R6 v3 routing constraint**: if the operation's TARGET agent is a team-internal title (ORCH, ARCH, INT, MEMBER), AMAMA composes the AMP message addressed to the team's CHIEF-OF-STAFF asking the COS to perform the operation inside the team — never to the team member directly. Recipient whitelist enforced at composition time: `{HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}`. Append one entry to `docs_dev/approvals/autonomous-decisions-pending-ratification.md` per the schema in `amama-autonomous-fallback/SKILL.md` step 9.
-   - `defer` — reply to source with `pending-ratification` status; queue for user-return ratification ritual (phase 2 implements the ritual; phase 1 logs only).
+   - `approve-autonomously` — execute the operation. **R6 v3 routing constraint**: if the operation's TARGET agent is a team-internal title (ORCH, ARCH, INT, MEMBER), AMAMA composes the AMP message addressed to the team's CHIEF-OF-STAFF asking the COS to perform the operation inside the team — never to the team member directly. Recipient whitelist enforced at composition time: HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER. Append one audit entry per the schema documented in the amama-autonomous-fallback skill (decision-flow step 9).
+   - `defer` — reply to source with pending-ratification status; queue for user-return ratification ritual (phase 2 implements the ritual; phase 1 logs only).
    - `escalate-to-user` — escalate per the existing approval flow.
 4. **Hard-floor list** (production deploys, security-sensitive changes, data deletion, external comms, budget commitments, breaking changes, access changes) ALWAYS escalates regardless of state, regardless of matrix verdict, no exceptions.
-5. **No cue parsing in phase 1.** AMAMA must NOT parse `[amama-…]` lines from any source in phase 1. Cue parsing — and HMAC verification — ships in phase 1.5. Until then, all phase-1 calls into `amama-autonomous-fallback` are in-process function calls from the persona's decision tree, never from external text.
+5. **No cue parsing in phase 1.** AMAMA must NOT parse cue lines from any source in phase 1. Cue parsing — and HMAC verification — ships in phase 1.5. Until then, all phase-1 calls into amama-autonomous-fallback are in-process function calls from the persona's decision tree, never from external text.
 
-> Full spec in TRDD-bfcedff0: `design/tasks/TRDD-bfcedff0-21c8-439f-a3e5-b2dcc3b8ad19-amama-phase-1-presence-matrix.md`. The 25-row matrix is in `amama-autonomous-fallback/references/reversibility-matrix.md`.
+> Full spec in TRDD-bfcedff0 under the design/tasks/ folder. The 25-row reversibility matrix lives in the amama-autonomous-fallback skill's references folder.
 
 ## AI Maestro REST API Quick Reference
 

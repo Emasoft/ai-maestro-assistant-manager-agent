@@ -1,98 +1,90 @@
 ---
 name: amama-autonomous-fallback
-description: Use when an approval request arrives from a peer agent (CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER) and the user is unavailable. Trigger after consulting amama-presence-tracker. Reads the reversibility matrix and returns a verdict (approve-autonomously / defer / escalate-to-user). Loaded by ai-maestro-assistant-manager-agent-main-agent.
+description: Use when an approval request arrives from a peer agent and the user is unavailable. Trigger with inbound AMP approvals from COS, AUTONOMOUS, or MAINTAINER. Returns approve-autonomously / defer / escalate-to-user.
 version: 1.0.0
 context: fork
 agent: amama-assistant-manager-main-agent
-user-invocable: false
 ---
 
 # Autonomous-Fallback Skill
 
 ## Overview
 
-Decides what to do with an inbound approval request when the user is `monitoring`, `away`, or `dnd`. Consults the [reversibility matrix](references/reversibility-matrix.md) — the single source of truth for which operations are auto-approve-eligible — then applies the per-state authority table from [amama-presence-tracker/references/state-thresholds.md](../amama-presence-tracker/references/state-thresholds.md).
-
-Phase 1 of TRDD-bfcedff0. Hard-floor list (always-escalate ops) inherited from `amama-amcos-coordination/references/delegation-rules.md:112-126`. Defense-in-depth string-match guard hard-blocks production/security paths until phase 1.5 adds HMAC.
+Decides what to do with an inbound approval request when the user is `monitoring`, `away`, or `dnd`. Consults the 25-row reversibility matrix and the per-state authority table, applies the per-role authority overrides, and enforces the R6 v3 routing constraint (team-bound messages route via COS only). Phase 1 of TRDD-bfcedff0. The hard-floor list (always-escalate ops) is inherited from amama-amcos-coordination.
 
 ## Prerequisites
 
 - AMAMA persona loaded.
-- [amama-presence-tracker](../amama-presence-tracker/SKILL.md) callable (returns the current state).
-- `references/reversibility-matrix.md` present and parseable.
-- The hard-floor list at `skills/amama-amcos-coordination/references/delegation-rules.md:112-126` accessible.
+- amama-presence-tracker callable (returns the current state).
+- references/reversibility-matrix.md present and parseable.
+- The hard-floor list at amama-amcos-coordination/references/delegation-rules.md:112-126 accessible.
 
 ## Instructions
 
-Apply this procedure for every approval request that arrives via AMP from a peer agent (CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER). Never apply it to messages from the user.
+Apply for every approval request from a peer agent (never to user messages). Full step-by-step procedure is in references/decision-flow.md (see Resources). Summary:
 
-1. **Hard-floor gate (immutable, ALWAYS-ESCALATE).** If the requested operation matches any of the seven hard-floor categories — production deployments, security-sensitive changes, data deletion, external communications, budget commitments, breaking changes to public APIs, access changes — return `(escalate-to-user, "hard-floor")` and STOP. The hard-floor does not consult the matrix.
+1. Hard-floor gate. If matched, escalate-to-user.
+2. Phase-1 string-match guard (replaced by HMAC in phase 1.5).
+3. Schema/identity gate. Unknown role or unclassified op → defer.
+4. Presence gate. Call amama-presence-tracker; non-`away`/`monitoring`/`dnd` states escalate.
+5. Per-role authority — AUTONOMOUS downgrades C→defer; MAINTAINER restricted to issue-triage subset; COS full matrix.
+6. R6 v3 routing — team-internal targets always go via COS, never directly.
+7. Matrix lookup (snapshot rule) — read once per decision.
+8. State-authority table — `monitoring` R-only auto; `away` R+C auto; `dnd` R-only auto; W always defer.
+9. Audit log — append one entry to docs_dev/approvals/autonomous-decisions-pending-ratification.md.
+10. Return `(verdict, classification, justification, compensating_action_ref?)`.
 
-2. **Defense-in-depth string-match guard (phase 1 only — replaced by HMAC in phase 1.5).** If any field of the approval request (operation key, target path, branch name, attributes) matches the regex `(production|prod|main|secrets|credentials|iam|auth)` (case-insensitive), return `(escalate-to-user, "phase-1-string-match-guard")`. This is intentionally over-broad — it will be replaced when phase 1.5 ships HMAC verification.
+Phase-1 behavior: amama-presence-tracker returns `unknown` until phase 3 ships, so step 4 always escalates. Policy is wired but dormant.
 
-3. **Schema / identity gate.** If `source_role` is not in `{COS, AUTONOMOUS, MAINTAINER}`, OR if the operation key is not present in the matrix, return `(defer, "unclassified-or-unknown-source")`. Phase 1 logs the deferred entry with empty Compensating-Action.
+## Output
 
-4. **Presence gate.** Call [amama-presence-tracker](../amama-presence-tracker/SKILL.md) `get_state()`. If state is `active`, `unknown`, or `unknown-after-compaction`, return `(escalate-to-user, "presence-not-permitting-fallback")`. Status quo applies — every risky approval still goes to the user.
+| Verdict | When emitted | Side effect |
+|---------|--------------|-------------|
+| `approve-autonomously` | Matrix says R or C, state permits | Operation executed (via COS for team-internal targets); audit-log entry appended |
+| `defer` | Matrix says W, OR unclassified, OR per-role override downgraded | Reply to source with `pending-ratification`; audit-log entry; user reviews on return |
+| `escalate-to-user` | Hard-floor / phase-1-string-match / state ∉ {monitoring,away,dnd} / per-role W-override | Standard escalation flow |
 
-5. **Per-role authority overrides.**
-   - `source_role == AUTONOMOUS`:
-     - If `attributes.first_push_to_main` is true → return `(escalate-to-user, "AUTONOMOUS-first-push-to-main → W")`.
-     - If `attributes.breaking_change` is true → return `(escalate-to-user, "AUTONOMOUS-breaking-change → W")`.
-     - For COMPENSABLE rows (matrix class C), downgrade to `defer` (require ratification on user return) — even though state would otherwise auto-approve a C in `away`.
-   - `source_role == MAINTAINER`:
-     - The eligible matrix subset is `{add-label-issue-or-pr, comment-issue-or-pr, open-draft-pr, convert-draft-pr-to-ready, delete-merged-worktree}` (rows 13-16, 23). All other rows → `(escalate-to-user, "MAINTAINER-out-of-scope")`.
-   - `source_role == COS`: the full matrix applies as written.
+## Error Handling
 
-6. **R6 v3 routing constraint (2026-05-05).** If the operation's TARGET agent is a team-internal title (ORCHESTRATOR, ARCHITECT, INTEGRATOR, MEMBER, or any custom team-layer title), the matrix verdict still applies, BUT the operation must be EXECUTED by sending the instruction to the team's CHIEF-OF-STAFF — never directly to the team member. AMAMA composes the AMP message addressed to the COS (whitelist enforced at composition time: `recipient ∈ {HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}`). The COS then performs the operation inside the team. This constraint applies regardless of state and regardless of source-role.
+| Error | Action |
+|-------|--------|
+| references/reversibility-matrix.md missing | Return `(escalate-to-user, "matrix-absent")` — strict-by-default |
+| Operation key not in matrix | Return `(defer, "unclassified")` |
+| `source_role` not in {COS, AUTONOMOUS, MAINTAINER} | Return `(defer, "unknown-source")` |
+| `decisions-pending-ratification.md` unwritable | stderr warning, escalate-to-user instead of approving |
+| amama-presence-tracker unreachable | Return `(escalate-to-user, "presence-unreachable")` |
 
-7. **Matrix lookup (snapshot rule).** Read the full matrix file ONCE at this step and cache the parse in-memory for the rest of the decision. If the user edits the matrix concurrently, the in-flight decision uses the snapshot. The next decision uses the new content. Resolve `classification ∈ {R, C, W}` from the matrix row matching the operation key.
+## Examples
 
-8. **Apply state-authority table** (from `state-thresholds.md`):
-   - `monitoring` → R: `approve-autonomously`. C: `defer`. W: `defer`.
-   - `away`       → R: `approve-autonomously`. C: `approve-autonomously`. W: `defer`.
-   - `dnd`        → R: `approve-autonomously`. C: `defer`. W: `defer`.
+**T2 — unclassified op while away:**
+```
+state = away
+request = (source=COS, op="deploy-to-quantum-cloud")
+verdict = (defer, "unclassified")
+audit log: APPROVAL-2026-05-05-001 | Source=COS | Op=deploy-to-quantum-cloud | Verdict=defer
+```
 
-9. **Audit log (single source of truth — append-only).** Every verdict — approve, defer, escalate — appends ONE entry to `docs_dev/approvals/autonomous-decisions-pending-ratification.md`. Each entry is structured as:
+**T10 — AUTO first-push-to-main (per-role override forces W):**
+```
+state = active   ; not even a fallback path
+request = (source=AUTONOMOUS, op="merge-pr-squash", attrs={first_push_to_main: true})
+verdict = (escalate-to-user, "AUTONOMOUS-first-push-to-main → W")
+```
 
-   ```
-   ## APPROVAL-YYYY-MM-DD-NNN
-   - Decided-At: <local-time-with-offset>
-   - Source-Role: <COS|AUTONOMOUS|MAINTAINER>
-   - Operation: <matrix-row-key>
-   - Target-Agent: <full-session-name>
-   - Target-Layer: <team-internal|peer|self>
-   - Classification: <R|C|W|hard-floor|unclassified>
-   - State-At-Decision: <state>
-   - Verdict: <approve-autonomously|defer|escalate-to-user>
-   - Justification: <one-line reason>
-   - Compensating-Action: <ready-to-paste shell command, or "n/a" or "deferred">
-   - Ratified-At: -
-   - Ratification-Verdict: -
-   ```
+**Routine R-class while away:**
+```
+state = away
+request = (source=COS, op="run-unit-tests", target=team-architect)
+verdict = (approve-autonomously, R, "matrix-row-1")
+side effect: AMP message composed to the team's COS asking COS to run-unit-tests inside the team (R6 v3 routing)
+```
 
-   The `Ratified-At:` and `Ratification-Verdict:` fields are filled in by phase 2's ratification ritual when the user returns. Phase 1 only writes the rows; the ritual command lands later.
+## Resources
 
-10. **Return the verdict tuple** to the caller in the persona decision tree:
-    `(verdict, classification, justification, compensating_action_ref?)`
+- [references/decision-flow.md](references/decision-flow.md) — Full 10-step decision flow
+  - Step 1 — Hard-floor gate, Step 2 — Phase-1 string-match guard, Step 3 — Schema/identity gate, Step 4 — Presence gate, Step 5 — Per-role authority overrides, Step 6 — R6 v3 routing constraint, Step 7 — Matrix lookup (snapshot rule), Step 8 — State-authority table, Step 9 — Audit log, Step 10 — Return verdict tuple
 
-## Phase-1 expected behavior
+- [references/reversibility-matrix.md](references/reversibility-matrix.md) — The 25-row classification table
+  - Classification legend, The 25 rows, Per-role authority overrides (applied in SKILL.md step 5), R6 v3 routing constraint reminder, Update protocol, Cross-reference with the hard-floor list, Crisis cross-reference
 
-Because phase 1's `amama-presence-tracker` always returns `unknown` (the PRESENCE sister plugin has not shipped yet), step 4 ALWAYS escalates to the user. Therefore phase 1's `decide()` is **invisible in production** — it never auto-approves anything. The matrix and the policy logic are wired and audit-loggable, but no operation is taken without user review until phase 3 ships.
-
-This is intentional. It lets the user inspect the matrix and the audit log against real approval requests for at least one week before phase 1.5 / phase 3 enable any active push.
-
-## What this skill does NOT do
-
-- Does NOT execute the operation itself. After `approve-autonomously`, the persona invokes the existing operation routine (e.g. running tests, opening a PR) with the COS as recipient when the target is team-internal.
-- Does NOT modify the matrix or thresholds.
-- Does NOT verify HMAC. Phase 1.5 adds the cue-HMAC check.
-- Does NOT parse cue lines from any source. Phase 1 has no cue parser.
-- Does NOT auto-approve any hard-floor operation, regardless of state, ever.
-
-## Related
-
-- [amama-presence-tracker](../amama-presence-tracker/SKILL.md) — must be called first to establish state.
-- [amama-amcos-coordination](../amama-amcos-coordination/SKILL.md) — the existing COS coordination workflows; supplies the hard-floor list and the AMP message templates.
-- [amama-approval-workflows](../amama-approval-workflows/SKILL.md) — GovernanceRequest workflows for approvals that ARE escalated to user.
-- [reversibility-matrix](references/reversibility-matrix.md) — the 25-row classification table.
-- TRDD-bfcedff0: `design/tasks/TRDD-bfcedff0-21c8-439f-a3e5-b2dcc3b8ad19-amama-phase-1-presence-matrix.md`
+- TRDD-bfcedff0 (design/tasks/) — Phase-1 spec, ratification gate, change log

@@ -1,6 +1,16 @@
 # Reversibility matrix
 
-Single source of truth for autonomous-fallback eligibility. Every approval request that is NOT in the hard-floor list (see `amama-amcos-coordination/references/delegation-rules.md:112-126`) is classified by this matrix.
+## Table of Contents
+
+- [Classification legend](#classification-legend)
+- [The 25 rows](#the-25-rows)
+- [Per-role authority overrides (applied in SKILL.md step 5)](#per-role-authority-overrides-applied-in-skillmd-step-5)
+- [R6 v3 routing constraint reminder](#r6-v3-routing-constraint-reminder)
+- [Update protocol](#update-protocol)
+- [Cross-reference with the hard-floor list](#cross-reference-with-the-hard-floor-list)
+- [Crisis cross-reference](#crisis-cross-reference)
+
+Single source of truth for autonomous-fallback eligibility. Every approval request that is NOT in the hard-floor list (see amama-amcos-coordination/references/delegation-rules.md:112-126) is classified by this matrix.
 
 ## Classification legend
 
