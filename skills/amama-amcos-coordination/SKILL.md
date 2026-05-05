@@ -23,7 +23,9 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 ## Instructions
 
 1. **Recommend COS** — Suggest agents for COS role. USER assigns via dashboard. See [creating-amcos-instance](references/creating-amcos-instance.md).
+   > Why AMAMA Assigns the COS Role · How to Assign the COS Role · When to Assign the COS Role · Post-Assignment Steps · Cross-Host COS Assignment
 2. **Register Agents** — `POST /api/agents/register`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
+   > Overview · Key Principles · Agent Registration · Team Creation · COS Assignment · Step-by-Step Procedure · Success Criteria · Troubleshooting · Related Documents
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
   - Request Categories
@@ -44,18 +46,14 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
   - Revocation Reasons
   - Operations That ALWAYS Require AMAMA Approval
 6. **Completions** — Handle notifications. See [completion-notifications](references/completion-notifications.md).
+   > When AMCOS Sends Completion Notifications · Processing Completion Notifications · User Notification Rules
 7. **ACK** — Require ACK 30-60s. See [references/ack-protocol.md](references/ack-protocol.md).
   - ACK Timeout Requirements
   - ACK Message Format
   - Handling Missing ACK
   - ACK Verification Checklist
 
-Copy this checklist and track your progress:
-
-- [ ] Identify operation type
-- [ ] Verify target agent registered
-- [ ] Prepare and execute API call
-- [ ] Wait for ACK (30-60s), log result
+Checklist: identify op type → verify agent registered → execute API call → await ACK (30-60s).
 
 ## Output
 
@@ -88,11 +86,11 @@ See [references/workflow-examples.md](references/workflow-examples.md) for full 
 ## Resources
 
 - [references/message-formats.md](references/message-formats.md) - JSON formats
-  - Approval Request/Response Formats
-  - Autonomy Grant/Revoke Messages
-  - Completion Notification Format
+  > AMCOS Approval Request Format · AMAMA Response Format · Autonomy Messages · Completion Notification Format
 - [ai-maestro-message-templates](references/ai-maestro-message-templates.md) - Templates
+  > Receiving Messages · Sending Approval-Related Messages · Requesting Information from AMCOS · Delegating Work to AMCOS · Standard AI Maestro Messaging Patterns
 - [success-criteria](references/success-criteria.md) - Success criteria
+  > Success: User Request Understood · Success: Project and Team Creation Complete · Success: AMCOS Agent Created and Ready · Success: Approval Processed · Success: Status Reported · General Success Verification Principles
 - [references/workflow-checklists.md](references/workflow-checklists.md) - Checklists
   - Checklist: Creating New Team
   - Checklist: Assigning COS Role
@@ -100,3 +98,4 @@ See [references/workflow-examples.md](references/workflow-examples.md) for full 
   - Checklist: Routing User Request to AMCOS
   - Checklist: Providing Status to User
 - [spawn-failure-recovery](references/spawn-failure-recovery.md) - Recovery
+  > Overview · AMCOS COS Assignment Failure Recovery Protocol · Communication Breakdown Recovery · Approval Request Handling Failures · Agent Creation Failures (General) · Logging and Audit Trail · Timeliness Requirements · Example Scenarios · Summary

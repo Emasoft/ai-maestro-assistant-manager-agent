@@ -2,13 +2,9 @@
 
 ## Table of Contents
 - [1. AMCOS Approval Request Format](#1-amcos-approval-request-format)
-  - [Field Descriptions](#field-descriptions)
 - [2. AMAMA Response Format](#2-amama-response-format)
 - [3. Autonomy Messages](#3-autonomy-messages)
-  - [Grant Message](#grant-message)
-  - [Revoke Message](#revoke-message)
 - [4. Completion Notification Format](#4-completion-notification-format)
-  - [Field Descriptions](#field-descriptions-1)
 
 > **Note**: For comprehensive AMCOS message templates, see [ai-maestro-message-templates.md](ai-maestro-message-templates.md). This file provides a quick reference subset.
 

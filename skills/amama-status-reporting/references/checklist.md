@@ -3,6 +3,8 @@
 ## Table of Contents
 - [Status Reporting Checklist](#status-reporting-checklist)
 
+## Checklist
+
 Copy this checklist and track your progress:
 
 - [ ] Determine the type of report needed (quick status, progress, handoff summary, blocker)

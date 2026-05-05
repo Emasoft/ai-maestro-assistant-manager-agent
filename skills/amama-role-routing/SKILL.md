@@ -81,11 +81,7 @@ See routing-rules.md and handoff-protocol.md in Resources.
 ## Resources
 
 - [routing-rules](references/routing-rules.md)
-  - Route to AMAA
-  - Route to AMOA
-  - Route to AMIA
-  - Route to AMCOS
-  - Handle Directly
+  > Route to AMAA (Architect) · Route to AMOA (Orchestrator) · Route to AMIA (Integrator) · Route to AMCOS (Chief of Staff) · Handle Directly (no routing)
 - [handoff-protocol](references/handoff-protocol.md)
   - Steps
   - File Naming Convention

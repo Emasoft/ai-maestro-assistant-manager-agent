@@ -2,21 +2,10 @@
 
 ## Table of Contents
 - [1. Why AMAMA Assigns the COS Role](#1-why-amama-assigns-the-cos-role)
-  - [Key Difference from v1 (Spawning AMCOS)](#key-difference-from-v1-spawning-amcos)
 - [2. How to Assign the COS Role](#2-how-to-assign-the-cos-role)
-  - [Prerequisites](#prerequisites)
-  - [Assignment API Call](#assignment-api-call)
-  - [Unassigning COS](#unassigning-cos)
-  - [Naming Convention for COS-Assigned Agents](#naming-convention-for-cos-assigned-agents)
 - [3. When to Assign the COS Role](#3-when-to-assign-the-cos-role)
 - [4. Post-Assignment Steps](#4-post-assignment-steps)
-  - [Initialization Message](#initialization-message)
-  - [Verification Checklist](#verification-checklist)
 - [5. Cross-Host COS Assignment](#5-cross-host-cos-assignment)
-  - [When Cross-Host Assignment Is Needed](#when-cross-host-assignment-is-needed)
-  - [GovernanceRequest for COS Assignment](#governancerequest-for-cos-assignment)
-  - [GovernanceRequest Lifecycle](#governancerequest-lifecycle)
-  - [Cross-Host Limitations](#cross-host-limitations)
 
 ---
 

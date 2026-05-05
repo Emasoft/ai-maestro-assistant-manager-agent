@@ -2,24 +2,10 @@
 
 ## Table of Contents
 - [1. Receiving Messages](#1-receiving-messages)
-  - [1.1 Receiving approval requests from AMCOS](#11-receiving-approval-requests-from-amcos)
-  - [1.2 Receiving status reports from AMCOS](#12-receiving-status-reports-from-amcos)
-  - [1.3 Receiving health check responses (pong)](#13-receiving-health-check-responses-pong)
 - [2. Sending Approval-Related Messages](#2-sending-approval-related-messages)
-  - [2.1 Sending approval decisions to AMCOS](#21-sending-approval-decisions-to-amcos-approvedenydefer)
-  - [2.2 Notifying AMCOS of user decisions after escalation](#22-notifying-amcos-of-user-decisions-after-escalation)
 - [3. Requesting Information from AMCOS](#3-requesting-information-from-amcos)
-  - [3.1 Requesting status from AMCOS](#31-requesting-status-from-amcos)
-  - [3.2 Sending health check pings](#32-sending-health-check-pings-to-verify-amcos-is-alive)
 - [4. Delegating Work to AMCOS](#4-delegating-work-to-amcos)
-  - [4.1 Routing user work requests](#41-routing-user-work-requests-to-amcos-for-specialist-delegation)
-  - [4.2 Routing design work to AMAA](#42-routing-design-work-to-amaa-via-amcos)
-  - [4.3 Routing implementation work to AMOA](#43-routing-implementation-work-to-amoa-via-amcos)
-  - [4.4 Routing review/integration work to AMIA](#44-routing-reviewintegration-work-to-amia-via-amcos)
 - [5. Standard AI Maestro Messaging Patterns](#5-standard-ai-maestro-messaging-patterns)
-  - [5.1 How to send and receive messages](#51-how-to-send-and-receive-messages)
-  - [5.2 Message content structure requirements](#52-message-content-structure-requirements)
-  - [5.3 Priority levels and when to use them](#53-priority-levels-and-when-to-use-them)
 
 **Reference for**: `amama-amcos-coordination` skill
 
