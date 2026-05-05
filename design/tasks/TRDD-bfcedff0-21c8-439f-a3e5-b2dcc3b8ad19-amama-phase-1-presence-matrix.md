@@ -191,6 +191,8 @@ Parser MUST refuse anything missing the magic header or with `v != 1`. On refusa
 
 **Snapshot rule (closes crisis F5).** The matrix file is read **once per decision** at the top of step 5 and cached in-memory for the rest of the decision. If the user edits the matrix concurrently, the in-flight decision uses the snapshot, the next decision uses the new content.
 
+**R6 v3 routing constraint (2026-05-05).** Whenever the requested operation's TARGET agent is a team-internal title (ORCH, ARCH, INT, MEMBER, or any custom team-layer title), the matrix verdict applies BUT the operation must be EXECUTED by routing the instruction to the team's CHIEF-OF-STAFF — never directly. Concretely: a verdict of `approve-autonomously` for a team-internal target means "AMAMA composes an AMP message to the team's COS asking the COS to perform the operation, and logs that delegated execution under the same Approval-ID". AMAMA must NEVER send AMP messages to team-internal targets directly under R6 v3. The only exception is HUMAN, which retains universal access. This constraint applies regardless of state (active/monitoring/away/dnd) and regardless of source-role.
+
 **Hard floor (immutable list).** Per `skills/amama-amcos-coordination/references/delegation-rules.md:112-126`:
 
 1. Production deployments
@@ -358,6 +360,7 @@ Six scenarios. Each is a fixture-driven unit/integration test runnable from `pyt
 - **Fabricated approval requests (H5).** Phase 1's `decide()` accepts approval requests by AMP; the source-role is taken from the AMP message. AMP messages are not yet HMAC-signed. **Phase 1's persona text MUST NOT auto-approve any operation that touches `production`, `main`, `prod`, `secrets`, `credentials`, `iam`, `auth` paths** even if the matrix says they're R or C. This is a defense-in-depth string-match guard at the top of `decide()`. Phase 1.5 replaces it with HMAC verification.
 - **Schema validation.** v3 hardening #1 (§3.1) ensures malformed `last-user-input.ts` cannot inflate the user's apparent idleness — the parser refuses on missing magic header.
 - **Compaction guard.** Sticky-unknown after compaction (§3.1) prevents a freshly compacted session from acting on a stale CozoDB state-snapshot.
+- **R6 v3 routing constraint (2026-05-05).** When the requested operation's target is a team-internal agent (ORCH/ARCH/INT/MEMBER), AMAMA must NEVER send the AMP message directly. Even under `approve-autonomously` the message is composed and addressed to the team's CHIEF-OF-STAFF, with the actual operation embedded as a request the COS will execute inside the team. This prevents the "team gets a directive the COS doesn't know about" failure mode the user observed empirically. AMAMA's `decide()` MUST refuse to compose any AMP message whose recipient is a team-internal title — the recipient list is whitelisted to {HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}. The persona enforces this at composition time; the API enforces it (or will enforce it once the server graph is updated to v3) at delivery time.
 
 ---
 
@@ -428,5 +431,6 @@ Do not start phase 1.5 until:
 | Date | Author | Change |
 |---|---|---|
 | 2026-05-05 | AMAMA-orchestrator (Claude) on owner's instruction "go on, continue" | Initial draft |
+| 2026-05-05 | AMAMA-orchestrator (Claude) on owner's R6 v3 update | Add R6 v3 routing constraint to §3.3 (autonomous-fallback) and §7 (security): operations targeting team-internal agents must route via COS even when matrix says auto-approve. AMP recipients whitelisted to {HUMAN, peer MANAGERs, COS, AUTONOMOUS, MAINTAINER}. |
 
 End of TRDD.
