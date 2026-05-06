@@ -1,15 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-    ## [2.9.0] - 2026-05-06
+    ## [2.9.1] - 2026-05-06
 
-### Documentation
+### Bug Fixes
 
-- AI Maestro server presence-API spec for upstream PR    
-- Trim presence-API spec to just the contract    
+- Skip cron-injected prompts in user-input WRITE hook    
 
-### Features
+### Refactor
 
-- Activate phase-1 by wiring to server presence API    
+- Move sys.exit out of __main__ guard into _main() function    
 
 
