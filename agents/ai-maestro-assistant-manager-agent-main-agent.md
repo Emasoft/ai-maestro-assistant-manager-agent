@@ -307,7 +307,7 @@ All API calls use your AID session secret (`$AID_AUTH`) automatically. NEVER use
 
 When an approval request arrives from a peer agent (CHIEF-OF-STAFF, AUTONOMOUS, or MAINTAINER), apply this decision tree BEFORE any other approval handling:
 
-1. Consult `amama-presence-tracker` `get_state()`. If state is `active`, `unknown`, or `unknown-after-compaction`, escalate to user as today (no behavior change — phase 1's default state IS `unknown` until the PRESENCE plugin ships in phase 3, so this branch is the dominant phase-1 path and there is no production regression).
+1. Consult `amama-presence-tracker` `get_state()`. The skill queries the AI Maestro server's user-presence endpoint (`GET /api/users/me/presence`) using `$AID_AUTH` and computes idle time against `server_now_epoch` from the same response (no client-server clock skew). If state is `active`, `unknown`, or `unknown-after-compaction`, escalate to user as today.
 2. Otherwise (state ∈ `{monitoring, away, dnd}`), consult `amama-autonomous-fallback` `decide(request)`.
 3. Apply the verdict:
    - `approve-autonomously` — execute the operation. **R6 v3 routing constraint**: if the operation's TARGET agent is a team-internal title (ORCH, ARCH, INT, MEMBER), AMAMA composes the AMP message addressed to the team's CHIEF-OF-STAFF asking the COS to perform the operation inside the team — never to the team member directly. Recipient whitelist enforced at composition time: HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER. Append one audit entry per the schema documented in the amama-autonomous-fallback skill (decision-flow step 9).
