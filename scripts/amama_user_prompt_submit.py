@@ -124,12 +124,19 @@ def _entry() -> None:
     # Always exit 0 - never block prompt submission on a presence-write failure.
 
 
-if __name__ == "__main__":
-    # Fail-soft is absolute: even an unforeseen exception (MemoryError,
-    # KeyboardInterrupt mid-curl, a future stdlib regression) must not
-    # block the user's prompt. Catch BaseException, swallow it, and exit 0.
+def _main() -> None:
+    """Hook entry point - fail-soft wrapper around _entry().
+
+    Fail-soft is absolute here: even an unforeseen exception (MemoryError,
+    KeyboardInterrupt mid-curl, a future stdlib regression) must not
+    block the user's prompt. We catch BaseException, swallow it, and let
+    Python exit 0 on natural script completion.
+    """
     try:
         _entry()
     except BaseException:
         pass
-    sys.exit(0)
+
+
+if __name__ == "__main__":
+    _main()
