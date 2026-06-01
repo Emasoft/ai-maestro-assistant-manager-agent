@@ -13,6 +13,7 @@ skills:
   - amama-status-reporting
   - amama-presence-tracker
   - amama-autonomous-fallback
+  - amama-prrd-trdd-kanban
   - ai-maestro-agents-management
 ---
 
