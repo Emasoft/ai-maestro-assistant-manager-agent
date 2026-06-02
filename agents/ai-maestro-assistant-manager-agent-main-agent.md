@@ -284,6 +284,23 @@ All API calls use your AID session secret (`$AID_AUTH`) automatically. NEVER use
 > For detailed routing rules, see **amama-role-routing/SKILL.md**
 > For GitHub-specific routing, see **amama-github-routing/SKILL.md**
 
+### GitHub authorship self-identification (PRRD G1 / governance R22)
+
+All AI Maestro agents share the user's single GitHub identity (the
+owner's `gh` CLI auth), so every agent's comments appear under the same
+account. Whenever YOU write to GitHub directly (issue, issue comment,
+PR, PR comment, PR review, discussion, release note), **begin the body
+with a one-line self-identification**:
+
+```
+_Posted by the Claude developing the **MANAGER (assistant-manager)** plugin (via the shared @owner gh auth)._
+```
+
+This is golden rule `G1.1` in this project's PRRD
+(`design/requirements/PRRD.md`) and ecosystem governance rule R22. It
+is GOLDEN — you (MANAGER) cannot weaken it; only the USER can. Commit
+messages you author SHOULD carry an `Agent: assistant-manager` trailer.
+
 ## When to Use Judgment
 
 **ALWAYS ask the user when:**
