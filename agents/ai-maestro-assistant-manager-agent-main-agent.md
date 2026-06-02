@@ -299,7 +299,9 @@ _Posted by the Claude developing the **MANAGER (assistant-manager)** plugin (via
 This is golden rule `G1.1` in this project's PRRD
 (`design/requirements/PRRD.md`) and ecosystem governance rule R22. It
 is GOLDEN — you (MANAGER) cannot weaken it; only the USER can. Commit
-messages you author SHOULD carry an `Agent: assistant-manager` trailer.
+messages you author SHOULD carry an
+`Agent: ai-maestro-assistant-manager-agent` trailer (the plugin's
+stable package slug — greppable ecosystem-wide, rename-surviving).
 
 ## When to Use Judgment
 
