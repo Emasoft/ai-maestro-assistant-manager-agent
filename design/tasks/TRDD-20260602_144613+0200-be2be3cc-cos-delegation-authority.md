@@ -1,9 +1,9 @@
 ---
 trdd-id: be2be3cc-3947-454f-8c93-7d368363f53c
 title: COS delegation authority — which decisions COS handles vs escalates to MANAGER
-column: dev
+column: complete
 created: 2026-06-02T14:46:13+0200
-updated: 2026-06-02T14:46:13+0200
+updated: 2026-06-02T14:50:19+0200
 current-owner: assistant-manager
 assignee: assistant-manager
 priority: 2
@@ -53,7 +53,7 @@ janitor-written presence breadcrumb fallback when the server is down.
 amcos-prrd-trdd-kanban skill COS-filter section; (3) COS persona filter
 rules; (4) amama-presence-tracker janitor-breadcrumb fallback note.
 
-**NEXT ACTION:** write references/cos-delegation-authority.md.
+**STATUS: COMPLETE.** Shipped: references/cos-delegation-authority.md, amcos-prrd-trdd-kanban skill + COS persona (two-tier filter), amama-presence-tracker janitor-breadcrumb fallback. Janitor breadcrumb write requested at janitor#15 (its call). All commits local-only pending push.
 
 ## Problem
 
