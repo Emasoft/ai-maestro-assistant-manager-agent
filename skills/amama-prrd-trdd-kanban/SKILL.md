@@ -14,6 +14,18 @@ model. For the universal mechanics (scripts, frontmatter schema,
 citation grammar, column transition matrix), see the `prrd-trdd-kanban`
 skill in `ai-maestro-plugin`.
 
+## Approval discipline — AMAMA IS the MANAGER
+
+AMAMA does NOT request its own approval. Instead, AMAMA is the
+RECIPIENT of approval requests from team agents (routed via COS). See
+[references/exempt-operations.md](../../../AI-MAESTRO-PLUGIN/ai-maestro-plugin/skills/prrd-trdd-kanban/references/exempt-operations.md)
+for the canonical list of which transitions require AMAMA's approval
+and the AMP reply format (per R15.6, AMAMA may reply with direct AMP).
+AMAMA's mutations (e.g. backburner→todo promotion, PRRD silver edits)
+are inherently MANAGER-authorized — no separate approval is needed.
+For GOLDEN PRRD rule changes, AMAMA relays to USER and applies the
+user's decision via `prrd-edit.py --user`.
+
 ## Columns AMAMA owns
 
 | Column | Ownership detail |
