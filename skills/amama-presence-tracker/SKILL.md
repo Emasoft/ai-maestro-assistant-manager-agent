@@ -25,8 +25,9 @@ Apply this procedure before invoking amama-autonomous-fallback for any incoming 
 
 1. **Compaction guard.** If this is the first user-facing turn after a detected compaction, return `("unknown-after-compaction", now, "compaction-guard")` and stop.
 2. **Override check.** If `<project>/.claude/amama/availability-overrides.md` carries a non-expired override, return `(override.state, override.since, "override")`.
-3. **Presence read.** `GET /api/users/me/presence` with `Authorization: Bearer $AID_AUTH`. If HTTP error or transport failure, return `("unknown", now, "presence-api-unreachable")` — graceful degradation routes every approval to the user.
-4. **Null check.** If response's `last_user_input_epoch` is `null` (no UserPromptSubmit has reached the server yet for this user), return `("unknown", now, "no-input-recorded")`.
+3. **Presence read (authoritative).** `GET /api/users/me/presence` with `Authorization: Bearer $AID_AUTH` and a 2s timeout. On HTTP error / transport failure / timeout, go to step 3b (do NOT immediately return `unknown`).
+3b. **Janitor-breadcrumb fallback (degraded).** If the server is unreachable, read `~/.aimaestro/state/user-presence.json` (`{last_user_input_epoch, source, written_at_epoch}`, written by the janitor's on-prompt-submit hook + refreshed each heartbeat). If present and `written_at_epoch` is recent (< 30min stale), use its `last_user_input_epoch` with `source="janitor-breadcrumb"`. If absent or stale, return `("unknown", now, "presence-unreachable")` — graceful degradation routes every approval to the user. (The janitor writing this breadcrumb is a coordination follow-up; until it lands, server-unreachable → `unknown`.)
+4. **Null check.** If the chosen source's `last_user_input_epoch` is `null` (no UserPromptSubmit recorded yet), return `("unknown", now, "no-input-recorded")`.
 5. **Idle clock — server-clock anchored.** `age_seconds = max(0, response.server_now_epoch - response.last_user_input_epoch)`. Both timestamps come from the same response, so client-server clock skew is impossible (closes crisis B8 / multi-host divergence).
 6. **Classification.** Per references/state-thresholds.md: `<30min` → active, `30min-4h` → monitoring, `4h-24h` → away, `≥24h` → dnd-implied.
 7. **Audit log on transition.** Append one row when computed state differs from last recorded.
