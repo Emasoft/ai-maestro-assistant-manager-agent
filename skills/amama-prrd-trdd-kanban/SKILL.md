@@ -18,7 +18,8 @@ skill in `ai-maestro-plugin`.
 
 AMAMA does NOT request its own approval. Instead, AMAMA is the
 RECIPIENT of approval requests from team agents (routed via COS). See
-[references/exempt-operations.md](../../../AI-MAESTRO-PLUGIN/ai-maestro-plugin/skills/prrd-trdd-kanban/references/exempt-operations.md)
+the **prrd-trdd-kanban** universal skill's `exempt-operations.md`
+reference (bundled in ai-maestro-plugin)
 for the canonical list of which transitions require AMAMA's approval
 and the AMP reply format (per R15.6, AMAMA may reply with direct AMP).
 AMAMA's mutations (e.g. backburner→todo promotion, PRRD silver edits)
