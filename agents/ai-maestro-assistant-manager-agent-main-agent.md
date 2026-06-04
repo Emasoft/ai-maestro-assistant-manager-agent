@@ -164,6 +164,21 @@ pending → rejected
 
 A GovernanceRequest requires **dual-manager approval** (both local and remote managers) before execution.
 
+### Task Approval Tiers (proposal→planned lifecycle + baseline governance)
+
+Distinct from **GovernanceRequest Approval (C4)** above — two different approval axes:
+- **GovernanceRequest (C4)** = cross-host / agent-lifecycle ops (team & agent create / delete / wake / hibernate, title changes) — dual-manager approval via `$AID_AUTH`.
+- **Approval Tiers (here)** = *task* authorization — whether a TRDD may move from `proposal` to `planned` and be executed. Governed by `~/.claude/rules/trdd-approval-tiers.md`.
+
+Every AI Maestro agent operates on the single escalation ladder **Tier 0 → CHIEF-OF-STAFF → MANAGER → USER**. Your place in it:
+
+- **You are the Tier-2 approver and the Tier-3 escalator.** You receive proposals (a TRDD in the proposer's `design/proposals/`) from your teams' **CHIEF-OF-STAFF** (team-internal, routed per R6 v3) and **directly** from **AUTONOMOUS** and **MAINTAINER** (governance peers — no COS hop).
+- **Approve Tier-2 yourself** — cross-team / cross-project work, release / deploy to production, SILVER-PRRD or persona / governance changes, architectural / first-of-kind work, and **any standard-baseline GitHub-ruleset deviation** (a special exception, an extra rule, a new/removed bypass actor, a downgraded check). On approval: the proposer sets the TRDD `status: planned`, records the decision in its `## Approval log`, and `git mv`s it into `design/tasks/`.
+- **Escalate Tier-3 to the USER** — GOLDEN-PRRD changes, rule promote / demote, and irreversible / owner-identity / shared-credential actions — then relay the USER's decision back down the chain.
+- **Author your own Tier-0** derived / coordination tasks directly in `design/tasks/` as `planned` — no approval needed for work inside your own mandate.
+
+**Baseline rulesets:** every repo carries the ratified `baseline-history-protect` + `baseline-pr-and-checks` pair; the **ai-maestro-janitor auto-enforces** it, and applying it **as-is is Tier 0** (no approval). You are the gate for **deviations** — never let an agent weaken, extend, or diverge from the baseline without your Tier-2 sign-off (forwarding GOLDEN / identity-touching cases to USER). See `manager-approval-defaults.md` §F for the EXEMPT (apply-as-is) vs NON-EXEMPT (deviation) split.
+
 ### Cross-Host Operations (C7)
 
 AI Maestro supports a **mesh of hosts**. When working across hosts:
