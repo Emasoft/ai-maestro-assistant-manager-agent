@@ -64,12 +64,10 @@ what only matters to the current conversation.
    ```
 
 5. Append a one-line pointer to `"$MEMDIR/MEMORY.md"` (create if missing) **with
-   the Write/Edit tool** — one markdown bullet linking the note **Title** to its
-   `<type>_<slug>.md` filename (from step 4), then ` — ` and a one-line hook:
-
-   ```text
-   - [Title](your-note.md) — one-line hook
-   ```
+   the Write/Edit tool**: a markdown list item that links the note's **Title** to
+   its `<type>_<slug>.md` filename (from step 4) and ends with ` — ` plus a
+   one-line hook — i.e. the standard "dash, bracketed Title, parenthesised
+   filename, em-dash, hook" bullet shape.
 
 6. Sanity-check: would a future AMAMA session, having only the SYMPTOM, find this
    note by searching `description`? If the description reads like the *answer*,
