@@ -3,11 +3,13 @@
 amama_stop_check.py - Stop hook to block exit until coordination work is complete.
 
 Stop hook that prevents assistant-manager from exiting with incomplete work:
-1. Pending user approvals not yet obtained
-2. Active handoffs to other roles not acknowledged
-3. Claude Tasks with pending/in-progress status
-4. Unread AI Maestro messages requiring response
-5. GitHub Issues assigned to assistant-manager not closed
+1. Unread AI Maestro messages requiring response
+2. GitHub Issues assigned to assistant-manager not closed
+
+The old activeContext/tasks/approvals/handoffs memory-bank reads were retired
+(TRDD-8707e849): pending tasks/approvals/handoffs are now surfaced by the AI
+Maestro inbox, the proposal-approvals lifecycle, and the `design/tasks/` /
+`design/proposals/` TRDD columns — so this hook no longer reads the bank.
 
 Dependencies: Python 3.8+ stdlib only
 
@@ -31,11 +33,6 @@ from pathlib import Path
 from typing import Any
 
 
-def get_memory_root(cwd: str) -> Path:
-    """Get the AI Maestro Assistant Manager memory root directory."""
-    return Path(cwd) / ".claude" / "amama"
-
-
 def check_ai_maestro_inbox() -> tuple[int, list[str]]:
     """Check AI Maestro inbox for unread messages via the API."""
     try:
@@ -55,165 +52,6 @@ def check_ai_maestro_inbox() -> tuple[int, list[str]]:
     except (subprocess.TimeoutExpired, subprocess.SubprocessError, json.JSONDecodeError, FileNotFoundError, OSError):
         pass
     return 0, []
-
-
-def check_claude_tasks(memory_root: Path) -> tuple[int, list[str]]:
-    """Check for pending or in-progress Claude Tasks.
-
-    Looks for tasks.md or similar task tracking files.
-
-    Returns:
-        Tuple of (pending_count, list of task descriptions)
-    """
-    pending_tasks = []
-
-    # Check tasks.md in memory root
-    tasks_path = memory_root / "tasks.md"
-    if tasks_path.exists():
-        try:
-            content = tasks_path.read_text(encoding="utf-8")
-            # Look for tasks marked as pending or in-progress
-            for line in content.split("\n"):
-                line_lower = line.lower()
-                if any(
-                    marker in line_lower
-                    for marker in [
-                        "[ ]",
-                        "[pending]",
-                        "[in-progress]",
-                        "status: pending",
-                        "status: in-progress",
-                    ]
-                ):
-                    # Extract task description
-                    task_desc = line.strip().lstrip("-").lstrip("*").strip()
-                    if task_desc and len(task_desc) < 100:
-                        pending_tasks.append(task_desc[:80])
-        except (OSError, UnicodeDecodeError):
-            pass
-
-    # Also check activeContext.md for in-flight tasks
-    active_path = memory_root / "activeContext.md"
-    if active_path.exists():
-        try:
-            content = active_path.read_text(encoding="utf-8")
-            # Look for "In-Flight" or "Active Tasks" sections with items
-            in_section = False
-            for line in content.split("\n"):
-                if "## In-Flight" in line or "## Active Tasks" in line:
-                    in_section = True
-                    continue
-                if in_section:
-                    if line.startswith("##"):
-                        break
-                    if line.strip().startswith("-") and "[ ]" in line:
-                        task_desc = line.strip().lstrip("-").strip()
-                        if task_desc and task_desc not in pending_tasks:
-                            pending_tasks.append(task_desc[:80])
-        except (OSError, UnicodeDecodeError):
-            pass
-
-    return len(pending_tasks), pending_tasks
-
-
-def check_pending_approvals(memory_root: Path) -> tuple[int, list[str]]:
-    """Check for pending user approvals.
-
-    Looks for approval requests in activeContext.md or approvals.md.
-
-    Returns:
-        Tuple of (pending_count, list of approval descriptions)
-    """
-    pending_approvals = []
-
-    # Check approvals.md
-    approvals_path = memory_root / "approvals.md"
-    if approvals_path.exists():
-        try:
-            content = approvals_path.read_text(encoding="utf-8")
-            for line in content.split("\n"):
-                line_lower = line.lower()
-                if "pending" in line_lower and (
-                    "approval" in line_lower or "[ ]" in line
-                ):
-                    desc = line.strip().lstrip("-").lstrip("*").strip()
-                    if desc and len(desc) < 100:
-                        pending_approvals.append(desc[:80])
-        except (OSError, UnicodeDecodeError):
-            pass
-
-    # Check activeContext.md for approval markers
-    active_path = memory_root / "activeContext.md"
-    if active_path.exists():
-        try:
-            content = active_path.read_text(encoding="utf-8")
-            in_section = False
-            for line in content.split("\n"):
-                if "## Pending Approvals" in line or "## Awaiting Approval" in line:
-                    in_section = True
-                    continue
-                if in_section:
-                    if line.startswith("##"):
-                        break
-                    if line.strip().startswith("-"):
-                        desc = line.strip().lstrip("-").strip()
-                        if desc and desc not in pending_approvals:
-                            pending_approvals.append(desc[:80])
-        except (OSError, UnicodeDecodeError):
-            pass
-
-    return len(pending_approvals), pending_approvals
-
-
-def check_active_handoffs(memory_root: Path) -> tuple[int, list[str]]:
-    """Check for active handoffs to other roles not yet acknowledged.
-
-    Returns:
-        Tuple of (pending_count, list of handoff descriptions)
-    """
-    pending_handoffs = []
-
-    # Check handoffs directory
-    handoffs_dir = memory_root / "handoffs"
-    if handoffs_dir.exists() and handoffs_dir.is_dir():
-        for handoff_file in handoffs_dir.glob("*.md"):
-            try:
-                content = handoff_file.read_text(encoding="utf-8")
-                # Check if handoff is pending (not acknowledged)
-                if (
-                    "status: pending" in content.lower()
-                    or "acknowledged: false" in content.lower()
-                ):
-                    # Extract handoff target from filename or content
-                    desc = f"Handoff: {handoff_file.stem}"
-                    pending_handoffs.append(desc)
-            except (OSError, UnicodeDecodeError):
-                pass
-
-    # Also check activeContext.md for handoff markers
-    active_path = memory_root / "activeContext.md"
-    if active_path.exists():
-        try:
-            content = active_path.read_text(encoding="utf-8")
-            in_section = False
-            for line in content.split("\n"):
-                if "## Active Handoffs" in line or "## Pending Handoffs" in line:
-                    in_section = True
-                    continue
-                if in_section:
-                    if line.startswith("##"):
-                        break
-                    if (
-                        line.strip().startswith("-")
-                        and "acknowledged" not in line.lower()
-                    ):
-                        desc = line.strip().lstrip("-").strip()
-                        if desc and desc not in pending_handoffs:
-                            pending_handoffs.append(desc[:80])
-        except (OSError, UnicodeDecodeError):
-            pass
-
-    return len(pending_handoffs), pending_handoffs
 
 
 def check_github_issues() -> tuple[int, list[str]]:
@@ -277,12 +115,6 @@ def build_blocking_response(issues: dict[str, Any]) -> dict[str, Any]:
 
     if issues.get("unread_messages", 0) > 0:
         reason_parts.append(f"{issues['unread_messages']} unread message(s)")
-    if issues.get("pending_tasks", 0) > 0:
-        reason_parts.append(f"{issues['pending_tasks']} pending task(s)")
-    if issues.get("pending_approvals", 0) > 0:
-        reason_parts.append(f"{issues['pending_approvals']} pending approval(s)")
-    if issues.get("active_handoffs", 0) > 0:
-        reason_parts.append(f"{issues['active_handoffs']} active handoff(s)")
     if issues.get("github_issues", 0) > 0:
         reason_parts.append(f"{issues['github_issues']} open GitHub issue(s)")
 
@@ -322,9 +154,8 @@ def main() -> int:
     if hook_input.get("agent_id"):
         return 0
 
-    # Get working directory from input or environment
+    # Working directory — used only as the report-write fallback below.
     cwd = hook_input.get("cwd", os.getcwd())
-    memory_root = get_memory_root(cwd)
 
     # Collect all blocking issues
     issues: dict[str, Any] = {}
@@ -335,25 +166,7 @@ def main() -> int:
         issues["unread_messages"] = unread_count
         issues["unread_subjects"] = unread_subjects
 
-    # 2. Check Claude Tasks
-    tasks_count, tasks_list = check_claude_tasks(memory_root)
-    if tasks_count > 0:
-        issues["pending_tasks"] = tasks_count
-        issues["pending_tasks_list"] = tasks_list
-
-    # 3. Check pending approvals
-    approvals_count, approvals_list = check_pending_approvals(memory_root)
-    if approvals_count > 0:
-        issues["pending_approvals"] = approvals_count
-        issues["pending_approvals_list"] = approvals_list
-
-    # 4. Check active handoffs
-    handoffs_count, handoffs_list = check_active_handoffs(memory_root)
-    if handoffs_count > 0:
-        issues["active_handoffs"] = handoffs_count
-        issues["active_handoffs_list"] = handoffs_list
-
-    # 5. Check GitHub Issues (only if gh CLI is available)
+    # 2. Check GitHub Issues (only if gh CLI is available)
     gh_count, gh_list = check_github_issues()
     if gh_count > 0:
         issues["github_issues"] = gh_count

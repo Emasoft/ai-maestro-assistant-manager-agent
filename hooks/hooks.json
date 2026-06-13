@@ -26,18 +26,6 @@
         ]
       }
     ],
-    "SessionEnd": [
-      {
-        "_id": "amama-memory-save",
-        "_description": "Save session memory and context on exit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/amama_session_end.py"
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "_id": "amama-stop-check",

@@ -3,7 +3,8 @@
 AMAMA Initialize Design Folders Script
 
 Creates the standardized design folder structure for the ai-maestro-assistant-manager-agent.
-Includes design/memory/, design/handoffs/, design/requirements/ with templates.
+Includes design/requirements/, design/handoffs/, and the TRDD lifecycle folders
+(proposals/, tasks/, refused/, archived/) with templates.
 
 Usage:
     python3 amama_init_design_folders.py
@@ -85,51 +86,6 @@ TEMPLATE_FILES = {
 {{OPEN_QUESTIONS}}
 """,
     },
-    "memory": {
-        "CONTEXT_TEMPLATE.md": """# Context Document
-
-## Document ID
-{{DOCUMENT_ID}}
-
-## Created
-{{CREATED_AT}}
-
-## Type
-{{CONTEXT_TYPE}}
-
-## Summary
-{{SUMMARY}}
-
-## Details
-{{DETAILS}}
-
-## Related Documents
-{{RELATED_DOCS}}
-""",
-        "DECISION_TEMPLATE.md": """# Decision Record
-
-## Decision ID
-{{DECISION_ID}}
-
-## Date
-{{DECISION_DATE}}
-
-## Status
-{{STATUS}}
-
-## Context
-{{CONTEXT}}
-
-## Decision
-{{DECISION}}
-
-## Consequences
-{{CONSEQUENCES}}
-
-## Alternatives Considered
-{{ALTERNATIVES}}
-""",
-    },
     "handoffs": {
         "HANDOFF_TEMPLATE.md": """# Agent Handoff Document
 
@@ -199,14 +155,12 @@ def create_index_file(root: Path, platforms: list[str]) -> dict[str, Any]:
         "platforms": platforms,
         "documents": {
             "requirements": [],
-            "memory": [],
             "handoffs": [],
         },
         "stats": {
             "total_documents": 0,
             "by_type": {
                 "requirements": 0,
-                "memory": 0,
                 "handoffs": 0,
             },
             "by_platform": {p: 0 for p in platforms},
@@ -244,13 +198,17 @@ def create_folder_structure(root: Path, platforms: list[str]) -> list[Path]:
     """Create the design folder structure and return created paths."""
     created: list[Path] = []
 
-    # Main folders
+    # Main folders. The TRDD lifecycle folders (proposals/tasks/refused/archived)
+    # are the source of truth for task state; the old design/memory bank was
+    # retired in TRDD-8707e849 (session memory is now the markdown-notes system).
     main_folders = [
         root / "requirements",
-        root / "memory",
         root / "handoffs",
         root / "config",
-        root / "archive",
+        root / "proposals",
+        root / "tasks",
+        root / "refused",
+        root / "archived",
     ]
 
     for folder in main_folders:
@@ -289,16 +247,6 @@ def create_template_files(root: Path, platforms: list[str]) -> list[Path]:
             if not file_path.exists():
                 file_path.write_text(content, encoding="utf-8")
                 created.append(file_path)
-
-    # Memory templates (shared)
-    memory_dir = root / "memory"
-    templates_subdir = memory_dir / "templates"
-    templates_subdir.mkdir(parents=True, exist_ok=True)
-    for filename, content in TEMPLATE_FILES["memory"].items():
-        file_path = templates_subdir / filename
-        if not file_path.exists():
-            file_path.write_text(content, encoding="utf-8")
-            created.append(file_path)
 
     # Handoffs templates (shared)
     handoffs_dir = root / "handoffs"
@@ -415,14 +363,15 @@ def main() -> int:
             print("        templates/")
             print("        specs/")
             print("        rdd/")
-        print("    memory/")
-        print("      templates/")
         print("    handoffs/")
         print("      templates/")
         print("    config/")
         for p in platforms:
             print(f"      {p}/")
-        print("    archive/")
+        print("    proposals/")
+        print("    tasks/")
+        print("    refused/")
+        print("    archived/")
         print("    index.yaml")
 
     return 0 if results["success"] else 1
