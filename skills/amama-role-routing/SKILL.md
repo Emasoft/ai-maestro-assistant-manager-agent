@@ -11,7 +11,7 @@ user-invocable: false
 
 ## Overview
 
-Routes requests to specialist agents. AMAMA can message directly; routing via AMCOS preferred but not required. 3 governance roles: `manager`, `chief-of-staff`, `member`.
+Routes user requests to specialist member agents. AMAMA delegates to members **only via AMCOS** — the team's chief-of-staff is the sole entry point into a team (R6 v3); AMAMA never messages a team member directly. AMAMA still responds to the *user* directly (status, approvals, clarifications) and talks to its AMCOS directly. The team coordination roles are `manager`, `chief-of-staff`, `member` — distinct from the three AI Maestro governance *titles* (MANAGER / AUTONOMOUS / MAINTAINER).
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ Copy this checklist and track your progress:
 - [ ] Send via AI Maestro
 - [ ] Track and report
 
-**Routing targets** (all `role: member`, preferably routed via AMCOS for delegation, or directly if urgent):
+**Routing targets** (all `role: member`, **always** routed via AMCOS — the sole entry point into a team, R6 v3; never message a member directly):
 - **AMAA** (`amaa-`) -- architect specialization
 - **AMOA** (`amoa-`) -- orchestrator specialization
 - **AMIA** (`amia-`) -- integrator specialization
