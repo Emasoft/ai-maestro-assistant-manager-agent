@@ -1,6 +1,6 @@
 {
   "name": "ai-maestro-assistant-manager-agent",
-  "version": "2.10.0",
+  "version": "2.10.1",
   "description": "User's right hand - sole interlocutor with user, directs other roles. Requires AI Maestro for inter-agent messaging.",
   "author": {
     "name": "Emasoft",
@@ -9,6 +9,9 @@
   "repository": "https://github.com/Emasoft/ai-maestro-assistant-manager-agent",
   "license": "MIT",
   "dependencies": [
-    { "name": "ai-maestro-plugin", "version": "^2.6.0" }
+    {
+      "name": "ai-maestro-plugin",
+      "version": "^2.6.0"
+    }
   ]
 }
