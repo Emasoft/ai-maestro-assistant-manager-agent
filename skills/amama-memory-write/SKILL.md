@@ -1,7 +1,6 @@
 ---
 name: amama-memory-write
 description: Capture a durable, reusable fact as a markdown memory note so a future session recalls it from the SYMPTOM. Use after a confirmed user preference, an approval/governance decision worth remembering, a project constraint not derivable from code, or any "we should remember this" moment — or when the user says "remember this", "save a memory", "note that for next time", "from now on always X". Writes a schema-valid note (name/description/metadata + body) with the description indexed by question/symptom vocabulary, and appends the MEMORY.md index line. The AMAMA mirror of the AI-Maestro memory-write protocol (see the memory-protocol rule).
-version: 2.9.1
 compatibility: Requires AI Maestro installed. memgrep optional (degrades to grep).
 context: fork
 agent: amama-assistant-manager-main-agent

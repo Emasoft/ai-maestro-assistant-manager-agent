@@ -1,7 +1,6 @@
 ---
 name: amama-memory-recall
 description: Recall durable project memories from a SYMPTOM before deciding, approving, recommending, or re-deriving a prior decision. Searches the project's markdown memory notes with memgrep (degrading to plain grep when memgrep is absent), ranking notes by how well your symptom query hits each note's description/title/tags, and returns the top notes to read. Use when you think "have we hit this before?" or "did the user already tell me their preference?", or the user says "recall memories about X", "did we already decide this", "search the memory notes", "what did we learn about Y". Read-only. The AMAMA mirror of the AI-Maestro memory-recall protocol (see the memory-protocol rule).
-version: 2.9.1
 compatibility: Requires AI Maestro installed. memgrep optional (degrades to grep).
 context: fork
 agent: amama-assistant-manager-main-agent

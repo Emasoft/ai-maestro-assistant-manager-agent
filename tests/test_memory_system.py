@@ -238,7 +238,7 @@ def test_skill_frontmatter_valid(skill: Path) -> None:
     """Each skill ships with parseable frontmatter carrying the AMAMA convention fields."""
     assert skill.is_file()
     fm = _read_frontmatter(skill)
-    for key in ("name", "description", "version", "compatibility", "context", "agent", "user-invocable"):
+    for key in ("name", "description", "compatibility", "context", "agent", "user-invocable"):
         assert key in fm, f"{skill} frontmatter missing {key}"
     assert fm["name"].startswith("amama-memory-")
 
