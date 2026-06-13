@@ -3,7 +3,7 @@ trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: planned
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-13T17:43:46+0200
+updated: 2026-06-13T18:01:56+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -26,18 +26,26 @@ external-refs: ["github.com/Emasoft/ai-maestro-janitor/issues/18"]
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-13
 
-**🔴 MODEL CORRECTION (USER, 2026-06-13) — supersedes the per-plugin `<plugin>-memory-*`
-model used in the body below.** The memory skills are **GLOBAL, provided by the user-level
-janitor plugin** — `janitor-memory-recall` / `janitor-memory-write` / `janitor-memory-update`
-(janitor may be RENAMING to `janitor-mem-*` right now). Role plugins **USE the global skills;
-they do NOT ship their own** `*-memory-recall/write`. So:
-- The body's canonical block referencing `<plugin>-memory-*` is **WRONG** — replace with the
-  global `janitor-memory-*` (final names per janitor #31).
-- **The fleet's per-plugin memory skills are REDUNDANT and likely REMOVED** — AMAMA shipped
-  `amama-memory-recall`/`amama-memory-write` + `rules/memory-protocol.md` in v2.10.0; those
-  come out (pending janitor confirm on #31 Q3/Q6).
-- **BLOCKED** on janitor #31 (final skill names + remove-per-plugin? + path + mirror). Do NOT
-  execute the wiring until #31 answers — wiring to a name that's mid-rename = rework.
+**🟢 FINAL SPEC RECEIVED (janitor, via assistant-manager#15 — supersedes the per-plugin
+`<plugin>-memory-*` model in the body below).** Memory skills are **GLOBAL, from the
+user-level janitor plugin** — names **CONFIRMED UNCHANGED**: `janitor-memory-recall` /
+`janitor-memory-write` / `janitor-memory-update` (no rename). Role plugins **USE the global
+skills; they do NOT ship their own**. The locked config:
+- **3-scope storage:** LOCAL `~/.claude/projects/<slug>/memory/` (harness, unchanged) ·
+  **PROJECT `<repo>/.claude/project/memory/`** (tracked+pushed; needs gitignore exception:
+  `.claude/**` ignored then `!.claude/project/memory/**`) · USER `${CLAUDE_PLUGIN_DATA}/memory/`.
+- **Rollout mechanism = the NEW `/janitor-memory-bootstrap` skill** — each plugin's own main
+  agent runs it once (creates `.claude/project/memory/` + gitignore exception, seeds the
+  arch-hub page + MEMORY.md, points the agent at the recall rule + skills + proactive contract).
+- **Proactive contract** (now in the skills + `markdown-memory-recall` rule): recall-before-acting
+  · write/update-after-solving · maintain-project-wikimem · scope-routing. **MY DELTA:** also
+  propagate the contract into SUB-AGENT prompts (sub-agents inherit nothing — USER's must-have).
+- **REMOVE the fleet's redundant per-plugin skills** — AMAMA strips `amama-memory-recall`/`-write`
+  + reconciles `rules/memory-protocol.md` (confirming removal with janitor on #15).
+- **EXECUTE ON JANITOR PUBLISH** — the janitor's skills/bootstrap are committed but UNPUSHED
+  (pending USER review). Align now (design locked); run `/janitor-memory-bootstrap` + the rework
+  once it ships. No `column:` collision — memory lives under `.claude/project/memory/`, the
+  3-pillars under `design/` (orthogonal).
 
 **AMAMA IS IN SCOPE (USER emphasized — it's the MANAGER, the most important role).** AMAMA's
 own agents MUST be updated as the exemplar, not just the fleet's:
