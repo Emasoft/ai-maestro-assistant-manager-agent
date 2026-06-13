@@ -1,7 +1,8 @@
 ---
-prrd-version: 1.0
-updated: 2026-06-02T14:17:45+0200
+prrd-version: 1.1
+updated: 2026-06-13T11:52:25+0200
 project: ai-maestro-assistant-manager-agent
+project-id: autonomous
 canonical-source: design/requirements/PRRD.md
 mirrors: []
 ---
@@ -29,4 +30,14 @@ spec: `~/.claude/rules/prrd-design-rules.md`.
 - **G1.1** — Every agent that writes to GitHub (issue, issue comment, PR, PR comment, PR review, discussion, release note) MUST begin the body with a one-line self-identification of which agent/role/plugin authored it, because all AI Maestro agents share the single human-owner GitHub identity (the owner's gh CLI auth). Recommended leading line: _Posted by the Claude developing **<plugin-or-role>** (via the shared @owner gh auth)._ Commit messages SHOULD carry an `Agent: <role>` trailer.
 
 ## 🥈 SILVER — MANAGER-mutable (agents propose via COS)
+
+- **S2.1** — Validate this plugin only via the remote CPV plugin (`uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin . --strict`). Never ship vendored validation/setup/lint scripts in this repo; CI's exit-0-only `--strict` gate is the release blocker. Report CPV false-positives/errors as upstream issues — never request rule suppression or exemption (the exempt-list was an exploitable attack surface; devitalize or remove flagged content instead).
+- **S3.1** — Declare the inter-plugin dependency on `ai-maestro-plugin` in `plugin.json` as the interim unpinned string `["ai-maestro-plugin"]` until CPV #106 reconciles the pin-format contradiction between `validate_plugin` (recommends `{name, version}`) and `validate_marketplace` (requires strings); migrate to the pinned object form once #106 lands. Do not mirror the dependency into a marketplace entry until then.
+- **S4.1** — Every agent/skill/tool report is written to `<main-repo-root>/reports/<component>/<YYYYMMDD_HHMMSS±HHMM>-<slug>.md` (local time + GMT offset). Both `reports/` and `reports_dev/` stay gitignored — reports may carry private paths/tokens/PII.
+- **S5.1** — The TRDD `column:` pipeline in `design/tasks/` is the authoritative task lifecycle. Any GitHub-Projects board or the AI Maestro server kanban is a visual projection of it, never the source of truth.
+- **S6.1** — Session memory uses the janitor's three-scope markdown-notes system (LOCAL `~/.claude/projects/<slug>/memory/`, PROJECT `<git-root>/memory/`, USER `~/.claude/memory/`), recall via memgrep-or-grep-fallback. The legacy `activeContext`/`progress`/`patterns` hook-bank is retired (TRDD-8707e849).
+- **S7.1** — This repo is solo-operated: `project-id: autonomous`, PRRD mutations via `prrd-edit.py --user` (the human owner is the manager). When the fleet goes live and a team takes ownership, re-scope `project-id:` to the registered AI Maestro project id and activate the approval chain — a Tier-2 transition the MANAGER coordinates.
+- **S8.1** — Every GitHub post (issue, comment, PR, review, discussion, release note) leads with the line "This is the Claude responsible for the ai-maestro-assistant-manager-agent project." — the concrete instance of `PRRD G1.1` for this repo.
+- **S9.1** — The MANAGER cannot self-approve its OWN releases: the `complete → publish` / `complete → deploy` transitions and any release/deploy of this plugin require USER approval. Routine mechanical column transitions remain exempt per `manager-approval-defaults.md`.
+- **S10.1** — The standard GitHub baseline rulesets (`baseline-history-protect` + `baseline-pr-and-checks`) apply to this repo as-is; any deviation (extra rule, loosened check, new bypass actor, disabled ruleset) is a Tier-2 change requiring MANAGER approval.
 
