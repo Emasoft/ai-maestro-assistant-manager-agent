@@ -3,9 +3,10 @@ trdd-id: b77a560f-68de-4ced-989e-5d6c01b62736
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AUTONOMOUS persona
 column: proposal
 created: 2026-06-04T23:06:42+0200
-updated: 2026-06-04T23:06:42+0200
+updated: 2026-06-13T11:55:27+0200
 current-owner: amama
 task-type: docs
+approval-tier: 2
 external-refs: [github.com/Emasoft/ai-maestro-autonomous-agent]
 ---
 
@@ -428,7 +429,7 @@ changed, removed, or contradicted.
    / USER-direct-fallback routing; no other existing content is removed or
    altered.
 8. No code, script, hook, skill, or other file is changed — docs/persona only.
-9. The plugin's own validation (`scripts/validate_agent.py`) and the markdown
+9. The plugin's own validation (CPV remote-validate) and the markdown
    lint (`.markdownlint.json` config in the repo) pass on the edited file with
    no new errors.
 
@@ -463,7 +464,7 @@ the two edits:
    direct-to-MANAGER routing.
 4. Run the plugin's agent validator and markdown lint on the file:
    ```bash
-   uv run python scripts/validate_agent.py agents/ai-maestro-autonomous-agent-main-agent.md
+   uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .
    npx markdownlint-cli2 agents/ai-maestro-autonomous-agent-main-agent.md   # or the repo's configured lint per .markdownlint.json
    ```
    Both MUST pass with no NEW errors attributable to this change.

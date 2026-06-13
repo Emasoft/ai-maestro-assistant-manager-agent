@@ -1,9 +1,17 @@
+---
+trdd-id: bfcedff0-21c8-439f-a3e5-b2dcc3b8ad19
+title: AMAMA Phase 1 — Presence-read + Reversibility Matrix (v3-hardening pass 1)
+column: backburner
+created: 2026-05-05T00:00:00+0200
+updated: 2026-06-13T11:55:27+0200
+current-owner: amama
+task-type: feature
+---
+
 # TRDD-bfcedff0 — AMAMA Phase 1: Presence-read + Reversibility Matrix (with v3 hardening #1)
 
-**TRDD ID:** `bfcedff0-21c8-439f-a3e5-b2dcc3b8ad19`
 **Filename:** `design/tasks/TRDD-bfcedff0-21c8-439f-a3e5-b2dcc3b8ad19-amama-phase-1-presence-matrix.md`
 **Tracked in:** this repo (`design/tasks/` is git-tracked)
-**Status:** Not started
 **Owner:** Emasoft
 **Created:** 2026-05-05
 **Plugin:** `ai-maestro-assistant-manager-agent` (AMAMA)

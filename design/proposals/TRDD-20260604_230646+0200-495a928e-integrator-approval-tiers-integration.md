@@ -3,9 +3,10 @@ trdd-id: 495a928e-34d3-41d9-9c25-28345935cac0
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMIA integrator persona
 column: proposal
 created: 2026-06-04T23:06:46+0200
-updated: 2026-06-04T23:06:46+0200
+updated: 2026-06-13T11:55:27+0200
 current-owner: amama
 task-type: docs
+approval-tier: 2
 external-refs: [github.com/Emasoft/ai-maestro-integrator-agent]
 ---
 
@@ -452,8 +453,8 @@ changed, removed, or contradicted.
    (Edit 2) with a pointer making the release-pipeline entry an explicit Tier-2
    (MANAGER-via-COS) gate; no other existing content is removed or altered.
 7. No code, script, hook, or other file is changed — docs/persona only.
-8. The plugin's own validation (`scripts/validate_agent.py` and the markdown
-   lint) passes on the edited file with no new errors.
+8. The plugin's own validation (CPV remote-validate plus the markdown lint)
+   passes on the edited file with no new errors.
 
 ## Verification steps
 
@@ -484,7 +485,7 @@ repo/branch), after applying the two edits:
    routing for entering the release pipeline.
 4. Run the plugin's agent validator and markdown lint on the file:
    ```bash
-   uv run python scripts/validate_agent.py agents/ai-maestro-integrator-agent-main-agent.md
+   uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .
    npx markdownlint-cli2 agents/ai-maestro-integrator-agent-main-agent.md   # or the repo's configured lint (.markdownlint.json)
    ```
    Both MUST pass with no NEW errors attributable to this change.

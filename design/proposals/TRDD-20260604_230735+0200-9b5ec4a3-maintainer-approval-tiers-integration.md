@@ -3,9 +3,10 @@ trdd-id: 9b5ec4a3-e5a1-46c2-8af4-78a902ce8c43
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the MAINTAINER persona
 column: proposal
 created: 2026-06-04T23:07:35+0200
-updated: 2026-06-04T23:07:35+0200
+updated: 2026-06-13T11:55:27+0200
 current-owner: amama
 task-type: docs
+approval-tier: 2
 external-refs: [github.com/Emasoft/ai-maestro-maintainer-agent]
 ---
 

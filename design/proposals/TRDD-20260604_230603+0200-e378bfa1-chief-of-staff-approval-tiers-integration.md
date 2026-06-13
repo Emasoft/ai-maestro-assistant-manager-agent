@@ -3,9 +3,10 @@ trdd-id: e378bfa1-5f61-4da9-917f-a77416f393ee
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMCOS chief-of-staff persona
 column: proposal
 created: 2026-06-04T23:06:03+0200
-updated: 2026-06-04T23:06:03+0200
+updated: 2026-06-13T11:55:27+0200
 current-owner: amama
 task-type: docs
+approval-tier: 2
 external-refs: [github.com/Emasoft/ai-maestro-chief-of-staff]
 ---
 
@@ -63,11 +64,12 @@ any external rule file; the rule's full content is summarized in
   (MANDATORY)`. It rides on the comms graph that section already states (COS =
   unrestricted team gateway).
 - **Load-bearing fact #4 (which validator):** validate the edited file with
-  `scripts/validate_agent.py` (the Claude-Code agent-spec validator, exit codes
-  0/1/2/3). Do **NOT** use `scripts/amcos_design_validate.py` — that validates a
-  DIFFERENT design-document scheme (`uuid: REQ-YYYYMMDD-NNNN`,
-  `status: draft|review|approved|...`) that has nothing to do with this persona
-  file or with TRDDs.
+  CPV remote-validate
+  (`uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .`,
+  the Claude-Code plugin/agent-spec validator). Do **NOT** use
+  `scripts/amcos_design_validate.py` — that validates a DIFFERENT design-document
+  scheme (`uuid: REQ-YYYYMMDD-NNNN`, `status: draft|review|approved|...`) that
+  has nothing to do with this persona file or with TRDDs.
 
 ---
 
@@ -408,9 +410,10 @@ changed, removed, or contradicted.
   MANAGER. Edit 2 adds one clarifying sentence pointing the reader at the new
   task-authorization axis; it does not alter the GovernanceRequest flow,
   escalation timeline (60s/90s/120s), or any of its references.
-- **Validator note:** validate with `scripts/validate_agent.py` (Claude-Code
-  agent-spec validator). Do NOT use `scripts/amcos_design_validate.py`, which
-  validates an unrelated design-document scheme (`REQ-/SPEC-/ARCH-…` UUIDs,
+- **Validator note:** validate with CPV remote-validate
+  (`uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .`).
+  Do NOT use `scripts/amcos_design_validate.py`, which validates an unrelated
+  design-document scheme (`REQ-/SPEC-/ARCH-…` UUIDs,
   `status: draft|review|approved|…`) and does not apply to this persona file or
   to TRDDs.
 
@@ -447,7 +450,7 @@ changed, removed, or contradicted.
    the new section disambiguating GovernanceRequest from the approval tiers; no
    other existing content is removed or altered.
 8. No code, script, hook, or other file is changed — docs/persona only.
-9. The plugin's own validation (`scripts/validate_agent.py`) and the repo's
+9. The plugin's own validation (CPV remote-validate) and the repo's
    markdown lint (`.markdownlint.json`) pass on the edited file with no new
    errors.
 
@@ -486,7 +489,7 @@ repo/branch), after applying the two edits:
    task-authorization vs agent-lifecycle distinction.
 5. Run the plugin's agent validator and the markdown lint on the file:
    ```bash
-   uv run python scripts/validate_agent.py agents/ai-maestro-chief-of-staff-main-agent.md
+   uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .
    npx markdownlint-cli2 agents/ai-maestro-chief-of-staff-main-agent.md   # respects the repo .markdownlint.json
    ```
    Both MUST pass with no NEW errors attributable to this change. (Do NOT run

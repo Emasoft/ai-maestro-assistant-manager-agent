@@ -3,9 +3,10 @@ trdd-id: 3649cb7b-ee33-458e-a559-3d52fcca58a0
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMPA programmer (MEMBER) persona
 column: proposal
 created: 2026-06-04T23:06:56+0200
-updated: 2026-06-04T23:06:56+0200
+updated: 2026-06-13T11:55:27+0200
 current-owner: amama
 task-type: docs
+approval-tier: 2
 external-refs: [github.com/Emasoft/ai-maestro-programmer-agent]
 ---
 
@@ -438,7 +439,7 @@ existing content is changed, removed, or contradicted.
    Tier 0 — don't over-escalate" reminder; no other existing content is removed
    or altered.
 8. No code, script, hook, or other file is changed — docs/persona only.
-9. The plugin's own validation (`scripts/validate_agent.py`) and the markdown
+9. The plugin's own validation (CPV remote-validate) and the markdown
    lint (`.markdownlint.json`) pass on the edited file with no new errors.
 
 ## Verification steps
@@ -471,7 +472,7 @@ repo/branch), after applying the two edits:
    The matched item MUST mention the Tier ladder / Approval-Tiers section.
 4. Run the plugin's agent validator and markdown lint on the file:
    ```bash
-   uv run python scripts/validate_agent.py agents/ai-maestro-programmer-agent-main-agent.md
+   uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .
    npx markdownlint-cli2 agents/ai-maestro-programmer-agent-main-agent.md   # or the repo's configured lint (.markdownlint.json)
    ```
    Both MUST pass with no NEW errors attributable to this change.

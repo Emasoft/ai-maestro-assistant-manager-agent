@@ -3,9 +3,10 @@ trdd-id: dd9a3026-0b11-451e-a4b1-94b733a43c16
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMOA orchestrator persona
 column: proposal
 created: 2026-06-04T22:58:33+0200
-updated: 2026-06-04T22:58:33+0200
+updated: 2026-06-13T11:55:27+0200
 current-owner: amama
 task-type: docs
+approval-tier: 2
 external-refs: [github.com/Emasoft/ai-maestro-orchestrator-agent]
 ---
 
@@ -354,8 +355,8 @@ changed, removed, or contradicted.
 6. The existing "ESCALATE BLOCKERS" principle is reconciled (Edit 2) with a
    pointer to the new section; no other existing content is removed or altered.
 7. No code, script, hook, or other file is changed — docs/persona only.
-8. The plugin's own validation (`scripts/validate_agent.py` and the markdown
-   lint) passes on the edited file with no new errors.
+8. The plugin's own validation (CPV remote-validate plus the markdown lint)
+   passes on the edited file with no new errors.
 
 ## Verification steps
 
@@ -384,7 +385,7 @@ repo/branch), after applying the two edits:
    The matched line MUST mention the Tier ladder / Approval-Tiers section.
 4. Run the plugin's agent validator and markdown lint on the file:
    ```bash
-   uv run python scripts/validate_agent.py agents/ai-maestro-orchestrator-agent-main-agent.md
+   uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin .
    npx markdownlint-cli2 agents/ai-maestro-orchestrator-agent-main-agent.md   # or the repo's configured lint
    ```
    Both MUST pass with no NEW errors attributable to this change.
