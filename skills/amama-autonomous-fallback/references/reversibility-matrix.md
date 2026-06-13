@@ -62,7 +62,7 @@ Single source of truth for autonomous-fallback eligibility. Every approval reque
 
 ## R6 v3 routing constraint reminder
 
-When the operation's TARGET agent is a team-internal title (ORCH/ARCH/INT/MEMBER), the verdict from this matrix still applies — but the AMP message that EXECUTES the operation must be addressed to the team's CHIEF-OF-STAFF, never to the team member directly. AMAMA composes the message to the COS asking the COS to perform the operation inside the team. See SKILL.md §6 for full text. The recipient whitelist is enforced at composition time: `{HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}`.
+When the operation's TARGET agent is a team-internal title (ORCH/ARCH/INT/MEMBER), the verdict from this matrix still applies — but the executing AMP message carries the team's CHIEF-OF-STAFF as its addressee, never a team member. The message is a delegation request whose executor, inside the team, is the COS. See SKILL.md §6 for full text. The recipient whitelist is enforced at composition time: `{HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}`.
 
 ## Update protocol
 

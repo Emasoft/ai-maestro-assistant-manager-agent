@@ -40,6 +40,56 @@ AI Maestro defines exactly 3 governance titles:
 | **Governance approvals** | Team membership, COS assignment, agent lifecycle, transfers | GovernanceRequest API | `amama-approval-workflows` |
 | **Operational approvals** | Deployments, merges, test runs, routine AMCOS operations | Message-based flow (`approval_request` / `approval_decision`) | `amama-amcos-coordination` |
 
+## TRDD lifecycle — at a glance
+
+The project's `design/` folder on GitHub is the **sole source of truth** for
+all TRDDs (proposals, open work, and terminal records). Every clone pulls
+before acting and pushes after each change.
+
+```text
+        ┌───────────────────────────────────────────────────────────────┐
+        │  design/  ⇅  GitHub repo  =  SOLE SOURCE OF TRUTH              │
+        │  every clone PULLS before acting and PUSHES after each change   │
+        └───────────────────────────────────────────────────────────────┘
+
+  idea / request
+       │
+       │  Tier 0 (own scope · NPT/EHT) ── author directly as `planned` ──┐
+       │                                                                 │
+       ▼   needs approval                                                ▼
+ ┌───────────────────┐   approve                                ┌────────────────────────┐
+ │ design/proposals/ │   (T1 COS · T2 MANAGER · T3 USER)         │  design/tasks/         │
+ │  column: proposal │ ───────────────────────────────────────▶ │  = OPEN WORK           │
+ │   (PENDING)       │                                          │                        │
+ └───────────────────┘                                          │  planned→todo→dispatch │
+       │                                                        │  →dev→testing→ai_review│
+       │ refuse  (NEVER approved)                               │  →human_review         │
+       ▼                                                        │  →complete→publish|deploy
+ ┌───────────────────┐                                          │                        │
+ │ design/refused/   │                                          │  • blocked  (lists its │
+ │  column: refused  │                                          │    blocked-by:)        │
+ └───────────────────┘                                          │  • failed → RETRY      │
+                                                                │    (stays OPEN, never  │
+                                                                │     archived)          │
+                                                                └───────────┬────────────┘
+                                                                            │ terminal-DONE
+                                                                            │ (was approved)
+                                                                            ▼
+                                                          ┌──────────────────────────────┐
+                                                          │  design/archived/            │
+                                                          │  completed · cancelled ·     │
+                                                          │  superseded                  │
+                                                          └──────────────────────────────┘
+
+  OPEN TRDD  = any file in design/tasks/  (INCLUDING `blocked` and `failed`).
+  refused/   = proposals NEVER approved.   archived/ = ONCE-approved, now terminal.
+  `failed` is OPEN and retryable — fix the cause (often via other TRDDs), retry;
+  it is NEVER moved to archived. Giving up on a failed TRDD = cancel → archived.
+```
+
+Full rules: `~/.claude/rules/trdd-approval-tiers.md`. Decide proposals fast with
+the `amama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
+
 ## Plugin Components
 
 ### Agents
@@ -144,9 +194,13 @@ claude --plugin-dir /path/to/ai-maestro-assistant-manager-agent
 
 ## Validation
 
+Validation runs against the canonical CPV pipeline fetched from GitHub —
+no validator scripts are vendored into this repo:
+
 ```bash
 cd /path/to/ai-maestro-assistant-manager-agent
-CLAUDE_PRIVATE_USERNAMES="emanuelesabetta" uv run --with pyyaml --with types-PyYAML python scripts/validate_plugin.py . --verbose
+uvx --from git+https://github.com/Emasoft/claude-plugins-validation \
+    --with pyyaml cpv-remote-validate plugin . --strict --verbose
 ```
 
 ## Token Optimization
@@ -155,13 +209,17 @@ All AMAMA scripts write verbose output to timestamped report files in `design/re
 
 ## Scripts
 
-All scripts are in the `scripts/` directory and use the `amama_` prefix:
+All runtime scripts are in the `scripts/` directory. The plugin's own
+functional scripts use the `amama_` prefix; `publish.py` is the canonical
+release pipeline. Validation and linting are NOT vendored — they run
+remotely against CPV from GitHub (see [Validation](#validation) above).
 
 | Script | Purpose |
 |--------|---------|
 | `amama_session_start.py` | SessionStart hook -- load memory |
 | `amama_session_end.py` | SessionEnd hook -- save memory |
 | `amama_stop_check.py` | Stop hook -- verify coordination complete |
+| `amama_user_prompt_submit.py` | UserPromptSubmit hook -- record user-input presence |
 | `amama_report_writer.py` | Shared report writer for token-efficient output |
 | `amama_memory_manager.py` | CozoDB memory management |
 | `amama_memory_operations.py` | Memory CRUD operations |
@@ -172,36 +230,7 @@ All scripts are in the `scripts/` directory and use the `amama_` prefix:
 | `amama_design_search.py` | Search design documents |
 | `amama_download.py` | Download resources |
 | `amama_init_design_folders.py` | Initialize design folder structure |
-| `smart_exec.py` | Smart command execution |
-| `bump_version.py` | Version bumping |
-| `check_version_consistency.py` | Verify version consistency across files |
-| `pre-push-hook.py` | Pre-push validation |
-| `publish.py` | Plugin publishing workflow |
-| `setup_git_hooks.py` | Git hooks setup |
-| `setup_marketplace_automation.py` | Marketplace automation setup |
-| `setup_plugin_pipeline.py` | Plugin pipeline setup |
-| `update_marketplace_metadata.py` | Update marketplace metadata |
-| `validate_plugin.py` | Main plugin validation entry point |
-| `validate_agent.py` | Agent definition validation |
-| `validate_command.py` | Command definition validation |
-| `validate_documentation.py` | Documentation validation |
-| `validate_encoding.py` | File encoding validation |
-| `validate_enterprise.py` | Enterprise feature validation |
-| `validate_hook.py` | Hook definition validation |
-| `validate_lsp.py` | LSP integration validation |
-| `validate_marketplace_pipeline.py` | Marketplace pipeline validation |
-| `validate_marketplace.py` | Marketplace metadata validation |
-| `validate_mcp.py` | MCP integration validation |
-| `validate_rules.py` | Rules validation |
-| `validate_scoring.py` | Plugin scoring validation |
-| `validate_security.py` | Security validation |
-| `validate_skill_comprehensive.py` | Comprehensive skill validation |
-| `validate_skill.py` | Basic skill validation |
-| `validate_xref.py` | Cross-reference validation |
-| `cpv_validation_common.py` | Shared validation utilities (CPV) |
-| `cpv_token_cost.py` | Token cost analysis |
-| `gitignore_filter.py` | Gitignore-aware file filtering |
-| `lint_files.py` | File linting utilities |
+| `publish.py` | Canonical plugin release pipeline (bump, lint, validate, test, tag, push) |
 
 ## Project Structure
 
@@ -220,12 +249,8 @@ ai-maestro-assistant-manager-agent/
 ├── hooks/
 │   └── hooks.json                     # Hook definitions
 ├── scripts/
-│   ├── amama_*.py                     # AMAMA functional scripts
-│   ├── validate_*.py                  # Plugin validation suite
-│   ├── cpv_validation_common.py        # Shared validation utilities (CPV)
-│   ├── smart_exec.py                  # Smart command execution
-│   ├── bump_version.py                # Version bumping
-│   └── pre-push-hook.py              # Pre-push validation
+│   ├── amama_*.py                     # AMAMA functional scripts (hooks + logic)
+│   └── publish.py                     # Canonical release pipeline (remote CPV validate/lint)
 ├── shared/
 │   ├── handoff_template.md            # Handoff document format
 │   ├── message_templates.md           # Generic message templates

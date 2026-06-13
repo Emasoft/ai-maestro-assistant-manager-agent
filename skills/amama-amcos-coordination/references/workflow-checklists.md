@@ -71,7 +71,7 @@ When AMCOS sends an approval request:
   - Risk level (if provided)
   - Justification
 - [ ] **Assess risk level**:
-  - Is operation destructive? (delete files, drop tables)
+  - Is operation destructive? (file deletion, table drops)
   - Is operation irreversible? (deploy prod, publish release)
   - Is operation within AMCOS documented scope?
   - Does operation align with user's stated goals?

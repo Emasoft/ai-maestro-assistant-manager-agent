@@ -1,7 +1,6 @@
 ---
 name: amama-session-memory
 description: Use when restoring user context, tracking decisions, or managing availability states. Trigger with session start or preference changes. Loaded by ai-maestro-assistant-manager-agent-main-agent
-version: 2.3.3
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent

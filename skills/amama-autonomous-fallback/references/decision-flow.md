@@ -43,7 +43,7 @@ Call amama-presence-tracker `get_state()`. If state is `active`, `unknown`, or `
 
 ## Step 6 — R6 v3 routing constraint
 
-(2026-05-05.) If the operation's TARGET agent is a team-internal title (ORCHESTRATOR, ARCHITECT, INTEGRATOR, MEMBER, or any custom team-layer title), the matrix verdict still applies, BUT the operation must be EXECUTED by sending the instruction to the team's CHIEF-OF-STAFF — never directly to the team member. Compose the AMP message addressed to the COS (whitelist enforced at composition time: `recipient ∈ {HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}`). The COS then performs the operation inside the team. Applies regardless of state and regardless of source-role.
+(2026-05-05.) If the operation's TARGET agent is a team-internal title (ORCHESTRATOR, ARCHITECT, INTEGRATOR, MEMBER, or any custom team-layer title), the matrix verdict still applies, BUT execution routes through the team's CHIEF-OF-STAFF — never a direct path to the team member. The AMP message carries the COS as its addressee (whitelist enforced at composition time: `recipient ∈ {HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER}`); inside the team, the COS is the operation's executor. Applies regardless of state and regardless of source-role.
 
 Empirical motivation (recorded in TRDD-bfcedff0 §1, R6 v3 update): when MANAGER messages a team-internal agent directly, the COS or the team's ORCHESTRATOR are not informed, or have already issued contradictory instructions, producing chaos. The COS is the SOLE entry point into a team.
 

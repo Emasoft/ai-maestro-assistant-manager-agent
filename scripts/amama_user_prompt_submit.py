@@ -22,7 +22,7 @@ Endpoint contract (server-side):
     Response 200: { "recorded_at_epoch": <int> }
     Errors 401/403: ignored - fail-soft
 
-Dependencies: Python 3.8+ stdlib only (uses curl via subprocess).
+Dependencies: Python 3.8+ stdlib only (urllib.request — cross-platform, no curl).
 
 Usage (as Claude Code hook):
     Receives JSON via stdin from UserPromptSubmit hook event.
@@ -36,8 +36,9 @@ from __future__ import annotations
 
 import json
 import os
-import subprocess
 import sys
+import urllib.error
+import urllib.request
 
 # Prompts that look like user input on the UserPromptSubmit channel but
 # are actually fired by CronCreate-driven plugins. Adding a new entry here
@@ -93,32 +94,24 @@ def _entry() -> None:
         # Silently skip - nothing to record.
         return
 
-    url = f"{api_base.rstrip('/')}/api/sessions/me/user-input"
+    # The endpoint path is a fixed server-side contract (NOT user-controlled);
+    # it is held in its own constant so the request target is assembled only
+    # from the operator-configured api_base plus this literal path.
+    path = "/api/sessions/me/user-input"
+    target = f"{api_base.rstrip('/')}{path}"
+    # urllib (stdlib) instead of curl: cross-platform (curl is not shipped on
+    # Windows) and no shell/subprocess. The empty-bytes body yields
+    # Content-Length: 0; the bearer header authenticates the session to the
+    # local AI Maestro server. 2-second timeout: presence is best-effort and
+    # must never block the user.
+    request = urllib.request.Request(target, data=b"", method="POST")
+    request.add_header("Authorization", f"Bearer {aid_auth}")
     try:
-        # 2-second timeout: presence is best-effort, never block the user.
-        # -X POST with empty body. -fsS: fail silently on HTTP errors but
-        # show errors on stderr (which is discarded below by suppressing
-        # stderr capture failures).
-        subprocess.run(
-            [
-                "curl",
-                "-fsS",
-                "-X",
-                "POST",
-                "-H",
-                f"Authorization: Bearer {aid_auth}",
-                "-H",
-                "Content-Length: 0",
-                "--max-time",
-                "2",
-                url,
-            ],
-            capture_output=True,
-            timeout=3,
-            check=False,
-        )
-    except (subprocess.TimeoutExpired, subprocess.SubprocessError, FileNotFoundError, OSError):
-        # Any failure is non-fatal - presence tracking degrades gracefully.
+        with urllib.request.urlopen(request, timeout=2) as response:
+            response.read()  # drain so the connection closes cleanly
+    except (urllib.error.URLError, OSError, ValueError):
+        # Any failure (HTTP error, transport failure, timeout) is non-fatal -
+        # presence tracking degrades gracefully.
         pass
 
     # Always exit 0 - never block prompt submission on a presence-write failure.
@@ -128,7 +121,7 @@ def _main() -> None:
     """Hook entry point - fail-soft wrapper around _entry().
 
     Fail-soft is absolute here: even an unforeseen exception (MemoryError,
-    KeyboardInterrupt mid-curl, a future stdlib regression) must not
+    KeyboardInterrupt mid-request, a future stdlib regression) must not
     block the user's prompt. We catch BaseException, swallow it, and let
     Python exit 0 on natural script completion.
     """

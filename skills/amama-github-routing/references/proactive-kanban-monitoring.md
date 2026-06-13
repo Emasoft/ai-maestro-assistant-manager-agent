@@ -43,8 +43,8 @@ gh project item-list <PROJECT_NUMBER> --owner Emasoft --format json | jq '
 | Status changes | Compare `status` field against previous snapshot | Notify orchestrator of card movement |
 | New assignees | Compare `assignees` array against previous snapshot | Notify relevant specialist |
 | New comments | Check `comments` count increase | Fetch new comments, route to appropriate agent |
-| Card created | New `id` not in previous snapshot | Route to orchestrator for triage |
-| Card archived | `id` missing from current snapshot | Update internal tracking state |
+| Card created | New "id" value not in previous snapshot | Route to orchestrator for triage |
+| Card archived | "id" value missing from current snapshot | Update internal tracking state |
 
 ### Monitoring Procedure
 

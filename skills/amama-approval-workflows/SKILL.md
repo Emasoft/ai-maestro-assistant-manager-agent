@@ -1,7 +1,6 @@
 ---
 name: amama-approval-workflows
 description: Use when handling governance approvals via GovernanceRequest API for team, agent lifecycle, and COS decisions. Trigger with approval requests.
-version: 2.3.2
 context: fork
 agent: amama-assistant-manager-main-agent
 ---

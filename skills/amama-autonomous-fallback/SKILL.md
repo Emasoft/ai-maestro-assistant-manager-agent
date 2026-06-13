@@ -1,7 +1,6 @@
 ---
 name: amama-autonomous-fallback
 description: Use when an approval request arrives from a peer agent and the user is unavailable. Trigger with inbound AMP approvals from COS, AUTONOMOUS, or MAINTAINER. Returns approve-autonomously / defer / escalate-to-user.
-version: 1.0.0
 context: fork
 agent: amama-assistant-manager-main-agent
 ---
