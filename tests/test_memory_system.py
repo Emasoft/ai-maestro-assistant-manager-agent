@@ -18,7 +18,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-
 from memory_ops import (
     VALID_TYPES,
     append_index_line,
@@ -134,7 +133,7 @@ def test_write_appends_memory_index_line(tmp_path: Path) -> None:
     memdir = tmp_path / "memory"
     write_note(memdir, "user", "owner_email", "what is the user's email", "owner@example.com")
     index = append_index_line(
-        memdir, "Owner email", "user_owner_email.md", "the user's contact email."
+        memdir, "Owner email", "user_owner_email.md", "the user's contact email.",
     )
     assert index.name == "MEMORY.md"
     content = index.read_text(encoding="utf-8")
