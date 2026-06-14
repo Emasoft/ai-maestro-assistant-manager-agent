@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-14T21:06:09+0200
+updated: 2026-06-14T21:36:47+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -80,8 +80,20 @@ script changes through the ai-maestro scripts owner; never patch installed scrip
   (amama_stop_check.py, amama_user_prompt_submit.py) are mine to repoint once the CLIs are confirmed.**
   Open governance Q for the scripts owner: is core `ai-maestro-hook.cjs` (the AMP/AID glue) by-design
   integration-layer or a bypass to fix?
+- ✓ **CLI PLAN CONFIRMED by the scripts owner (#16, 2026-06-14) — additive/frozen-safe.** Split:
+  - **Already exist → REPOINT now (plugin edits, no new CLI):** #4 inbox → `amp-inbox --count`/`--unread`
+    (AMAMA `amama_stop_check.py`, core hook); #2 list-active → `aimaestro-agent.sh list --status online`
+    ("active"==online; COS heartbeat).
+  - **Owner will EXPOSE (additive, wait):** #1 resolve → `aimaestro-agent.sh resolve <name> | --cwd <path>`;
+    #3 send-command → `aimaestro-agent.sh session command <name> -- <cmd>`.
+  - **Owner will ADD (new CLIs, wait):** #6 `session user-input` (AMAMA `amama_user_prompt_submit.py`);
+    #7 `aimaestro-teams` CRUD + `aid-whoami`/`aid-governance` + governance-request (core `prrd_lib.py`, COS).
+  - **#5 core-hook `activity-update`:** owner escalated to USER (sanctioned-glue vs wrap decision); owner will
+    fix the `.cjs` `:23000`-hardcode → `AIMAESTRO_API` at source (no interface change).
+  - **Sequencing:** owner posts each CLI's exact name+args on #16 as it lands → I drive the fleet-wide repoints +
+    verify each. AMAMA's two (#4 ready, #6 pending) BATCHED into AMAMA's pending memory-migration release (M5/USER publish).
 - ? **STILL PENDING (separate concern):** arg-level interface drift (a skill calling a canonical script
-  with args it rejects) — distinct from the bypass audit; do after the scripts owner confirms the CLI inventory.
+  with args it rejects) — distinct from the bypass audit; do after the new CLIs land.
 
 ## Plan
 1. Resolve the source-of-truth gap with the ai-maestro Claude on #16 (where do installed
