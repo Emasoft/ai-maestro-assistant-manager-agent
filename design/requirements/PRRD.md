@@ -1,6 +1,6 @@
 ---
-prrd-version: 1.2
-updated: 2026-06-14T01:56:57+0200
+prrd-version: 1.3
+updated: 2026-06-14T07:31:03+0200
 project: ai-maestro-assistant-manager-agent
 project-id: autonomous
 canonical-source: design/requirements/PRRD.md
@@ -32,7 +32,7 @@ spec: `~/.claude/rules/prrd-design-rules.md`.
 ## 🥈 SILVER — MANAGER-mutable (agents propose via COS)
 
 - **S2.1** — Validate this plugin only via the remote CPV plugin (`uvx --from git+https://github.com/Emasoft/claude-plugins-validation cpv-remote-validate plugin . --strict`). Never ship vendored validation/setup/lint scripts in this repo; CI's exit-0-only `--strict` gate is the release blocker. Report CPV false-positives/errors as upstream issues — never request rule suppression or exemption (the exempt-list was an exploitable attack surface; devitalize or remove flagged content instead).
-- **S3.2** — Declare the inter-plugin dependency on `ai-maestro-plugin` in `plugin.json` as the pinned **object** form `[{"name": "ai-maestro-plugin", "version": "^X.Y.0"}]` — verified to pass CPV `--strict` (0 MAJOR) and to clear the un-exemptable version-constraint WARNING. Do NOT mirror the object form into `marketplace.json`: there the `validate_marketplace` MAJOR (CPV #106) requires the bare string form `["ai-maestro-plugin"]`. The two files intentionally diverge until #106 reconciles `validate_plugin` (accepts `{name, version}`) with `validate_marketplace` (string-only).
+- **S3.3** — Declare the inter-plugin dependency on `ai-maestro-plugin` in `plugin.json` as the pinned **object** form `[{"name": "ai-maestro-plugin", "version": "^X.Y.0"}]` — verified to pass CPV `--strict` (0 MAJOR) and to clear the un-exemptable version-constraint WARNING. In `marketplace.json`, the bare string form `["ai-maestro-plugin"]` is the safe default (valid on every CPV version); as of **CPV v2.126.19** (#106 resolved — `validate_plugin` and `validate_marketplace` now share one dependency schema) the object form is ALSO accepted there, so either validates and existing string entries need not change.
 - **S4.1** — Every agent/skill/tool report is written to `<main-repo-root>/reports/<component>/<YYYYMMDD_HHMMSS±HHMM>-<slug>.md` (local time + GMT offset). Both `reports/` and `reports_dev/` stay gitignored — reports may carry private paths/tokens/PII.
 - **S5.1** — The TRDD `column:` pipeline in `design/tasks/` is the authoritative task lifecycle. Any GitHub-Projects board or the AI Maestro server kanban is a visual projection of it, never the source of truth.
 - **S6.1** — Session memory uses the janitor's three-scope markdown-notes system (LOCAL `~/.claude/projects/<slug>/memory/`, PROJECT `<git-root>/memory/`, USER `~/.claude/memory/`), recall via memgrep-or-grep-fallback. The legacy `activeContext`/`progress`/`patterns` hook-bank is retired (TRDD-8707e849).
