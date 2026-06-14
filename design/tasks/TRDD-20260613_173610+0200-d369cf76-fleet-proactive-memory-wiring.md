@@ -3,7 +3,7 @@ trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: planned
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-14T02:20:43+0200
+updated: 2026-06-14T04:57:03+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -46,15 +46,17 @@ skills; they do NOT ship their own**. The locked config:
   (pending USER review). Align now (design locked); run `/janitor-memory-bootstrap` + the rework
   once it ships. No `column:` collision — memory lives under `.claude/project/memory/`, the
   3-pillars under `design/` (orthogonal).
-- **🔴 SECOND BLOCKER — CPV #120 (discovered 2026-06-14).** `validate_gitignore` raises an
-  UNSATISFIABLE `[MINOR] missing coverage for .claude/` for any plugin that tracks content under
-  `.claude/` (exactly the PROJECT-memory pattern `.claude/project/memory/**`): its check is
-  `git check-ignore -q -- .claude`, which only passes if the whole `.claude` dir is ignored — but
-  git cannot re-include a path whose parent dir is excluded, so `.claude/**` + `!.claude/project/memory/**`
-  can never satisfy it. MINOR = exit 3 → blocks the exit-0-only publish gate. So EVERY fleet
-  memory-rework publish (AMAMA's included) is blocked until CPV #120 is fixed. Filed + owned by the
-  **janitor's Claude** (it owns the memory model) — do NOT duplicate; track it. The memory rollout
-  is now gated on BOTH the janitor's memory publish AND CPV #120's fix.
+- **✅ SECOND BLOCKER CLEARED — CPV #120 fixed in CPV v2.126.15 (2026-06-14T02:37).** `validate_gitignore`
+  previously raised an UNSATISFIABLE `[MINOR] missing coverage for .claude/` for any plugin tracking
+  content under `.claude/` (the PROJECT-memory pattern `.claude/project/memory/**`) — its old
+  `git check-ignore -q -- .claude` test could never pass once a subtree under `.claude/` was tracked.
+  CPV's Claude fixed it: the `.claude/` coverage category is now satisfied when the plugin TRACKS
+  content under `.claude/` (decided git-authoritatively via `git ls-files -- .claude/`), FN-safe
+  two-sided (a real un-ignored+un-tracked `.claude/` cache leak still gets the MINOR). So the
+  `.claude/**` + `!.claude/project/memory/**` pattern now passes `--strict`. **Min CPV version for
+  the memory rework = v2.126.15** (the `uvx --from git+…` runner pulls latest, so it's covered).
+  TO VERIFY first-hand during the AMAMA rework (run `cpv-remote-validate --strict` on the tracked
+  `.claude/project/memory/` layout). The memory rollout is now gated on ONLY the janitor's memory publish.
 
 **AMAMA IS IN SCOPE (USER emphasized — it's the MANAGER, the most important role).** AMAMA's
 own agents MUST be updated as the exemplar, not just the fleet's:
