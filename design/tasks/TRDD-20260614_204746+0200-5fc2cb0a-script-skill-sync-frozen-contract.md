@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-14T20:47:46+0200
+updated: 2026-06-14T21:06:09+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -66,9 +66,22 @@ script changes through the ai-maestro scripts owner; never patch installed scrip
 - ✗ **REFUTED would-be-FP:** `command -v docs-search/graph-describe/memory-search/aid-status` failed,
   but the installed CLIs are `.sh`-suffixed (`docs-search.sh` etc. EXIST) and the skills call the
   `.sh` forms → those calls DO resolve. NOT a drift. (Caught before claiming — verify-before-fixing.)
-- ? **NOT YET DONE:** arg-level interface drift (a skill passing flags an installed script rejects) —
-  the deeper per-call comparison pass. Awaiting USER decision: run it now, or take the source-gap
-  question to the ai-maestro Claude on #16 first.
+- ✓ **DONE — direct-API-bypass audit (2026-06-14, background agent).** USER directive: COS was forced
+  to call the server API directly for agent creation; fix it + investigate similar. Result: **10 confirmed
+  `/api/*` bypasses across 4 plugins** (COS 5, core 2, AMAMA 2, janitor 1; autonomous/maintainer/amvcp
+  clean) collapsing to **7 distinct functionalities → canonical CLIs to add/confirm**: (1) `agent-resolve`
+  name|cwd→session [COS+core+janitor], (2) `agent-list --status active` [COS], (3) `agent-command`/
+  send-command POST /api/sessions/<tmux>/command [core+janitor], (4) unread-inbox list/count [AMAMA+core —
+  ⚠ `amp-inbox.sh` likely already exists, may just need USING], (5) `aimaestro-session activity-update`
+  [core], (6) `aimaestro-session user-input` [AMAMA], (7) `aid-governance`/`aid-whoami` + `aimaestro-teams`
+  CRUD [core+COS]. Report: `reports/script-bypass-audit/20260614_210319+0200-fleet-bypass-audit.md`.
+  Posted to #16. False-positives correctly excluded (amcos_spawn/wake/terminate/hibernate use
+  aimaestro-agent.sh; janitor scanner-pattern files are signatures not calls). **MY OWN 2 bypasses
+  (amama_stop_check.py, amama_user_prompt_submit.py) are mine to repoint once the CLIs are confirmed.**
+  Open governance Q for the scripts owner: is core `ai-maestro-hook.cjs` (the AMP/AID glue) by-design
+  integration-layer or a bypass to fix?
+- ? **STILL PENDING (separate concern):** arg-level interface drift (a skill calling a canonical script
+  with args it rejects) — distinct from the bypass audit; do after the scripts owner confirms the CLI inventory.
 
 ## Plan
 1. Resolve the source-of-truth gap with the ai-maestro Claude on #16 (where do installed
