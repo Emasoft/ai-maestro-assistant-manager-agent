@@ -3,7 +3,7 @@ trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: planned
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-14T04:57:03+0200
+updated: 2026-06-14T06:35:50+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -57,6 +57,29 @@ skills; they do NOT ship their own**. The locked config:
   the memory rework = v2.126.15** (the `uvx --from git+…` runner pulls latest, so it's covered).
   TO VERIFY first-hand during the AMAMA rework (run `cpv-remote-validate --strict` on the tracked
   `.claude/project/memory/` layout). The memory rollout is now gated on ONLY the janitor's memory publish.
+- **🟢 JANITOR #15 CONFIRMATIONS (2026-06-14) — design LOCKED; cleared to align now + execute on publish.**
+  The janitor's Claude confirmed on `assistant-manager#15` (the publish-ping channel):
+  - **REMOVE AMAMA's per-plugin memory artifacts:** `skills/amama-memory-recall/`,
+    `skills/amama-memory-write/`, `rules/memory-protocol.md` (133 lines). NOTE: `skills/amama-session-memory/`
+    is a SEPARATE concern (the deferred reconciliation item in the v2.10 follow-up TRDD) — NOT part of this removal.
+  - **CAVEAT 1 (before deleting `rules/memory-protocol.md`):** verify it carries no plugin-UNIQUE content;
+    fold anything unique into AMAMA's CLAUDE.md first (don't lose it).
+  - **CAVEAT 2:** document the janitor-dependency coupling explicitly — now a USER-ratified invariant
+    (the janitor is the ONLY USER-scope plugin, "above claude code itself," guardian of the oauth;
+    janitor-always-present is what makes relying on the global memory system safe by construction).
+  - **🔴 ZSH RECALL-BUG FIX — FLEET-CRITICAL.** The documented recall snippet built `ROOTS` as a space-joined
+    string passed UNQUOTED (`memgrep recall "$SYMPTOM" $ROOTS`). bash word-splits it; **zsh (macOS default)
+    does NOT** → the whole string reaches memgrep as ONE bogus path → **0 results, exit 0, SILENTLY** (every
+    zsh agent got an empty memory). Fixed to the array form (`ROOTS+=("$d")` built, `"${ROOTS[@]}"` expanded);
+    janitor commit `df2e563` + regression test. The global `markdown-memory-recall` rule reinstalls the fixed
+    form automatically on publish, BUT the fleet-rollout directive MUST instruct every plugin to ADOPT THE FIXED
+    ARRAY-FORM recall command (the old string form is a silent footgun on zsh). My own
+    `~/.claude/rules/markdown-memory-recall.md` still has the OLD buggy form today — the janitor publish overwrites
+    it; until then, use the array form if I recall.
+  - **REFERENCES TO UPDATE when removing amama-memory-* (grep hits):** README.md, tests/README.md,
+    `agents/…-main-agent.md` (rewire to global `janitor-memory-*`); the 2 TRDDs reference it intentionally — leave.
+  - **TRIGGER:** execute on the janitor's publish (a janitor release > v0.7.5). The janitor will PING
+    `assistant-manager#15` when it ships. Sequence: AMAMA exemplar FIRST, then the fleet. CPV/PSS out of scope.
 
 **AMAMA IS IN SCOPE (USER emphasized — it's the MANAGER, the most important role).** AMAMA's
 own agents MUST be updated as the exemplar, not just the fleet's:
