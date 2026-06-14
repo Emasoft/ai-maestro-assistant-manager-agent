@@ -38,6 +38,22 @@ This skill contains:
 
 ---
 
+## Memory — proactive (applies to you and any sub-agent you spawn)
+
+This sub-agent uses the **global janitor-hosted memory system** (the user-level
+`ai-maestro-janitor` plugin: `/janitor-memory-recall` · `/janitor-memory-write`;
+protocol in `~/.claude/rules/markdown-memory-recall.md`).
+
+- **RECALL before generating** — if a report touches a recurring problem, a prior
+  decision, or a known gotcha, run `/janitor-memory-recall` with the SYMPTOM first
+  so the report reflects what's already known. Cheap; do it before aggregating.
+- **WRITE durable findings** — if you discover a durable, non-obvious fact while
+  aggregating (a recurring failure pattern, a data-source quirk), capture it via
+  `/janitor-memory-write`, indexed by the symptom.
+- **PROPAGATE** — if you spawn a sub-agent, include this directive in its prompt.
+
+---
+
 ## Key Constraints
 
 | Constraint | Description |
