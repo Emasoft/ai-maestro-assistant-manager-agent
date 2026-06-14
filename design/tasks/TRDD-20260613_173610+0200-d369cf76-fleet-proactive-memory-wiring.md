@@ -3,7 +3,7 @@ trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: planned
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-14T06:35:50+0200
+updated: 2026-06-14T16:34:55+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -62,8 +62,14 @@ skills; they do NOT ship their own**. The locked config:
   - **REMOVE AMAMA's per-plugin memory artifacts:** `skills/amama-memory-recall/`,
     `skills/amama-memory-write/`, `rules/memory-protocol.md` (133 lines). NOTE: `skills/amama-session-memory/`
     is a SEPARATE concern (the deferred reconciliation item in the v2.10 follow-up TRDD) — NOT part of this removal.
-  - **CAVEAT 1 (before deleting `rules/memory-protocol.md`):** verify it carries no plugin-UNIQUE content;
-    fold anything unique into AMAMA's CLAUDE.md first (don't lose it).
+  - **CAVEAT 1 — RESOLVED (scanned 2026-06-14):** `rules/memory-protocol.md` (133 lines) is explicitly
+    "the AMAMA-parameterized MIRROR of the canonical `~/.claude/rules/markdown-memory-recall.md`" (its line 3),
+    which v0.8.0 refreshes. The ONLY plugin-UNIQUE content to FOLD into AMAMA's CLAUDE.md before deleting:
+    the **MANAGER-role recall emphasis** — for AMAMA the highest-value recalls are **confirmed user
+    preferences** + **prior approval/governance decisions**; AMAMA's workhorse note `type` is `feedback`
+    (e.g. merge-strategy, escalate-all-prod-deploys, don't-over-flag-ToS-on-own-accounts). Everything else
+    is generic mirror content (index-by-symptom, recall-before-acting, note schema, memgrep, dual-test) =
+    covered by the canonical rule. Its refs to `amama-memory-write/recall` are obsolete (those skills are removed).
   - **CAVEAT 2:** document the janitor-dependency coupling explicitly — now a USER-ratified invariant
     (the janitor is the ONLY USER-scope plugin, "above claude code itself," guardian of the oauth;
     janitor-always-present is what makes relying on the global memory system safe by construction).
