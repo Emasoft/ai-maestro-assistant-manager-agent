@@ -3,7 +3,7 @@ trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: planned
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-14T21:29:18+0200
+updated: 2026-06-14T22:23:11+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -35,7 +35,10 @@ to global `janitor-memory-*` + the proactive contract (recall/write/PROPAGATE/zs
 (3) new `CLAUDE.md` folds the MANAGER-role recall emphasis (Caveat 1) + the janitor-coupling
 (Caveat 2); (4) removed `skills/amama-memory-recall`+`-write`, `rules/memory-protocol.md`, + their
 tests (`test_memory_system.py`, `memory_ops.py`); README + tests/README repointed. **Test gate
-GREEN (15 passed).** Commits on `main` (unpushed). REMAINING = the publish ONLY — **M5-gated
+GREEN (15 passed); CPV `--strict` = 0 CRITICAL/0 MAJOR/0 MINOR/0 NIT (17 non-blocking WARNINGs:
+13 cache CA-01..06 + 1 markdownlint-config) — VALIDATED PUBLISH-READY.** Also folded in the AMAMA
+bypass #4 repoint (`amama_stop_check.py` → `amp-inbox --count`). Commits on `main` (unpushed).
+REMAINING = the publish ONLY — **M5-gated
 (MANAGER can't self-approve AMAMA's own release) → USER runs `publish.py` on return** (a `/reload-plugins`
 then makes the global skills live in-session, but the file-work is already done). AMAMA now matches
 COS v2.16.0's shape = the MANAGER exemplar. Fleet rollout: 8 plugins nudged with the GO (COS done).
