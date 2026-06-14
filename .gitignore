@@ -52,7 +52,12 @@ Cargo.lock
 .tldr/
 .tldrignore
 .tldr_session_*
-.claude/
+.claude/**
+# The PROJECT memory scope lives in-repo under .claude/ and MUST be tracked +
+# pushed (the shared, cross-dev wiki memory). Re-include it via these exceptions.
+!.claude/project/
+!.claude/project/memory/
+!.claude/project/memory/**
 .rechecker/
 .serena/
 llm_externalizer_output/
