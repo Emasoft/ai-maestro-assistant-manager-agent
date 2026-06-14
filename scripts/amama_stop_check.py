@@ -34,22 +34,22 @@ from typing import Any
 
 
 def check_ai_maestro_inbox() -> tuple[int, list[str]]:
-    """Check AI Maestro inbox for unread messages via the API."""
+    """Check AI Maestro inbox for unread messages via the canonical `amp-inbox` CLI.
+
+    Routes through the stable script layer (NOT a direct server-API call) per the
+    frozen-interface architecture: `amp-inbox --count` prints the unread count for
+    this agent (resolved from the agent's own config) as a bare integer, exit 0.
+    """
     try:
-        api_base = os.environ.get("AIMAESTRO_API", "http://localhost:23000")
-        session_name = os.environ.get("AIMAESTRO_AGENT", "")
-        if not session_name:
-            return 0, []
         result = subprocess.run(
-            ["curl", "-sf", f"{api_base}/api/messages?agent={session_name}&action=unread-count"],
+            ["amp-inbox", "--count"],
             capture_output=True, text=True, timeout=5,
         )
         if result.returncode == 0 and result.stdout.strip():
-            data = json.loads(result.stdout)
-            count = data.get("count", 0)
+            count = int(result.stdout.strip())
             if count > 0:
                 return count, [f"{count} unread message(s)"]
-    except (subprocess.TimeoutExpired, subprocess.SubprocessError, json.JSONDecodeError, FileNotFoundError, OSError):
+    except (subprocess.TimeoutExpired, subprocess.SubprocessError, ValueError, FileNotFoundError, OSError):
         pass
     return 0, []
 
