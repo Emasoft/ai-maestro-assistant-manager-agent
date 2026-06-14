@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-14T21:36:47+0200
+updated: 2026-06-14T22:19:28+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -92,8 +92,16 @@ script changes through the ai-maestro scripts owner; never patch installed scrip
     fix the `.cjs` `:23000`-hardcode → `AIMAESTRO_API` at source (no interface change).
   - **Sequencing:** owner posts each CLI's exact name+args on #16 as it lands → I drive the fleet-wide repoints +
     verify each. AMAMA's two (#4 ready, #6 pending) BATCHED into AMAMA's pending memory-migration release (M5/USER publish).
-- ? **STILL PENDING (separate concern):** arg-level interface drift (a skill calling a canonical script
-  with args it rejects) — distinct from the bypass audit; do after the new CLIs land.
+- ✓ **DONE — arg-level drift audit (2026-06-14, background agent; the 2nd half of the sync audit).**
+  ~24 drifts, ALL plugin-side, confined to **chief-of-staff (~21)** + **maintainer (3)**; 100% violate
+  `amp-send` (positional `<recipient> <subject> <message>` + the `--type` 10-value allow-list) or
+  `aimaestro-agent.sh` (phantom `messages` subcommand). Several are SILENT runtime failures (CoS
+  `broadcast_notification` invalid `--type broadcast` → exit 1 every call; `amcos_failure_recovery.py:153`
+  phantom `aimaestro-agent.sh messages`). **Core `ai-maestro-plugin` CLEAN** (288 invocations all valid —
+  the canonical reference is internally consistent); AMAMA/autonomous/janitor/amvcp clean. Report:
+  `reports/script-arg-drift-audit/20260614_221510+0200-fleet-arg-drift-audit.md`. **Fixes ROUTED (plugin-side,
+  no script changes):** chief-of-staff#19 + maintainer-agent#13; recorded on #16. I verify-ack each fix.
+  Confirms `amp-send` + `aimaestro-agent.sh` are the highest-blast-radius CLIs → keep frozen.
 
 ## Plan
 1. Resolve the source-of-truth gap with the ai-maestro Claude on #16 (where do installed
