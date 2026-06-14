@@ -125,7 +125,7 @@ the `amama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
 
 | Hook ID | Event | Script | Description |
 |---------|-------|--------|-------------|
-| `amama-memory-load` | `SessionStart` | `scripts/amama_session_start.py` | SessionStart wiring (memory recall is now on-demand via the `amama-memory-recall` skill) |
+| `amama-memory-load` | `SessionStart` | `scripts/amama_session_start.py` | SessionStart wiring (memory recall is now on-demand via the global `/janitor-memory-recall` skill) |
 | `amama-stop-check` | `Stop` | `scripts/amama_stop_check.py` | Block exit until coordination work is complete |
 
 ### Shared Resources
@@ -215,7 +215,7 @@ remotely against CPV from GitHub (see [Validation](#validation) above).
 
 | Script | Purpose |
 |--------|---------|
-| `amama_session_start.py` | SessionStart hook -- wiring (memory recall is on-demand via the `amama-memory-recall` skill) |
+| `amama_session_start.py` | SessionStart hook -- wiring (memory recall is on-demand via the global `/janitor-memory-recall` skill) |
 | `amama_stop_check.py` | Stop hook -- verify coordination complete |
 | `amama_user_prompt_submit.py` | UserPromptSubmit hook -- record user-input presence |
 | `amama_report_writer.py` | Shared report writer for token-efficient output |
