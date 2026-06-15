@@ -107,6 +107,14 @@ script changes through the ai-maestro scripts owner; never patch installed scrip
   `reports/script-arg-drift-audit/20260614_221510+0200-fleet-arg-drift-audit.md`. **Fixes ROUTED (plugin-side,
   no script changes):** chief-of-staff#19 + maintainer-agent#13; recorded on #16. I verify-ack each fix.
   Confirms `amp-send` + `aimaestro-agent.sh` are the highest-blast-radius CLIs → keep frozen.
+- ✓ **DONE — COMPREHENSIVE fleet-wide API-usage SEARCH (2026-06-15, per USER "search for ANY script using the api").**
+  Grepped all installed plugins + shallow-cloned the 4 previously-un-audited role plugins. **Verified definitive bypass
+  set = exactly 4 plugins:** AMAMA (`amama_user_prompt_submit.py` #6 only — `amama_stop_check.py` FIXED in v2.11.0),
+  COS (~5, COS#20 filed), core/ai-maestro-plugin (`ai-maestro-hook.cjs` + `prrd_lib.py`, core#9), janitor
+  (`terminal_trigger.py`). **CLEAN (verified):** orchestrator, integrator, programmer, architect (shallow-clone grep,
+  zero `/api/` in non-test scripts), plus autonomous/maintainer/amvcp. **False positives correctly excluded:** janitor
+  `tests/*_patterns.py` + `scripts/lib/*_patterns.py` + detectors = security-scanner SIGNATURES not calls; amvcp
+  `cpv_skillaudit_rules.py` = audit rules. The "did we miss any?" question on #16 is now CLOSED: no missed scripts.
 
 ## Plan
 1. Resolve the source-of-truth gap with the ai-maestro Claude on #16 (where do installed
