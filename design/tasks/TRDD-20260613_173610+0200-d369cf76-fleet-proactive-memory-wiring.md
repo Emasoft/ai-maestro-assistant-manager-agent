@@ -35,6 +35,16 @@ untracked-but-not-ignored — corrected before publish; the prior STATE's "gitig
 AMAMA is now the published MANAGER exemplar of the global-memory shape. Fleet rollout continues: 7
 plugins still to verify-ack (COS done). Historical file-work record below.
 
+**⚠ ROLLOUT CAVEAT (verified 2026-06-15, tracked janitor#37): recall via the SKILL, not the rule's bash
+snippet.** The installed `~/.claude/rules/markdown-memory-recall.md` can be STALE on a given machine —
+PROJECT shown as `<git-root>/memory/` (old) vs the correct `<git-root>/.claude/project/memory/` in cached
+0.8.10. Cause: a session that loaded an OLDER janitor (e.g. 0.7.5 hooks) re-installs the old-path rule at
+SessionStart, actively re-staling it. The `/janitor-memory-recall` SKILL uses the correct root regardless,
+so **skill-based recall WORKS** — only someone hand-running the rule's inline `PROJECT_MEM=…` bash would
+miss PROJECT notes. Fleet sweep (2026-06-15): only AMAMA + COS have `.claude/project/memory/` committed;
+8 plugins pending (each has an open `feat(memory): adopt…` tracking issue). Mitigation until janitor#37
+lands: recall skill-first; `/reload-plugins` after bootstrap syncs the rule snippet.
+
 **🟢 AMAMA MIGRATION FILE-WORK COMPLETE (2026-06-14, committed, NOT yet published).** Done
 manually (the bootstrap skill wasn't loaded in-session — replicated from the v0.8.8 cache +
 COS v2.16.0 reference): (1) PROJECT scope `.claude/project/memory/` + gitignore exception
