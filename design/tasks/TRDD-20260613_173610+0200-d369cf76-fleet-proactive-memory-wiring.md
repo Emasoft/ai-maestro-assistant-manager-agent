@@ -3,7 +3,7 @@ trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: planned
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-14T22:23:11+0200
+updated: 2026-06-15T21:27:51+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -25,6 +25,15 @@ external-refs: ["github.com/Emasoft/ai-maestro-janitor/issues/18"]
 # TRDD-d369cf76 — Fleet proactive-memory wiring (main + sub agents)
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-14
+
+**✅ AMAMA MIGRATION PUBLISHED — v2.11.0 (2026-06-15).** USER authorized the publish (M5 satisfied
+by explicit USER approval); `publish.py --minor` ran all gates green (pytest 15-passed, CPV --strict
+0/0/0/0, version-consistency OK) → tagged + pushed + GitHub release
+(github.com/Emasoft/ai-maestro-assistant-manager-agent/releases/tag/v2.11.0). Shipped: the full memory
+migration + the AMAMA bypass-#4 repoint + a `.gitignore .janitor/` housekeeping fix (runtime state was
+untracked-but-not-ignored — corrected before publish; the prior STATE's "gitignored" claim was wrong).
+AMAMA is now the published MANAGER exemplar of the global-memory shape. Fleet rollout continues: 7
+plugins still to verify-ack (COS done). Historical file-work record below.
 
 **🟢 AMAMA MIGRATION FILE-WORK COMPLETE (2026-06-14, committed, NOT yet published).** Done
 manually (the bootstrap skill wasn't loaded in-session — replicated from the v0.8.8 cache +

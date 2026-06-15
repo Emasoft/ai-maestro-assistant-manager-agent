@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-14T22:19:28+0200
+updated: 2026-06-15T21:27:51+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -88,8 +88,13 @@ script changes through the ai-maestro scripts owner; never patch installed scrip
     #3 send-command → `aimaestro-agent.sh session command <name> -- <cmd>`.
   - **Owner will ADD (new CLIs, wait):** #6 `session user-input` (AMAMA `amama_user_prompt_submit.py`);
     #7 `aimaestro-teams` CRUD + `aid-whoami`/`aid-governance` + governance-request (core `prrd_lib.py`, COS).
-  - **#5 core-hook `activity-update`:** owner escalated to USER (sanctioned-glue vs wrap decision); owner will
-    fix the `.cjs` `:23000`-hardcode → `AIMAESTRO_API` at source (no interface change).
+  - **#5 core-hook `activity-update`:** ✅ **USER DECIDED (2026-06-15) — ROUTE THROUGH A CLI; no provider-exception.**
+    The core `ai-maestro-plugin` is NOT exempt from the frozen-CLI invariant: even its `ai-maestro-hook.cjs`
+    must reach the server via a CLI (additive `activity-update` CLI to be added at source), end state = ZERO
+    direct `/api/*` from the core hook. The `:23000`→`AIMAESTRO_API` fix still happens but is NOT sufficient
+    alone. Rationale → fleet governance rule: "installed scripts frozen; ALL plugins (core included) reach the
+    server only through CLIs; route every script change through the ai-maestro scripts owner." Relayed on #16
+    (issuecomment-4711612291). #5 now joins #1/#3/#6/#7 as additive CLIs the owner adds → I repoint + verify-ack.
   - **Sequencing:** owner posts each CLI's exact name+args on #16 as it lands → I drive the fleet-wide repoints +
     verify each. AMAMA's two (#4 ready, #6 pending) BATCHED into AMAMA's pending memory-migration release (M5/USER publish).
 - ✓ **DONE — arg-level drift audit (2026-06-14, background agent; the 2nd half of the sync audit).**
