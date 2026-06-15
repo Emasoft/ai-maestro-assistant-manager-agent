@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-15T21:27:51+0200
+updated: 2026-06-15T23:02:20+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -115,6 +115,7 @@ script changes through the ai-maestro scripts owner; never patch installed scrip
   zero `/api/` in non-test scripts), plus autonomous/maintainer/amvcp. **False positives correctly excluded:** janitor
   `tests/*_patterns.py` + `scripts/lib/*_patterns.py` + detectors = security-scanner SIGNATURES not calls; amvcp
   `cpv_skillaudit_rules.py` = audit rules. The "did we miss any?" question on #16 is now CLOSED: no missed scripts.
+- ⚠ **CORRECTION (2026-06-15, COS surfaced on #16): that search was SCRIPT-ONLY and UNDERCOUNTED — the `.md` PROMPT/skill/command layer instructs direct `/api/` too, and IS in scope** (a prompt telling an agent to `curl /api/...` is a bypass — the agent runs it). So "4-plugin set / AMAMA clean" was incomplete: **AMAMA itself is NOT clean** — `amama-presence-tracker` / `amama-approval-workflows` / `amama-status-reporting` skills instruct direct calls (its scripts were repointed #4, its prompts were not; I clean them once the CLIs land). New functionalities the CLI surface must ALSO cover (gaps): **governance/transfers** (COS `amcos-transfer-agent`), **users/me/presence + sessions/me/user-input** (presence/#6), **whoami/identity** (`me`/`hosts/identity`). Full functionality→CLI map posted on #16 (issuecomment-4712406314). **Completeness criterion (all plugins, scripts+prompts):** `grep -rn '/api/'` shows no direct-call INSTRUCTIONS (descriptive "CLI wraps /api/X" docs OK). Lesson: "search for any script" must include the `.md` prompt layer — those files drive agent behavior, not just executables.
 
 ## Plan
 1. Resolve the source-of-truth gap with the ai-maestro Claude on #16 (where do installed
