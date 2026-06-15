@@ -67,5 +67,8 @@ rck-*.md
 /reports/
 /reports_dev/
 
+# Janitor per-session runtime state + logs (regeneratable — never commit)
+/.janitor/
+
 # git-cliff scratch — ephemeral release notes between bump and push
 .git-cliff-release-notes.md
