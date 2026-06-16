@@ -8,11 +8,11 @@
 Copy this checklist and track your progress:
 
 - [ ] Determine the type of report needed (quick status, progress, handoff summary, blocker)
-- [ ] Verify AI Maestro API is reachable at `$AIMAESTRO_API`
-- [ ] Query `GET /api/sessions` for agent session liveness (active/inactive — proxies agent health)
-- [ ] Query `GET /api/agents` for registered agents (filter response client-side by `status`)
-- [ ] Query `GET /api/teams/{id}` for team status
-- [ ] Query `GET /api/teams/{id}/tasks` for task Kanban data
+- [ ] Verify AI Maestro is reachable (`aimaestro-agent.sh list` exits non-zero if the server is unreachable)
+- [ ] Run `aimaestro-agent.sh list` for agent session liveness (active/inactive — proxies agent health)
+- [ ] Run `aimaestro-agent.sh list` for registered agents (filter output client-side by `status`)
+- [ ] Run `aimaestro-teams.sh show <teamId>` for team status
+- [ ] Get team task Kanban data: <!-- DECOUPLE-BLOCKED ai-maestro#36: team tasks read — CLI verb not yet deployed --> fall back to `GET /api/teams/{id}/tasks` until a `aimaestro-teams.sh tasks` verb lands
 - [ ] Verify GitHub CLI is installed and authenticated
 - [ ] Query GitHub for issue and PR status
 - [ ] Read session memory files for context

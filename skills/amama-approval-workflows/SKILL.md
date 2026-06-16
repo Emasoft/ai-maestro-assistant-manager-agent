@@ -15,16 +15,16 @@ GovernanceRequest API workflows. Two tracks:
 
 ## Prerequisites
 
-- AI Maestro v2+ at `$AIMAESTRO_API`
+- AI Maestro v2+ reachable via the frozen `aimaestro-governance.sh` CLI (resolves AID auth internally)
 - Password set per references/governance-password.md
 - Writable state file and `docs_dev/handoffs`
 
 ## Instructions
 
-1. Poll pending (`GET /api/v1/governance/requests?status=pending`)
+1. Poll pending (`aimaestro-governance.sh requests --status pending`)
 2. Parse type per references/governance-request-types.md
 3. Present to MANAGER using template
-4. Call approve/reject endpoint with password
+4. Call `aimaestro-governance.sh approve`/`reject` with `--password`
 5. Verify transition per references/state-machine.md
 6. Update state per references/state-tracking.md
 7. Notify requesting agent
@@ -51,7 +51,7 @@ GovernanceRequest API workflows. Two tracks:
 
 ## Examples
 
-**Input:** `POST /api/v1/governance/requests/{id}/approve` with `{"password":"***","approvedBy":"MANAGER","notes":"Approved after review"}`
+**Input:** `aimaestro-governance.sh approve <id> --password "***" [--approver <MANAGER-UUID>]`
 
 **Output:** `{"status":"approved","updatedAt":"2026-03-08T10:00:00Z","approvedBy":"MANAGER"}`
 
@@ -60,10 +60,10 @@ See [references/examples.md](references/examples.md) for more.
 Copy this checklist and track your progress:
 
 - [ ] Verify password set
-- [ ] Poll pending GovernanceRequests
+- [ ] Poll pending GovernanceRequests (`aimaestro-governance.sh requests --status pending`)
 - [ ] Parse type, present to MANAGER
 - [ ] Wait for decision
-- [ ] Call approve/reject endpoint
+- [ ] Call `aimaestro-governance.sh approve`/`reject`
 - [ ] Verify state transition
 - [ ] Update state file, notify agent
 

@@ -8,7 +8,7 @@
 - [Server-clock anchored idle computation](#server-clock-anchored-idle-computation)
 - [Crisis cross-reference](#crisis-cross-reference)
 
-The single source of truth for availability-state boundaries used by both amama-presence-tracker and the upcoming `/amama-set-availability` slash command (phase 2). The idle clock is computed from the AI Maestro server's user-presence endpoint (`GET /api/users/me/presence`) — there is no host-local file involved.
+The single source of truth for availability-state boundaries used by both amama-presence-tracker and the upcoming `/amama-set-availability` slash command (phase 2). The idle clock is computed from the AI Maestro server's user-presence endpoint (`GET /api/users/me/presence`) — there is no host-local file involved. <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed -->
 
 ## State table
 
@@ -42,7 +42,7 @@ notes: explicit user override via /amama-set-availability
 
 ## Server-clock anchored idle computation
 
-The `GET /api/users/me/presence` response always carries BOTH `last_user_input_epoch` and `server_now_epoch`. AMAMA computes:
+The `GET /api/users/me/presence` response always carries BOTH `last_user_input_epoch` and `server_now_epoch`. <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed --> AMAMA computes:
 
 ```
 age_seconds = max(0, response.server_now_epoch - response.last_user_input_epoch)

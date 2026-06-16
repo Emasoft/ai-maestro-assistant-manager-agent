@@ -30,8 +30,10 @@ When COS (Chief of Staff) role assignment fails via the AI Maestro API, follow t
 #### Step 1: Verify AI Maestro API is Running
 
 ```
-GET $AIMAESTRO_API/api/sessions
+aimaestro-agent.sh list
 ```
+
+(non-zero exit ⇒ server unreachable)
 
 If AI Maestro API is down or not responding:
 - Alert user: "AI Maestro API is not responding. Please restart it."
@@ -40,8 +42,10 @@ If AI Maestro API is down or not responding:
 #### Step 2: Verify the Target Agent is Registered
 
 ```
-GET $AIMAESTRO_API/api/agents?name=<agent-name>
+aimaestro-agent.sh list
 ```
+
+(filter by `<agent-name>` client-side)
 
 If the target agent is not registered:
 - Register the agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
@@ -50,7 +54,7 @@ If the target agent is not registered:
 #### Step 3: Verify the Team Exists and is Type `closed`
 
 ```
-GET $AIMAESTRO_API/api/teams/<team-id>
+aimaestro-teams.sh show <team-id>
 ```
 
 If the team does not exist or is not type `closed`:
@@ -62,7 +66,7 @@ See the `team-governance` skill for full API details.
 #### Step 4: Check if Team Already Has a COS Assigned
 
 ```
-GET $AIMAESTRO_API/api/teams/<team-id>
+aimaestro-teams.sh show <team-id>
 ```
 
 If a COS is already assigned:
@@ -98,9 +102,9 @@ If the user reports COS assignment failures:
    Status: Team exists WITHOUT COS coordination
 
    Diagnostic checks:
-   1. AI Maestro API health: `GET $AIMAESTRO_API/api/sessions`
-   2. Agent registration: `GET $AIMAESTRO_API/api/agents?name=<agent-name>`
-   3. Team status: `GET $AIMAESTRO_API/api/teams/<team-id>`
+   1. AI Maestro connectivity: `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable)
+   2. Agent registration: `aimaestro-agent.sh list` (filter by `<agent-name>`)
+   3. Team status: `aimaestro-teams.sh show <team-id>`
 
    Please retry COS assignment via the dashboard once issues are resolved.
    ```
@@ -122,22 +126,22 @@ COS Assignment Fails
     |
     v
 Is AI Maestro API running? ──NO──> Alert user, STOP
-(GET /api/sessions)
+(aimaestro-agent.sh list)
     |
    YES
     v
 Is target agent registered? ──NO──> Register agent first, RETRY
-(GET /api/agents?name=<name>)
+(aimaestro-agent.sh list, filter by name)
     |
    YES
     v
 Does team exist and type=closed? ──NO──> Escalate to user: request team creation/fix via dashboard
-(GET /api/teams/<team-id>)
+(aimaestro-teams.sh show <team-id>)
     |
    YES
     v
 Does team already have COS? ──YES──> Verify if re-assignment needed
-(GET /api/teams/<team-id>)
+(aimaestro-teams.sh show <team-id>)
     |
    NO
     v
@@ -194,7 +198,7 @@ When AMCOS or other agents fail to respond to messages.
    3. AI Maestro routing issue
 
    Actions you can take:
-   1. Check AMCOS agent status: `GET $AIMAESTRO_API/api/agents?name=amcos-<project-name>`
+   1. Check AMCOS agent status: `aimaestro-agent.sh show amcos-<project-name>`
    2. Check AMCOS logs (if available)
    3. Restart AMCOS if needed
 
@@ -324,17 +328,19 @@ When creating specialist agents (AMOA, AMAA, AMIA) fails.
 
 1. **Check AI Maestro API health**
    ```
-   GET $AIMAESTRO_API/api/sessions
+   aimaestro-agent.sh list
    ```
+   (non-zero exit ⇒ server unreachable)
 
 2. **Verify agent is registered in AI Maestro**
    ```
-   GET $AIMAESTRO_API/api/agents?name=<agent-name>
+   aimaestro-agent.sh list
    ```
+   (filter by `<agent-name>` client-side)
 
 3. **Check team membership**
    ```
-   GET $AIMAESTRO_API/api/teams/<team-id>
+   aimaestro-teams.sh show <team-id>
    ```
 
 4. **Retry agent registration**
@@ -357,8 +363,8 @@ When creating specialist agents (AMOA, AMAA, AMIA) fails.
    - Team exists: <yes/no>
 
    Recommended actions:
-   1. Check AI Maestro API health: `GET $AIMAESTRO_API/api/sessions`
-   2. Check agent registry: `GET $AIMAESTRO_API/api/agents`
+   1. Check AI Maestro connectivity: `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable)
+   2. Check agent registry: `aimaestro-agent.sh list`
    3. Review AI Maestro logs for registration errors
 
    Should I:
@@ -435,13 +441,13 @@ All failures MUST be logged for debugging and audit purposes.
 ```
 Issue encountered: COS role assignment failed
 
-Details: COS role assignment API call returned error (PATCH /api/teams/<team-id>/chief-of-staff)
+Details: COS role assignment via the dashboard returned an error (COS assignment is USER-only via the dashboard; AMAMA only recommends candidates)
 Impact: Cannot coordinate agents for inventory-system project
-Attempted: Assigning COS role to amcos-inventory-system agent
+Attempted: Recommending COS role for amcos-inventory-system agent
 
 Error output: [paste relevant error]
 
-I recommend: Verify AI Maestro API is running by checking `GET /api/sessions`.
+I recommend: Verify AI Maestro is reachable by running `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable).
 If down, restart it. Then please retry COS assignment via the dashboard.
 
 Would you like me to check the AI Maestro health status?

@@ -10,11 +10,14 @@ GovernanceRequests that remain pending for too long are automatically rejected t
 
 ## Expiry Check Schedule
 
-Check GovernanceRequest timestamps every hour to identify expired requests:
+Check GovernanceRequest timestamps every hour to identify expired requests. List
+pending requests via the CLI, then filter client-side on `requested_at`:
 
 ```
-GET $AIMAESTRO_API/api/v1/governance/requests?status=pending&olderThan=24h
+aimaestro-governance.sh requests --status pending
 ```
+
+<!-- DECOUPLE-BLOCKED ai-maestro#36: server-side olderThan=24h filter — no CLI flag confirmed; list with `requests --status pending` and apply the 24h age cutoff client-side. -->
 
 See the `team-governance` skill for full API details.
 
@@ -30,14 +33,9 @@ Every hour, query for GovernanceRequests where:
 
 For each expired GovernanceRequest:
 
-1. **Reject via API**
+1. **Reject via CLI**
    ```
-   POST $AIMAESTRO_API/api/v1/governance/requests/{id}/reject
-   Body: {
-     "password": "<governance-password>",
-     "rejectedBy": "SYSTEM",
-     "reason": "EXPIRED: Request pending for more than 24 hours without dual-approval"
-   }
+   aimaestro-governance.sh reject <id> --password <governance-password> --reason "EXPIRED: Request pending for more than 24 hours without dual-approval"
    ```
 
 2. **Update local state file**

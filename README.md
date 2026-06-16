@@ -31,7 +31,7 @@ AI Maestro defines exactly 3 governance titles:
 | `chief-of-staff` | AMCOS | Agent lifecycle, permissions, failure recovery |
 | `member` | AMAA, AMOA, AMIA | All specialist agents (specialization via skills/tags, NOT the role field) |
 
-**COS Assignment Model**: AMAMA does NOT spawn new AMCOS instances. Instead, AMAMA assigns the `chief-of-staff` governance title to an already-running registered agent via `PATCH /api/teams/{id}/chief-of-staff`.
+**COS Assignment Model**: AMAMA does NOT spawn new AMCOS instances, and does NOT assign the `chief-of-staff` governance title itself. AMAMA **recommends** a COS candidate from the already-running registered agents; the **USER assigns** the `chief-of-staff` title via the dashboard.
 
 ## Two-Track Approval System
 

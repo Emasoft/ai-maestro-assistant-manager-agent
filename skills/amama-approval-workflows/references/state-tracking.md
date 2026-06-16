@@ -4,7 +4,7 @@
 - [State File Schema](#state-file-schema)
 - [Proactive Monitoring](#proactive-monitoring)
 
-All GovernanceRequests are tracked both in the API and in the local state file for redundancy.
+All GovernanceRequests are tracked both server-side (via the frozen `aimaestro-governance.sh` CLI) and in the local state file for redundancy.
 
 ## State File Schema
 
@@ -35,6 +35,6 @@ legacy_approvals:
 
 ## Proactive Monitoring
 
-- Poll `GET /api/v1/governance/requests?status=pending` every 60 seconds during active sessions
+- Poll `aimaestro-governance.sh requests --status pending` every 60 seconds during active sessions
 - Present pending requests to user with context and recommended action
 - Auto-escalate requests older than 10 minutes to urgent priority

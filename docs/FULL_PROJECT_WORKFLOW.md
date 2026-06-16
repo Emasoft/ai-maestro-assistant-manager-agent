@@ -4,13 +4,13 @@
 
 ### Phase 1: Team Creation
 
-| Step | Actor | Action | API |
+| Step | Actor | Action | CLI |
 |------|-------|--------|-----|
-| 1 | Manager | Create GitHub repo + team | `POST /api/teams` |
-| 2 | Manager | Assign COS to team | `PATCH /api/teams/{id}/chief-of-staff` |
+| 1 | Manager | Create GitHub repo + team | `aimaestro-teams.sh create --name N [--type T]` |
+| 2 | Manager | Recommend COS; USER assigns | USER assigns COS via dashboard (MANAGER only recommends) |
 | 3 | COS | Propose member roster | GovernanceRequest to manager |
-| 4 | Manager | Approve roster | `POST /api/v1/governance/requests/{id}/approve` |
-| 5 | COS | Add members to team | `POST /api/teams/{id}/members` |
+| 4 | Manager | Approve roster | `aimaestro-governance.sh approve <id> --password P` |
+| 5 | COS | Add members to team | `aimaestro-teams.sh add-agent <teamId> <agent>` |
 
 ### Phase 2: Design
 
@@ -86,5 +86,5 @@
 
 ## Communication
 
-All inter-agent communication via AI Maestro messaging API (`POST /api/messages`).
+All inter-agent communication via the AI Maestro messaging CLI (`amp-send …`).
 GitHub used for: repos, issues, PRs, project boards.

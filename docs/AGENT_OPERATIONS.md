@@ -11,14 +11,14 @@
 
 ## Core Operations
 
-| Operation | API | Notes |
+| Operation | CLI | Notes |
 |-----------|-----|-------|
-| Create team | `POST /api/teams` | Specifies team type (open/closed) |
-| Assign COS | `PATCH /api/teams/{id}/chief-of-staff` | Assigns chief-of-staff to closed team |
-| Approve request | `POST /api/v1/governance/requests/{id}/approve` | GovernanceRequest approval |
-| Reject request | `POST /api/v1/governance/requests/{id}/reject` | GovernanceRequest rejection |
-| Send message | `POST /api/messages` | AI Maestro messaging |
-| Check inbox | `GET /api/messages?agent={name}&status=unread` | Priority: urgent > high > normal |
+| Create team | `aimaestro-teams.sh create --name N [--type T]` | Specifies team type (open/closed) |
+| Assign COS | USER assigns COS via dashboard | COS assignment is USER-only; MANAGER only recommends candidates |
+| Approve request | `aimaestro-governance.sh approve <id> --password P` | GovernanceRequest approval |
+| Reject request | `aimaestro-governance.sh reject <id> --password P [--reason R]` | GovernanceRequest rejection |
+| Send message | `amp-send …` | AI Maestro messaging |
+| Check inbox | `amp-inbox` | Priority: urgent > high > normal |
 
 ## Communication Flow
 
@@ -73,7 +73,7 @@ AI Maestro uses 5 task statuses:
 
 ## Session Lifecycle
 
-1. Verify AI Maestro connectivity: `GET /api/sessions`
-2. Check existing teams: `GET /api/teams`
+1. Verify AI Maestro connectivity: `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable)
+2. Check existing teams: `aimaestro-teams.sh list`
 3. Process unread messages
 4. Announce readiness to user

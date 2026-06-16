@@ -9,13 +9,13 @@ agent: amama-assistant-manager-main-agent
 
 ## Overview
 
-Computes the user's availability state from a clock-anchored signal queried over REST from the AI Maestro server (`GET /api/users/me/presence`). State is one of: `active`, `monitoring`, `away`, `dnd`, `unknown`, `unknown-after-compaction`. The server records `last_user_input_epoch` on every UserPromptSubmit (via the AMAMA hook plus any other AI Maestro-managed Claude Code session that ships an equivalent hook).
+Computes the user's availability state from a clock-anchored signal queried over REST from the AI Maestro server (`GET /api/users/me/presence`). <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed --> State is one of: `active`, `monitoring`, `away`, `dnd`, `unknown`, `unknown-after-compaction`. The server records `last_user_input_epoch` on every UserPromptSubmit (via the AMAMA hook plus any other AI Maestro-managed Claude Code session that ships an equivalent hook).
 
 ## Prerequisites
 
 - AMAMA persona loaded.
 - `$AID_AUTH` and `$AIMAESTRO_API` available in the session environment.
-- The AI Maestro server at `$AIMAESTRO_API` exposes the user-presence endpoints (`POST /api/sessions/me/user-input`, `GET /api/users/me/presence`).
+- The AI Maestro server at `$AIMAESTRO_API` exposes the user-presence endpoints (`POST /api/sessions/me/user-input`, `GET /api/users/me/presence`). <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed -->
 - Append access to `docs_dev/sessions/availability-log.md` for the audit trail.
 
 ## Instructions
@@ -24,7 +24,7 @@ Apply this procedure before invoking amama-autonomous-fallback for any incoming 
 
 1. **Compaction guard.** If this is the first user-facing turn after a detected compaction, return `("unknown-after-compaction", now, "compaction-guard")` and stop.
 2. **Override check.** If `<project>/.claude/amama/availability-overrides.md` carries a non-expired override, return `(override.state, override.since, "override")`.
-3. **Presence read (authoritative).** `GET /api/users/me/presence` with `Authorization: Bearer $AID_AUTH` and a 2s timeout. On HTTP error / transport failure / timeout, go to step 3b (do NOT immediately return `unknown`).
+3. **Presence read (authoritative).** `GET /api/users/me/presence` with `Authorization: Bearer $AID_AUTH` and a 2s timeout. <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed — interim fallback: call the endpoint directly until the CLI verb lands --> On HTTP error / transport failure / timeout, go to step 3b (do NOT immediately return `unknown`).
 3b. **Janitor-breadcrumb fallback (degraded).** If the server is unreachable, read `~/.aimaestro/state/user-presence.json` (`{last_user_input_epoch, source, written_at_epoch}`, written by the janitor's on-prompt-submit hook + refreshed each heartbeat). If present and `written_at_epoch` is recent (< 30min stale), use its `last_user_input_epoch` with `source="janitor-breadcrumb"`. If absent or stale, return `("unknown", now, "presence-unreachable")` — graceful degradation routes every approval to the user. (The janitor writing this breadcrumb is a coordination follow-up; until it lands, server-unreachable → `unknown`.)
 4. **Null check.** If the chosen source's `last_user_input_epoch` is `null` (no UserPromptSubmit recorded yet), return `("unknown", now, "no-input-recorded")`.
 5. **Idle clock — server-clock anchored.** `age_seconds = max(0, response.server_now_epoch - response.last_user_input_epoch)`. Both timestamps come from the same response, so client-server clock skew is impossible (closes crisis B8 / multi-host divergence).
@@ -55,6 +55,8 @@ Apply this procedure before invoking amama-autonomous-fallback for any incoming 
 
 ## Examples
 
+<!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed — examples below show the interim direct /api/ behavior -->
+
 ```
 # Active user
 GET /api/users/me/presence
@@ -80,5 +82,5 @@ GET → curl exit 28 (timeout)
 - [references/state-thresholds.md](references/state-thresholds.md) — State table + override TTL semantics
   - State table, Override TTL semantics, Override file format (phase 2), Server-clock anchored idle computation, Crisis cross-reference
 
-- AI Maestro server presence-API contract (handoff in repo design/handoffs/) — POST /api/sessions/me/user-input, GET /api/users/me/presence
+- AI Maestro server presence-API contract (handoff in repo design/handoffs/) — POST /api/sessions/me/user-input, GET /api/users/me/presence <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed -->
 - TRDD-bfcedff0 (design/tasks/) — Phase-1 spec, ratification gate, change log

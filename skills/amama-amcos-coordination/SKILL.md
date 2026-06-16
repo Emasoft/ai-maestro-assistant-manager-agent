@@ -15,7 +15,7 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 
 ## Prerequisites
 
-1. Target agent in AI Maestro registry (`GET /api/agents`)
+1. Target agent in AI Maestro registry (`aimaestro-agent.sh list`)
 2. AI Maestro messaging available
 3. A team exists or will be created
 
@@ -23,7 +23,7 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 
 1. **Recommend COS** — Suggest agents for COS role. USER assigns via dashboard. See [creating-amcos-instance](references/creating-amcos-instance.md).
    > Why AMAMA Assigns the COS Role · How to Assign the COS Role · When to Assign the COS Role · Post-Assignment Steps · Cross-Host COS Assignment
-2. **Register Agents** — `POST /api/agents/register`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
+2. **Register Agents** — `aimaestro-agent.sh create <name> [opts]`. See [creating-amcos-procedure](references/creating-amcos-procedure.md).
    > Overview · Key Principles · Agent Registration · Team Creation · COS Assignment · Step-by-Step Procedure · Success Criteria · Troubleshooting · Related Documents
 3. **Approvals** — Evaluate, respond. See [references/approval-request-flow.md](references/approval-request-flow.md).
   - When COS-Assigned Agent Sends Approval Requests
@@ -52,7 +52,7 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
   - Handling Missing ACK
   - ACK Verification Checklist
 
-Checklist: identify op type → verify agent registered → execute API call → await ACK (30-60s).
+Checklist: identify op type → verify agent registered → run the frozen CLI (`aimaestro-agent.sh` / `aimaestro-teams.sh`) → await ACK (30-60s).
 
 ## Output
 
@@ -71,7 +71,7 @@ See [references/error-handling.md](references/error-handling.md). Escalate on: d
 
 **Input:** User assigns COS via dashboard for team-1 with agent amcos-cos
 
-**Output:** AMAMA verifies assignment: `GET /api/teams/team-1` returns `{"chiefOfStaff":"amcos-cos","status":"assigned"}`
+**Output:** AMAMA verifies assignment: `aimaestro-teams.sh show team-1` returns `{"chiefOfStaff":"amcos-cos","status":"assigned"}`
 
 See [references/workflow-examples.md](references/workflow-examples.md) for full examples.
   - Example 1: User Requests New Project

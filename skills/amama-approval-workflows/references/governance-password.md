@@ -8,7 +8,9 @@ The governance password authenticates MANAGER approval/rejection actions. It is 
 
 ## Initial Setup
 
-Set the governance password on first use:
+Set the governance password on first use.
+
+<!-- DECOUPLE-BLOCKED ai-maestro#36: set-governance-password — CLI verb not yet deployed (aimaestro-governance.sh exposes requests/request/approve/reject/transfer only). Fallback below until the verb lands. -->
 
 ```
 POST $AIMAESTRO_API/api/v1/governance/password

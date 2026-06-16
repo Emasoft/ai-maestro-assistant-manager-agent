@@ -48,7 +48,7 @@ Additional optional fields may include:
 ### Verify Registration
 
 ```
-GET $AIMAESTRO_API/api/agents
+aimaestro-agent.sh list
 ```
 
 Filter for the specific agent by name.
@@ -85,7 +85,7 @@ Filter for the specific agent by name.
 After the user creates the team, verify it exists:
 
 ```
-GET $AIMAESTRO_API/api/teams
+aimaestro-teams.sh list
 ```
 
 
@@ -105,7 +105,7 @@ See [creating-amcos-instance.md](creating-amcos-instance.md) for COS role detail
 
 If the target agent is not already in the registry, register it using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
 
-**Verify**: `GET /api/agents` lists the agent.
+**Verify**: `aimaestro-agent.sh list` lists the agent.
 
 
 ### Step 2: Request User to Create Team
@@ -117,7 +117,7 @@ If the target agent is not already in the registry, register it using `aimaestro
 - **Recommended type**: `closed`
 - **Recommended members**: `coordinator-alpha`
 
-**Verify**: After the user creates the team, confirm via `GET /api/teams`. Note the returned `teamId`.
+**Verify**: After the user creates the team, confirm via `aimaestro-teams.sh list`. Note the returned `teamId`.
 
 
 ### Step 3: Request User to Assign COS Role
@@ -127,7 +127,7 @@ If the target agent is not already in the registry, register it using `aimaestro
 - **Recommended COS**: `coordinator-alpha`
 - **Team**: The team created in Step 2
 
-**Verify**: After the user assigns COS, confirm via `GET /api/teams/{teamId}` that `chiefOfStaff` is set to the agent.
+**Verify**: After the user assigns COS, confirm via `aimaestro-teams.sh show <teamId>` that `chiefOfStaff` is set to the agent.
 
 ### Step 4: Send Initialization Message
 
@@ -165,7 +165,7 @@ Expected response content:
 3. If the response still shows `constraints_loaded: false`, revoke the COS role and try assigning to a different agent
 4. Report to user if no agent can load constraints
 
-**Handling no response**: If no `cos-role-accepted` response arrives within 30 seconds, the assignment may have failed silently. Verify the COS assignment via `GET /api/teams/<team-id>` and check if `chiefOfStaff` is set. If set but no response, send a health ping. If not set, retry the PATCH call.
+**Handling no response**: If no `cos-role-accepted` response arrives within 30 seconds, the assignment may have failed silently. Verify the COS assignment via `aimaestro-teams.sh show <team-id>` and check if `chiefOfStaff` is set. If set but no response, send a health ping. If not set, request the user to re-assign COS via the dashboard (COS assignment is USER-only; AMAMA only recommends).
 
 ### Step 6: Log the Setup
 
@@ -203,11 +203,11 @@ The COS-assigned agent is now available to coordinate specialist agents within t
 
 A successful team setup with COS assignment meets ALL of the following:
 
-- [ ] Agent registered in AI Maestro registry (`GET /api/agents` lists it)
-- [ ] User created team via dashboard (team ID available via `GET /api/teams`)
+- [ ] Agent registered in AI Maestro registry (`aimaestro-agent.sh list` lists it)
+- [ ] User created team via dashboard (team ID available via `aimaestro-teams.sh list`)
 - [ ] Team stored in `~/.aimaestro/teams/registry.json`
 - [ ] User assigned COS via dashboard
-- [ ] `GET /api/teams/{teamId}` confirms `chiefOfStaff` set correctly
+- [ ] `aimaestro-teams.sh show <teamId>` confirms `chiefOfStaff` set correctly
 - [ ] COS-assigned agent received and acknowledged role assignment message
 - [ ] Team and COS logged in `docs_dev/sessions/active-teams.md`
 
@@ -218,8 +218,8 @@ A successful team setup with COS assignment meets ALL of the following:
 **Cause**: AI Maestro service may be down or agent name collision
 
 **Solution**:
-1. Check AI Maestro sessions: `GET /api/sessions`
-2. Check for name collisions: `GET /api/agents?name=$AGENT_NAME`
+1. Check AI Maestro connectivity: `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable)
+2. Check for name collisions: `aimaestro-agent.sh list` (filter by name client-side)
 3. If collision, choose a different agent name with a suffix
 
 ### Team Creation Fails
@@ -228,7 +228,7 @@ A successful team setup with COS assignment meets ALL of the following:
 
 **Solution**:
 1. Verify all `agentIds` exist in the registry
-2. Check for team name collisions: `GET /api/teams?name=$TEAM_NAME`
+2. Check for team name collisions: `aimaestro-teams.sh list` (filter by name client-side)
 3. Verify AI Maestro service is healthy
 
 ### COS Assignment Fails
@@ -237,7 +237,7 @@ A successful team setup with COS assignment meets ALL of the following:
 
 **Solution**:
 1. Verify agent is in the team's member list
-2. Check if team already has a COS: `GET /api/teams/{teamId}`
+2. Check if team already has a COS: `aimaestro-teams.sh show <teamId>`
 3. If team has existing COS, request user to unassign the current COS via dashboard first
 4. Verify team type is `closed` (open teams cannot have COS)
 5. Request user to retry COS assignment via dashboard
@@ -249,7 +249,7 @@ A successful team setup with COS assignment meets ALL of the following:
 **Solution**:
 1. Wait additional 10 seconds
 2. Retry initialization message
-3. Check agent session status via `GET /api/agents/$AGENT_NAME`
+3. Check agent session status via `aimaestro-agent.sh show <agent-id>`
 4. If agent is unresponsive, consider assigning COS to a different agent
 
 ## Related Documents

@@ -10,7 +10,7 @@
 
 ```
 # 1. Poll for pending requests
-GET $AIMAESTRO_API/api/v1/governance/requests?status=pending
+aimaestro-governance.sh requests --status pending
 
 # Response includes:
 # {
@@ -35,8 +35,7 @@ GET $AIMAESTRO_API/api/v1/governance/requests?status=pending
 **Reason**: Needed for sprint 42 capacity
 
 # 3. MANAGER approves
-POST $AIMAESTRO_API/api/v1/governance/requests/gov-abc123/approve
-Body: {"password": "***", "approvedBy": "MANAGER", "notes": "Approved for sprint 42"}
+aimaestro-governance.sh approve gov-abc123 --password "***"
 
 # Response: {"id": "gov-abc123", "status": "local-approved", ...}
 ```
@@ -47,7 +46,7 @@ See the `team-governance` skill for full API details.
 
 ```
 # 1. Transfer request arrives
-GET $AIMAESTRO_API/api/v1/governance/requests/gov-def456
+aimaestro-governance.sh request gov-def456
 
 # {
 #   "id": "gov-def456",
@@ -70,8 +69,7 @@ GET $AIMAESTRO_API/api/v1/governance/requests/gov-def456
 **Note**: Agent expertise better suited for gamma's mission
 
 # 3. MANAGER approves -> transitions to dual-approved -> executed
-POST $AIMAESTRO_API/api/v1/governance/requests/gov-def456/approve
-Body: {"password": "***", "approvedBy": "MANAGER"}
+aimaestro-governance.sh approve gov-def456 --password "***"
 
 # Response: {"id": "gov-def456", "status": "dual-approved", ...}
 # System auto-executes the transfer -> status becomes "executed"
@@ -94,8 +92,7 @@ See the `team-governance` skill for full API details.
 # }
 
 # 2. MANAGER rejects
-POST $AIMAESTRO_API/api/v1/governance/requests/gov-ghi789/reject
-Body: {"password": "***", "rejectedBy": "MANAGER", "reason": "Agent-001 is still critical for monitoring"}
+aimaestro-governance.sh reject gov-ghi789 --password "***" --reason "Agent-001 is still critical for monitoring"
 
 # Response: {"id": "gov-ghi789", "status": "rejected", ...}
 ```

@@ -15,18 +15,18 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 
 ## Prerequisites
 
-- AI Maestro running, API reachable at `$AIMAESTRO_API`
+- AI Maestro running and reachable (the frozen CLIs resolve auth internally)
 - GitHub CLI (`gh`) installed for issue/PR status
 - `design/reports/` directory must exist (create if missing)
 
 ## Instructions
 
 1. Determine report type: quick status, progress, handoff summary, or blocker
-2. Query AI Maestro APIs for live data:
-   - `GET /api/sessions` -- session liveness (proxies agent health; no `/api/agents/health` endpoint)
-   - `GET /api/agents` -- registered agents (filter client-side by `status`)
-   - `GET /api/teams/{id}` -- team config and members
-   - `GET /api/teams/{id}/tasks` -- tasks with Kanban statuses
+2. Query AI Maestro via the frozen CLIs for live data:
+   - `aimaestro-agent.sh list` -- session liveness / connectivity (non-zero exit ⇒ server unreachable; proxies agent health, no separate health endpoint)
+   - `aimaestro-agent.sh list` -- registered agents (filter client-side by `status`)
+   - `aimaestro-teams.sh show <teamId>` -- team config and members
+   - team tasks with Kanban statuses: <!-- DECOUPLE-BLOCKED ai-maestro#36: team tasks read — CLI verb not yet deployed --> fall back to `GET /api/teams/{id}/tasks` until a `aimaestro-teams.sh tasks` verb lands
 3. Query GitHub for issue/PR status via `gh` CLI
 4. Read session memory files for additional context
 5. Compile into report format and save to `design/reports/`

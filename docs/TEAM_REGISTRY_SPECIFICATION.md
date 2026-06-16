@@ -7,18 +7,18 @@
 | Global registry | `~/.aimaestro/teams/registry.json` |
 | Per-repo registry | `<repo-root>/.aimaestro/team-registry.json` |
 
-## API
+## CLI
 
-| Operation | Endpoint |
-|-----------|----------|
-| Create team | `POST /api/teams` |
-| List teams | `GET /api/teams` |
-| Get team | `GET /api/teams/{id}` |
-| Update team | `PATCH /api/teams/{id}` |
-| Delete team | `DELETE /api/teams/{id}` |
-| Assign COS | `PATCH /api/teams/{id}/chief-of-staff` |
-| Add member | `POST /api/teams/{id}/members` |
-| Remove member | `DELETE /api/teams/{id}/members/{agent}` |
+| Operation | Command |
+|-----------|---------|
+| Create team | `aimaestro-teams.sh create --name N [--type T] [--agents u1,u2]` |
+| List teams | `aimaestro-teams.sh list` |
+| Get team | `aimaestro-teams.sh show <teamId>` |
+| Update team | `aimaestro-teams.sh update <teamId> [opts]` |
+| Delete team | `aimaestro-teams.sh delete <teamId> [--delete-agents]` |
+| Assign COS | USER assigns COS via dashboard (MANAGER only recommends) |
+| Add member | `aimaestro-teams.sh add-agent <teamId> <agent>` |
+| Remove member | `aimaestro-teams.sh remove-agent <teamId> <agent>` |
 
 ## Team Types
 
@@ -81,7 +81,7 @@ Format: `<team-prefix>-<descriptor>[-<instance>]`
 
 Agents resolve addresses from the team registry using the `team-governance` skill's member lookup capability, or via:
 ```
-GET $AIMAESTRO_API/api/teams/{id}/members
+aimaestro-teams.sh show <teamId>
 ```
 
 ## Validation Rules

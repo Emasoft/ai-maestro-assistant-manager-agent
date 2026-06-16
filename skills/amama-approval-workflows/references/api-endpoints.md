@@ -1,4 +1,8 @@
-# GovernanceRequest API Endpoints Reference
+# GovernanceRequest CLI Reference
+
+All governance operations route through the frozen `aimaestro-governance.sh`
+CLI (R22). The CLI resolves AID auth internally — no `Authorization` header is
+ever passed by hand.
 
 ## Contents
 
@@ -12,7 +16,7 @@
 ## List Pending Requests
 
 ```
-GET $AIMAESTRO_API/api/v1/governance/requests?status=pending
+aimaestro-governance.sh requests --status pending
 ```
 
 See the `team-governance` skill for full API details.
@@ -20,7 +24,7 @@ See the `team-governance` skill for full API details.
 ## Get a Specific Request
 
 ```
-GET $AIMAESTRO_API/api/v1/governance/requests/{id}
+aimaestro-governance.sh request <id>
 ```
 
 See the `team-governance` skill for full API details.
@@ -28,13 +32,7 @@ See the `team-governance` skill for full API details.
 ## Approve a Request (MANAGER only)
 
 ```
-POST $AIMAESTRO_API/api/v1/governance/requests/{id}/approve
-Body: {
-  "password": "<governance-password>",
-  "approvedBy": "MANAGER",
-  "conditions": [],
-  "notes": "<optional-notes>"
-}
+aimaestro-governance.sh approve <id> --password <governance-password> [--approver <MANAGER-UUID>]
 ```
 
 **Response on success**: Status transitions to `local-approved` or `dual-approved` (if remote already approved).
@@ -44,12 +42,7 @@ See the `team-governance` skill for full API details.
 ## Reject a Request (MANAGER only)
 
 ```
-POST $AIMAESTRO_API/api/v1/governance/requests/{id}/reject
-Body: {
-  "password": "<governance-password>",
-  "rejectedBy": "MANAGER",
-  "reason": "<rejection-reason>"
-}
+aimaestro-governance.sh reject <id> --password <governance-password> [--rejector <MANAGER-UUID>] [--reason <rejection-reason>]
 ```
 
 **Response on success**: Status transitions to `rejected`. The operation is permanently blocked.
@@ -59,13 +52,7 @@ See the `team-governance` skill for full API details.
 ## Submit a Transfer Request
 
 ```
-POST $AIMAESTRO_API/api/v1/governance/transfers
-Body: {
-  "agentId": "<agent-uuid>",
-  "fromTeamId": "<source-team-uuid>",
-  "toTeamId": "<destination-team-uuid>",
-  "note": "<transfer-justification>"
-}
+aimaestro-governance.sh transfer --agent <agent-uuid> --from-team <source-team-uuid> --to-team <destination-team-uuid> [--note <transfer-justification>]
 ```
 
 **Response**: Creates a GovernanceRequest of type `transfer-agent` with status `pending`. Returns the request ID.
@@ -82,7 +69,7 @@ Transfer requests have special routing rules because they involve two teams.
 
 ### Transfer Workflow
 
-1. **Request submitted** via `POST /api/v1/governance/transfers`
+1. **Request submitted** via `aimaestro-governance.sh transfer …`
 2. A GovernanceRequest of type `transfer-agent` is created with status `pending`
 3. **Notifications sent** to:
    - MANAGER (AMAMA) for governance approval

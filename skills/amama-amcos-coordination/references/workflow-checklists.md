@@ -17,9 +17,9 @@ When user requests a new project team:
 
 - [ ] **Parse user request** for project name, purpose, and requirements
 - [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
-- [ ] **Verify team name available** (no existing team with that name via `GET $AIMAESTRO_API/api/teams`)
+- [ ] **Verify team name available** (no existing team with that name via `aimaestro-teams.sh list`)
 - [ ] **Request user to create team via dashboard** with recommended name, project, and description
-- [ ] **Verify team created** by user via `GET $AIMAESTRO_API/api/teams`
+- [ ] **Verify team created** by user via `aimaestro-teams.sh list`
 - [ ] **Identify available registered agent** for COS role (see "Checklist: Assigning COS Role")
 - [ ] **Request user to assign COS role** to the selected agent via dashboard
 - [ ] **Send health check ping** to the COS agent using the `agent-messaging` skill (mandatory)
@@ -37,7 +37,7 @@ When assigning the Chief-of-Staff (COS) role to an existing registered agent:
 - [ ] **Determine AMCOS session name** (format: `amcos-<project-name>`)
 - [ ] **Identify available registered agent** suitable for COS role:
   ```
-  GET $AIMAESTRO_API/api/agents
+  aimaestro-agent.sh list
   # Filter response client-side, e.g. jq '.agents[] | select(.status == "available")'
   ```
 - [ ] **Verify agent is registered and reachable** (agent must already exist in AI Maestro)

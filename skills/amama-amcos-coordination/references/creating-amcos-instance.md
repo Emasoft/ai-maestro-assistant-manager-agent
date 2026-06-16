@@ -32,8 +32,8 @@ In v1, AMAMA spawned a new dedicated AMCOS instance. In v2:
 
 ### Prerequisites
 
-1. The target agent must be registered in AI Maestro (`GET /api/agents` must list it)
-2. A team must exist (`GET /api/teams` must list it) with type `closed`
+1. The target agent must be registered in AI Maestro (`aimaestro-agent.sh list` must list it)
+2. A team must exist (`aimaestro-teams.sh list` must list it) with type `closed`
 3. The team must not already have a COS assigned (one COS per closed team)
 4. The target agent should be a member of the team
 
@@ -41,7 +41,7 @@ In v1, AMAMA spawned a new dedicated AMCOS instance. In v2:
 
 **AMAMA cannot assign COS roles.** Recommend a COS candidate to the user and request them to assign COS via the AI Maestro dashboard.
 
-**Verify**: After the user assigns COS, confirm the team's `chiefOfStaff` field is set by checking `GET /api/teams/$TEAM_ID`.
+**Verify**: After the user assigns COS, confirm the team's `chiefOfStaff` field is set by checking `aimaestro-teams.sh show <team-id>`.
 
 ### Unassigning COS (USER-ONLY)
 
@@ -72,7 +72,7 @@ However, for clarity in messaging and logs, AMAMA may refer to the agent as:
 
 After assigning the COS role:
 
-1. **Verify assignment** - Check `GET /api/teams/$TEAM_ID` to confirm `chiefOfStaff` is set
+1. **Verify assignment** - Check `aimaestro-teams.sh show <team-id>` to confirm `chiefOfStaff` is set
 2. **Send initialization message** - Notify the agent of its new COS role using the `agent-messaging` skill
 3. **Confirm role acceptance** - Wait for the agent to acknowledge its COS responsibilities
 4. **Log the assignment** - Record in the team audit log
@@ -98,7 +98,7 @@ Send a COS role notification to the agent using the `agent-messaging` skill:
 - [ ] Team exists and is of type `closed`
 - [ ] Team does not already have a COS (or previous COS was unassigned)
 - [ ] User assigned COS via dashboard
-- [ ] `GET /api/teams/$TEAM_ID` confirms `chiefOfStaff` set to correct agent
+- [ ] `aimaestro-teams.sh show <team-id>` confirms `chiefOfStaff` set to correct agent
 - [ ] Initialization message sent to agent
 - [ ] Agent acknowledged COS role
 
@@ -116,7 +116,9 @@ When the target agent is on a different host (remote AI Maestro instance), the a
 
 ### GovernanceRequest for COS Assignment
 
-Submit a GovernanceRequest of type `assign-cos`:
+Submit a GovernanceRequest of type `assign-cos`.
+
+<!-- DECOUPLE-BLOCKED ai-maestro#36: submit cross-host assign-cos GovernanceRequest — no `aimaestro-governance.sh` submit/create verb deployed yet (the CLI exposes requests/request/approve/reject/transfer only). Until the verb lands, the current direct call below remains the fallback. -->
 
 ```
 POST $AIMAESTRO_API/api/v1/governance/requests
@@ -150,7 +152,7 @@ See the `team-governance` skill for full API details.
 3. **Rejected** - Governance policy denies the assignment; AMAMA is notified with reason
 4. **Executed** - Assignment completed on remote host; AMAMA receives confirmation
 
-**Verify**: Poll `GET /api/v1/governance/requests/$REQUEST_ID` until status is `approved` and then `executed`.
+**Verify**: Poll `aimaestro-governance.sh request <request-id>` until status is `approved` and then `executed`.
 
 ### Cross-Host Limitations
 

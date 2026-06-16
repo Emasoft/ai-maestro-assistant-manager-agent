@@ -29,8 +29,8 @@ Single source of truth for autonomous-fallback eligibility. Every approval reque
 | 5 | `run-type-checker` | R | COS, AUTONOMOUS, MAINTAINER | n/a (read-only) | |
 | 6 | `read-files` | R | COS, AUTONOMOUS, MAINTAINER | n/a (read-only) | |
 | 7 | `send-amp-message-to-cos` | R | COS, AUTONOMOUS, MAINTAINER | Re-send corrective AMP message | AMP cannot delete; supersede only. R6 v3 reminder: messages bound for team members route HERE. |
-| 8 | `wake-hibernated-agent` | R | COS, AUTONOMOUS, MAINTAINER | `POST /api/agents/{id}/hibernate` | If target is team-internal, AMAMA asks the team's COS to wake — see §6 of SKILL.md (R6 v3 routing constraint) |
-| 9 | `hibernate-agent-no-task` | R | COS, AUTONOMOUS, MAINTAINER | `POST /api/agents/{id}/wake` | Same R6 v3 routing rule for team-internal targets |
+| 8 | `wake-hibernated-agent` | R | COS, AUTONOMOUS, MAINTAINER | `aimaestro-agent.sh hibernate <id>` | If target is team-internal, AMAMA asks the team's COS to wake — see §6 of SKILL.md (R6 v3 routing constraint) |
+| 9 | `hibernate-agent-no-task` | R | COS, AUTONOMOUS, MAINTAINER | `aimaestro-agent.sh wake <id>` | Same R6 v3 routing rule for team-internal targets |
 | 10 | `hibernate-agent-with-task` | C | COS, AUTONOMOUS | wake + replay last in-flight prompt; possible duplicate work | AUTONOMOUS source downgrades to defer |
 | 11 | `commit-feature-branch` | R | COS, AUTONOMOUS, MAINTAINER | `git revert <sha>` | Creates a revert commit; preserves history |
 | 12 | `push-feature-branch` | C | COS, AUTONOMOUS, MAINTAINER | `git push --force-with-lease` to rewind + notify any reviewer who pulled | |

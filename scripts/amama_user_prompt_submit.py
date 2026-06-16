@@ -97,6 +97,11 @@ def _entry() -> None:
     # The endpoint path is a fixed server-side contract (NOT user-controlled);
     # it is held in its own constant so the request target is assembled only
     # from the operator-configured api_base plus this literal path.
+    # DECOUPLE-BLOCKED ai-maestro#36 (hook-split): per the frozen-CLI invariant
+    # (R22) a plugin must never call /api/ directly. This direct POST must be
+    # replaced by a frozen CLI (an agent-session.sh user-input verb) once that
+    # verb is exposed/deployed; the plugin then carries only the non-api part
+    # (the prompt-denylist filter) and shells out to the CLI for the api-part.
     path = "/api/sessions/me/user-input"
     target = f"{api_base.rstrip('/')}{path}"
     # urllib (stdlib) instead of curl: cross-platform (curl is not shipped on

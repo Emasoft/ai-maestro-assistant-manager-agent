@@ -11,13 +11,13 @@
 
 | Error | Symptom | Solution |
 |-------|---------|----------|
-| Agent not in registry | `404` on COS assignment | Register agent first via `POST /api/agents/register` |
+| Agent not in registry | `404` on COS assignment | Register agent first via `aimaestro-agent.sh create <name>` |
 | COS-assigned agent not found | No response to messages | Verify agent session exists, check AI Maestro registry |
 | Message send failure | AI Maestro API error | Check AI Maestro service status |
 | Invalid approval format | COS-assigned agent rejects response | Review message format in [message-formats.md](message-formats.md) |
 | Autonomy grant failed | COS-assigned agent doesn't acknowledge grant | Verify agent has latest plugin version |
 | Duplicate request ID | Request ID collision | Use unique UUID for each request |
-| Team not found | `404` on team operations | Create team first via `POST /api/teams` |
+| Team not found | `404` on team operations | Request user to create team first via dashboard (`aimaestro-teams.sh create` is the underlying verb; AMAMA cannot create teams) |
 | COS already assigned | Team already has a COS | Unassign current COS before assigning new one |
 
 ## Error Scenarios
