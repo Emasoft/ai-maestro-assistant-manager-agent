@@ -3,7 +3,7 @@ trdd-id: f5883dcc-3ee0-4335-85cb-c2aa12fe9b9e
 title: Fleet 3-pillars as proactive ama-* skills in the core plugin + governance-aware wiring + fool-proof rule injection
 column: planned
 created: 2026-06-13T18:10:42+0200
-updated: 2026-06-13T18:10:42+0200
+updated: 2026-06-16T02:49:24+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -23,7 +23,24 @@ external-refs: ["github.com/Emasoft/ai-maestro-plugin"]
 
 # TRDD-f5883dcc — 3-pillars as proactive `ama-*` skills (core plugin) + governance-aware wiring
 
-## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-13
+## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-16
+
+**✅ PHASE A SHIPPED (core ai-maestro-plugin v2.7.9, 2026-06-16).** The granular `ama-*` skills landed
+exactly as specified below: `ama-prrd-{get,find,edit,propose}`, `ama-trdd-{write,find,update,transition}`,
+`ama-kanban-render`, `ama-proposal-approvals` — REPLACING the monolithic `prrd-trdd-kanban`; governance-
+enforcing + role-permission-sliced; decoupling-safe (local PRRD.md / design/tasks / kanban.py files — zero
+`/api/`). `team-kanban`/`team-governance` retained (server-backed → ride amp-kanban-*/governance CLIs, R22).
+MANAGER verify-acked on #8 (issuecomment-4713826803). **Correction logged:** a transient MANAGER re-scope
+comment on #8 (prior session) wrongly said "extend the monolith, don't add ama-*" — retracted; THIS TRDD's
+granular approach was right all along (granularizing ≠ redundant; it's the USER's "many granular skills").
+**NEXT: Phase B** — governance-rule auto-install via the core SessionStart hook + fleet wiring each role
+plugin's agents (main+sub) to the `ama-*` skills with their permission slice. Architect epic-create = a
+SERVER task → team-kanban/amp-kanban path (not the local ama-trdd-write).
+
+---
+_(historical STATE — 2026-06-13)_
+
+## ⏵ STATE (historical) — 2026-06-13
 
 **USER directive (2026-06-13).** The 3 pillars (TRDD/PRRD/kanban) are being built as SKILLS
 (many — one per operation), and agents must use them **PROACTIVELY** — but **role-appropriately**,
