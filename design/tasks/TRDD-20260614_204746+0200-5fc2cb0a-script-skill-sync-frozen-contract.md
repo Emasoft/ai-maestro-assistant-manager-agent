@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-15T23:02:20+0200
+updated: 2026-06-16T02:14:17+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -40,6 +40,7 @@ changes, only the scripts change — never the plugins.** Therefore:
   forever.** Changing one breaks ~a dozen plugins.
 - New capability = **ADD new scripts + new skills**, never modify an existing script's interface.
 - The ONLY exception is a serious security vulnerability in a script's syntax.
+- **🆕 USER (2026-06-16) — the SPLIT principle, explicit for HOOKS + ALL scripts, no exceptions:** every script AND every hook is divided into an **api-dependent part** and a **non-api part**. The api part lives in the **ai-maestro project, installed with it** (a CLI); the **plugin carries ONLY the non-api part**. A plugin HOOK that needs the server calls a CLI, never `/api/` directly — hooks stay in plugins, but their API logic moves out to an installed intermediary CLI the hook invokes. Named exemplar: core `ai-maestro-hook.cjs` → split so the `.cjs` calls `activity-update` CLI (`cmd_session_activity_update`, built) + `amp-inbox` (exists) — no new CLI needed, just deploy + repoint. Hook-split scope = same 4 plugins as the script bypasses (AMAMA `amama_user_prompt_submit.py`; core `.cjs`; COS/janitor hook-registered scripts); the hooks' api-parts all reuse existing/built session/inbox CLIs. Coordinated on #16 (issuecomment-4713600798). Enshrine fleet-wide: "split every script/hook; plugin carries only the non-api part; no exceptions; all plugins."
 The ai-maestro Claude **independently affirmed** this same invariant on assistant-manager#16 ✅.
 This must be carried into the fleet governance-rules ("installed scripts are frozen; route all
 script changes through the ai-maestro scripts owner; never patch installed scripts in a plugin").
