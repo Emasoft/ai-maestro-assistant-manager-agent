@@ -3,7 +3,7 @@ trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: planned
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-16T02:14:17+0200
+updated: 2026-06-16T20:14:31+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -23,7 +23,39 @@ external-refs: ["github.com/Emasoft/ai-maestro/issues/35", "github.com/Emasoft/a
 
 # TRDD-5fc2cb0a — Script↔skill sync + the FROZEN script-interface invariant
 
-## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-14
+## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-16
+
+**▶ 2026-06-16 MILESTONE — AMAMA self-decoupling COMPLETE (commit-not-publish).** Branch
+`decouple/api-to-frozen-cli` (fa45357 = mapping spec, cab546c = repoint, 26 files). Every direct
+`/api/` INSTRUCTION in AMAMA shipped source (main agent prompt + 5 skills + docs + README + hook)
+repointed to the immutable CLI layer with **verified frozen verb syntax** (read from deployed PATH
++ `~/ai-maestro/scripts/`): agents→`aimaestro-agent.sh {list,show,create,update,delete,wake,hibernate}`,
+teams→`aimaestro-teams.sh {list,show,create,update,delete,add-agent,remove-agent}`,
+governance→`aimaestro-governance.sh {requests,request,approve,reject,transfer}`, messaging→`amp-*`.
+Manual `Bearer/$AID_AUTH` curl scaffolding dropped (CLIs resolve auth). VERIFIED: zero hallucinated
+verbs in shipped source, hooks.json valid JSON, hook `.py` compiles, all skill frontmatter intact.
+Authoritative map: `design/handoffs/api-to-cli-mapping.md`.
+
+**Residuals — ALL marked `DECOUPLE-BLOCKED ai-maestro#36`** (the only un-decouplable ops, pending the
+keystone BUILD verbs; greppable): presence (`GET /api/users/me/presence`), session user-input (the
+UserPromptSubmit hook), team-tasks (`/api/teams/{id}/tasks`), governance-password-set, assign-cos
+GovernanceRequest submit.
+
+**FALSE-BLOCKER CORRECTION (the lesson of this session):** I had been HOLDING for hours on a wrong
+"fully blocked" read. Reality: the bulk of the CLI layer was ALREADY on PATH (all `amp-*`, `aid-*`,
+`aimaestro-agent.sh`, `agent-session.sh`), and `aimaestro-teams.sh`/`aimaestro-governance.sh` already
+exist in ai-maestro SOURCE (frozen, just un-deployed). Only those 2 need DEPLOY (mechanical
+installer-list fix — exact diff posted on ai-maestro#36 `issuecomment-4721617777`); only
+kanban-config + presence + session-user-input verbs need BUILD (ai-maestro Claude). `transfer`
+already exists. → Verify the ACTUAL deployed surface before declaring blocked.
+
+**NEXT:** (1) #36 deploy lands → `aimaestro-teams/governance.sh` on PATH → smoke-test AMAMA's
+team/governance calls. (2) #36 build verbs land → repoint the 5 BLOCKED residuals + split the hook.
+(3) merge `decouple/api-to-frozen-cli`→main, run publish.py (publish ONLY after deploy so AMAMA never
+ships calls to an absent CLI). (4) AMAMA = reference impl; drive fleet pass-2 (COS, core, janitor +
+remaining plugins copy the mapping-spec pattern).
+
+---
 
 **USER directive (2026-06-14).** A new coordination partner exists: the **ai-maestro core
 repo's Claude** (Emasoft/ai-maestro — server + unified-installer + the **scripts layer**). The
