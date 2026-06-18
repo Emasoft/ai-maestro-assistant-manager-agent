@@ -29,7 +29,7 @@ If `source_role` is not in `{COS, AUTONOMOUS, MAINTAINER}` OR if the operation k
 
 ## Step 4 — Presence gate
 
-Call amama-presence-tracker `get_state()`. If state is `active`, `unknown`, or `unknown-after-compaction`, return `(escalate-to-user, "presence-not-permitting-fallback")`. Status quo applies — every risky approval still goes to user. **Phase 1 default**: state is always `unknown` until phase 3 ships, so this gate fires for every request — by design.
+Call amama-presence-tracker `get_state()`. If state is `active`, `unknown`, or `unknown-after-compaction`, return `(escalate-to-user, "presence-not-permitting-fallback")`. Status quo applies — every risky approval still goes to the active MAESTRO / DELEGATE (R36/R37; AMAMA obeys only that user). **Phase 1 default**: state is always `unknown` until phase 3 ships, so this gate fires for every request — by design.
 
 ## Step 5 — Per-role authority overrides
 

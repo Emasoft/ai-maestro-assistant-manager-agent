@@ -5,7 +5,7 @@
 
 - [Success: User Request Understood](#success-user-request-understood)
 - [Success: Project and Team Creation Complete](#success-project-and-team-creation-complete)
-- [Success: AMCOS Agent Created and Ready](#success-amcos-agent-created-and-ready)
+- [Success: AMCOS Created and Ready](#success-amcos-created-and-ready)
 - [Success: Approval Processed](#success-approval-processed)
 - [Success: Status Reported](#success-status-reported)
 - [General Success Verification Principles](#general-success-verification-principles)
@@ -48,10 +48,11 @@ User notified: "Routing your request to AMCOS, who will coordinate with AMOA to 
 - [ ] Project directory created at specified/clarified location
 - [ ] Git repository initialized
 - [ ] Initial project structure created (README.md, .gitignore)
-- [ ] User created AI Maestro team for this project via dashboard
-- [ ] AMCOS agent created for this project with correct working directory
-- [ ] User assigned COS role to AMCOS agent via dashboard
+- [ ] You created the AI Maestro team for this project via `aimaestro-teams.sh create` (R29)
+- [ ] Server auto-created the COS for this team (`chiefOfStaff` set)
+- [ ] COS woken and granted its team-creation mandate (R30)
 - [ ] AMCOS responding to health check ping
+- [ ] The 5 base members are being completed (team FROZEN until 5/5, R31)
 - [ ] Project registered in `docs_dev/projects/project-registry.md`
 - [ ] User notified of project creation and AMCOS readiness
 
@@ -68,18 +69,20 @@ Verify AMCOS is alive by sending a health check ping using the `agent-messaging`
 - Does the project directory exist at the agreed location?
 - Is git initialized with correct user config?
 - Does the initial structure include all required files?
+- Did I create the team via the teams CLI (R29) and confirm the COS was auto-created?
 - Did AMCOS respond to the health check ping?
 - Is the project registered in the registry file?
 - Did I notify the user with all relevant details?
 
 ---
 
-## Success: AMCOS Agent Created and Ready
+## Success: AMCOS Created and Ready
 
 **Completion Checklist:**
 
-- [ ] Agent creation command succeeded (exit code 0) via the `ai-maestro-agents-management` skill
-- [ ] User assigned COS role via dashboard
+- [ ] You created the team via `aimaestro-teams.sh create` (R29, exit code 0)
+- [ ] Server auto-created the COS (`aimaestro-teams.sh show <team-id>` shows `chiefOfStaff` set)
+- [ ] COS woken via `aimaestro-agent.sh wake <cos-id>` and granted its team-creation mandate (R30)
 - [ ] AMCOS session registered in AI Maestro (visible in agent list)
 - [ ] AMCOS main agent loaded with correct role constraints
 - [ ] AMCOS plugins loaded (verify via plugin list if possible)
@@ -89,11 +92,12 @@ Verify AMCOS is alive by sending a health check ping using the `agent-messaging`
 
 **Verification Evidence:**
 
-Verify session exists using the `ai-maestro-agents-management` skill's agent listing feature.
+Verify the COS exists using the `ai-maestro-agents-management` skill's agent listing feature and `aimaestro-teams.sh show <team-id>`.
 Verify AMCOS responds by sending a health check ping using the `agent-messaging` skill.
 
 **Self-Check Questions:**
-- Did the agent creation succeed (exit code 0)?
+- Did the team creation succeed (exit code 0) and the server auto-create the COS?
+- Did I wake the COS and grant its team-creation mandate (R30)?
 - Is the AMCOS session visible in the agent list via the `ai-maestro-agents-management` skill?
 - Are all required plugins loaded?
 - Is the working directory correctly set?

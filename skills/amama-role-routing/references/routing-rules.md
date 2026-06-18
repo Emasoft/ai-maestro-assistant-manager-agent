@@ -1,15 +1,15 @@
 # Detailed Routing Rules
 
 ## Table of Contents
-- [Route to AMAA (Architect)](#route-to-amaa-architect-specialization-role-member)
-- [Route to AMOA (Orchestrator)](#route-to-amoa-orchestrator-specialization-role-member)
-- [Route to AMIA (Integrator)](#route-to-amia-integrator-specialization-role-member)
-- [Route to AMCOS (Chief of Staff)](#route-to-amcos-chief-of-staff----governance-role-chief-of-staff)
+- [Route to AMAA (Architect)](#route-to-amaa-architect)
+- [Route to AMOA (Orchestrator)](#route-to-amoa-orchestrator)
+- [Route to AMIA (Integrator)](#route-to-amia-integrator)
+- [Route to AMCOS (Chief of Staff)](#route-to-amcos-chief-of-staff)
 - [Handle Directly (no routing)](#handle-directly-no-routing)
 
-**IMPORTANT**: AMAMA CAN message any agent directly. Routing via AMCOS is preferred for delegation but not required. When a routing rule says "route to AMAA/AMOA/AMIA", it means: preferably create a handoff, send it to AMCOS for delegation, and AMCOS delegates to the appropriate specialist. However, AMAMA may contact specialists directly if urgent or if AMCOS is unavailable.
+**IMPORTANT (R6 v3 — HARD rule)**: AMAMA delegates to a team **only through that team's AMCOS** — the COS is the SOLE entry point into a team. Routing via AMCOS is MANDATORY, not "preferred", and there is no urgent-bypass. When a routing rule says "route to AMAA/AMOA/AMIA", it means: create a handoff, send it to AMCOS, and AMCOS delegates to the appropriate specialist inside the team. AMAMA NEVER messages a team-internal agent directly (HTTP 403 `title_communication_forbidden` if attempted). Empirical reason: a side-channel directive left the COS/ORCHESTRATOR uninformed or contradicted, producing chaos.
 
-## Route to AMAA (Architect specialization, `role: member`)
+## Route to AMAA (Architect)
 
 1. **New project/feature design needed**
    - User says: "Design a...", "Plan how to...", "Create architecture for..."
@@ -27,7 +27,7 @@
    - User says: "Break down...", "Modularize...", "Plan implementation of..."
    - Action: Create handoff, send to AMCOS for AMAA delegation
 
-## Route to AMOA (Orchestrator specialization, `role: member`)
+## Route to AMOA (Orchestrator)
 
 1. **Implementation ready to start**
    - Condition: Approved design/plan exists
@@ -45,7 +45,7 @@
    - Condition: Orchestration in progress, need intervention
    - Action: Forward message to AMCOS for AMOA
 
-## Route to AMIA (Integrator specialization, `role: member`)
+## Route to AMIA (Integrator)
 
 1. **Work ready for integration**
    - Condition: Orchestrator agent signals completion
@@ -63,12 +63,12 @@
    - User says: "Prepare release...", "Merge...", "Deploy..."
    - Action: Create handoff, send to AMCOS for AMIA delegation
 
-## Route to AMCOS (Chief of Staff -- governance title: `chief-of-staff`)
+## Route to AMCOS (Chief of Staff)
 
 1. **Agent lifecycle operations needed**
    - User says: "Spawn a new agent", "Create agent for...", "Start new session"
    - Action: Create handoff with agent requirements, route to AMCOS
-   - **IMPORTANT**: When AMCOS creates new agents, it MUST set `role: 'member'` for all specialist agents. Specialization is expressed via `skills` and `tags`, never via the `title` field.
+   - **IMPORTANT (R29/R30)**: The MANAGER creates teams + the COS + the 5 base members + AUTONOMOUS/MAINTAINER with no user approval. A COS creates further agents only under a MANAGER mandate, and any extra project-specific agent it adds MUST be MEMBER-titled on the member-agent role plugin (`--governanceTitle member`). Neither may create a team lacking the 5 base members, nor a non-MEMBER agent beyond the base.
 
 2. **Agent termination required**
    - User says: "Terminate agent", "Stop session", "Kill agent"

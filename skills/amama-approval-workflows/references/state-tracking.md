@@ -4,7 +4,7 @@
 - [State File Schema](#state-file-schema)
 - [Proactive Monitoring](#proactive-monitoring)
 
-All GovernanceRequests are tracked both server-side (via the frozen `aimaestro-governance.sh` CLI) and in the local state file for redundancy.
+All GovernanceRequests are tracked both server-side (the frozen `aimaestro-governance.sh` CLI authorizes via AID + portfolio token, R28 — no password) and in the local state file for redundancy.
 
 ## State File Schema
 
@@ -21,10 +21,10 @@ governance_requests:
     notes: ""
     payload: {}
 
-legacy_approvals:
+operational_approvals:
   - id: "approval-{uuid}"
     type: "push" | "merge" | "publish" | "security" | "design"
-    requested_by: "<role>"
+    requested_by: "<team-title, via COS>"
     requested_at: "ISO-8601"
     status: "pending" | "approved" | "rejected"
     user_decision: null | "approve" | "reject" | "request_changes"

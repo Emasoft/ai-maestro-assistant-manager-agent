@@ -21,6 +21,8 @@ Autonomous mode allows AMCOS to proceed with certain operation types without req
 - Time boundaries
 - Scope boundaries
 
+> **Autonomy ≠ creation mandate (R30).** Autonomous mode is a *runtime* grant over the operations below. It is distinct from the COS **team-creation mandate** (R30) you grant at team setup, which authorizes the COS to create the 5 base members + project-specific MEMBER agents (MEMBER-titled on the member-agent role plugin). Without that mandate the COS may NOT create agents, and neither you nor the COS may create a team lacking its 5 base members or create non-MEMBER agents. See [creating-amcos-instance.md](creating-amcos-instance.md).
+
 ### Delegation Configuration
 
 AMAMA can configure delegation rules stored in state file:

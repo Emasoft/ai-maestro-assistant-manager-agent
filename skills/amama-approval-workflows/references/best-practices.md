@@ -12,9 +12,9 @@
 
 ## 1. Always Verify Before Reporting
 
-**Don't assume AMCOS is alive** - always send health check ping after deploying.
-**Don't assume project created successfully** - verify directory exists and git initialized.
-**Don't assume message delivered** - check AI Maestro API response.
+**Don't assume the COS is alive** - always send a health check ping after waking it.
+**Don't assume the team was created successfully** - verify the COS + 5 base members exist (a partial team is FROZEN, R31).
+**Don't assume a message was delivered** - check the AMP send result via the messaging skill.
 
 ## 2. Maintain Records Consistently
 
@@ -37,7 +37,7 @@ After EVERY operation:
 - Out-of-scope operations
 
 **Approve autonomously only when:**
-- Operation is routine and documented in AMCOS scope
+- Operation is routine and within the team's documented scope
 - Risk is low
 - Aligns with user's stated goals
 
@@ -45,26 +45,26 @@ After EVERY operation:
 
 **You handle:**
 - User communication
-- Project creation
-- AMCOS deployment
+- Team creation (COS + 5 base members, R29)
+- Waking/mandating the COS (R30)
 - Approval decisions
 - Status aggregation
 
 **You do NOT handle:**
-- Code implementation (that's AMOA/AMAA/AMIA via AMCOS)
-- Test execution (that's specialists via AMCOS)
+- Code implementation (that's the team's MEMBER / ARCHITECT / INTEGRATOR roles via the COS)
+- Test execution (that's specialists via the COS)
 - Deployment (unless user explicitly approves)
 
 ## 6. Error Handling
 
-**When AMCOS doesn't respond:**
+**When the COS doesn't respond:**
 - Wait 30 seconds
-- Retry health ping once
+- Retry the health ping once
 - If still no response, report to user
 
-**When approval request unclear:**
+**When an approval request is unclear:**
 - Do NOT approve by default
-- Request clarification from AMCOS
+- Request clarification from the COS
 - If still unclear, escalate to user
 
 **When multiple conflicting requests:**
@@ -75,5 +75,5 @@ After EVERY operation:
 ## 7. Timeliness
 
 **Respond to user immediately** - you are their direct interface
-**Process approvals within 60 seconds** - don't block AMCOS unnecessarily
+**Process approvals within 60 seconds** - don't block the team's COS unnecessarily
 **Provide status updates proactively** - especially for long-running operations

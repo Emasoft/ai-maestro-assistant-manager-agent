@@ -2,7 +2,13 @@
 
 All governance operations route through the frozen `aimaestro-governance.sh`
 CLI (R22). The CLI resolves AID auth internally — no `Authorization` header is
-ever passed by hand.
+ever passed by hand. The SERVER runs the 3-check authz on every call (R28): it
+verifies your AID identity, the MANAGER title bound to it, and the required
+approval/mandate token in your portfolio enclave. You NEVER assert your own
+title and NEVER supply a governance/sudo password (R32). The deployed CLI still
+exposes a `--password` flag — that is a USER/UI residual; AMAMA does not pass it.
+For a sudo-gated / cross-host request, surface the operation to the MAESTRO to
+action via the UI.
 
 ## Contents
 
@@ -32,8 +38,11 @@ See the `team-governance` skill for full API details.
 ## Approve a Request (MANAGER only)
 
 ```
-aimaestro-governance.sh approve <id> --password <governance-password> [--approver <MANAGER-UUID>]
+aimaestro-governance.sh approve <id> [--approver <MANAGER-UUID>]
 ```
+
+AID-authorized (R28) — no password. A cross-host approval is sudo-gated (USER/UI,
+R32): surface it to the MAESTRO rather than supplying a password yourself.
 
 **Response on success**: Status transitions to `local-approved` or `dual-approved` (if remote already approved).
 
@@ -42,8 +51,10 @@ See the `team-governance` skill for full API details.
 ## Reject a Request (MANAGER only)
 
 ```
-aimaestro-governance.sh reject <id> --password <governance-password> [--rejector <MANAGER-UUID>] [--reason <rejection-reason>]
+aimaestro-governance.sh reject <id> [--rejector <MANAGER-UUID>] [--reason <rejection-reason>]
 ```
+
+AID-authorized (R28) — no password.
 
 **Response on success**: Status transitions to `rejected`. The operation is permanently blocked.
 
@@ -58,8 +69,8 @@ aimaestro-governance.sh transfer --agent <agent-uuid> --from-team <source-team-u
 **Response**: Creates a GovernanceRequest of type `transfer-agent` with status `pending`. Returns the request ID.
 
 **Who can approve transfers**:
-- MANAGER (via governance password)
-- COS of the destination team (via their authority token)
+- MANAGER — AID-authorized (R28), via `aimaestro-governance.sh approve`
+- COS of the destination team — via its portfolio mandate token (R28/R30)
 
 See the `team-governance` skill for full API details.
 

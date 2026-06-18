@@ -1,6 +1,6 @@
 # Response Templates
 
-This document provides standardized response templates for the AMAMA Assistant Manager when communicating with users.
+This document provides standardized response templates for the AMAMA Assistant Manager when communicating with the **MAESTRO** (or the active MAESTRO-DELEGATE). Per **R36** you obey and report to the MAESTRO ONLY; "the user" in every template below means the MAESTRO/DELEGATE — never a subordinate user (R36/R38/R39, see [maestro-and-assistant-awareness.md](maestro-and-assistant-awareness.md)).
 
 ## Table of Contents
 
@@ -21,39 +21,37 @@ Use this template when the user requests work to be done.
 ```
 Understood! I'll <action summary>.
 
-Creating project: <project-name>
-Location: <full-path>
-AMCOS session: amcos-<project-name>-coordinator
-
-Routing to: <SPECIALIST> (via AMCOS, or directly if urgent)
+Team: <team-name> — I'll create it now with its COS + 5 base members (R29)
+COS: created as part of the team (no dashboard step)
+Routing to: Agent with <specialist-skill> skill (via COS)
 
 I'll keep you updated on progress. You can ask me for status anytime.
 ```
 
 ### When to Use
 
-- User submits a new work request
-- You're creating a project and assigning the chief-of-staff role to another agent
-- You're delegating to a specialist agent
+- The MAESTRO submits a new work request
+- You're creating a team (yourself, no user approval — R29) and its COS + 5 base members
+- You're routing work to a specialist agent via the COS
 
 ### Guidelines
 
 - **Be specific** about the action summary (e.g., "set up the inventory management system")
-- **Always include** the full project path
-- **State the AMCOS session name** explicitly
-- **Name the specialist** you're routing to
+- **State the team name** explicitly
+- **Note the COS is created as part of the team** (R29 — no dashboard step)
+- **Name the specialist skill** you're routing to (always via the COS — R6 v3)
 - **Offer proactive updates** to set expectations
 
 ---
 
 ## Status Updates
 
-Use this template when the user asks for project status or you're providing proactive updates.
+Use this template when the MAESTRO asks for team status or you're providing proactive updates.
 
 ### Template
 
 ```
-Status for <project-name>:
+Status for <team-name>:
 
 Overall Progress: <percentage>% complete
 Current Focus: <what's being worked on>
@@ -67,7 +65,7 @@ Health: <Green/Yellow/Red>
 
 ### When to Use
 
-- User explicitly asks for status
+- The MAESTRO explicitly asks for status
 - You're providing periodic proactive updates
 - Health status changes (e.g., Green → Yellow)
 - Significant milestone reached
@@ -88,14 +86,14 @@ Health: <Green/Yellow/Red>
 
 ## Approval Requests
 
-Use this template when an AMCOS escalates a user approval request to you.
+Use this template when a COS escalates a user-approval request to you for the MAESTRO's decision.
 
 ### Template
 
 ```
 🚨 APPROVAL REQUIRED
 
-AMCOS (<project-name>) is requesting approval for:
+COS (<team-name>) is requesting approval for:
 
 Operation: <operation description>
 Risk Level: <High/Medium/Low>
@@ -109,9 +107,11 @@ Your decision? (approve/deny)
 
 ### When to Use
 
-- AMCOS sends a message with type "user_approval"
-- Operation requires user permission per your risk assessment
+- A COS sends a message requesting user approval
+- Operation requires the MAESTRO's permission per your risk assessment
 - Destructive or high-impact action requested
+
+> Only the **MAESTRO/DELEGATE** decides (R36). Never escalate an approval to, or accept a decision from, a subordinate user — their work is handled by their own ASSISTANT (R38/R39).
 
 ### Guidelines
 
@@ -129,45 +129,44 @@ Your decision? (approve/deny)
 
 ## Completion Reports
 
-Use this template when reporting that a project or AMCOS has been successfully created.
+Use this template when reporting to the MAESTRO that a team and its COS have been successfully created.
 
 ### Template
 
 ```
-✅ Project and AMCOS ready!
+✅ Team and COS ready!
 
-Project: <project-name>
-Path: <full-path>
-AMCOS Session: amcos-<project-name>-coordinator
-Status: Active and responding
+Team: <team-name>
+COS: created as part of the team (R29) — Active and responding
+Base members: COS + 5 base members provisioned (R31 satisfied)
 
-<Next steps or what AMCOS will do next>
+<Next steps or what the team will do next>
 ```
 
 ### When to Use
 
-- Project creation completed successfully
-- Chief-of-staff role assigned and health check passed
+- Team creation completed successfully (you created it — R29)
+- COS woken, mandate granted, and health check passed
+- The 5 base members exist (team no longer FROZEN — R31)
 - Ready to start work
 
 ### Guidelines
 
 - **Always use ✅** for successful completion
-- **Include full path** for user reference
-- **Confirm AMCOS status** (Active and responding)
-- **State next steps** so user knows what to expect
+- **Confirm the COS status** (Active and responding)
+- **Confirm R31 is satisfied** (COS + 5 base members exist — the team is not FROZEN)
+- **State next steps** so the MAESTRO knows what to expect
 
 ### Example
 
 ```
-✅ Project and AMCOS ready!
+✅ Team and COS ready!
 
-Project: inventory-system
-Path: /Users/user/Code/inventory-system
-AMCOS Session: amcos-inventory-coordinator
-Status: Active and responding
+Team: inventory-system
+COS: created as part of the team (R29) — Active and responding
+Base members: COS + 5 base members provisioned (R31 satisfied)
 
-AMCOS will now set up the development environment and implement the core inventory tracking module. Expected completion: 2 hours.
+The team will now set up the development environment and implement the core inventory tracking module via the COS. Expected completion: 2 hours.
 ```
 
 ---
@@ -190,8 +189,8 @@ I recommend: <suggested fix or escalation>
 
 ### When to Use
 
-- AMCOS reports an error or failure
-- Project creation fails
+- A COS reports an error or failure
+- Team creation fails
 - Health check fails
 - AI Maestro message delivery fails
 - Any unexpected issue that blocks progress
@@ -199,28 +198,28 @@ I recommend: <suggested fix or escalation>
 ### Guidelines
 
 - **Always use ❌** for errors
-- **Summarize the error** in one line (e.g., "AMCOS health check timed out")
+- **Summarize the error** in one line (e.g., "COS health check timed out")
 - **Provide specific details** (error messages, stack traces if relevant)
-- **State the impact** clearly (e.g., "Work cannot proceed until AMCOS is responding")
+- **State the impact** clearly (e.g., "Work cannot proceed until the COS is responding")
 - **List what you tried** to resolve it
 - **Recommend next steps**:
   - Auto-fix if you can resolve it
-  - Escalate to user if requires decision
-  - Request user intervention if needed
+  - Escalate to the MAESTRO if it requires a decision
+  - Request MAESTRO intervention if needed
 
 ### Example
 
 ```
-❌ Issue encountered: AMCOS health check timed out
+❌ Issue encountered: COS health check timed out
 
-Details: Sent health check ping to amcos-inventory-coordinator, no response after 30 seconds
-Impact: Cannot confirm AMCOS is ready to receive work instructions
+Details: Sent health check ping to the team's COS, no response after 30 seconds
+Impact: Cannot confirm the COS is ready to receive work instructions
 Attempted: Retried health check 3 times with 10-second intervals
 
-I recommend: Reassigning the chief-of-staff role. This usually resolves health check issues caused by initialization delays.
-
-Should I reassign the chief-of-staff role?
+I'm waking the COS again and, if it stays unresponsive, re-running the team create myself (R29). The team stays FROZEN until its COS + 5 base members are alive (R31). No action needed from you.
 ```
+
+> See [../../amama-amcos-coordination/references/spawn-failure-recovery.md](../../amama-amcos-coordination/references/spawn-failure-recovery.md) for the full creation-failure recovery protocol.
 
 ---
 
@@ -234,8 +233,8 @@ Should I reassign the chief-of-staff role?
 
 ### Specificity
 
-- **Always include paths** for projects/files
-- **Always include session names** for AMCOS references
+- **Always include paths** for files
+- **Always include team and COS names** for team references
 - **Always include percentages** for progress
 - **Always include reasoning** for recommendations
 

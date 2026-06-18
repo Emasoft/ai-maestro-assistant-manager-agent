@@ -10,14 +10,21 @@
 
 ---
 
+> **"The user" here = the MAESTRO (R36).** You notify, escalate to, and accept
+> blocker decisions from the **MAESTRO** (or active MAESTRO-DELEGATE) ONLY — never
+> a subordinate user, whose work is handled by their own ASSISTANT (R38/R39). A
+> blocker that originates inside a team reaches you **via that team's COS** (R6 v3,
+> the sole team entry/exit point); you route the MAESTRO's resolution back the same
+> way — to the COS, never directly to a team member.
+
 ## 1. When to notify the user about blockers
 
-### 1.1 ALL blockers require IMMEDIATE user notification
+### 1.1 ALL blockers require IMMEDIATE MAESTRO notification
 
-**IRON RULE**: Every blocker must be communicated to the user IMMEDIATELY upon receipt
-from AMOA or AMCOS. There are no blockers that should be "batched" or "held" for the next
-status report. The user may have the solution ready in minutes — but only if they know
-about the problem.
+**IRON RULE**: Every blocker must be communicated to the MAESTRO IMMEDIATELY upon receipt
+from a team's COS (or an AUTONOMOUS/MAINTAINER governance peer). There are no blockers that
+should be "batched" or "held" for the next status report. The MAESTRO may have the solution
+ready in minutes — but only if they know about the problem.
 
 A task is BLOCKED when an agent cannot continue working on it and must wait for an
 external resolution before resuming. Categories of blockers:

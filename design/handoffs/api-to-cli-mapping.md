@@ -53,7 +53,7 @@ Tracked by TRDD-5fc2cb0a. Keystone deploy gap = ai-maestro#36.
 | `PATCH /api/teams/{id}` | `aimaestro-teams.sh update <teamId> [opts]` |
 | `DELETE /api/teams/{id}` | `aimaestro-teams.sh delete <teamId> [--password P] [--delete-agents]` |
 | (add/remove agent ↔ team) | `aimaestro-teams.sh add-agent …` / `remove-agent …` |
-| `PATCH /api/teams/{id}/chief-of-staff` | **NOT a CLI verb** — COS assignment is **USER-only via the dashboard**. Keep prose: "USER assigns COS via dashboard; MANAGER only recommends." |
+| `PATCH /api/teams/{id}/chief-of-staff` | COS lifecycle is a **MANAGER action (R29)** — the COS is created as part of team creation (the server auto-creates it on `aimaestro-teams.sh create`; a specific UUID may be pinned via `--cos UUID`), AID-authorized with no user approval and no sudo/governance password (R32). To **re-assign** an existing team's COS to a different agent, use the teams CLI; for a **cross-host** assign-cos, AMAMA surfaces the GovernanceRequest `request` flow (`aimaestro-governance.sh request …`) to the MAESTRO rather than sudo-ing. If no deployed verb covers an in-host re-assign sub-case yet, mark `<!-- DECOUPLE-BLOCKED ai-maestro#36: reassign-cos verb not yet deployed -->`. |
 
 ## GOVERNANCE — `aimaestro-governance.sh` (SOURCE-frozen; deploy pending #36) ✓ repoint now (works on deploy)
 
@@ -65,6 +65,8 @@ Tracked by TRDD-5fc2cb0a. Keystone deploy gap = ai-maestro#36.
 | `POST /api/v1/governance/requests/{id}/reject` | `aimaestro-governance.sh reject <id> --password P [--rejector UUID] [--reason R]` |
 | (cross-host transfer) | `aimaestro-governance.sh transfer …` |
 | `GET /api/governance` (flat status: `hasManager`…) | **Possible gap** — no dedicated verb confirmed. If a status probe is needed, use `aimaestro-governance.sh requests` as the connectivity signal; otherwise mark `<!-- DECOUPLE-BLOCKED ai-maestro#36: governance status verb -->`. |
+
+> **R32 authority note on `--password`:** the `--password P` shown for `approve`/`reject` above is the deployed CLI's accepted flag, but it is a USER/UI sudo residual that **AMAMA never supplies itself**. Same-host approvals are AID-authorized (R28); a password-gated (cross-host / sudo) approval is surfaced to the MAESTRO to action via the UI (R32). Keep the flag in the syntax for accuracy; do not have AMAMA pass it.
 
 ## BLOCKED on keystone (#36) — mark, do NOT guess, do NOT break
 
@@ -82,5 +84,5 @@ Tracked by TRDD-5fc2cb0a. Keystone deploy gap = ai-maestro#36.
 - `skills/amama-presence-tracker/**` — BLOCKED (presence) → markers only
 - `skills/amama-autonomous-fallback/references/reversibility-matrix.md` — verify descriptive vs instruction
 - `docs/AGENT_OPERATIONS.md`, `docs/TEAM_REGISTRY_SPECIFICATION.md`, `docs/FULL_PROJECT_WORKFLOW.md` — operation tables
-- `README.md` — one COS-assignment line (dashboard prose)
+- `README.md` — one COS-assignment line (reconcile to R29: MANAGER creates the COS as part of team creation, no dashboard/user-approval)
 - `hooks/hooks.json` + `scripts/amama_user_prompt_submit.py` — BLOCKED (hook-split) → marker only

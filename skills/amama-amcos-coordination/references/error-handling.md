@@ -17,8 +17,8 @@
 | Invalid approval format | COS-assigned agent rejects response | Review message format in [message-formats.md](message-formats.md) |
 | Autonomy grant failed | COS-assigned agent doesn't acknowledge grant | Verify agent has latest plugin version |
 | Duplicate request ID | Request ID collision | Use unique UUID for each request |
-| Team not found | `404` on team operations | Request user to create team first via dashboard (`aimaestro-teams.sh create` is the underlying verb; AMAMA cannot create teams) |
-| COS already assigned | Team already has a COS | Unassign current COS before assigning new one |
+| Team not found | `404` on team operations | Create the team yourself via `aimaestro-teams.sh create` (R29) — the server auto-creates the COS |
+| COS already assigned | Team already has a COS | One COS per closed team; reassign via the teams CLI or delete + recreate the team (R29) |
 
 ## Error Scenarios
 

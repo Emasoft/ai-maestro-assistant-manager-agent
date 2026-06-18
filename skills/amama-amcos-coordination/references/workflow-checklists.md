@@ -4,7 +4,7 @@
 ## Contents
 
 - [Checklist: Creating New Team](#checklist-creating-new-team)
-- [Checklist: Assigning COS Role](#checklist-assigning-cos-role)
+- [Checklist: Granting the COS Mandate](#checklist-granting-the-cos-mandate)
 - [Checklist: Processing AMCOS Approval Request](#checklist-processing-amcos-approval-request)
 - [Checklist: Routing User Request to AMCOS](#checklist-routing-user-request-to-amcos)
 - [Checklist: Providing Status to User](#checklist-providing-status-to-user)
@@ -13,52 +13,47 @@ Use these checklists to ensure complete execution of each workflow. Check off it
 
 ## Checklist: Creating New Team
 
-When user requests a new project team:
+When a new project team is needed (you create it yourself — R29, no user approval):
 
-- [ ] **Parse user request** for project name, purpose, and requirements
+- [ ] **Parse the request** for project name, purpose, and requirements
 - [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
 - [ ] **Verify team name available** (no existing team with that name via `aimaestro-teams.sh list`)
-- [ ] **Request user to create team via dashboard** with recommended name, project, and description
-- [ ] **Verify team created** by user via `aimaestro-teams.sh list`
-- [ ] **Identify available registered agent** for COS role (see "Checklist: Assigning COS Role")
-- [ ] **Request user to assign COS role** to the selected agent via dashboard
-- [ ] **Send health check ping** to the COS agent using the `agent-messaging` skill (mandatory)
+- [ ] **Create the team yourself** via `aimaestro-teams.sh create --name N --type closed [...]` (R29) — the server auto-creates the COS
+- [ ] **Verify team created** via `aimaestro-teams.sh list`, and `chiefOfStaff` set via `aimaestro-teams.sh show <team-id>`
+- [ ] **Wake the COS** via `aimaestro-agent.sh wake <cos-id>` and grant its mandate (see "Checklist: Granting the COS Mandate")
+- [ ] **Send health check ping** to the COS using the `agent-messaging` skill (mandatory)
 - [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
+- [ ] **Confirm the 5 base members** are being completed (team FROZEN until 5/5, R31)
 - [ ] **Register team** in `docs_dev/projects/project-registry.md`
 - [ ] **Report to user** with team ID and AMCOS session name
 - [ ] **Log session creation** in `docs_dev/sessions/active-amcos-sessions.md`
 
-**Success Criteria**: User created AI Maestro team via dashboard, user assigned COS role via dashboard, AMCOS responds to health ping, team registered in logs.
+**Success Criteria**: You created the team via the teams CLI (R29), the server auto-created the COS, you granted its mandate (R30), AMCOS responds to health ping, the 5 base members are completing (R31), team registered in logs.
 
-## Checklist: Assigning COS Role
+## Checklist: Granting the COS Mandate
 
-When assigning the Chief-of-Staff (COS) role to an existing registered agent:
+When granting the auto-created COS its team-creation mandate (R30):
 
-- [ ] **Determine AMCOS session name** (format: `amcos-<project-name>`)
-- [ ] **Identify available registered agent** suitable for COS role:
-  ```
-  aimaestro-agent.sh list
-  # Filter response client-side, e.g. jq '.agents[] | select(.status == "available")'
-  ```
-- [ ] **Verify agent is registered and reachable** (agent must already exist in AI Maestro)
-- [ ] **Request user to assign COS role** to the agent via the dashboard
-- [ ] **Send cos-role-assignment message** to the agent using the `agent-messaging` skill:
-  - **Recipient**: `amcos-<project-name>`
-  - **Subject**: "COS Role Assignment"
-  - **Type**: `cos-role-assignment`
-  - **Content**: team ID, project name, role expectations
+- [ ] **Determine the COS session name** (the agent the server set as `chiefOfStaff`)
+- [ ] **Verify the COS is set** via `aimaestro-teams.sh show <team-id>` (`chiefOfStaff` field)
+- [ ] **Wake the COS** via `aimaestro-agent.sh wake <cos-id>`
+- [ ] **Send cos-mandate message** to the COS using the `agent-messaging` skill:
+  - **Recipient**: `<cos-session-name>`
+  - **Subject**: "COS Mandate — Team Creation"
+  - **Type**: `cos-mandate`
+  - **Content**: team ID, project name, `mandate: team-creation` (authorizes the 5-member base + project MEMBERs, R30)
   - **Priority**: `high`
-- [ ] **Wait for cos-role-accepted response** (check inbox within 30 seconds using the `agent-messaging` skill)
+- [ ] **Wait for cos-mandate-accepted response** (check inbox within 30 seconds using the `agent-messaging` skill)
 - [ ] **Send health check ping** using the `agent-messaging` skill (mandatory):
-  - **Recipient**: `amcos-<project-name>`
+  - **Recipient**: `<cos-session-name>`
   - **Subject**: "Health Check"
   - **Type**: `ping`
   - **Priority**: `normal`
 - [ ] **Verify AMCOS response** (check inbox for pong within 30 seconds using the `agent-messaging` skill)
 - [ ] **Register AMCOS session** in active sessions log
-- [ ] **Report AMCOS ready** to user
+- [ ] **Report AMCOS ready** to user (team unfreezes once the 5 base members exist, R31)
 
-**Success Criteria**: User assigned COS role via dashboard, agent accepted role, responds to health ping, registered in logs.
+**Success Criteria**: COS woken and mandated (R30), COS accepted the mandate, responds to health ping, completing the 5 base members (R31), registered in logs.
 
 ## Checklist: Processing AMCOS Approval Request
 
@@ -107,7 +102,7 @@ When user gives a work request:
 - [ ] **Verify AMCOS exists and is alive**
   - Check active sessions log
   - Send health ping (mandatory every time)
-  - Request user to assign COS role via dashboard if no AMCOS exists for this project
+  - If no team/COS exists for this project, create the team yourself via `aimaestro-teams.sh create` (R29) — the server auto-creates the COS
 - [ ] **Format work request** for AMCOS
 - [ ] **Send request** to AMCOS using the `agent-messaging` skill:
   - **Recipient**: `amcos-<project>`

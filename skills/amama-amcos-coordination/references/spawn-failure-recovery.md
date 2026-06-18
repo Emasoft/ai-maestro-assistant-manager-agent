@@ -4,7 +4,7 @@
 ## Contents
 
 - [Overview](#overview)
-- [1. AMCOS COS Assignment Failure Recovery Protocol](#1-amcos-cos-assignment-failure-recovery-protocol)
+- [1. Team + COS Creation Failure Recovery Protocol](#1-team--cos-creation-failure-recovery-protocol)
 - [2. Communication Breakdown Recovery](#2-communication-breakdown-recovery)
 - [3. Approval Request Handling Failures](#3-approval-request-handling-failures)
 - [4. Agent Creation Failures (General)](#4-agent-creation-failures-general)
@@ -15,15 +15,15 @@
 
 ## Overview
 
-This document provides recovery procedures for handling failures in COS (Chief of Staff) role assignment, agent registration, and inter-agent communication within the AMAMA system. All operations use the AI Maestro v2 API.
+This document provides recovery procedures for handling failures in team + COS creation (R29), agent registration, and inter-agent communication within the AMAMA system. All operations go through the frozen CLIs (`aimaestro-teams.sh`, `aimaestro-agent.sh`), which resolve AID auth internally (R28) — never a sudo/governance password (R32).
 
 ---
 
-## 1. AMCOS COS Assignment Failure Recovery Protocol
+## 1. Team + COS Creation Failure Recovery Protocol
 
-When COS (Chief of Staff) role assignment fails via the AI Maestro API, follow this recovery procedure systematically before escalating to the user.
+When team creation (and its auto-created COS, R29) fails via the frozen CLI, follow this recovery procedure systematically. You (the MANAGER) own team + COS lifecycle (R29), so recovery is yours to drive — recreate the team yourself; only escalate to the user for an environment failure you cannot fix (e.g. the server is unreachable).
 
-> **Note on retry counts:** AMCOS (COS) assignment gets 3 retries because it is critical for project coordination. General agent creation failures (Section 4) get 2 retries before escalation, since specialist agents can be re-added later without disrupting the team structure.
+> **Note on retry counts:** Team + COS creation gets 3 retries because it is critical for project coordination. General agent creation failures (Section 4) get 2 retries before escalation, since specialist agents can be re-added later without disrupting the team structure.
 
 ### Recovery Steps
 
@@ -36,10 +36,10 @@ aimaestro-agent.sh list
 (non-zero exit ⇒ server unreachable)
 
 If AI Maestro API is down or not responding:
-- Alert user: "AI Maestro API is not responding. Please restart it."
-- Do NOT proceed with COS assignment retry until API health is confirmed
+- Alert user: "AI Maestro API is not responding. Please restart it." (server health is an environment issue only the user can fix)
+- Do NOT proceed with team creation retry until API health is confirmed
 
-#### Step 2: Verify the Target Agent is Registered
+#### Step 2: Verify Any Pre-Required Agent is Registered
 
 ```
 aimaestro-agent.sh list
@@ -47,108 +47,102 @@ aimaestro-agent.sh list
 
 (filter by `<agent-name>` client-side)
 
-If the target agent is not registered:
-- Register the agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
+If a pre-required agent is not registered:
+- Register the agent using `aimaestro-agent.sh create <name>` or the `ai-maestro-agents-management` skill.
 - Verify registration succeeded before proceeding
 
-#### Step 3: Verify the Team Exists and is Type `closed`
+#### Step 3: Re-Create the Team Yourself (R29)
 
 ```
-aimaestro-teams.sh show <team-id>
+aimaestro-teams.sh create --name <team-name> --type closed [...]
 ```
 
-If the team does not exist or is not type `closed`:
-- Escalate to user: request user to create the team or update its type via dashboard
+If the team does not exist or was created without a COS:
+- Re-run team creation yourself (R29) — the server auto-creates the COS for a `closed` team. Never fall back to a sudo/password path (R32)
 - Document the issue in session log
 
-See the `team-governance` skill for full API details.
+See the `team-governance` skill for full CLI details.
 
-#### Step 4: Check if Team Already Has a COS Assigned
+#### Step 4: Check if the COS Was Auto-Created
 
 ```
 aimaestro-teams.sh show <team-id>
 ```
 
-If a COS is already assigned:
-- Determine if re-assignment is needed (e.g., replacing a non-responsive COS)
-- If the existing COS is functioning, no action needed
+If `chiefOfStaff` is set, the COS exists:
+- Wake it (`aimaestro-agent.sh wake <cos-id>`) and grant its mandate (R30)
+- If the existing COS is functioning, no recreation needed
 
-#### Step 5: Escalate to User for COS Assignment
+#### Step 5: Recreate the Team if the COS Is Missing
 
-**AMAMA cannot assign COS roles.** Report the verification findings to the user and request them to assign COS via the dashboard.
+The COS is auto-created with the team (R29). If `chiefOfStaff` is unset after creation, the creation did not complete:
+- Delete the partial team (`aimaestro-teams.sh delete <team-id>`) and re-create it (R29) so a fresh COS is auto-created
+- This is your call to make (R29) — do NOT wait on the user, and do NOT use a sudo/password path (R32)
 
-Provide the user with:
-- The team ID and recommended COS agent
-- Any issues found during verification (API health, agent registration, team state)
-- Recommended actions to resolve issues before attempting COS assignment
+Track the recovery in the session state file `docs_dev/sessions/cos-creation-retries.md` with timestamp, team ID, and findings.
 
-Track escalation in the session state file `docs_dev/sessions/cos-assignment-retries.md` with timestamp, team ID, target agent, and findings.
+#### Step 6: If Team + COS Creation Continues to Fail
 
-#### Step 6: If COS Assignment Continues to Fail
+If creation fails after 3 retries:
 
-If the user reports COS assignment failures:
-
-1. **Team continues WITHOUT COS**
-   - The team still exists in AI Maestro -- it just lacks a COS
+1. **Team has no COS — FROZEN (R31)**
+   - A team without its COS + 5 base members is FROZEN: only the COS active, all others hibernated (R31)
    - AMAMA can still receive user requests
-   - AMAMA cannot delegate to specialists until a COS is assigned
+   - AMAMA cannot delegate to specialists until the COS + 5 base members exist
 
-2. **Provide Diagnostic Info to User**
+2. **Provide Diagnostic Info to User** (environment-failure escalation only)
    ```
-   COS Assignment Diagnostics
+   Team + COS Creation Diagnostics
 
    Team: <team-id>
-   Target Agent: <agent-name>
-   Status: Team exists WITHOUT COS coordination
+   Status: Team creation not completing (no COS auto-created)
 
    Diagnostic checks:
    1. AI Maestro connectivity: `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable)
-   2. Agent registration: `aimaestro-agent.sh list` (filter by `<agent-name>`)
-   3. Team status: `aimaestro-teams.sh show <team-id>`
+   2. Team status: `aimaestro-teams.sh show <team-id>`
+   3. Retries attempted: 3 (R29 — MANAGER re-created the team each time)
 
-   Please retry COS assignment via the dashboard once issues are resolved.
+   This looks like a server/environment issue. Please verify AI Maestro health; I will re-create the team once it is healthy.
    ```
 
 3. **Log Failure**
    Record in `docs_dev/sessions/spawn-failures.md`:
    ```markdown
-   ## COS Assignment Failure: <timestamp>
+   ## Team + COS Creation Failure: <timestamp>
    - Team: <team-id>
-   - Target Agent: <agent-name>
    - Issues found: <diagnostic details>
-   - Resolution: Awaiting user to assign COS via dashboard
+   - Resolution: MANAGER re-created 3× (R29); escalated server-health issue to user
    ```
 
 ### Recovery Decision Tree
 
 ```
-COS Assignment Fails
+Team + COS Creation Fails
     |
     v
-Is AI Maestro API running? ──NO──> Alert user, STOP
+Is AI Maestro API running? ──NO──> Alert user (server health), STOP
 (aimaestro-agent.sh list)
     |
    YES
     v
-Is target agent registered? ──NO──> Register agent first, RETRY
+Is any pre-required agent registered? ──NO──> Register agent first, RETRY
 (aimaestro-agent.sh list, filter by name)
     |
    YES
     v
-Does team exist and type=closed? ──NO──> Escalate to user: request team creation/fix via dashboard
-(aimaestro-teams.sh show <team-id>)
+Does the team exist (type=closed)? ──NO──> Create it yourself (R29), RETRY
+(aimaestro-teams.sh show <team-id>)              (aimaestro-teams.sh create --type closed)
     |
    YES
     v
-Does team already have COS? ──YES──> Verify if re-assignment needed
+Was the COS auto-created (chiefOfStaff set)? ──YES──> Wake it + grant mandate (R30)
 (aimaestro-teams.sh show <team-id>)
     |
    NO
     v
-Escalate to user: request COS assignment via dashboard
-Provide diagnostic info and recommended COS candidate
-Log findings
-Wait for user to assign COS via dashboard
+Delete + re-create the team yourself (R29) so a fresh COS is auto-created
+Log findings; never use a sudo/password path (R32)
+Escalate to user ONLY for a server-health issue you cannot fix
 ```
 
 ---
@@ -431,24 +425,25 @@ All failures MUST be logged for debugging and audit purposes.
 
 ## 7. Example Scenarios
 
-### Example 1: COS Assignment Fails (AI Maestro Down)
+### Example 1: Team + COS Creation Fails (AI Maestro Down)
 
-**Scenario**: COS role assignment API call returns an error
+**Scenario**: `aimaestro-teams.sh create` returns an error (server unreachable)
 
-**Your Action**: Diagnose and report to user
+**Your Action**: Diagnose; recreate the team yourself once the server is healthy (R29). Escalate only the server-health issue to the user.
 
 **Your Response to User**:
 ```
-Issue encountered: COS role assignment failed
+Issue encountered: team + COS creation failed
 
-Details: COS role assignment via the dashboard returned an error (COS assignment is USER-only via the dashboard; AMAMA only recommends candidates)
-Impact: Cannot coordinate agents for inventory-system project
-Attempted: Recommending COS role for amcos-inventory-system agent
+Details: `aimaestro-teams.sh create` returned an error — the AI Maestro server appears unreachable
+Impact: Cannot coordinate agents for inventory-system project (no team/COS yet)
+Attempted: Creating the team myself (R29) — the server auto-creates the COS
 
 Error output: [paste relevant error]
 
-I recommend: Verify AI Maestro is reachable by running `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable).
-If down, restart it. Then please retry COS assignment via the dashboard.
+This looks like a server/environment issue (the one thing only you can fix). Verify AI Maestro is reachable
+by running `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable). Once it is healthy, I will re-create
+the team and grant the COS its mandate (R30).
 
 Would you like me to check the AI Maestro health status?
 ```
@@ -467,4 +462,15 @@ Would you like me to check the AI Maestro health status?
 ```
 Communication issue detected with AMCOS for inventory-system.
 
-I sent a work
+I sent a work request 60s ago and the COS has not responded, even after a health-check retry.
+
+Checked:
+- AI Maestro API: Running
+- Message sent successfully: Yes
+- Response received: No
+
+Possible causes: COS session crashed, overloaded, or an AI Maestro routing issue.
+
+Actions: check the COS status (`aimaestro-agent.sh show <cos-id>`); if it is unresponsive I can
+delete + recreate the team so a fresh COS is auto-created (R29). I will not use a sudo/password path (R32).
+```

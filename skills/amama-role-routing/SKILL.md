@@ -11,12 +11,12 @@ user-invocable: false
 
 ## Overview
 
-Routes user requests to specialist member agents. AMAMA delegates to members **only via AMCOS** — the team's chief-of-staff is the sole entry point into a team (R6 v3); AMAMA never messages a team member directly. AMAMA still responds to the *user* directly (status, approvals, clarifications) and talks to its AMCOS directly. The team coordination roles are `manager`, `chief-of-staff`, `member` — distinct from the three AI Maestro governance *titles* (MANAGER / AUTONOMOUS / MAINTAINER).
+Routes user requests to specialist team agents. AMAMA delegates **only via AMCOS** — the team's CHIEF-OF-STAFF is the sole entry point into a team (R6 v3); AMAMA never messages a team-internal agent directly. AMAMA responds to the MAESTRO directly (status, approvals, clarifications) — it obeys ONLY the currently-active MAESTRO / DELEGATE (R36/R37) — and talks to its AMCOS directly. Each team agent holds a governance title bound to its AID (R28): the 5 base titles are CHIEF-OF-STAFF / ARCHITECT / ORCHESTRATOR / INTEGRATOR / MEMBER; extra agents are MEMBER-titled (R30). See [governance-and-specializations](references/governance-and-specializations.md) for the full title model and team-creation authority (R29/R31).
 
 ## Prerequisites
 
 - AI Maestro messaging system running
-- Specialist agents (AMAA, AMOA, AMIA) registered with `role: 'member'`
+- The target team exists and is complete (COS + 5 base members) — a team missing any base member is FROZEN (R31), do not route into it
 - `docs_dev/handoffs/` directory exists and is writable
 
 ## Instructions
@@ -36,10 +36,10 @@ Copy this checklist and track your progress:
 - [ ] Send via AI Maestro
 - [ ] Track and report
 
-**Routing targets** (all `role: member`, **always** routed via AMCOS — the sole entry point into a team, R6 v3; never message a member directly):
-- **AMAA** (`amaa-`) -- architect specialization
-- **AMOA** (`amoa-`) -- orchestrator specialization
-- **AMIA** (`amia-`) -- integrator specialization
+**Routing targets** (team-internal governance titles, **always** routed via AMCOS — the sole entry point into a team, R6 v3; never message a team agent directly):
+- **AMAA** (`amaa-`) -- ARCHITECT
+- **AMOA** (`amoa-`) -- ORCHESTRATOR
+- **AMIA** (`amia-`) -- INTEGRATOR
 
 | Intent Pattern | Route To | Handoff Type |
 |----------------|----------|--------------|
@@ -87,6 +87,7 @@ See routing-rules.md and handoff-protocol.md in Resources.
   - Storage Location
   - Checklist
 - [governance-and-specializations](references/governance-and-specializations.md)
-  - Governance Roles
+  - Governance Titles
+  - Team Creation Authority (R29/R30/R31)
   - Plugin Prefix Reference
   - Communication Hierarchy

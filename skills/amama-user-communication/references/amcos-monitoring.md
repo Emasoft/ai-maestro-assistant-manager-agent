@@ -54,21 +54,21 @@ If AMCOS fails to respond after the urgent ping (30 second timeout):
 2. **Check AI Maestro Health**
    Use the `agent-messaging` skill's health check feature to verify AI Maestro is running.
 
-3. **Notify User**
+3. **Notify the MAESTRO** (R36 — only the MAESTRO/DELEGATE; never a subordinate user)
    ```
-   AMCOS (amcos-<project>-coordinator) is unresponsive.
+   The team's COS is unresponsive.
    Last successful contact: <timestamp>
    Attempted recovery: <steps taken>
 
    Options:
-   - [Restart AMCOS] - Attempt to reassign the chief-of-staff role to another agent
-   - [Continue Without] - Proceed with reduced coordination
+   - [Wake COS] - Wake the COS again (aimaestro-agent.sh wake <cosId>)
+   - [Re-create] - Re-run the team create myself (R29); team stays FROZEN until COS + 5 base members are alive (R31)
    - [Investigate] - Check logs for error details
    ```
 
 4. **Attempt Recovery**
-   - If AI Maestro is down: Alert user to restart AI Maestro
-   - If AMCOS session crashed: Reassign the chief-of-staff role using standard reassignment procedure
+   - If AI Maestro is down: Alert the MAESTRO to restart AI Maestro
+   - If the COS session crashed: Wake it (`aimaestro-agent.sh wake <cosId>`); if it stays down, re-run the team create yourself (R29) — the team is FROZEN until its COS + 5 base members exist (R31)
    - If network issue: Wait 5 minutes and retry
 
 5. **Log Incident**

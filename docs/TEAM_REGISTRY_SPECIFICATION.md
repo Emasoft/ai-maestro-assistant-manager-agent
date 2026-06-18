@@ -1,5 +1,8 @@
 # Team Registry Specification
 
+Team and COS lifecycle here follows R26-R40 (GOVERNANCE-RULES.md); rule numbers
+are cited inline. The persona is the authoritative source.
+
 ## Storage
 
 | Item | Path |
@@ -9,16 +12,25 @@
 
 ## CLI
 
+All team-lifecycle CLIs resolve the MANAGER's AID auth internally — AMAMA passes
+no Bearer token and no governance/sudo password (R28/R32). Team create and delete
+are MANAGER actions with NO user approval (R29).
+
 | Operation | Command |
 |-----------|---------|
-| Create team | `aimaestro-teams.sh create --name N [--type T] [--agents u1,u2]` |
+| Create team (incl. auto-created COS + base, R29) | `aimaestro-teams.sh create --name N [--type T] [--agents u1,u2]` |
 | List teams | `aimaestro-teams.sh list` |
 | Get team | `aimaestro-teams.sh show <teamId>` |
 | Update team | `aimaestro-teams.sh update <teamId> [opts]` |
-| Delete team | `aimaestro-teams.sh delete <teamId> [--delete-agents]` |
-| Assign COS | USER assigns COS via dashboard (MANAGER only recommends) |
+| Delete team (R29) | `aimaestro-teams.sh delete <teamId> [--delete-agents]` |
+| Re-assign COS (R29) | MANAGER action via the teams CLI (no dashboard / USER-only step); if no deployed verb covers this sub-case yet it is a transition residual — never a sudo/password path (R32) |
 | Add member | `aimaestro-teams.sh add-agent <teamId> <agent>` |
 | Remove member | `aimaestro-teams.sh remove-agent <teamId> <agent>` |
+
+The COS is **created by the MANAGER as part of `create`** (the server auto-creates
+it, R29) — there is no separate "assign COS" step and no USER-only / dashboard
+assignment. A deployed CLI's `--password` flag on create/delete is a USER/UI
+residual that AMAMA never supplies (R32).
 
 ## Team Types
 
@@ -28,6 +40,9 @@
 | `closed` | Required | Formal COS-managed coordination |
 
 ## Registry Schema (registry.json)
+
+The `members` array below is abbreviated to show the JSON shape; a real closed
+team carries the COS + all 5 base members (R31, see Roles in Registry).
 
 ```json
 {
@@ -54,9 +69,14 @@
 
 | Role | Count per Team | Notes |
 |------|---------------|-------|
-| `manager` | 0 (org-wide) | Not listed in team; singleton |
-| `chief-of-staff` | 0 or 1 | Required for closed teams |
-| `member` | 1+ | Skills field determines specialization |
+| `manager` | 0 (host-wide) | Not listed in team; singleton |
+| `chief-of-staff` | 1 | Auto-created with the team (R29); required for closed teams |
+| `orchestrator` / `architect` / `integrator` | 1 each | Part of the 5 base members (R31) |
+| `member` | 1+ | One base MEMBER + project-specific extras; extras must be MEMBER-titled (R30); skills determine specialization |
+
+A closed team's mandatory baseline is the COS + 5 base members (CHIEF-OF-STAFF,
+ORCHESTRATOR, ARCHITECT, INTEGRATOR, MEMBER). A team missing any base member is
+FROZEN until the base is complete (R31).
 
 ## Agent Naming
 
@@ -88,5 +108,8 @@ aimaestro-teams.sh show <teamId>
 
 - Team name must be globally unique
 - Agent name must be unique within team
-- Closed teams must have exactly one COS
-- At least one member per team
+- Closed teams must have exactly one COS (auto-created with the team, R29)
+- A closed team must carry its 5 base members; one that is missing any base
+  member is FROZEN until complete (R31)
+- Extra (non-base) agents must be MEMBER-titled on the member-agent role plugin
+  (R30)

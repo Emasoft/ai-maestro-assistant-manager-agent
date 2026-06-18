@@ -6,7 +6,7 @@
 - [Key Principles](#key-principles)
 - [Agent Registration](#agent-registration)
 - [Team Creation](#team-creation)
-- [COS Assignment](#cos-assignment)
+- [COS Creation](#cos-creation)
 - [Step-by-Step Procedure](#step-by-step-procedure)
 - [Success Criteria](#success-criteria)
 - [Troubleshooting](#troubleshooting)
@@ -14,23 +14,24 @@
 
 ## Overview
 
-This document describes the step-by-step procedure for registering agents and coordinating team setup with the user. ONLY the USER can create teams and assign COS roles. AMAMA recommends and requests these actions from the user.
+This document describes the step-by-step procedure for creating a team and its agents. You (the MANAGER) create AND delete teams on your own with NO user approval (R29); the server auto-creates the team's COS as part of team creation, and you grant the COS a team-creation mandate (R30) to build out the 5 base members.
 
 ## Key Principles
 
-1. **Agents must exist before assignment** - An agent must be registered in the AI Maestro agent registry before it can be added to a team or assigned the COS role
-2. **Teams organize agents** - Teams group agents and define coordination boundaries
-3. **One COS per closed team** - Each closed team can have exactly one COS-assigned agent
-4. **Team registry is persistent** - Teams are stored in `~/.aimaestro/teams/registry.json`
-5. **USER is the authority** - Only the USER can create teams and assign COS roles. AMAMA recommends and requests these actions from the user.
+1. **MANAGER creates teams + COS** - You create teams via `aimaestro-teams.sh create` (R29); the server auto-creates the COS. No user approval, no dashboard step (R29)
+2. **5 base members are mandatory** - A team missing any of its 5 base members is FROZEN (only the COS active, all others hibernated) until the COS completes the base (R31)
+3. **COS needs a mandate to create agents** - The COS needs your approval/mandate to create agents, unless you granted a team-creation mandate (the 5-member base + project-specific extra MEMBER agents, which must be MEMBER-titled on the member-agent role plugin). Neither you nor the COS may create a team lacking the 5 base members, nor create non-MEMBER agents (R30)
+4. **One COS per closed team** - Each closed team has exactly one COS (auto-created with the team)
+5. **Team registry is persistent** - Teams are stored in `~/.aimaestro/teams/registry.json`
+6. **AID-authorized, never sudo** - Team + agent lifecycle authenticates via your AID + portfolio token (R28); you NEVER supply a governance/sudo password (R32). A deployed CLI that still demands `--password` is a transition residual — surface such an op to the MAESTRO instead
 
 ---
 
 ## Agent Registration
 
-### Registration API Call
+### Registration Call
 
-Register a new agent using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
+Register a new agent using `aimaestro-agent.sh create <name>` or the `ai-maestro-agents-management` skill. The CLI resolves your AID auth internally (R28).
 
 ### Agent Required Parameters
 
@@ -58,9 +59,15 @@ Filter for the specific agent by name.
 
 ## Team Creation
 
-### Team Creation (USER-ONLY)
+### Team Creation (MANAGER, R29)
 
-**AMAMA cannot create teams.** Request the user to create the team via the AI Maestro dashboard. Provide the user with the recommended team name, description, type, and member agents so they can create it.
+You create the team yourself; the server auto-creates its COS:
+
+```bash
+aimaestro-teams.sh create --name N [--description D] [--type closed] [--agents u1,u2] [--gh-owner O --gh-repo R]
+```
+
+No `--password` is supplied by you — team creation is AID-authorized (R29). The deployed CLI's `--password` flag is a USER/UI residual (R32).
 
 ### Team Required Parameters
 
@@ -76,82 +83,86 @@ Filter for the specific agent by name.
 | Type | Description | COS Allowed |
 |------|-------------|-------------|
 | `open` | Any registered agent can join | No |
-| `closed` | Invite-only, managed membership | Yes (one COS) |
+| `closed` | Invite-only, managed membership | Yes (one COS, auto-created) |
 
-**Only closed teams can have a COS-assigned agent.** Open teams use ad-hoc coordination without a designated coordinator.
+**Only closed teams have a COS.** Open teams use ad-hoc coordination without a designated coordinator.
 
 ### Verify Team Creation
 
-After the user creates the team, verify it exists:
+After you create the team, verify it exists and its COS is set:
 
 ```
 aimaestro-teams.sh list
+aimaestro-teams.sh show <team-id>
 ```
 
 
 ---
 
-## COS Assignment (USER-ONLY)
+## COS Creation (MANAGER, R29 + R30)
 
-**AMAMA cannot assign COS roles.** After the user creates the team, recommend a COS candidate and request the user to assign COS via the AI Maestro dashboard.
+The COS is auto-created by the server when you create a closed team (R29). You then wake it and grant it a team-creation mandate (R30) so it can complete the team's 5 base members.
 
-See [creating-amcos-instance.md](creating-amcos-instance.md) for COS role details including cross-host scenarios.
+See [creating-amcos-instance.md](creating-amcos-instance.md) for COS creation details including cross-host scenarios.
 
 ---
 
 ## Step-by-Step Procedure
 
-### Step 1: Register Agent
+### Step 1: Register Agent (if needed)
 
-If the target agent is not already in the registry, register it using `aimaestro-agent.sh` or the `ai-maestro-agents-management` skill.
+If a specific agent must exist before team membership, register it using `aimaestro-agent.sh create <name>` or the `ai-maestro-agents-management` skill.
 
 **Verify**: `aimaestro-agent.sh list` lists the agent.
 
 
-### Step 2: Request User to Create Team
+### Step 2: Create the Team (MANAGER, R29)
 
-**AMAMA cannot create teams.** Request the user to create the team via the dashboard with the recommended configuration:
+You create the team yourself — no user approval, no dashboard:
 
-- **Recommended name**: `project-alpha-team`
-- **Recommended description**: "Development team for project alpha"
-- **Recommended type**: `closed`
-- **Recommended members**: `coordinator-alpha`
+```bash
+aimaestro-teams.sh create --name project-alpha-team --description "Development team for project alpha" --type closed
+```
 
-**Verify**: After the user creates the team, confirm via `aimaestro-teams.sh list`. Note the returned `teamId`.
+**Verify**: `aimaestro-teams.sh list` lists the team. Note the returned `teamId`. The server auto-creates the team's COS.
 
 
-### Step 3: Request User to Assign COS Role
+### Step 3: Wake the COS and Grant Its Mandate (R30)
 
-**AMAMA cannot assign COS roles.** Recommend a COS candidate and request the user to assign COS via the dashboard.
+The COS was auto-created with the team. Wake it and grant its team-creation mandate:
 
-- **Recommended COS**: `coordinator-alpha`
-- **Team**: The team created in Step 2
+```bash
+aimaestro-agent.sh wake <cos-id>
+```
 
-**Verify**: After the user assigns COS, confirm via `aimaestro-teams.sh show <teamId>` that `chiefOfStaff` is set to the agent.
+Then send the mandate (R30) authorizing the 5 base members + project MEMBERs.
 
-### Step 4: Send Initialization Message
+**Verify**: `aimaestro-teams.sh show <teamId>` confirms `chiefOfStaff` is set; the COS responds confirming its mandate.
 
-Notify the agent of its COS role using the `agent-messaging` skill:
+### Step 4: Send Mandate Message
 
-- **Recipient**: `coordinator-alpha`
-- **Subject**: "COS Role Assignment"
+Notify the COS of its mandate using the `agent-messaging` skill:
+
+- **Recipient**: `<cos-session-name>`
+- **Subject**: "COS Mandate — Team Creation"
 - **Content**:
-  - `type`: `cos-role-assignment`
+  - `type`: `cos-mandate`
   - `team_id`: `team-id`
   - `team_name`: `project-alpha-team`
   - `expected_role`: `chief-of-staff`
+  - `mandate`: `team-creation`
 - **Priority**: `high`
 
-See the `agent-messaging` skill for full messaging API details.
+See the `agent-messaging` skill for full messaging details.
 
 ### Step 5: Verify COS Acknowledgment
 
-Check inbox using the `agent-messaging` skill for a response from the COS-assigned agent within 30 seconds.
+Check inbox using the `agent-messaging` skill for a response from the COS within 30 seconds.
 
 Expected response content:
 ```json
 {
-  "type": "cos-role-accepted",
+  "type": "cos-mandate-accepted",
   "team_id": "<team-id>",
   "status": "active",
   "constraints_loaded": true
@@ -159,56 +170,67 @@ Expected response content:
 ```
 
 
-**Handling `constraints_loaded: false`**: If the COS agent responds with `constraints_loaded: false`, the agent accepted the role but failed to load its governance constraints. In this case:
-1. Send a `cos-reload-constraints` message to the COS agent
+**Handling `constraints_loaded: false`**: If the COS responds with `constraints_loaded: false`, it accepted the mandate but failed to load its governance constraints. In this case:
+1. Send a `cos-reload-constraints` message to the COS
 2. Wait 15 seconds and re-send the health ping
-3. If the response still shows `constraints_loaded: false`, revoke the COS role and try assigning to a different agent
-4. Report to user if no agent can load constraints
+3. If the response still shows `constraints_loaded: false`, delete + recreate the team (R29) so a fresh COS is auto-created
+4. Report to user if no COS can load constraints
 
-**Handling no response**: If no `cos-role-accepted` response arrives within 30 seconds, the assignment may have failed silently. Verify the COS assignment via `aimaestro-teams.sh show <team-id>` and check if `chiefOfStaff` is set. If set but no response, send a health ping. If not set, request the user to re-assign COS via the dashboard (COS assignment is USER-only; AMAMA only recommends).
+**Handling no response**: If no `cos-mandate-accepted` response arrives within 30 seconds, the wake/mandate may have failed silently. Verify via `aimaestro-teams.sh show <team-id>` that `chiefOfStaff` is set. If set but no response, send a health ping. If not set, the team creation did not complete — recreate the team via `aimaestro-teams.sh create` (R29).
 
-### Step 6: Log the Setup
+### Step 6: Verify the 5 Base Members (R31)
 
-Record the team and COS assignment in the active sessions log:
+A team missing any of its 5 base members is FROZEN (R31) — only the COS active, all others hibernated. Confirm the COS is completing the base under its mandate (R30):
+
+```bash
+aimaestro-teams.sh show <team-id>
+```
+
+The team unfreezes once the COS completes all 5 base members. Until then, do NOT delegate work into the team.
+
+### Step 7: Log the Setup
+
+Record the team and COS in the active sessions log:
 
 File: `docs_dev/sessions/active-teams.md`
 
 ```markdown
 ## Team: project-alpha-team
-- **Created**: 2026-02-27 10:00:00
+- **Created**: 2026-02-27 10:00:00 (by MANAGER, R29)
 - **Type**: closed
-- **Members**: coordinator-alpha, dev-agent-1
-- **COS**: coordinator-alpha
-- **COS Assigned**: 2026-02-27 10:00:05
+- **COS**: coordinator-alpha (auto-created)
+- **Mandate granted**: 2026-02-27 10:00:05 (team-creation, R30)
+- **Base members**: completing (team FROZEN until 5/5, R31)
 - **Last Health Check**: 2026-02-27 10:00:10 (ALIVE)
-- **Current Tasks**: Awaiting work requests
+- **Current Tasks**: Awaiting base completion
 ```
 
-### Step 7: Report to User
+### Step 8: Report to User
 
 Notify the user that the team and COS are ready:
 
 ```
 Team and COS ready!
 
-Team: project-alpha-team (closed)
-COS: coordinator-alpha
-Members: coordinator-alpha, dev-agent-1
+Team: project-alpha-team (closed) — created by MANAGER (R29)
+COS: coordinator-alpha (mandate granted, R30)
+Base members: completing (team unfreezes at 5/5, R31)
 Status: Active and responding
 
-The COS-assigned agent is now available to coordinate specialist agents within this team.
+The COS is completing the team's 5 base members and will coordinate specialist agents within this team.
 ```
 
 ## Success Criteria
 
-A successful team setup with COS assignment meets ALL of the following:
+A successful team setup with COS meets ALL of the following:
 
-- [ ] Agent registered in AI Maestro registry (`aimaestro-agent.sh list` lists it)
-- [ ] User created team via dashboard (team ID available via `aimaestro-teams.sh list`)
+- [ ] Any pre-required agent registered (`aimaestro-agent.sh list` lists it)
+- [ ] You created the team via `aimaestro-teams.sh create` (R29) — team ID available via `aimaestro-teams.sh list`
 - [ ] Team stored in `~/.aimaestro/teams/registry.json`
-- [ ] User assigned COS via dashboard
-- [ ] `aimaestro-teams.sh show <teamId>` confirms `chiefOfStaff` set correctly
-- [ ] COS-assigned agent received and acknowledged role assignment message
+- [ ] Server auto-created the COS — `aimaestro-teams.sh show <teamId>` confirms `chiefOfStaff` set
+- [ ] COS woken and granted its team-creation mandate (R30)
+- [ ] COS acknowledged role + mandate
+- [ ] COS completing the 5 base members (team FROZEN until 5/5, R31)
 - [ ] Team and COS logged in `docs_dev/sessions/active-teams.md`
 
 ## Troubleshooting
@@ -230,31 +252,31 @@ A successful team setup with COS assignment meets ALL of the following:
 1. Verify all `agentIds` exist in the registry
 2. Check for team name collisions: `aimaestro-teams.sh list` (filter by name client-side)
 3. Verify AI Maestro service is healthy
+4. Re-run `aimaestro-teams.sh create` (R29) — never fall back to a sudo/password path (R32)
 
-### COS Assignment Fails
+### COS Mandate Fails
 
-**Cause**: Agent not a team member, team already has COS, or team type is `open`
+**Cause**: COS not woken, team not type `closed`, or constraints failed to load
 
 **Solution**:
-1. Verify agent is in the team's member list
-2. Check if team already has a COS: `aimaestro-teams.sh show <teamId>`
-3. If team has existing COS, request user to unassign the current COS via dashboard first
-4. Verify team type is `closed` (open teams cannot have COS)
-5. Request user to retry COS assignment via dashboard
+1. Verify the team is type `closed` (open teams have no COS)
+2. Wake the COS: `aimaestro-agent.sh wake <cos-id>`
+3. Confirm `aimaestro-teams.sh show <teamId>` shows `chiefOfStaff` set
+4. Re-send the mandate message; if constraints still fail to load, delete + recreate the team (R29)
 
-### No Response to Initialization Message
+### No Response to Mandate Message
 
-**Cause**: Agent may not be running or not processing messages
+**Cause**: COS may not be running or not processing messages
 
 **Solution**:
 1. Wait additional 10 seconds
-2. Retry initialization message
-3. Check agent session status via `aimaestro-agent.sh show <agent-id>`
-4. If agent is unresponsive, consider assigning COS to a different agent
+2. Retry the mandate message
+3. Check COS session status via `aimaestro-agent.sh show <cos-id>`
+4. If the COS is unresponsive, delete + recreate the team so a fresh COS is auto-created (R29)
 
 ## Related Documents
 
-- [creating-amcos-instance.md](creating-amcos-instance.md) - COS role assignment details and cross-host scenarios
+- [creating-amcos-instance.md](creating-amcos-instance.md) - COS creation details and cross-host scenarios
 - [approval-response-workflow.md](approval-response-workflow.md) - COS approval workflow
 - [delegation-rules.md](delegation-rules.md) - COS delegation rules
 - [workflow-checklists.md](workflow-checklists.md) - Coordination checklists

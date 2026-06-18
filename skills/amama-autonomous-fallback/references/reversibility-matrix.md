@@ -50,6 +50,8 @@ Single source of truth for autonomous-fallback eligibility. Every approval reque
 
 ## Per-role authority overrides (applied in SKILL.md step 5)
 
+The `source_role` is the title the SERVER bound to the requester's AID (R28) — never self-asserted. Each title reaches AMAMA only on its R6 v3 edge (COS is the team's sole exit; AUTONOMOUS/MAINTAINER are governance-layer peers). Verdicts of `escalate-to-user` go to the active MAESTRO / DELEGATE (R36/R37).
+
 - **AUTONOMOUS** source:
   - Downgrade C → defer (require ratification on return). The autonomous agent has no team architect/integrator to second-guess decisions, so the matrix is one notch stricter.
   - `attributes.first_push_to_main = true` → force-escalate (W override) for any merge operation.

@@ -7,8 +7,8 @@
 - [Example 2: AMCOS Requests Approval (Low Risk)](#example-2-amcos-requests-approval-low-risk)
 - [Example 3: AMCOS Requests Approval (High Risk)](#example-3-amcos-requests-approval-high-risk)
 - [Example 4: User Requests Status](#example-4-user-requests-status)
-- [Example 5: COS Role Assignment Failure](#example-5-cos-role-assignment-failure)
-- [COS Role Assignment Failure Recovery Protocol](#cos-role-assignment-failure-recovery-protocol)
+- [Example 5: Team + COS Creation Failure](#example-5-team--cos-creation-failure)
+- [Team + COS Creation Failure Recovery Protocol](#team--cos-creation-failure-recovery-protocol)
 - [Handoff Pattern](#handoff-pattern)
 
 This document contains practical examples of AMAMA coordinating with AMCOS, including routing requests, handling approvals, status queries, and failure recovery.
@@ -21,20 +21,19 @@ This document contains practical examples of AMAMA coordinating with AMCOS, incl
 
 **Your Response**:
 ```
-Understood! I'll help set up the inventory management REST API work.
+Understood! I'll set up the inventory management REST API work.
 
-I recommend creating team: inventory-system (type: open)
-COS recommendation: I suggest assigning <agent-name> as chief-of-staff for this team.
-
-Please create the team and assign the COS via the dashboard. Once done, I'll route the work to the COS.
+I'm creating team: inventory-system (type: closed) — the server will auto-create its COS (R29).
+I'll then wake the COS, grant its mandate (R30), and route the work to it.
 ```
 
 **Actions Taken**:
-1. Recommended team creation and COS candidate to user
-2. After user created team and assigned COS via dashboard:
-3. Verified COS acknowledged (cos-role-accepted)
-4. Sent work request to AMCOS
-5. Logged to active-teams.md and user-interactions.md
+1. Created the team yourself: `aimaestro-teams.sh create --name inventory-system --type closed` (R29)
+2. Verified the server auto-created the COS (`aimaestro-teams.sh show` shows `chiefOfStaff` set)
+3. Woke the COS and granted its team-creation mandate (R30); verified it acknowledged (cos-mandate-accepted)
+4. Confirmed the COS is completing the 5 base members (team FROZEN until 5/5, R31)
+5. Sent work request to AMCOS
+6. Logged to active-teams.md and user-interactions.md
 
 ---
 
@@ -148,35 +147,35 @@ Health: Yellow (blocked on external dependency)
 
 ---
 
-## Example 5: COS Role Assignment Failure
+## Example 5: Team + COS Creation Failure
 
-**Scenario**: COS role assignment fails
+**Scenario**: `aimaestro-teams.sh create` fails (no COS auto-created)
 
-**Your Action**: Diagnose and report to user
+**Your Action**: Diagnose; recreate the team yourself (R29). Escalate only a server-health issue to the user.
 
 **Your Response to User**:
 ```
-Issue encountered: COS role assignment failed
+Issue encountered: team + COS creation failed
 
-Details: COS role assignment via dashboard returned error
-Impact: Cannot delegate work for inventory-system team
-Attempted: COS role assignment to registered agent via dashboard
+Details: `aimaestro-teams.sh create` returned an error — no COS was auto-created
+Impact: Cannot delegate work for inventory-system team (team FROZEN until COS + 5 base members, R31)
+Attempted: Creating the team myself (R29), then deleting + re-creating it on failure
 
 Error output: [paste relevant error]
 
-I recommend: Verify AI Maestro API is running and the target agent is registered.
-If down, restart it. Then please retry COS role assignment via the dashboard.
+I re-created the team 3× (R29). If the server is reachable, the COS auto-creates on success; this looks like a
+server-health issue (the one thing only you can fix). Verify AI Maestro is running and I will re-create the team.
 
 Would you like me to run diagnostic checks on the AI Maestro health status?
 ```
 
 ---
 
-## COS Role Assignment Failure Recovery Protocol
+## Team + COS Creation Failure Recovery Protocol
 
-When COS role assignment fails, follow the recovery procedure in [Agent Creation Failure Recovery Procedures](spawn-failure-recovery.md#1-amcos-agent-creation-failure-recovery-protocol).
+When team + COS creation fails, follow the recovery procedure in [Team + COS Creation Failure Recovery Procedures](spawn-failure-recovery.md#1-team--cos-creation-failure-recovery-protocol).
 
-**Quick reference**: Verify AI Maestro API → Check agent registration → Check team state → Report findings to user → User retries COS assignment via the dashboard.
+**Quick reference**: Verify AI Maestro API → register any pre-required agent → re-create the team yourself (R29) → check the COS was auto-created → delete + recreate if missing → escalate only a server-health issue to the user (R32: never use a sudo/password path).
 
 ---
 
@@ -186,8 +185,8 @@ This agent does NOT hand off to other agents directly. You communicate with AMCO
 
 **Your workflow**:
 1. Receive user request
-2. Recommend team creation and COS candidate to user if needed (user creates team and assigns COS via dashboard)
-3. Route work to AMCOS once user has set up team and COS
+2. Create the team yourself if needed (R29) — the server auto-creates the COS; wake it and grant its mandate (R30)
+3. Route work to AMCOS once the team + COS + 5 base members exist (team unfreezes at 5/5, R31)
 4. Monitor approvals
 5. Report status to user
 6. Return to step 1

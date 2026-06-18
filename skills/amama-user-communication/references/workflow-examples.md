@@ -6,7 +6,10 @@
 - [Workflow 3: Presenting AMCOS Approval Request to User](#workflow-3-presenting-amcos-approval-request-to-user)
 - [See Also](#see-also)
 
-Detailed workflow examples for user communication scenarios.
+Detailed workflow examples for user communication scenarios. In every example
+below **"User" = the MAESTRO** (or active MAESTRO-DELEGATE) — the only principal
+you take orders from (R36). A subordinate user never drives these workflows; their
+work is handled by their own ASSISTANT (R38/R39).
 
 ---
 

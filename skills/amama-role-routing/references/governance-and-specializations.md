@@ -1,65 +1,77 @@
-# Governance Roles vs. Agent Specializations
+# Governance Titles vs. Agent Specializations
 
 ## Table of Contents
-- [Governance Roles](#governance-roles)
+- [Governance Titles](#governance-titles)
+- [Team Creation Authority (R29/R30/R31)](#team-creation-authority-r29r30r31)
 - [Plugin Prefix Reference](#plugin-prefix-reference)
 - [Communication Hierarchy](#communication-hierarchy)
 
-## Governance Roles
+## Governance Titles
 
-AI Maestro defines exactly **3 governance titles**:
+AI Maestro governance titles (R26-R40, GOVERNANCE-RULES.md). The server derives a title from the AID; an agent never asserts its own title (R28):
 
-| Governance Role | Purpose |
-|-----------------|---------|
-| `manager` | Team manager with full administrative authority |
-| `chief-of-staff` | Agent lifecycle, permissions, failure recovery |
-| `member` | All other agents -- the default role |
+| Governance Title | Purpose |
+|------------------|---------|
+| `MANAGER` | Sole authority per host. Creates/deletes teams + the COS + the 5 base members + AUTONOMOUS/MAINTAINER (R29). Obeys only the MAESTRO / active DELEGATE (R36/R37). |
+| `CHIEF-OF-STAFF` | Team operations, staffing, failure recovery. Created by the MANAGER as part of team creation (R29); needs a MANAGER mandate to create further agents (R30). |
+| `ARCHITECT` | Design lead — architecture, data models, requirements. |
+| `ORCHESTRATOR` | Task coordinator — kanban, workflow, implementer coordination. |
+| `INTEGRATOR` | Integration, code review, quality gates, deployment. |
+| `MEMBER` | Core implementer. Extra project-specific agents MUST be MEMBER-titled (R30). |
+| `MAINTAINER` | Governance-layer host maintenance/oversight. Reaches MANAGER + HUMAN only. |
+| `AUTONOMOUS` | Independent agent outside team structure. Reaches MANAGER + peer AUTONOMOUS + HUMAN only. |
+| `ASSISTANT` | A non-MAESTRO user's auto-assigned counterpart of AMAMA (R38/R39). No team; obeys only its user + the MAESTRO. |
 
-**Architect**, **Orchestrator**, and **Integrator** are NOT governance titles. They are **plugin-level specializations** expressed through agent skills, metadata, and tags. When creating or registering agents, always set `role: 'member'` for all non-COS agents. The specialization (architect, orchestrator, integrator) is conveyed via the agent's `skills` array and `tags` metadata, not the `title` field.
+**ARCHITECT / ORCHESTRATOR / INTEGRATOR / MEMBER are the team-internal titles** — they ARE governance titles a team agent holds (server-bound to its AID), set at creation via `--governanceTitle`. The agent's specialization is its title; its `skills` array carries the capability detail. The 5 base titles every team must contain are CHIEF-OF-STAFF + ARCHITECT + ORCHESTRATOR + INTEGRATOR + MEMBER (R31).
 
-```jsonc
-// CORRECT -- specialization via skills/tags, governance title is 'member'
-{
-  "name": "amaa-architect",
-  "title": "member",
-  "skills": ["architecture", "design", "requirements-analysis"],
-  "tags": ["specialization:architect"]
-}
+```bash
+# CORRECT -- title bound at creation; the server enforces it from the AID (R28)
+aimaestro-agent.sh create amaa-architect --client claude --team TEAM_ID --governanceTitle architect
 
-// WRONG -- do NOT use specialization names as governance titles
-{
-  "name": "amaa-architect",
-  "title": "architect"  // <- INVALID: not a governance title
-}
+# Extra project-specific agents MUST be MEMBER-titled on the member-agent role plugin (R30)
+aimaestro-agent.sh create db-expert --client claude --team TEAM_ID --governanceTitle member
 ```
+
+## Team Creation Authority (R29/R30/R31)
+
+Before routing any work, the target team must exist and be complete. The authority model:
+
+- **MANAGER creates AND deletes** teams, the auto-created COS, the 5 base members, and AUTONOMOUS/MAINTAINER agents — **with NO user approval** (R29). `aimaestro-teams.sh create` resolves AID auth internally; the server auto-creates the COS.
+- **COS creates further agents only under a MANAGER mandate** (R30). With a team-creation mandate the COS may complete the 5-member base + add project-specific extra agents — which MUST be MEMBER-titled on the member-agent role plugin. Neither the MANAGER nor a COS may create a team lacking the 5 base members, nor create non-MEMBER agents beyond the base.
+- **A team missing any of its 5 base members is FROZEN** (only the COS active, all others hibernated) until the COS completes the base (R31). Do not route work into a frozen team.
+
+This SUPERSEDES any older text stating team/COS creation needs USER approval, a dashboard step, or that AMAMA cannot assign a COS. AMAMA creates the COS as part of team creation, on its own.
 
 ## Plugin Prefix Reference
 
-| Specialization | Prefix | Plugin Name | Governance Role |
-|----------------|--------|-------------|-----------------|
-| Assistant Manager | `amama-` | AI Maestro Assistant Manager Agent | `manager` |
-| Chief of Staff | `amcos-` | AI Maestro Chief of Staff | `chief-of-staff` |
-| Architect | `amaa-` | AI Maestro Architect Agent | `member` |
-| Orchestrator | `amoa-` | AI Maestro Orchestrator Agent | `member` |
-| Integrator | `amia-` | AI Maestro Integrator Agent | `member` |
+| Role | Prefix | Role Plugin | Governance Title |
+|------|--------|-------------|------------------|
+| Assistant Manager | `amama-` | ai-maestro-assistant-manager-agent | `MANAGER` |
+| Chief of Staff | `amcos-` | ai-maestro-chief-of-staff | `CHIEF-OF-STAFF` |
+| Architect | `amaa-` | ai-maestro-architect-agent | `ARCHITECT` |
+| Orchestrator | `amoa-` | ai-maestro-orchestrator-agent | `ORCHESTRATOR` |
+| Integrator | `amia-` | ai-maestro-integrator-agent | `INTEGRATOR` |
+| Member (programmer) | — | ai-maestro-programmer-agent | `MEMBER` |
+
+Extra project-specific agents are MEMBER-titled on the member-agent role plugin (R30).
 
 ## Communication Hierarchy
 
 ```
-USER <-> AMAMA (Assistant Manager) <-> AMCOS (Chief of Staff) <-> AMAA (Architect skill agent)
-                                                            <-> AMOA (Orchestrator skill agent)
-                                                            <-> AMIA (Integrator skill agent)
+MAESTRO (active user / DELEGATE — R36/R37)
+   |
+AMAMA (MANAGER) — sole user interface
+   |
+AMCOS (CHIEF-OF-STAFF) — sole entry point into a team
+   |
+AMAA (ARCHITECT) · AMOA (ORCHESTRATOR) · AMIA (INTEGRATOR) · MEMBER(s)
 ```
 
-**Governance roles in this hierarchy:**
-- AMAMA: `manager`
-- AMCOS: `chief-of-staff`
-- AMAA, AMOA, AMIA: `member` (with specialization expressed via skills/tags)
+**Governance titles in this hierarchy:** AMAMA `MANAGER` · AMCOS `CHIEF-OF-STAFF` · AMAA `ARCHITECT` · AMOA `ORCHESTRATOR` · AMIA `INTEGRATOR` · extras `MEMBER`.
 
-**CRITICAL**:
-- AMAMA is the ONLY agent that communicates directly with the USER
-- AMAMA has UNRESTRICTED messaging -- it CAN message any agent directly (MANAGER privilege)
-- AMCOS manages agent lifecycle and is the preferred route for delegating work to specialists
-- AMAA, AMOA, and AMIA CAN communicate with AMAMA when AMAMA contacts them directly
-- Routing via AMCOS is preferred for delegation but not required -- AMAMA may contact specialists directly if urgent
-- All specialist agents use governance `role: 'member'` -- their specialization is metadata, not a governance concept
+**CRITICAL (R6 v3 / R26-R40):**
+- AMAMA is the ONLY agent that communicates directly with the MAESTRO; it obeys ONLY the currently-active MAESTRO / DELEGATE (R36/R37) — every other user is subordinate.
+- **AMAMA does NOT have unrestricted messaging.** Its only entry point into a team is the team's CHIEF-OF-STAFF. AMAMA NEVER messages a team-internal agent (ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER) directly — always route via AMCOS. (Empirical R6 v3 finding: direct MANAGER→team-member messaging left the COS/ORCHESTRATOR uninformed or contradicted, producing chaos.) AMAMA's full outbound set is HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, MAINTAINER.
+- AMCOS is the SOLE gateway for delegating work to specialists — routing via AMCOS is MANDATORY, not "preferred".
+- A team-internal agent reaches AMAMA only THROUGH its COS; it cannot message AMAMA directly.
+- All team-internal agents hold a governance title bound to their AID (R28) — the title IS the specialization, not loose metadata.

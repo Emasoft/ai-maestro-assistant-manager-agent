@@ -1,4 +1,4 @@
-# Legacy Approval Types Reference
+# Operational Approval Types Reference
 
 ## Table of Contents
 - [Push Approval](#push-approval)
@@ -7,14 +7,21 @@
 - [Security Approval](#security-approval)
 - [Design Approval](#design-approval)
 
-The following approval types from v1 are still supported for backward compatibility with non-governance workflows. These use the standard AI Maestro messaging system rather than the GovernanceRequest API.
+These are **operational** approvals (deploys, merges, pushes, releases, design
+sign-off) — distinct from the governance lifecycle ops handled via the
+GovernanceRequest API. They travel on the AMP messaging system, arriving from
+the team's **CHIEF-OF-STAFF** (R6 v3 — a team member never messages you directly;
+the COS is the sole entry point) and surfaced by you to the user. Publish,
+deploy, and security actions are **hard-floor escalations to the USER** (Tier 3,
+`trdd-approval-tiers.md` / `manager-approval-defaults.md`) regardless of any
+autonomous-fallback verdict.
 
 ## Push Approval
 
 **Trigger**: Code is ready to be pushed to remote repository
 
 **Workflow**:
-1. Receive approval request from AMOA/AMIA
+1. Receive approval request via the team's CHIEF-OF-STAFF
 2. Present to user:
    ```
    ## Push Approval Requested
@@ -30,14 +37,14 @@ The following approval types from v1 are still supported for backward compatibil
    - [Review] - Show me the changes first
    ```
 3. Record user decision
-4. Send approval response to requesting role
+4. Send approval response back via the CHIEF-OF-STAFF
 
 ## Merge Approval
 
 **Trigger**: PR is ready to be merged
 
 **Workflow**:
-1. Receive approval request from AMIA
+1. Receive approval request via the CHIEF-OF-STAFF (originated by the INTEGRATOR)
 2. Present to user:
    ```
    ## Merge Approval Requested
@@ -54,14 +61,14 @@ The following approval types from v1 are still supported for backward compatibil
    - [Request Changes] - Add comments
    ```
 3. Record user decision
-4. Send approval response to AMIA
+4. Send approval response back via the CHIEF-OF-STAFF
 
 ## Publish Approval
 
 **Trigger**: Package/release is ready to be published
 
 **Workflow**:
-1. Receive approval request from AMIA
+1. Receive approval request via the CHIEF-OF-STAFF (originated by the INTEGRATOR)
 2. Present to user:
    ```
    ## Publish Approval Requested
@@ -78,14 +85,14 @@ The following approval types from v1 are still supported for backward compatibil
    - [Review] - Show release notes
    ```
 3. Record user decision
-4. Send approval response to AMIA
+4. Send approval response back via the CHIEF-OF-STAFF
 
 ## Security Approval
 
 **Trigger**: Action with security implications requires authorization
 
 **Workflow**:
-1. Receive approval request from any role (AMAA/AMOA/AMIA)
+1. Receive approval request via the CHIEF-OF-STAFF (originated by any team role)
 2. Present to user:
    ```
    ## Security Approval Required
@@ -106,10 +113,10 @@ The following approval types from v1 are still supported for backward compatibil
 
 ## Design Approval
 
-**Trigger**: AMAA (Architect) has completed design document
+**Trigger**: the ARCHITECT has completed a design document
 
 **Workflow**:
-1. Receive completion signal from AMAA
+1. Receive the completion signal via the CHIEF-OF-STAFF
 2. Present to user:
    ```
    ## Design Approval Requested
@@ -121,8 +128,8 @@ The following approval types from v1 are still supported for backward compatibil
 
    Review the design document and approve to proceed with implementation.
    - [Approve] - Proceed to orchestration
-   - [Request Changes] - Send back to AMAA
+   - [Request Changes] - Send back to the ARCHITECT (via the COS)
    - [Discuss] - I have questions
    ```
 3. Record user decision
-4. If approved, create handoff to AMOA
+4. If approved, relay the go-ahead to the team via the CHIEF-OF-STAFF

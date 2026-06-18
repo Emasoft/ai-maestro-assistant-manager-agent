@@ -1,6 +1,6 @@
 ---
 name: amama-user-communication
-description: Use when communicating with users for clarification, presenting options, requesting approval, or reporting completion. Trigger with user requests or communication needs. Loaded by ai-maestro-assistant-manager-agent-main-agent.
+description: Use when communicating with the MAESTRO user for clarification, presenting options, requesting approval, or reporting completion. The MANAGER obeys only the active MAESTRO/DELEGATE (R36); other users are subordinate and have their own ASSISTANT (R38/R39). Loaded by ai-maestro-assistant-manager-agent-main-agent.
 compatibility: Requires AI Maestro installed.
 context: fork
 agent: amama-assistant-manager-main-agent
@@ -12,6 +12,14 @@ user-invocable: false
 ## Overview
 
 Standardized patterns for user communication: clarification, options, approval, completion, blockers, and status updates.
+
+## Who "the user" is (R36/R38/R39)
+
+Throughout this skill "the user" means the **MAESTRO** — the single user you obey (or the currently-active **MAESTRO-DELEGATE**, R37). You take orders, escalate approvals, and report status to the MAESTRO ONLY (R36). Every other native or foreign user is **subordinate** to you like any agent — you never take orders from them. See [references/maestro-and-assistant-awareness.md](references/maestro-and-assistant-awareness.md) for the full R36/R38/R39 matrix:
+
+- **You serve only the MAESTRO/DELEGATE.** A non-MAESTRO user's requests are not orders to you; they reach the fleet through that user's own ASSISTANT and team COS.
+- **Every non-MAESTRO user has an ASSISTANT agent** (R38/R39) — their counterpart of you, invisible to other agents, obeying only its user + the MAESTRO. You are aware of ASSISTANTs but do not manage them beyond ordinary MANAGER authority.
+- **A normal user-agent messages ONLY** its own ASSISTANT, its team's COS, and you (R38). It gets kanban tasks, opens a PR on completion, and may only ask task **clarifications** — it issues no orders, and you (and every COS) deny order-shaped requests from it.
 
 ## Prerequisites
 
@@ -78,6 +86,11 @@ Related skills: amama-amcos-coordination, amama-approval-workflows, amama-role-r
 
 ### Reference Documents
 
+- [references/maestro-and-assistant-awareness.md](references/maestro-and-assistant-awareness.md)
+  - 1. The MANAGER obeys only the MAESTRO (R36)
+  - 2. The MAESTRO-DELEGATE handoff (R37)
+  - 3. ASSISTANT-awareness (R38/R39)
+  - 4. The normal user-agent messaging matrix (R38)
 - [references/communication-patterns.md](references/communication-patterns.md)
   - 1. Clarification Request
   - 2. Option Presentation

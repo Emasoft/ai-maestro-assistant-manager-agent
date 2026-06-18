@@ -11,6 +11,8 @@ agent: amama-assistant-manager-main-agent
 
 Decides what to do with an inbound approval request when the user is `monitoring`, `away`, or `dnd`. Consults the 25-row reversibility matrix and the per-state authority table, applies the per-role authority overrides, and enforces the R6 v3 routing constraint (team-bound messages route via COS only). Phase 1 of TRDD-bfcedff0. The hard-floor list (always-escalate ops) is inherited from amama-amcos-coordination.
 
+The `escalate-to-user` verdict targets the **currently-active MAESTRO / DELEGATE** (R36/R37) — AMAMA obeys only that user; every other native/foreign user is subordinate. Per-role authority (R28-derived title, never self-asserted): COS gets the full matrix; AUTONOMOUS is one notch stricter (C → defer); MAINTAINER is restricted to the issue-triage subset.
+
 ## Prerequisites
 
 - AMAMA persona loaded.

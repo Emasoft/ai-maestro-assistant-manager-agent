@@ -34,8 +34,8 @@ aimaestro-governance.sh requests --status pending
 **Role**: developer
 **Reason**: Needed for sprint 42 capacity
 
-# 3. MANAGER approves
-aimaestro-governance.sh approve gov-abc123 --password "***"
+# 3. MANAGER approves (AID-authorized, R28 — no password)
+aimaestro-governance.sh approve gov-abc123
 
 # Response: {"id": "gov-abc123", "status": "local-approved", ...}
 ```
@@ -69,7 +69,7 @@ aimaestro-governance.sh request gov-def456
 **Note**: Agent expertise better suited for gamma's mission
 
 # 3. MANAGER approves -> transitions to dual-approved -> executed
-aimaestro-governance.sh approve gov-def456 --password "***"
+aimaestro-governance.sh approve gov-def456
 
 # Response: {"id": "gov-def456", "status": "dual-approved", ...}
 # System auto-executes the transfer -> status becomes "executed"
@@ -91,8 +91,8 @@ See the `team-governance` skill for full API details.
 #   }
 # }
 
-# 2. MANAGER rejects
-aimaestro-governance.sh reject gov-ghi789 --password "***" --reason "Agent-001 is still critical for monitoring"
+# 2. MANAGER rejects (AID-authorized, R28 — no password)
+aimaestro-governance.sh reject gov-ghi789 --reason "Agent-001 is still critical for monitoring"
 
 # Response: {"id": "gov-ghi789", "status": "rejected", ...}
 ```

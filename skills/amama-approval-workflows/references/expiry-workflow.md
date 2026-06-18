@@ -33,9 +33,9 @@ Every hour, query for GovernanceRequests where:
 
 For each expired GovernanceRequest:
 
-1. **Reject via CLI**
+1. **Reject via CLI** (AID-authorized, R28 — no password)
    ```
-   aimaestro-governance.sh reject <id> --password <governance-password> --reason "EXPIRED: Request pending for more than 24 hours without dual-approval"
+   aimaestro-governance.sh reject <id> --reason "EXPIRED: Request pending for more than 24 hours without dual-approval"
    ```
 
 2. **Update local state file**

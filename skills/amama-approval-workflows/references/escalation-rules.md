@@ -12,7 +12,7 @@
 - GovernanceRequest older than 24 hours without response
 - Requesting agent session terminated
 - Blocking security vulnerability detected
-- Governance password rate-limit exceeded (requests queued until cooldown ends)
+- `$AID_AUTH` invalid / missing — the request cannot be authorized; stop and surface (never fall back to unauthenticated calls)
 
 ## Auto-Approve Conditions (NEVER by default)
 
@@ -23,7 +23,7 @@
 
 - Security-related GovernanceRequest (delete-agent, configure-agent with security changes)
 - GovernanceRequest with "urgent" priority flag
-- Multiple failed governance password attempts (potential breach)
+- Cross-host / sudo-gated request — surface to the MAESTRO to action via the UI (R32)
 - Transfer request contested by source team COS
 
 ## User Notification
@@ -37,12 +37,12 @@ When a GovernanceRequest is created:
 
 ## Workflow Checklist
 
-- [ ] Verify governance password is set
-- [ ] Poll for pending GovernanceRequests via API
+- [ ] Verify `$AID_AUTH` present (server runs the 3-check authz, R28)
+- [ ] Poll for pending GovernanceRequests via `aimaestro-governance.sh requests`
 - [ ] Parse request type
 - [ ] Present GovernanceRequest to MANAGER using appropriate template
 - [ ] Wait for MANAGER decision
-- [ ] Call approve or reject API endpoint with governance password
+- [ ] Call `aimaestro-governance.sh approve`/`reject` (AID-authorized; sudo-gated → surface to MAESTRO, R32)
 - [ ] Verify state transition completed
 - [ ] Update local approval state tracking file
 - [ ] Notify requesting agent of the outcome
