@@ -1,10 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-    ## [2.12.0] - 2026-06-18
+    ## [2.12.1] - 2026-06-18
 
-### Features
+### Documentation
 
-- Internalize R26-R40 across persona, skills, docs + scenarios    
+- Renumber decoupling citations R22->R23 (GOVERNANCE-RULES v3.11.0)    
 
 
