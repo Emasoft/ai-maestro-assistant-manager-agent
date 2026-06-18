@@ -1,7 +1,7 @@
 # AMAMA decoupling — authoritative `/api/` → frozen-CLI mapping
 
 Single source of truth for repointing AMAMA off direct `/api/` calls onto the
-immutable CLI layer (R22). Syntax below is **verified** — deployed CLIs read
+immutable CLI layer (R23). Syntax below is **verified** — deployed CLIs read
 from `~/.local/bin`, source-only CLIs read from `~/ai-maestro/scripts/` (frozen
 by design: their headers state "Plugins call THIS script, never the HTTP API
 directly; new capability = new subcommand/flag only").

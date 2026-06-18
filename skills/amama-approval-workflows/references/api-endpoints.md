@@ -1,7 +1,7 @@
 # GovernanceRequest CLI Reference
 
 All governance operations route through the frozen `aimaestro-governance.sh`
-CLI (R22). The CLI resolves AID auth internally — no `Authorization` header is
+CLI (R23). The CLI resolves AID auth internally — no `Authorization` header is
 ever passed by hand. The SERVER runs the 3-check authz on every call (R28): it
 verifies your AID identity, the MANAGER title bound to it, and the required
 approval/mandate token in your portfolio enclave. You NEVER assert your own
