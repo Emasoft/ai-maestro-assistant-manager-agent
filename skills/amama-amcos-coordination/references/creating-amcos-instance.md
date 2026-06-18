@@ -116,23 +116,21 @@ When the target agent is on a different host (remote AI Maestro instance), the a
 
 ### GovernanceRequest for COS Assignment
 
-Submit a GovernanceRequest of type `assign-cos`.
+Submit a GovernanceRequest of type `assign-cos` via the frozen CLI. The `request` verb (deployed ai-maestro#36) wraps `POST /api/v1/governance/requests` — no direct `/api/` call:
 
-<!-- DECOUPLE-BLOCKED ai-maestro#36: submit cross-host assign-cos GovernanceRequest — no `aimaestro-governance.sh` submit/create verb deployed yet (the CLI exposes requests/request/approve/reject/transfer only). Until the verb lands, the current direct call below remains the fallback. -->
-
-```
-POST $AIMAESTRO_API/api/v1/governance/requests
-Body: {
-  "type": "assign-cos",
-  "requestedBy": "amama-session-name",
-  "targetAgent": "<remote-agent-id>",
-  "targetTeam": "<team-id>",
-  "remoteHost": "<remote-aimaestro-url>",
-  "justification": "Team requires operational coordinator on remote host"
-}
+```bash
+aimaestro-governance.sh request \
+  --type assign-cos \
+  --target-host "<remote-aimaestro-url>" \
+  --requested-by "<amama-session-name>" \
+  --role MANAGER \
+  --password "<governance-password>" \
+  --payload-json '{"targetAgent":"<remote-agent-id>","targetTeam":"<team-id>","justification":"Team requires operational coordinator on remote host"}'
 ```
 
-See the `team-governance` skill for full API details.
+<!-- NOTE (ai-maestro#36): the submit verb (`request`) IS deployed and is used above. It still requires `--password` on the command line; the secure non-interactive env-fallback `AIMAESTRO_GOV_PASSWORD` remains a residual (see the consolidated list on ai-maestro#36). Until it lands, pass `--password` explicitly. -->
+
+See the `team-governance` skill for full CLI details.
 
 **Expected Response:**
 
