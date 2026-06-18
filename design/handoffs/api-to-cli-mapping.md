@@ -10,9 +10,9 @@ Tracked by TRDD-5fc2cb0a. Keystone deploy gap = ai-maestro#36.
 
 ## Repoint rules (for every editor / sub-agent)
 
-1. Change only **direct `/api/` INSTRUCTION calls** — `curl …/api/…` examples,
-   operation tables whose cells are `/api/…`, prose telling the agent to hit an
-   endpoint. Pure architecture description may stay but prefer citing the CLI.
+1. Change only **direct `/api/` INSTRUCTION calls** — inline `/api/…` endpoint-call
+   examples, operation tables whose cells are `/api/…`, prose telling the agent to
+   hit an endpoint. Pure architecture description may stay but prefer citing the CLI.
 2. The CLIs resolve AID auth internally — **drop manual `-H "Authorization:
    Bearer $AID_AUTH"` curl scaffolding**; that coupling goes away.
 3. For a **BLOCKED** op (no CLI verb yet), do NOT invent syntax and do NOT leave

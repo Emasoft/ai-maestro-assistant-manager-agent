@@ -89,7 +89,7 @@ Copy this checklist and track your progress:
 ## Resources
 
 - [api-endpoints](references/api-endpoints.md) -- API endpoint details and query examples
-  - API Endpoints
+  - CLI Commands
   - Query Examples
   - Task Query for Reports
 - [task-system](references/task-system.md) -- Task system and Kanban status details
