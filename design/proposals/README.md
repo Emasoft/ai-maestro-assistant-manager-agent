@@ -46,7 +46,7 @@ Standard v2 TRDD frontmatter, plus:
 
 ## Deciding proposals — the fast path
 
-Use the **`amama-proposal-approvals`** skill (MANAGER plugin):
+Use the core **`ama-proposal-approvals`** skill:
 
 1. **List:** "list proposals" → a numbered, one-line-each table
    (number · 8-char id · tier · title), with a manifest pinning each

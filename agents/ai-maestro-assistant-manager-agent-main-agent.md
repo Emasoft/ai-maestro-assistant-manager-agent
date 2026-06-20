@@ -13,7 +13,16 @@ skills:
   - amama-status-reporting
   - amama-presence-tracker
   - amama-autonomous-fallback
-  - amama-prrd-trdd-kanban
+  - ama-trdd-write
+  - ama-trdd-find
+  - ama-trdd-update
+  - ama-trdd-transition
+  - ama-prrd-get
+  - ama-prrd-find
+  - ama-prrd-edit
+  - ama-prrd-propose
+  - ama-kanban-render
+  - ama-proposal-approvals
   - ai-maestro-agents-management
 ---
 
@@ -220,7 +229,7 @@ Every AI Maestro agent operates on the single escalation ladder **Tier 0 → CHI
 - **Escalate Tier-3 to the USER** — GOLDEN-PRRD changes, rule promote / demote, and irreversible / owner-identity / shared-credential actions — then relay the USER's decision back down the chain.
 - **Author your own Tier-0** derived / coordination tasks directly in `design/tasks/` as `column: planned` — no approval needed for work inside your own mandate.
 
-**Deciding proposals fast.** Use the **`amama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: `trdd-approval-tiers.md` Part A.
+**Deciding proposals fast.** Use the core **`ama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: `trdd-approval-tiers.md` Part A.
 
 **Baseline rulesets:** every repo carries the ratified `baseline-history-protect` + `baseline-pr-and-checks` pair; the **ai-maestro-janitor auto-enforces** it, and applying it **as-is is Tier 0** (no approval). You are the gate for **deviations** — never let an agent weaken, extend, or diverge from the baseline without your Tier-2 sign-off (forwarding GOLDEN / identity-touching cases to USER). See `manager-approval-defaults.md` §F for the EXEMPT (apply-as-is) vs NON-EXEMPT (deviation) split.
 

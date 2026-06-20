@@ -88,7 +88,7 @@ before acting and pushes after each change.
 ```
 
 Full rules: `~/.claude/rules/trdd-approval-tiers.md`. Decide proposals fast with
-the `amama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
+the core `ama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
 
 ## Plugin Components
 
