@@ -72,3 +72,7 @@ rck-*.md
 
 # git-cliff scratch — ephemeral release notes between bump and push
 .git-cliff-release-notes.md
+
+# Added by CPV standardize
+.coverage
+.pytest_cache/
