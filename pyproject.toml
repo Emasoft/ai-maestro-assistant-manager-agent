@@ -6,6 +6,18 @@ requires-python = ">=3.10"
 license = "MIT"
 dependencies = ["pyyaml"]
 
+[project.optional-dependencies]
+# The canonical CPV pipeline (ci.yml + release.yml) runs `uv sync --extra dev`
+# before `uv run pytest/ruff/mypy`, so the dev toolchain MUST live in a `dev`
+# extra here — `uv sync --extra` reads [project.optional-dependencies], NOT a
+# PEP-735 [dependency-groups] table. Without it CI fails at install with
+# "Extra `dev` is not defined in the project's optional-dependencies table".
+dev = [
+    "pytest",
+    "ruff",
+    "mypy",
+]
+
 [tool.ruff]
 line-length = 320
 
