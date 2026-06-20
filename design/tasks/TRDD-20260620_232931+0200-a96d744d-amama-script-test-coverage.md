@@ -1,9 +1,9 @@
 ---
 trdd-id: a96d744d-11f6-48e8-971e-09985564dcb7
 title: Close AMAMA script test-coverage gap — real no-mock tests for the 11 untested scripts
-column: planned
+column: complete
 created: 2026-06-20T23:29:31+0200
-updated: 2026-06-20T23:29:31+0200
+updated: 2026-06-20T23:56:39+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -29,7 +29,7 @@ external-refs: []
 
 **WHY:** `/go-on-yourself` eval (2026-06-20 night) found AMAMA ships **13 scripts but only 1 test file** (`tests/test_proposal_approvals.py`). The green CI "Test" job hides this — `pytest tests/` runs the 1 test and passes. 11 scripts are UNTESTED (`publish.py` deferred — see §Deferred). Per `~/.claude/rules/plugin-tests-are-the-plugins-job.md` every script must be tested.
 
-**NEXT ACTION:** spawn one `python-test-writer` agent per untested script (§Execution), each with its specified test count, the real-no-mock template, and report-to-file. Then run `uv run pytest tests/ -v`, verify all green, fix any bug a test reveals (in the SCRIPT, with a WHY comment), render the result table, update `tests/README.md`, commit (NO push).
+**✅ DONE (2026-06-20).** All 11 scripts tested via real no-mock `python-test-writer` agents (waves 1 + 2a + 2b; wave 2's parallel spawn hit a transient server rate-limit, so the 4 affected scripts were re-run serially — the no-multiagent-during-rate-limit lesson). Result: **67 tests pass** (52 new across 11 files + 15 existing), 0 mocks, exact per-file counts (no bloat), no leaked processes (download's local `http.server` fixture closes in `finally`). 6 LOCAL commits (197c7bf TRDD · af446ca wave1 · 620e0f1 wave2a · ed2f38b report_writer · e09fd9a final3 · 0481145 README) — **NOT pushed** (per the /go-on-yourself "do not push, wait for approval" directive); they batch into the next AMAMA publish once the USER approves. `tests/README.md` updated. NO script bugs were surfaced (the scripts are sound). `publish.py` remains the only deferred script (§Deferred).
 
 **LOAD-BEARING FACTS:**
 - Style template = `tests/test_proposal_approvals.py` (353 lines): **real, no-mock** — throwaway tmp git repo, runs the ACTUAL script functions/CLI, asserts real filesystem/stdout outcomes; imports the module via `sys.path.insert(scripts/)`; standalone-runnable (`python3 tests/test_X.py`, exit 0 = pass) AND pytest-discoverable.
