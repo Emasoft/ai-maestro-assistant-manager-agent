@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+"""Real (no-mock) tests for scripts/amama_report_writer.py.
+
+Each test instantiates the ACTUAL ``ReportWriter`` against a throwaway temp
+directory (via ``CLAUDE_PROJECT_DIR``), runs the real methods, and asserts the
+real filesystem outcome (file written under ``design/reports/``, timestamped
+filename shape, content round-trip) and the real stdout/stderr summary format.
+
+Run: python3 tests/test_amama_report_writer.py      (exit 0 = all pass)
+"""
+
+from __future__ import annotations
+
+import contextlib
+import io
+import os
+import re
+import shutil
+import sys
+import tempfile
+from pathlib import Path
+
+_SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
+sys.path.insert(0, str(_SCRIPTS))
+
+import amama_report_writer as arw  # noqa: E402  # pyright: ignore[reportMissingImports]
+
+# Filename shape the script promises: "<script_name>_<YYYYMMDD_HHMMSS>.md"
+_FILENAME_RE = re.compile(r"^(?P<name>.+)_(?P<ts>\d{8}_\d{6})\.md$")
+
+
+@contextlib.contextmanager
+def temp_project():
+    """Yield a fresh temp dir pinned as CLAUDE_PROJECT_DIR; restore env + clean up."""
+    root = Path(tempfile.mkdtemp(prefix="arw-test-"))
+    prev = os.environ.get("CLAUDE_PROJECT_DIR")
+    os.environ["CLAUDE_PROJECT_DIR"] = str(root)
+    try:
+        yield root
+    finally:
+        if prev is None:
+            os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        else:
+            os.environ["CLAUDE_PROJECT_DIR"] = prev
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def test_writes_report_under_project_design_reports():
+    """Happy path: write_report creates a timestamped .md under <project>/design/reports/ with exact content."""
+    with temp_project() as root:
+        writer = arw.ReportWriter("amama_planning_status")
+        content = "# Planning status\n\nfull verbose body\nwith multiple lines\n"
+        path = writer.write_report(content)
+
+        # Real file, real location, real content (no mocks).
+        assert path.exists() and path.is_file()
+        assert path.parent == root / "design" / "reports"
+        assert path.read_text(encoding="utf-8") == content
+
+        # Filename shape: "<script_name>_<YYYYMMDD_HHMMSS>.md".
+        m = _FILENAME_RE.match(path.name)
+        assert m is not None, f"filename {path.name!r} does not match the documented shape"
+        assert m.group("name") == "amama_planning_status"
+        # Path returned by write_report is exactly the one get_report_path computes.
+        assert path == writer.get_report_path()
+        # Timestamp is frozen at construction → repeated get_report_path is stable.
+        assert writer.get_report_path() == writer.get_report_path()
+
+
+def test_falls_back_to_tmp_when_no_project_dir():
+    """Edge case: with CLAUDE_PROJECT_DIR unset/empty the report writes under /tmp/amama-reports/."""
+    prev = os.environ.get("CLAUDE_PROJECT_DIR")
+    os.environ["CLAUDE_PROJECT_DIR"] = ""  # empty → falsy → fallback branch
+    written: Path | None = None
+    try:
+        writer = arw.ReportWriter("amama_stop_check")
+        written = writer.write_report("fallback body\n")
+        assert written.exists()
+        assert written.parent == Path("/tmp") / "amama-reports"
+        assert written.read_text(encoding="utf-8") == "fallback body\n"
+        assert _FILENAME_RE.match(written.name) is not None
+    finally:
+        if written is not None and written.exists():
+            written.unlink()
+        if prev is None:
+            os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        else:
+            os.environ["CLAUDE_PROJECT_DIR"] = prev
+
+
+def test_summary_and_failure_print_expected_format():
+    """print_summary → stdout '[DONE] <name> - <summary>' + 'Report:'; print_failure → same on stderr with '[FAILED]'."""
+    with temp_project():
+        writer = arw.ReportWriter("amama_orchestration_status")
+        report_path = writer.write_report("body\n")
+
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            writer.print_summary("3 agents idle", report_path)
+        stdout = out.getvalue()
+        assert "[DONE] amama_orchestration_status - 3 agents idle" in stdout
+        assert f"Report: {report_path}" in stdout
+
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            writer.print_failure("planning dir missing", report_path)
+        stderr = err.getvalue()
+        assert "[FAILED] amama_orchestration_status - planning dir missing" in stderr
+        assert f"Report: {report_path}" in stderr
+
+        # report_path is optional: omitting it prints no "Report:" line.
+        out2 = io.StringIO()
+        with contextlib.redirect_stdout(out2):
+            writer.print_summary("no path given")
+        assert "Report:" not in out2.getvalue()
+
+
+# --------------------------------------------------------------------------- #
+# Runner + result table
+# --------------------------------------------------------------------------- #
+def _table(rows: list[tuple[str, str, str]]) -> str:
+    name_w = max(len(r[0]) for r in rows)
+    desc_w = max(len(r[2]) for r in rows)
+    top = f"┏━{'━' * name_w}━┳━━━━━━━━┳━{'━' * desc_w}━┓"
+    head = f"┃ {'Test':<{name_w}} ┃ Status ┃ {'Description':<{desc_w}} ┃"
+    sep = f"┡━{'━' * name_w}━╇━━━━━━━━╇━{'━' * desc_w}━┩"
+    bot = f"└─{'─' * name_w}─┴────────┴─{'─' * desc_w}─┘"
+    out = [top, head, sep]
+    for name, status, desc in rows:
+        out.append(f"│ {name:<{name_w}} │ {status:<6} │ {desc:<{desc_w}} │")
+    out.append(bot)
+    return "\n".join(out)
+
+
+def main() -> int:
+    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
+    rows: list[tuple[str, str, str]] = []
+    failed = 0
+    for fn in tests:
+        desc = (fn.__doc__ or "").strip().split("\n")[0]
+        try:
+            fn()
+            rows.append((fn.__name__, "PASS", desc))
+        except AssertionError as exc:
+            failed += 1
+            rows.append((fn.__name__, "FAIL", f"{desc}  [{exc}]"))
+        except Exception as exc:  # noqa: BLE001
+            failed += 1
+            rows.append((fn.__name__, "ERROR", f"{desc}  [{type(exc).__name__}: {exc}]"))
+    print(_table(rows))
+    print(f"\n{len(tests) - failed}/{len(tests)} passed.")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
