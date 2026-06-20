@@ -94,7 +94,7 @@ every role follows **approval-tier** rules per TRDD, and PRRD changes are **prop
 1. **Design sign-off** (this TRDD) + propose the architecture to the **base plugin** (it hosts the
    `ama-*` skills + the rule-auto-install hook). Coordinate the granular-skill split + the hook.
 2. **Base plugin builds:** the `ama-*` skills (governance-enforcing wrappers over the existing scripts)
-   + bundles the four rules + the SessionStart-hook auto-install to `~/.claude/rules/`. Publishes.
+   plus bundles the four rules + the SessionStart-hook auto-install to `~/.claude/rules/`. Publishes.
 3. **AMAMA (exemplar):** remove `amama-prrd-trdd-kanban` + `amama-proposal-approvals`; wire the main
    agent + `amama-report-generator` sub-agent to the `ama-*` skills with the MANAGER permission slice
    (full write + approval authority). Bundle into AMAMA's governance-rework release.

@@ -80,7 +80,7 @@ skills; they do NOT ship their own**. The locked config:
   · write/update-after-solving · maintain-project-wikimem · scope-routing. **MY DELTA:** also
   propagate the contract into SUB-AGENT prompts (sub-agents inherit nothing — USER's must-have).
 - **REMOVE the fleet's redundant per-plugin skills** — AMAMA strips `amama-memory-recall`/`-write`
-  + reconciles `rules/memory-protocol.md` (confirming removal with janitor on #15).
+  plus reconciles `rules/memory-protocol.md` (confirming removal with janitor on #15).
 - **EXECUTE ON JANITOR PUBLISH** — the janitor's skills/bootstrap are committed but UNPUSHED
   (pending USER review). Align now (design locked); run `/janitor-memory-bootstrap` + the rework
   once it ships. No `column:` collision — memory lives under `.claude/project/memory/`, the

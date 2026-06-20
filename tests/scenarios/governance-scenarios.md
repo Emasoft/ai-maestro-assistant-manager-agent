@@ -244,7 +244,7 @@ authority).
 ## Notable reversal embedded in these scenarios
 
 SCEN-G05/G06 assert the **R29 supersession**: the MANAGER creates AND deletes teams
-+ the auto-created COS + the 5 base members + AUTONOMOUS/MAINTAINER **with no user
+plus the auto-created COS + the 5 base members + AUTONOMOUS/MAINTAINER **with no user
 approval**. This is the OPPOSITE of the pre-R29 "COS assignment is USER-only / via
 the dashboard / AMAMA cannot assign COS" wording (which still survives in
 `design/handoffs/api-to-cli-mapping.md` line 56 — a decoupling-doc artifact out of

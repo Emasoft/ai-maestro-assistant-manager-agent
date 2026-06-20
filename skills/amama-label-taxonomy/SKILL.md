@@ -111,4 +111,3 @@ See commands-and-patterns reference for more examples.
 
 - [label-tables](references/label-tables.md): Priority Labels, Kanban Columns (Canonical 5-Status Model), Status Labels AMAMA Updates, Labels AMAMA Monitors, Labels AMAMA Never Sets, AMAMA's Approval Authority
 - [commands-and-patterns](references/commands-and-patterns.md): Label Commands, User Communication Patterns, Full Examples
-

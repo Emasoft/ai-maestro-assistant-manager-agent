@@ -29,7 +29,7 @@ external-refs: ["github.com/Emasoft/ai-maestro/issues/35", "github.com/Emasoft/a
 `decouple/api-to-frozen-cli` (fa45357 = mapping spec, cab546c = repoint, 26 files). Every direct
 `/api/` INSTRUCTION in AMAMA shipped source (main agent prompt + 5 skills + docs + README + hook)
 repointed to the immutable CLI layer with **verified frozen verb syntax** (read from deployed PATH
-+ `~/ai-maestro/scripts/`): agents→`aimaestro-agent.sh {list,show,create,update,delete,wake,hibernate}`,
+plus `~/ai-maestro/scripts/`): agents→`aimaestro-agent.sh {list,show,create,update,delete,wake,hibernate}`,
 teams→`aimaestro-teams.sh {list,show,create,update,delete,add-agent,remove-agent}`,
 governance→`aimaestro-governance.sh {requests,request,approve,reject,transfer}`, messaging→`amp-*`.
 Manual `Bearer/$AID_AUTH` curl scaffolding dropped (CLIs resolve auth). VERIFIED: zero hallucinated

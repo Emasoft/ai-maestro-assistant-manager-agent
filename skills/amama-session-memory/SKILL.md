@@ -105,4 +105,3 @@ See [references/examples.md](references/examples.md) for detailed examples:
   - Example 5: Availability State Change
   - Example 6: Semantic Search for Implicit Preferences
 - record-keeping-formats.md (references/record-keeping-formats.md) - Record formats
-

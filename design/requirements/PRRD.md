@@ -40,4 +40,3 @@ spec: `~/.claude/rules/prrd-design-rules.md`.
 - **S8.1** — Every GitHub post (issue, comment, PR, review, discussion, release note) leads with the line "This is the Claude responsible for the ai-maestro-assistant-manager-agent project." — the concrete instance of `PRRD G1.1` for this repo.
 - **S9.1** — The MANAGER cannot self-approve its OWN releases: the `complete → publish` / `complete → deploy` transitions and any release/deploy of this plugin require USER approval. Routine mechanical column transitions remain exempt per `manager-approval-defaults.md`.
 - **S10.1** — The standard GitHub baseline rulesets (`baseline-history-protect` + `baseline-pr-and-checks`) apply to this repo as-is; any deviation (extra rule, loosened check, new bypass actor, disabled ruleset) is a Tier-2 change requiring MANAGER approval.
-

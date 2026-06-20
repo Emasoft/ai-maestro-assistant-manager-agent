@@ -1,6 +1,5 @@
 # Agent Creation Failure Recovery Procedures
 
-
 ## Contents
 
 - [Overview](#overview)

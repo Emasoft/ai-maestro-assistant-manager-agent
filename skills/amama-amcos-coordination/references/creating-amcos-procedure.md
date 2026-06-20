@@ -54,7 +54,6 @@ aimaestro-agent.sh list
 
 Filter for the specific agent by name.
 
-
 ---
 
 ## Team Creation
@@ -96,7 +95,6 @@ aimaestro-teams.sh list
 aimaestro-teams.sh show <team-id>
 ```
 
-
 ---
 
 ## COS Creation (MANAGER, R29 + R30)
@@ -115,7 +113,6 @@ If a specific agent must exist before team membership, register it using `aimaes
 
 **Verify**: `aimaestro-agent.sh list` lists the agent.
 
-
 ### Step 2: Create the Team (MANAGER, R29)
 
 You create the team yourself — no user approval, no dashboard:
@@ -125,7 +122,6 @@ aimaestro-teams.sh create --name project-alpha-team --description "Development t
 ```
 
 **Verify**: `aimaestro-teams.sh list` lists the team. Note the returned `teamId`. The server auto-creates the team's COS.
-
 
 ### Step 3: Wake the COS and Grant Its Mandate (R30)
 
@@ -168,7 +164,6 @@ Expected response content:
   "constraints_loaded": true
 }
 ```
-
 
 **Handling `constraints_loaded: false`**: If the COS responds with `constraints_loaded: false`, it accepted the mandate but failed to load its governance constraints. In this case:
 1. Send a `cos-reload-constraints` message to the COS

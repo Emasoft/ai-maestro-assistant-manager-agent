@@ -30,9 +30,9 @@ The motivating request, paraphrased from the conversation that produced this TRD
 Subsequent direction:
 
 > "Examine the janitor to see if it can be used to improve the MANAGER workflow, or if there are better ways to solve the problems you found. A mixed solution would be even better."
-
+>
 > "Take your time and think of all the edge cases that can put each of the proposed plans into a crisis and see what plan solve the crisis better."
-
+>
 > "go on, continue" (authorization to draft this TRDD)
 
 The audit (`reports/assistant-manager-audit/20260504_023156+0200-orchestration-capability-audit.md`) found three gaps. The crisis-stress-test (`reports/assistant-manager-audit/20260504_153853+0200-crisis-stress-test-plan-v3.md`) selected **Plan v3 = v2-multi-plugin + four targeted hardening additions** as the answer. This TRDD is **phase 1** of that plan — the smallest viable cut — bundled with **v3 hardening #1** (sticky-unknown after compaction + versioned schema).

@@ -40,7 +40,7 @@ COS exists (to absorb load).
 - COS-AUTONOMOUS — COS decides within the team, no upstream.
 - COS-ESCALATE — COS forwards to MANAGER, who applies the EXISTING
   presence-aware flow (amama-presence-tracker + amama-autonomous-fallback
-  + reversibility-matrix + hard-floor): escalate-to-USER if present,
+  plus reversibility-matrix + hard-floor): escalate-to-USER if present,
   decide-autonomously if absent, golden rules ALWAYS to USER.
 
 **Presence is MANAGER-tier, not COS-tier.** The COS filters the same

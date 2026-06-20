@@ -13,7 +13,7 @@ The keystone. `aimaestro-teams.sh` + `aimaestro-governance.sh` exist in
 - Run `install-agent-cli.sh` → both CLIs land on `~/.local/bin` for the whole local fleet.
 - BUILD the missing verbs (server knowledge required): `kanban-config`, `presence`
   (`/api/users/{id}/presence`), expose `session user-input` in `agent-session.sh`,
-  + the cross-fleet gap candidates in ai-maestro#36 `issuecomment-4722058864`
+  plus the cross-fleet gap candidates in ai-maestro#36 `issuecomment-4722058864`
   (team-tasks, governance status/manager/attestation/members/pubkey, hosts/identity, users, teams/stats).
   `transfer` already exists.
 - Signal MANAGER springs on: `[ -e ~/.local/bin/aimaestro-teams.sh ]`.
@@ -26,7 +26,7 @@ Branch `decouple/api-to-frozen-cli` is ready (commit-not-publish).
 
 ## Step 3 — Each plugin's repoint slice  (owner: each plugin's Claude)
 Recipe ready: AMAMA#16 `issuecomment-4721952538` (verb table + rules + marker convention
-+ the "verify your agents' hallucinated verbs" warning). COS already self-decoupling
+plus the "verify your agents' hallucinated verbs" warning). COS already self-decoupling
 (`TRDD-…-remove-direct-api-calls`); orchestrator self-audited on #16. Most other plugins'
 raw `/api/` is noise (descriptive REFERENCE docs / test fixtures / OAuth-rotator), so the
 real per-plugin work is small — each Claude runs the recipe on its own source (its conventions loaded).

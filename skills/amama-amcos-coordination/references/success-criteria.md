@@ -1,6 +1,5 @@
 # Success Criteria for Assistant Manager Operations
 
-
 ## Contents
 
 - [Success: User Request Understood](#success-user-request-understood)

@@ -1,6 +1,5 @@
 # Record-Keeping Formats
 
-
 ## Contents
 
 - [Overview](#overview)

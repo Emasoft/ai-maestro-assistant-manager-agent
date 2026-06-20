@@ -1,6 +1,5 @@
 # Workflow Checklists
 
-
 ## Contents
 
 - [Checklist: Creating New Team](#checklist-creating-new-team)

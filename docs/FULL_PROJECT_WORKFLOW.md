@@ -105,7 +105,7 @@ GitHub used for: repos, issues, PRs, project boards.
 - Each non-MAESTRO user is auto-assigned ONE ASSISTANT agent (role plugin
   `ai-maestro-assistant-role-agent` = MANAGER planning ∪ AUTONOMOUS programming,
   minus all agent/team creation). The ASSISTANT has no team, obeys only its user
-  + the MAESTRO, is invisible to other agents (but receives every task/permission
+  and the MAESTRO, is invisible to other agents (but receives every task/permission
   sent to its user), and is non-deletable except by deleting the user (R38/R39).
 - A normal (non-ASSISTANT) user-agent messages ONLY its own ASSISTANT, its team's
   COS, and the MANAGER; it receives kanban tasks and opens a PR on completion, and

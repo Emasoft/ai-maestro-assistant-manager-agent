@@ -1,6 +1,5 @@
 # AMAMA-AMCOS Coordination Workflow Examples
 
-
 ## Contents
 
 - [Example 1: User Requests New Project](#example-1-user-requests-new-project)

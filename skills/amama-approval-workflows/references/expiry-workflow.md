@@ -68,7 +68,6 @@ For each expired GovernanceRequest:
 
 **Step 3: Notify MANAGER of Expirations (Optional)**
 
-
 If user preference is set to receive expiry notifications:
 ```
 GovernanceRequests Expired
@@ -81,9 +80,7 @@ The following governance requests were auto-rejected after 24 hours:
 These requests have been returned to the requesting agents. They can resubmit if still needed.
 ```
 
-
 ## Expiry Configuration
-
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -91,4 +88,3 @@ These requests have been returned to the requesting agents. They can resubmit if
 | `expiry_check_interval_minutes` | 60 | How often to check for expired |
 | `notify_user_on_expiry` | false | Send summary to MANAGER on expiry |
 | `allow_resubmission` | true | Requesting agent can resubmit after expiry |
-
