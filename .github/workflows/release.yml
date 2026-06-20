@@ -60,10 +60,13 @@ jobs:
         env:
           # Root-cause #4: skip the GitHub-anchored integrity fetch on a
           # fresh-checkout runner (the local manifest already matches the code)
-          # and pass the repo owner so private-path heuristics treat it as
-          # public — matching the project's canonical validate command.
+          # CLAUDE_PRIVATE_USERNAMES is the RUNNER's local username (= $(whoami),
+          # "runner" on GitHub-hosted) so CPV scrubs genuine local-path leaks. It
+          # MUST NOT be the public repo owner: that flags every legitimate
+          # github.com/<owner>/ reference as a "private path leaked" CRITICAL
+          # (issue #44 — canon-template bug; verified: owner => 41 false CRITICALs).
           PLUGIN_SKIP_GITHUB_INTEGRITY: "1"
-          CLAUDE_PRIVATE_USERNAMES: "${{ github.repository_owner }}"
+          CLAUDE_PRIVATE_USERNAMES: "runner"
         run: |
           set +e
           uvx --from git+https://github.com/Emasoft/claude-plugins-validation@v2.136.1               --with pyyaml               cpv-remote-validate plugin . --strict               > validation-report.txt 2>&1

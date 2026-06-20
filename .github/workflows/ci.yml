@@ -134,11 +134,13 @@ jobs:
           # Root-cause #4: on a fresh-checkout runner the local self-hash
           # manifest already matches the code, so CPV's GitHub-anchored
           # integrity fetch (a live urlopen to raw.githubusercontent.com) adds
-          # no security but real latency/hang risk. Skip it — and tell CPV the
-          # repo owner so its private-path heuristics treat the org name as
-          # public, matching the project's own canonical validate command.
+          # no security but real latency/hang risk. Skip it. CLAUDE_PRIVATE_USERNAMES
+          # is the RUNNER's local username (= $(whoami), "runner" on GitHub-hosted)
+          # so CPV scrubs genuine local-path leaks; it MUST NOT be the public repo
+          # owner — that flags every legitimate github.com/<owner>/ reference as a
+          # "private path leaked" CRITICAL (issue #44 — canon-template bug).
           PLUGIN_SKIP_GITHUB_INTEGRITY: "1"
-          CLAUDE_PRIVATE_USERNAMES: "${{ github.repository_owner }}"
+          CLAUDE_PRIVATE_USERNAMES: "runner"
         run: |
           set +e
           uvx --from git+https://github.com/Emasoft/claude-plugins-validation@v2.136.1 \
