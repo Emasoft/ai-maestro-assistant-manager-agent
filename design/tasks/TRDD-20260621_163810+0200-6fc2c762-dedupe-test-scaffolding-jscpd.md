@@ -1,9 +1,11 @@
 ---
 trdd-id: 6fc2c762-6c80-4adb-9241-209834425ecb
 title: Dedupe test scaffolding to clear the Mega-Linter jscpd CI gate
-column: testing
+column: complete
 created: 2026-06-21T16:38:10+0200
-updated: 2026-06-21T17:55:00+0200
+updated: 2026-06-21T18:05:00+0200
+published-version: 2.12.7
+published-at: 2026-06-21T16:57:00+0200
 current-owner: amama
 assignee: cpv-plugin-fixer
 priority: 1
@@ -92,9 +94,14 @@ Local verification (faithful CI repro = `npx jscpd@4.0.5 --reporters console --t
 - ruff (E,F,W,I) clean (isort auto-fixed the 2 added imports); mypy clean;
   `cpv-remote-validate lint` → CRITICAL/MAJOR/MINOR/WARNING all 0.
 
-NEXT: publish via `publish.py --patch` (→ v2.12.7), then watch CI to GREEN (the Lint
-job runs the real jscpd; publish.py's local gates do NOT — CPV #143). On green CI,
-flip `column: complete`.
+## DONE — 2026-06-21 — v2.12.7 published, CI FULLY GREEN
+
+Published **v2.12.7** via `publish.py --patch` (bump → commit → tag → push → release).
+CI run [27908058062](https://github.com/Emasoft/ai-maestro-assistant-manager-agent/actions/runs/27908058062)
+= **completed success** (3m32s): **Lint ✓** (Mega-Linter / jscpd now 0.32% < 5% — the
+fix is confirmed in CI, not just locally), Validate ✓, Test matrix ubuntu ✓ + macos ✓,
+Test gate ✓. Release + Notify-Marketplace workflows also `success`. Acceptance criteria
+1-6 all met. `column: complete`.
 
 ## Notes and lessons learned
 
