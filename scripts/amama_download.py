@@ -161,17 +161,16 @@ def compute_sha256(file_path: Path) -> str:
     return sha256_hash.hexdigest()
 
 
-def set_readonly(path: Path, recursive: bool = False) -> None:
-    """Set file or directory to read-only."""
+def set_readonly(path: Path) -> None:
+    """Make a file read-only: clear the owner/group/other write bits (r--r--r--).
+
+    File-only by design — the only callers lock the downloaded file + its
+    metadata.json for per-document immutability. The directory / recursive branch
+    was removed as dead code: after bug H3's fix stopped locking the containing
+    folder, no caller passes a directory or recursive=True, and that branch carried
+    a latent dir-mode bug (M5). A non-file path is a no-op.
+    """
     if path.is_file():
-        # Remove write permissions: r--r--r--
-        current = path.stat().st_mode
-        path.chmod(current & ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH)
-    elif path.is_dir():
-        if recursive:
-            for item in path.rglob("*"):
-                set_readonly(item, recursive=False)
-        # Directory: r-xr-xr-x
         current = path.stat().st_mode
         path.chmod(current & ~stat.S_IWUSR & ~stat.S_IWGRP & ~stat.S_IWOTH)
 
