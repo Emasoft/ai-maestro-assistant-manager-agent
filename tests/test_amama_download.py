@@ -64,7 +64,7 @@ def _serve_dir(directory: Path) -> tuple[socketserver.TCPServer, int]:
 
 
 # --------------------------------------------------------------------------- #
-# Tests (exactly 6)
+# Tests (exactly 7)
 # --------------------------------------------------------------------------- #
 def test_get_storage_root_resolution():
     """get_storage_root honours project_root, then AMAMA_STORAGE_ROOT, then cwd."""
@@ -225,10 +225,44 @@ def test_verify_storage_detects_integrity_violation():
         _rmtree(src)
 
 
+def test_redownload_into_same_folder_succeeds():  # 🐌 spins a real HTTP server
+    """H3 regression: a SECOND download into an existing task folder succeeds — the
+    folder is not locked read-only (only the files are), so sibling documents can
+    still be added."""
+    root = _tmp()
+    src = _tmp()
+    (src / "a.md").write_bytes(b"# first doc\n")
+    (src / "b.md").write_bytes(b"# second doc\n")
+    srv, port = _serve_dir(src)
+    try:
+        first = dl.download_document(
+            url=f"http://127.0.0.1:{port}/a.md",
+            task_id="GH-77", category="reports", subcategory="completion",
+            doc_type="completion", project_root=root,
+        )
+        assert first is not None and first.exists()
+        # Second download into the SAME task/category/subcategory folder (a sibling doc).
+        second = dl.download_document(
+            url=f"http://127.0.0.1:{port}/b.md",
+            task_id="GH-77", category="reports", subcategory="completion",
+            doc_type="review", project_root=root,
+        )
+        assert second is not None and second.exists(), "re-download into a locked folder must not fail (H3)"
+        # Both docs coexist in the one folder; both are individually read-only.
+        assert first.parent == second.parent
+        assert not (first.stat().st_mode & stat.S_IWUSR)
+        assert not (second.stat().st_mode & stat.S_IWUSR)
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
 # --------------------------------------------------------------------------- #
 # Slow tests (spin a real local HTTP server) get a 🐌 marker in the result table.
 # --------------------------------------------------------------------------- #
-_SLOW = {"test_download_real_file_via_local_http_server"}
+_SLOW = {"test_download_real_file_via_local_http_server", "test_redownload_into_same_folder_succeeds"}
 
 
 if __name__ == "__main__":

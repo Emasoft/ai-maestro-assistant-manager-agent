@@ -4,8 +4,9 @@ amama_session_start.py - AI Maestro Assistant Manager SessionStart hook.
 
 The old activeContext/progress/patterns memory-bank that this hook used to load
 at session start has been retired (TRDD-8707e849). Session memory is now the
-markdown-notes + memgrep system, recalled on demand via the `amama-memory-recall`
-skill — NOT auto-loaded at session start. This hook therefore loads nothing; it
+markdown-notes + memgrep system, recalled on demand via the global
+`/janitor-memory-recall` skill (ai-maestro-janitor) — NOT auto-loaded at session
+start. This hook therefore loads nothing; it
 remains registered so the SessionStart wiring is intact and so subagent runs are
 explicitly short-circuited.
 
@@ -28,7 +29,7 @@ def main() -> int:
     """Main entry point for SessionStart hook.
 
     Reads (and discards) the hook payload from stdin. No session memory is loaded
-    here anymore — recall is on-demand via the `amama-memory-recall` skill.
+    here anymore — recall is on-demand via the global `/janitor-memory-recall` skill.
 
     Returns:
         Exit code: 0 for success

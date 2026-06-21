@@ -339,10 +339,13 @@ def download_document(
     metadata_path = folder_path / f"{filename.replace('.md', '')}_metadata.json"
     metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
-    # Set read-only
+    # Lock the downloaded file + its metadata read-only for integrity. Do NOT lock
+    # the containing folder: a read-only directory rejects new entries, so a later
+    # download of a sibling document into the same task folder would crash with
+    # PermissionError (bug H3). File-level locking already gives per-document
+    # immutability; the folder must stay writable to accept more documents.
     set_readonly(file_path)
     set_readonly(metadata_path)
-    set_readonly(folder_path)
 
     print(f"Downloaded and locked: {file_path}")
     print(f"SHA256: {sha256}")
