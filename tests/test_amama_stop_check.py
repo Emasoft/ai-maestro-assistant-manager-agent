@@ -121,9 +121,9 @@ def test_block_stop_on_unread_messages():
         assert payload["decision"] == "block"
         assert "5 unread message(s)" in payload["reason"]
         assert payload["hookSpecificOutput"]["permissionDecision"] == "deny"
-        # the real block path writes a detailed report under design/reports/
+        # the real block path writes a detailed report under reports/stop-check/
         report = Path(payload["report"])
-        assert report.exists() and report.parent == project / "design" / "reports"
+        assert report.exists() and report.parent == project / "reports" / "stop-check"
         saved = json.loads(report.read_text(encoding="utf-8"))
         assert saved["details"]["unread_messages"] == 5
 
@@ -149,7 +149,7 @@ def test_subagent_exit_is_always_allowed():
         assert rc == 0, f"subagent stop must be allowed (0), got {rc}"
         assert out.strip() == "", "subagent allow path must be silent"
         # no report written because the blocking branch was never entered
-        assert not (project / "design" / "reports").exists()
+        assert not (project / "reports" / "stop-check").exists()
 
 
 def test_malformed_stdin_falls_back_and_does_not_crash():

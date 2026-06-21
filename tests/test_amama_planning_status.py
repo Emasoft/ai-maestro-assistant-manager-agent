@@ -6,7 +6,7 @@ writes a synthetic ``.claude/orchestrator-plan-phase.local.md`` state file with 
 frontmatter, then runs the ACTUAL CLI as a subprocess (with cwd +
 CLAUDE_PROJECT_DIR pinned to the temp dir) and asserts against the real outcome:
 exit code, the stdout summary, the stderr error, and the verbose report file the
-real ReportWriter writes into the temp project's design/reports/ directory.
+real ReportWriter writes into the temp project's reports/planning-status/ directory.
 
 Running via subprocess (rather than calling main() in-process) is deliberate and
 load-bearing: PLAN_STATE_FILE is computed from CLAUDE_PROJECT_DIR at MODULE-IMPORT
@@ -62,7 +62,7 @@ def _run(root: Path, *argv: str) -> subprocess.CompletedProcess[str]:
 
 def _report_text(root: Path) -> str:
     """Return the single written report file's content (asserts exactly one exists)."""
-    reports = sorted((root / "design" / "reports").glob("planning-status_*.md"))
+    reports = sorted((root / "reports" / "planning-status").glob("planning-status_*.md"))
     assert len(reports) == 1, f"expected exactly one report, found {len(reports)}"
     return reports[0].read_text(encoding="utf-8")
 
@@ -112,9 +112,9 @@ def test_error_when_no_state_file():
         cp = _run(root)
         assert cp.returncode == 1, f"expected rc 1, got {cp.returncode} ({cp.stderr})"
         assert "Not in Plan Phase" in cp.stderr
-        # ReportWriter.__init__ eagerly creates design/reports/, but the failure
-        # path returns before write_report(): the contract is ZERO report files.
-        assert not list((root / "design" / "reports").glob("planning-status_*.md"))
+        # ReportWriter.__init__ eagerly creates reports/planning-status/, but the
+        # failure path returns before write_report(): the contract is ZERO files.
+        assert not list((root / "reports" / "planning-status").glob("planning-status_*.md"))
     finally:
         shutil.rmtree(root, ignore_errors=True)
 
@@ -156,8 +156,8 @@ def test_empty_unparseable_state_reports_parse_failure():
         assert cp.returncode == 1, f"expected rc 1, got {cp.returncode} ({cp.stdout})"
         assert "Could not parse plan state file" in cp.stderr
         # The failure path returns before write_report() -> no report file written
-        # (the empty design/reports/ dir created by ReportWriter.__init__ is fine).
-        assert not list((root / "design" / "reports").glob("planning-status_*.md"))
+        # (the empty reports/planning-status/ dir created by ReportWriter.__init__ is fine).
+        assert not list((root / "reports" / "planning-status").glob("planning-status_*.md"))
     finally:
         shutil.rmtree(root, ignore_errors=True)
 

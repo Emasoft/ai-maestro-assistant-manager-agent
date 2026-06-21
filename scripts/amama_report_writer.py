@@ -8,32 +8,36 @@ token consumption when script output is captured into agent context.
 
 from __future__ import annotations
 
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_state_paths import project_root
+
 
 class ReportWriter:
-    """Writes verbose output to timestamped report files in design/reports/."""
+    """Writes verbose output to timestamped files under the gitignored reports/<component>/ dir."""
 
     def __init__(self, script_name: str) -> None:
         self.script_name = script_name
         self._report_dir = self._resolve_report_dir()
-        self._timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # Local time + GMT offset (%z) so a report filename is unambiguous across
+        # machines/worktrees, per ~/.claude/rules/agent-reports-location.md.
+        self._timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M%S%z")
 
     def _resolve_report_dir(self) -> Path:
-        """Resolve report directory from CLAUDE_PROJECT_DIR, fallback to /tmp."""
-        project_dir = os.environ.get("CLAUDE_PROJECT_DIR", "")
-        if project_dir:
-            report_dir = Path(project_dir) / "design" / "reports"
-        else:
-            report_dir = Path("/tmp") / "amama-reports"
-        try:
-            report_dir.mkdir(parents=True, exist_ok=True)
-        except OSError:
-            report_dir = Path("/tmp") / "amama-reports"
-            report_dir.mkdir(parents=True, exist_ok=True)
+        """The gitignored reports/<component>/ dir under the project root.
+
+        reports/ (NOT design/reports/) is gitignored, so verbose reports — which
+        can embed message subjects, issue titles, and absolute paths — never land
+        in a committable path. There is no silent /tmp fallback: a mkdir failure
+        propagates (fail-fast) instead of hiding the real cause (a read-only or
+        unwritable FS). project_root() is the single source of truth for the root
+        (CLAUDE_PROJECT_DIR, else cwd) — shared with the phase-state files.
+        """
+        report_dir = project_root() / "reports" / self.script_name
+        report_dir.mkdir(parents=True, exist_ok=True)
         return report_dir
 
     def get_report_path(self) -> Path:

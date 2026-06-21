@@ -177,10 +177,14 @@ def main() -> int:
         response = build_blocking_response(issues)
         # Write full details to report file, minimize stdout JSON for token savings
         try:
+            # reports/ is gitignored (design/reports/ is NOT) so the block report —
+            # which embeds message subjects + issue titles — never lands in a
+            # committable path. Timestamp carries the %z GMT offset per the
+            # agent-reports-location rule.
             project_dir = os.environ.get("CLAUDE_PROJECT_DIR", cwd)
-            report_dir = Path(project_dir) / "design" / "reports"
+            report_dir = Path(project_dir) / "reports" / "stop-check"
             report_dir.mkdir(parents=True, exist_ok=True)
-            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            ts = datetime.now().astimezone().strftime("%Y%m%d_%H%M%S%z")
             report_path = report_dir / f"stop_check_{ts}.md"
             report_path.write_text(json.dumps(response, indent=2), encoding="utf-8")
             # Minimal stdout: counts only, no lists, no indentation

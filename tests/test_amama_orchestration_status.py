@@ -11,7 +11,7 @@ Running via subprocess (rather than calling main() in-process) is deliberate:
 the script reads $CLAUDE_PROJECT_DIR and calls sys.exit(), so a subprocess exercises the
 genuine entry point with zero global-state pollution (no sys.argv / chdir leak
 between tests). Nothing is mocked — the real ReportWriter performs real file I/O
-into the temp project's design/reports/ directory.
+into the temp project's reports/orchestration-status/ directory.
 
 Run: python3 tests/test_amama_orchestration_status.py      (exit 0 = all pass)
 """
@@ -58,7 +58,7 @@ def _run(root: Path, *argv: str) -> subprocess.CompletedProcess[str]:
 
 def _report_text(root: Path) -> str:
     """Return the single written report file's content (asserts exactly one exists)."""
-    reports = sorted((root / "design" / "reports").glob("orchestration-status_*.md"))
+    reports = sorted((root / "reports" / "orchestration-status").glob("orchestration-status_*.md"))
     assert len(reports) == 1, f"expected exactly one report, found {len(reports)}"
     return reports[0].read_text(encoding="utf-8")
 
@@ -73,7 +73,7 @@ def test_error_when_no_state_file():
         cp = _run(root)
         assert cp.returncode == 1, f"expected rc 1, got {cp.returncode}"
         assert "Not in Orchestration Phase" in cp.stderr
-        assert not (root / "design" / "reports").exists()
+        assert not (root / "reports" / "orchestration-status").exists()
     finally:
         shutil.rmtree(root, ignore_errors=True)
 

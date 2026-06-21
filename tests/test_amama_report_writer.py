@@ -3,7 +3,7 @@
 
 Each test instantiates the ACTUAL ``ReportWriter`` against a throwaway temp
 directory (via ``CLAUDE_PROJECT_DIR``), runs the real methods, and asserts the
-real filesystem outcome (file written under ``design/reports/``, timestamped
+real filesystem outcome (file written under ``reports/<component>/``, timestamped
 filename shape, content round-trip) and the real stdout/stderr summary format.
 
 Run: python3 tests/test_amama_report_writer.py      (exit 0 = all pass)
@@ -27,13 +27,16 @@ import amama_report_writer as arw  # noqa: E402  # pyright: ignore[reportMissing
 from _harness import run_standalone  # noqa: E402
 
 # Filename shape the script promises: "<script_name>_<YYYYMMDD_HHMMSS>.md"
-_FILENAME_RE = re.compile(r"^(?P<name>.+)_(?P<ts>\d{8}_\d{6})\.md$")
+_FILENAME_RE = re.compile(r"^(?P<name>.+)_(?P<ts>\d{8}_\d{6}[+-]\d{4})\.md$")
 
 
 @contextlib.contextmanager
 def temp_project():
     """Yield a fresh temp dir pinned as CLAUDE_PROJECT_DIR; restore env + clean up."""
-    root = Path(tempfile.mkdtemp(prefix="arw-test-"))
+    # .resolve() so the dir matches project_root()'s canonical (symlink-resolved)
+    # path — on macOS mkdtemp yields /var/... but project_root() resolves it to
+    # /private/var/..., which would break a Path-equality assert otherwise.
+    root = Path(tempfile.mkdtemp(prefix="arw-test-")).resolve()
     prev = os.environ.get("CLAUDE_PROJECT_DIR")
     os.environ["CLAUDE_PROJECT_DIR"] = str(root)
     try:
@@ -46,8 +49,8 @@ def temp_project():
         shutil.rmtree(root, ignore_errors=True)
 
 
-def test_writes_report_under_project_design_reports():
-    """Happy path: write_report creates a timestamped .md under <project>/design/reports/ with exact content."""
+def test_writes_report_under_project_reports():
+    """Happy path: write_report creates a timestamped .md under <project>/reports/<component>/ with exact content."""
     with temp_project() as root:
         writer = arw.ReportWriter("amama_planning_status")
         content = "# Planning status\n\nfull verbose body\nwith multiple lines\n"
@@ -55,7 +58,7 @@ def test_writes_report_under_project_design_reports():
 
         # Real file, real location, real content (no mocks).
         assert path.exists() and path.is_file()
-        assert path.parent == root / "design" / "reports"
+        assert path.parent == root / "reports" / "amama_planning_status"
         assert path.read_text(encoding="utf-8") == content
 
         # Filename shape: "<script_name>_<YYYYMMDD_HHMMSS>.md".
@@ -68,25 +71,29 @@ def test_writes_report_under_project_design_reports():
         assert writer.get_report_path() == writer.get_report_path()
 
 
-def test_falls_back_to_tmp_when_no_project_dir():
-    """Edge case: with CLAUDE_PROJECT_DIR unset/empty the report writes under /tmp/amama-reports/."""
+def test_writes_under_cwd_when_project_dir_unset():
+    """With CLAUDE_PROJECT_DIR unset, project_root() falls back to cwd, so the report
+    lands under <cwd>/reports/<component>/ — NOT /tmp (the silent fallback was removed
+    for fail-fast)."""
     prev = os.environ.get("CLAUDE_PROJECT_DIR")
-    os.environ["CLAUDE_PROJECT_DIR"] = ""  # empty → falsy → fallback branch
-    written: Path | None = None
+    saved_cwd = Path.cwd()
+    root = Path(tempfile.mkdtemp(prefix="arw-cwd-")).resolve()
+    os.environ.pop("CLAUDE_PROJECT_DIR", None)
+    os.chdir(root)
     try:
         writer = arw.ReportWriter("amama_stop_check")
         written = writer.write_report("fallback body\n")
         assert written.exists()
-        assert written.parent == Path("/tmp") / "amama-reports"
+        assert written.parent == root / "reports" / "amama_stop_check"
         assert written.read_text(encoding="utf-8") == "fallback body\n"
         assert _FILENAME_RE.match(written.name) is not None
     finally:
-        if written is not None and written.exists():
-            written.unlink()
+        os.chdir(saved_cwd)
         if prev is None:
             os.environ.pop("CLAUDE_PROJECT_DIR", None)
         else:
             os.environ["CLAUDE_PROJECT_DIR"] = prev
+        shutil.rmtree(root, ignore_errors=True)
 
 
 def test_summary_and_failure_print_expected_format():
