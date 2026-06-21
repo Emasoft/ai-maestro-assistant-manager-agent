@@ -24,12 +24,11 @@ import os
 import shutil
 import socketserver
 import stat
+import sys
 import tempfile
 import threading
 import uuid
 from pathlib import Path
-
-import sys
 
 _SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
 sys.path.insert(0, str(_SCRIPTS))
