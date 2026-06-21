@@ -1,9 +1,9 @@
 ---
 trdd-id: 0f491ba0-9fa0-49f4-933b-b938d7a7d4d9
 title: AMAMA test-coverage gaps — close the HIGH-value function/branch gaps (bucket E)
-column: dev
+column: complete
 created: 2026-06-21T23:57:16+0200
-updated: 2026-06-21T23:57:16+0200
+updated: 2026-06-22T00:06:17+0200
 current-owner: amama
 assignee: amama
 priority: 3
@@ -17,7 +17,14 @@ test-requirements: [unit]
 
 # TRDD-0f491ba0 — AMAMA test-coverage gaps (bucket E of the self-audit)
 
-## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-06-21
+## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-06-22
+
+**✅ COMPLETE (HIGH-value scope).** Both Opus agents landed: design_search +10 (file
+7→17), download +5 (file 9→14); full suite **78→93 pass**, ruff + mypy clean, both
+scripts byte-identical to HEAD (agents reverted their mutation-test edits). Committed
+`79cb1ca` — LOCAL, NOT pushed (awaiting USER approval per /go-on-yourself). design_search
+tests read + confirmed real; download set mutation-tested. LOW/NIT gaps remain DEFERRED
+(below) — out of this TRDD's scope.
 
 **Origin:** bucket E of the self-audit (TRDD-4c388042). The audit's tests report
 (`reports/plugin-audit/20260621_221741+0200-tests.md`) found the suite is
