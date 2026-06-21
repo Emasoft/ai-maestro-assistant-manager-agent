@@ -486,6 +486,20 @@ def verify_storage(project_root: Path | None = None) -> dict[str, Any]:
     return report
 
 
+def _valid_task_id(value: str) -> str:
+    """argparse validator: a task-id is used as an rglob PATTERN by `lookup`, so it
+    must be a literal — reject glob metacharacters (`*`, `?`, `[`) and path separators
+    that would change the search semantics (bug M2). Allows the documented `GH-42`
+    shape: letters, digits, '.', '_', '-'.
+    """
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", value):
+        raise argparse.ArgumentTypeError(
+            f"invalid --task-id {value!r}: only letters, digits, '.', '_', '-' are "
+            "allowed (e.g. GH-42)"
+        )
+    return value
+
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -507,7 +521,7 @@ def main() -> int:
     # download command
     dl_parser = subparsers.add_parser("download", help="Download a document")
     dl_parser.add_argument("--url", required=True, help="GitHub comment or file URL")
-    dl_parser.add_argument("--task-id", required=True, help="Task ID (e.g., GH-42)")
+    dl_parser.add_argument("--task-id", required=True, type=_valid_task_id, help="Task ID (e.g., GH-42)")
     dl_parser.add_argument(
         "--category",
         required=True,
@@ -521,7 +535,7 @@ def main() -> int:
 
     # lookup command
     lookup_parser = subparsers.add_parser("lookup", help="Find documents by task ID")
-    lookup_parser.add_argument("--task-id", required=True, help="Task ID to search")
+    lookup_parser.add_argument("--task-id", required=True, type=_valid_task_id, help="Task ID to search")
     lookup_parser.add_argument("--category", help="Filter by category")
     lookup_parser.add_argument(
         "--project-root", type=Path, help="Project root directory"

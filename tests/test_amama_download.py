@@ -291,6 +291,22 @@ def test_main_download_failure_surfaces_cause_on_stderr():
     assert "ERROR: Download failed" in err.getvalue()
 
 
+def test_main_rejects_task_id_with_glob_metacharacters():
+    """M2: main() rejects a --task-id with glob metachars / path separators (parse-time fail-fast)."""
+    for bad in ("*", "a/b", "x?y", "[abc]"):
+        prev = sys.argv
+        sys.argv = ["amama_download.py", "lookup", "--task-id", bad]
+        code = None
+        try:
+            with contextlib.redirect_stderr(io.StringIO()):
+                dl.main()
+        except SystemExit as exc:
+            code = exc.code
+        finally:
+            sys.argv = prev
+        assert code not in (0, None), f"task-id {bad!r} must be rejected (got exit {code!r})"
+
+
 # --------------------------------------------------------------------------- #
 # Slow tests (spin a real local HTTP server) get a 🐌 marker in the result table.
 # --------------------------------------------------------------------------- #
