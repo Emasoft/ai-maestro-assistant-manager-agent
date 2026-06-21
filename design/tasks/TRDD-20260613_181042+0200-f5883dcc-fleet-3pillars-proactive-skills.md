@@ -3,7 +3,7 @@ trdd-id: f5883dcc-3ee0-4335-85cb-c2aa12fe9b9e
 title: Fleet 3-pillars as proactive ama-* skills in the core plugin + governance-aware wiring + fool-proof rule injection
 column: planned
 created: 2026-06-13T18:10:42+0200
-updated: 2026-06-16T02:49:24+0200
+updated: 2026-06-21T21:45:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -23,7 +23,20 @@ external-refs: ["github.com/Emasoft/ai-maestro-plugin"]
 
 # TRDD-f5883dcc — 3-pillars as proactive `ama-*` skills (core plugin) + governance-aware wiring
 
-## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-16
+## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-21
+
+**✅ UPDATE 2026-06-21 — AMAMA-exemplar (plan step 3) VERIFIED DONE.** AMAMA carries
+NO redundant 3-pillars skills (`amama-prrd-trdd-kanban` / `amama-proposal-approvals`
+absent from `skills/`) AND its main agent is wired to the core `ama-*` skills with
+the MANAGER slice (`ama-prrd-{get,find,edit,propose}`, `ama-trdd-{write,find,update,
+transition}`, `ama-kanban-render`, `ama-proposal-approvals`). The AMAMA-exemplar
+slice is complete. **CACHE-STALENESS FINDING:** this machine's core-plugin cache is
+**2.7.6** but live (gh `plugin.json`) is **2.7.12** — the `ama-*` skills (shipped
+2.7.9) are NOT installed here, so #11's architecture is not fully LIVE on this
+machine until a marketplace refresh pulls core ≥2.7.9 (janitor/user — out-of-bounds
+for me per `/go-on-yourself` "no changes outside the project folder"). **Remaining
+Phase B is cross-project/external:** B.1 core SessionStart rule auto-install +
+B.2 fleet wiring of the other role plugins' agents.
 
 **✅ PHASE A SHIPPED (core ai-maestro-plugin v2.7.9, 2026-06-16).** The granular `ama-*` skills landed
 exactly as specified below: `ama-prrd-{get,find,edit,propose}`, `ama-trdd-{write,find,update,transition}`,
