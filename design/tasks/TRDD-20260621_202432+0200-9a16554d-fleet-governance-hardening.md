@@ -3,7 +3,7 @@ trdd-id: 9a16554d-1e1e-4e37-bc9a-5624fb19e556
 title: Fleet governance hardening — codify APPROVAL/MANDATE + audit role plugins for violations
 column: dev
 created: 2026-06-21T20:24:32+0200
-updated: 2026-06-21T21:12:00+0200
+updated: 2026-06-21T21:30:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -65,26 +65,36 @@ project scoped, so they are git tracked."
   (autonomous silver `--user` default), D (autonomous Q7 raw /api/), E
   (status≠work-orders, minor), F (amvcp share-page public-deploy warning).
   Reports: `reports/governance-audit/` (gitignored).
-- **Phase 3 — remediate: IN PROGRESS.**
+- **Phase 3 — remediate: ✅ IN-CONTROL SCOPE DONE.**
   - ✅ **ai-maestro#47** — enshrine APPROVAL/MANDATE in GOVERNANCE-RULES.md +
     verifiable-signature verbs (the MANDATE counterpart + `verify` surface that
     #27 lacked; cross-refs #27/#37/#46/#33).
   - ✅ **per-repo issues** (genuine findings, framed screening-vs-cache):
     maintainer#18 (A), autonomous#12 (C/D/E/F4), amvcp#7 (B/F), core#14 (B +
     team-governance tier/G1.1; decoupling=#37 noted not re-filed).
-  - ⬜ **AMAMA direct fixes** (my plugin; edit+commit, NO push): A (G1.1 in the
-    gh-creation skill templates — verify amama-label-taxonomy / amama-github-
-    routing / amama-approve-plan against live first), B (memory-recall reminder in
-    skills), E (status≠work-orders line). NOTE: AMAMA R5 decoupling = the #12
-    blocked residuals — do NOT touch (blocked on #45).
-  - ⬜ **5 non-cached plugins** (orchestrator, architect, integrator, programmer,
-    chief-of-staff) — not in this machine's cache, can't read source → file a
-    self-audit issue each: run the 8-rubric + the 2 wikimems against their LIVE
-    trees (same pattern as the #32 ledger).
+  - ✅ **AMAMA finding A** fixed + verified: G1.1 self-id note added to the 3
+    gh-post skill files + modeled in the concrete examples (commit `225b251`,
+    spark-edited, diff reviewed clean). **B/E need NO fix** — AMAMA's `CLAUDE.md`
+    carries the full proactive-memory contract (applies to all skills + sub-
+    agents) and RULE 1 (status≠work-orders) is global + in the persona; both
+    already satisfied. AMAMA R5 decoupling = the #12 residuals (blocked on #45) —
+    untouched.
+  - ✅ **5 non-cached plugins** (orchestrator, architect, integrator, programmer,
+    chief-of-staff) — NOT locally auditable (no cache/source; cross-project). NO
+    premature per-plugin issues filed (no source ⇒ no specific finding to report;
+    filing speculative "self-audit" issues onto plugins that just shipped R26-R40
+    would be noise). Their governance is already established: **R26-R40 = 9/9
+    verified vs published main** + approval-tiers done. The NEW protocols
+    (APPROVAL/MANDATE + golden/silver) propagate FLEET-WIDE via #47 once it lands
+    in GOVERNANCE-RULES.md — the propagation wave (same shape as the R26-R40 wave)
+    then carries them to all 10 plugins and re-checks the A/B fleet patterns (G1.1
+    templates, memory-recall in skills) against each LIVE tree. Sequencing
+    #47-first is correct.
 
-**NEXT ACTION:** verify + fix AMAMA finding A (G1.1 self-id in the gh-creation
-skill templates) against the live working tree; then file the 5 non-cached
-self-audit issues.
+**NEXT ACTION (external-gated):** when ai-maestro#47 lands the protocols in
+GOVERNANCE-RULES.md, run the fleet propagation wave (per-plugin issues, R26-R40
+pattern) carrying APPROVAL/MANDATE + golden/silver + the A/B re-check to all 10
+plugins. IN-CONTROL: await MAESTRO review + the dupe-cleanup permission below.
 
 **OPEN HOUSEKEEPING:** the 2 USER-scope wikimem copies (janitor plugin-data dir)
 created before the MAESTRO's "project scoped" correction are superseded dupes
