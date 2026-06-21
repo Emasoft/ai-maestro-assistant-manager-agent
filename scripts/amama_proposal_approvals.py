@@ -59,6 +59,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import re
@@ -67,6 +68,9 @@ import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_atomic_write import atomic_write
 
 # Frontmatter is the block between the first two `---` fences at file start.
 _FM_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
@@ -309,9 +313,7 @@ def write_manifest(root: Path, items: list[Proposal]) -> Path:
         "items": [asdict(p) for p in items],
     }
     target = mdir / MANIFEST_NAME
-    tmp = target.with_suffix(".json.tmp")
-    tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    tmp.replace(target)
+    atomic_write(target, json.dumps(payload, indent=2))
     return target
 
 
@@ -385,14 +387,23 @@ def apply_move(
 ) -> dict:
     """Mutate frontmatter (column + updated) + append the log line, then move the file."""
     dest = dest_dir / src.name
-    text = src.read_text(encoding="utf-8")
-    text = set_frontmatter_field(text, "column", target_col)
+    original = src.read_text(encoding="utf-8")
+    text = set_frontmatter_field(original, "column", target_col)
     text = set_frontmatter_field(text, "updated", iso_now())
     bullet = f"- {iso_now()} — {verb} by {approver} (tier {tier}). {reason}"
     text = append_approval_log(text, bullet)
-    src.write_text(text, encoding="utf-8")
-
-    kind = move_file(root, src, dest)
+    # Mutate the source atomically, then move. If the move fails, RESTORE the
+    # pre-mutation content so a failed decision never strands a mutated file in
+    # the source zone (e.g. a `planned`-column file still in design/proposals/) —
+    # F7. The rollback's own error is suppressed so the ORIGINAL move failure is
+    # what propagates (fail-fast), not a secondary rollback error.
+    atomic_write(src, text)
+    try:
+        kind = move_file(root, src, dest)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            atomic_write(src, original)
+        raise
     return {
         "verb": verb.lower(),
         "from": src.relative_to(root).as_posix(),
@@ -641,7 +652,10 @@ def find_in(folder: Path, ident: str) -> Path | None:
     for path in sorted(folder.glob("*.md")):
         if path.name.lower() == "readme.md":
             continue
-        fm = parse_frontmatter(path.read_text(encoding="utf-8"))
+        try:
+            fm = parse_frontmatter(path.read_text(encoding="utf-8"))
+        except OSError:
+            continue  # unreadable (perms/race/broken symlink) can't be the target — skip, don't crash the search (F6)
         tid = fm.get("trdd-id", "")
         if tid and (tid == ident or tid[:8] == ident):
             return path
@@ -667,7 +681,14 @@ def cmd_archive(args: argparse.Namespace) -> int:
             else:
                 missing.append(ident)
             continue
-        fm = parse_frontmatter(path.read_text(encoding="utf-8"))
+        try:
+            fm = parse_frontmatter(path.read_text(encoding="utf-8"))
+        except OSError:
+            # Found by find_in but unreadable now (race / perms) — surface as
+            # unprocessed instead of crashing mid-batch (which would leave earlier
+            # moves already applied). F6.
+            missing.append(ident)
+            continue
         tier = fm.get("approval-tier", "—")
         if args.dry_run:
             dest = archived_dir(root) / path.name

@@ -313,5 +313,43 @@ def test_move_file_tracked_uses_git_untracked_uses_fs():
         assert ppa.move_file(root, fresh, ppa.tasks_dir(root) / fresh.name) == "fs"
 
 
+def test_apply_move_rolls_back_source_on_move_failure():
+    """F7: if the move fails, apply_move restores the source to its pre-mutation content."""
+    with temp_repo() as (root, _ids):
+        src = next(ppa.proposals_dir(root).glob("*p1*.md"))
+        original = src.read_text(encoding="utf-8")
+        dest_dir = ppa.tasks_dir(root)
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        # Pre-create the destination so move_file raises FileExistsError (it refuses
+        # to clobber an existing dest) — the move fails AFTER the in-place mutation.
+        (dest_dir / src.name).write_text("pre-existing blocker\n", encoding="utf-8")
+        raised = False
+        try:
+            ppa.apply_move(
+                root, src, target_col="planned", dest_dir=dest_dir,
+                verb="APPROVED", approver="USER", tier="2", reason="r",
+            )
+        except FileExistsError:
+            raised = True
+        assert raised, "apply_move must propagate the move failure (fail-fast)"
+        # Source restored: content byte-identical to before, NOT mutated to planned.
+        restored = src.read_text(encoding="utf-8")
+        assert restored == original
+        assert "column: proposal" in restored
+        # No atomic-write temp litter left behind in the source zone.
+        assert list(ppa.proposals_dir(root).glob("*.tmp.*")) == []
+
+
+def test_find_in_skips_unreadable_entry():
+    """F6: find_in skips an unreadable entry (a broken symlink) and still finds a readable target."""
+    with temp_repo() as (root, ids):
+        pdir = ppa.proposals_dir(root)
+        # A broken symlink whose read_text raises OSError — find_in must skip it and
+        # keep searching, not crash the whole lookup mid-scan.
+        (pdir / "TRDD-broken-symlink.md").symlink_to(pdir / "nonexistent-target.md")
+        found = ppa.find_in(pdir, ids["p3"][:8])
+        assert found is not None and "p3" in found.name
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))
