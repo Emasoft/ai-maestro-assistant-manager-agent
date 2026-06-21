@@ -11,7 +11,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -20,9 +19,12 @@ from typing import Any, cast
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import yaml
+from amama_state_paths import exec_state_path
 
-# State file location
-EXEC_STATE_FILE = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / "design" / "exec-phase.local.md"
+# Canonical orchestration-phase state file. One source of truth — the old
+# design/exec-phase.local.md path was never written by /approve-plan, so
+# /notify-agent always reported "not in phase" (bug C1); see amama_state_paths.
+EXEC_STATE_FILE = exec_state_path()
 
 
 def parse_frontmatter(file_path: Path) -> tuple[dict[str, Any], str]:

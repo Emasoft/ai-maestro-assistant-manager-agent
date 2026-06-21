@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from amama_report_writer import ReportWriter
+from amama_state_paths import exec_state_path, plan_state_path, project_root
 
 
 def main() -> int:
@@ -36,12 +37,13 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    # Get project directory from environment or current directory
-    project_dir = Path.cwd()
-    claude_dir = project_dir / ".claude"
+    # Project root + the canonical phase-state files. One source of truth —
+    # the writer and every reader MUST resolve these the same way (the C1 bug
+    # was a writer/reader path mismatch); see amama_state_paths.
+    project_dir = project_root()
 
     # Check for plan phase state file
-    plan_state_file = claude_dir / "orchestrator-plan-phase.local.md"
+    plan_state_file = plan_state_path(project_dir)
     if not plan_state_file.exists():
         print(
             "ERROR: No plan phase state file found. Run /start-planning first.",
@@ -66,7 +68,7 @@ def main() -> int:
     }
 
     # Create orchestration state file
-    exec_state_file = claude_dir / "orchestrator-exec-phase.local.md"
+    exec_state_file = exec_state_path(project_dir)
     exec_state_file.write_text(
         f"""# Orchestration Phase State
 

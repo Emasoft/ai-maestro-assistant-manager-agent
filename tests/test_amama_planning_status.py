@@ -2,7 +2,7 @@
 """Real (no-mock) tests for scripts/amama_planning_status.py.
 
 Each test builds a throwaway project dir under the system temp dir, optionally
-writes a synthetic ``design/plan-phase.local.md`` state file with real YAML
+writes a synthetic ``.claude/orchestrator-plan-phase.local.md`` state file with real YAML
 frontmatter, then runs the ACTUAL CLI as a subprocess (with cwd +
 CLAUDE_PROJECT_DIR pinned to the temp dir) and asserts against the real outcome:
 exit code, the stdout summary, the stderr error, and the verbose report file the
@@ -10,7 +10,7 @@ real ReportWriter writes into the temp project's design/reports/ directory.
 
 Running via subprocess (rather than calling main() in-process) is deliberate and
 load-bearing: PLAN_STATE_FILE is computed from CLAUDE_PROJECT_DIR at MODULE-IMPORT
-time (scripts/amama_planning_status.py line 26), and the script calls sys.exit()
+time (via amama_state_paths.plan_state_path), and the script calls sys.exit()
 and reads Path.cwd() (line 142). A subprocess exercises the genuine entry point
 with the env bound before import, and with zero global-state pollution (no
 sys.argv / chdir / re-import leak between tests). Nothing is mocked — the real
@@ -43,8 +43,8 @@ def _make_project(state_body: str | None) -> Path:
     """Create a temp project dir; if state_body is not None, write the plan state file."""
     root = Path(tempfile.mkdtemp(prefix="amama-ps-test-"))
     if state_body is not None:
-        (root / "design").mkdir(parents=True, exist_ok=True)
-        (root / "design" / "plan-phase.local.md").write_text(state_body, encoding="utf-8")
+        (root / ".claude").mkdir(parents=True, exist_ok=True)
+        (root / ".claude" / "orchestrator-plan-phase.local.md").write_text(state_body, encoding="utf-8")
     return root
 
 
@@ -106,7 +106,7 @@ Synthetic fixture body.
 # Tests
 # --------------------------------------------------------------------------- #
 def test_error_when_no_state_file():
-    """Missing design/plan-phase.local.md -> rc 1, 'Not in Plan Phase' on stderr, no report."""
+    """Missing .claude/orchestrator-plan-phase.local.md -> rc 1, 'Not in Plan Phase' on stderr, no report."""
     root = _make_project(state_body=None)
     try:
         cp = _run(root)

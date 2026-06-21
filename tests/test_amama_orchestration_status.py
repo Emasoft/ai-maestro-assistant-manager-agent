@@ -8,7 +8,7 @@ temp dir) and asserts against the real outcome: exit code, the stdout summary,
 the stderr error, and the verbose report file the real ReportWriter writes.
 
 Running via subprocess (rather than calling main() in-process) is deliberate:
-the script reads Path.cwd() and calls sys.exit(), so a subprocess exercises the
+the script reads $CLAUDE_PROJECT_DIR and calls sys.exit(), so a subprocess exercises the
 genuine entry point with zero global-state pollution (no sys.argv / chdir leak
 between tests). Nothing is mocked — the real ReportWriter performs real file I/O
 into the temp project's design/reports/ directory.

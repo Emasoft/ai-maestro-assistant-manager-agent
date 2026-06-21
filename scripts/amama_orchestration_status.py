@@ -19,6 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from amama_report_writer import ReportWriter
+from amama_state_paths import exec_state_path
 
 
 def main() -> int:
@@ -42,12 +43,9 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    # Get project directory from environment or current directory
-    project_dir = Path.cwd()
-    claude_dir = project_dir / ".claude"
-
-    # Check for orchestration phase state file
-    exec_state_file = claude_dir / "orchestrator-exec-phase.local.md"
+    # The canonical orchestration-phase state file. One source of truth —
+    # must match the writer in amama_approve_plan (see amama_state_paths).
+    exec_state_file = exec_state_path()
     if not exec_state_file.exists():
         print(
             "ERROR: Not in Orchestration Phase. Run /approve-plan first.",

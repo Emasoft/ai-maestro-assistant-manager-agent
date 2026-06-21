@@ -3,7 +3,7 @@
 
 Each test builds a throwaway project under the system temp dir, populates it
 with synthetic ``.claude`` state + ``USER_REQUIREMENTS.md``, runs the ACTUAL
-``main()`` (which reads ``Path.cwd()`` and ``sys.argv``), and asserts against
+``main()`` (which reads ``$CLAUDE_PROJECT_DIR`` and ``sys.argv``), and asserts against
 the real filesystem outcome (exec-phase state file written, plan state mutated,
 error exits when prerequisites are missing). Nothing is mocked: ``ReportWriter``
 runs for real, its output pinned into the temp tree via ``CLAUDE_PROJECT_DIR``

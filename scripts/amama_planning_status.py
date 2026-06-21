@@ -13,7 +13,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -21,9 +20,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import yaml
 from amama_report_writer import ReportWriter
+from amama_state_paths import plan_state_path
 
-# Plan phase state file location
-PLAN_STATE_FILE = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / "design" / "plan-phase.local.md"
+# Canonical plan-phase state file. One source of truth — the old
+# design/plan-phase.local.md path was never written by /approve-plan, so
+# /planning-status always reported "not in Plan Phase" (bug C1); see amama_state_paths.
+PLAN_STATE_FILE = plan_state_path()
 
 
 def parse_frontmatter(file_path: Path) -> dict:
