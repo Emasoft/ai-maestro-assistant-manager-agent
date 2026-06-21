@@ -25,6 +25,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import yaml
 
+from amama_atomic_write import atomic_write
+
 # Default root location
 DEFAULT_ROOT = "design"
 
@@ -176,7 +178,7 @@ def write_yaml_file(path: Path, data: dict[str, Any]) -> bool:
         content = yaml.dump(
             data, default_flow_style=False, allow_unicode=True, sort_keys=False
         )
-        path.write_text(content, encoding="utf-8")
+        atomic_write(path, content)
         return True
     except Exception as e:
         print(f"ERROR: Failed to write {path}: {e}")
@@ -187,7 +189,7 @@ def write_json_file(path: Path, data: dict[str, Any]) -> bool:
     """Write data to a JSON file."""
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        atomic_write(path, json.dumps(data, indent=2))
         return True
     except Exception as e:
         print(f"ERROR: Failed to write {path}: {e}")

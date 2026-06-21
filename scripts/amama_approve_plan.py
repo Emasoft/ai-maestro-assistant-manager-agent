@@ -15,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_atomic_write import atomic_write
 from amama_report_writer import ReportWriter
 from amama_state_paths import exec_state_path, plan_state_path, project_root
 
@@ -69,7 +70,8 @@ def main() -> int:
 
     # Create orchestration state file
     exec_state_file = exec_state_path(project_dir)
-    exec_state_file.write_text(
+    atomic_write(
+        exec_state_file,
         f"""# Orchestration Phase State
 
 Plan ID: {plan_data["plan_id"]}
@@ -83,7 +85,6 @@ Plan Approved: true
 ## Agents
 (No agents registered yet)
 """,
-        encoding="utf-8",
     )
 
     # Update plan state to mark as complete
@@ -92,7 +93,7 @@ Plan Approved: true
         plan_content = plan_content.replace(
             "plan_phase_complete: false", "plan_phase_complete: true"
         )
-        plan_state_file.write_text(plan_content, encoding="utf-8")
+        atomic_write(plan_state_file, plan_content)
 
     # Build verbose output for report file
     lines = []

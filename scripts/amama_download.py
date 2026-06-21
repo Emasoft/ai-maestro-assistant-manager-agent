@@ -30,6 +30,7 @@ from typing import Any
 
 # Ensure sibling modules are importable
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from amama_atomic_write import atomic_write
 from amama_report_writer import ReportWriter
 
 # Category definitions with folder structure
@@ -337,7 +338,7 @@ def download_document(
     }
 
     metadata_path = folder_path / f"{filename.replace('.md', '')}_metadata.json"
-    metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+    atomic_write(metadata_path, json.dumps(metadata, indent=2))
 
     # Lock the downloaded file + its metadata read-only for integrity. Do NOT lock
     # the containing folder: a read-only directory rejects new entries, so a later
