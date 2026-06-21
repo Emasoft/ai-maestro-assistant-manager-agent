@@ -217,8 +217,8 @@ Issues: Missing integration tests, documentation incomplete
 
 Use these tools (when available) to gather data without consuming your context window:
 
-- **LLM Externalizer** (`mcp__llm-externalizer__*`): Use `scan_folder` to scan project files for patterns, `chat` to summarize large log files, `batch_check` to check multiple files against the same criteria. Always pass file paths via `input_files_paths`, never paste content. Include brief project context in `instructions`. Set `ensemble: false` for simple queries.
-- **Serena MCP** (`mcp__serena-mcp__*`): Use `get_symbols_overview` to list code symbols, `find_symbol` to locate definitions. Prefer over Grep for code-aware searches.
+- **LLM Externalizer** (LLM Externalizer MCP tools, match `mcp__*llm-externalizer*` — exact prefix varies with install layout; resolve via ToolSearch): Use `scan_folder` to scan project files for patterns, `chat` to summarize large log files, `batch_check` to check multiple files against the same criteria. Always pass file paths via `input_files_paths`, never paste content. Include brief project context in `instructions`. Set `ensemble: false` for simple queries.
+- **Serena MCP** (Serena MCP tools, match `mcp__*serena*` — exact prefix varies with install layout; resolve via ToolSearch): Use `get_symbols_overview` to list code symbols, `find_symbol` to locate definitions. Prefer over Grep for code-aware searches.
 - **TLDR CLI**: Use `tldr structure .` for code structure, `tldr dead <path>` for dead code, `tldr diagnostics` for type/lint checks without running full tests.
 
 ---

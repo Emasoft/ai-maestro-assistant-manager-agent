@@ -742,7 +742,7 @@ Use these tools to conserve orchestrator context tokens. Instruct sub-agents to 
 
 ### LLM Externalizer (plugin: `llm-externalizer`)
 
-Offload bounded analysis tasks to cheaper external LLMs via MCP tools (`mcp__llm-externalizer__*`). More capable than Haiku subagents and cheaper. Use `discover` to check availability before first use.
+Offload bounded analysis tasks to cheaper external LLMs via the LLM Externalizer MCP tools (match `mcp__*llm-externalizer*` — the exact prefix varies with install layout; resolve via ToolSearch). More capable than Haiku subagents and cheaper. Use `discover` to check availability before first use.
 
 | Task | Tool |
 |------|------|
@@ -761,7 +761,7 @@ Offload bounded analysis tasks to cheaper external LLMs via MCP tools (`mcp__llm
 
 ### Serena MCP (if available)
 
-Use Serena MCP (`mcp__serena-mcp__*`) for precise code symbol navigation:
+Use the Serena MCP tools (match `mcp__*serena*` — the exact prefix varies with install layout; resolve via ToolSearch) for precise code symbol navigation:
 - `find_symbol` / `find_referencing_symbols` — locate definitions and usages
 - `get_symbols_overview` — list all symbols in a file
 - `read_file` / `search_for_pattern` — targeted code reading

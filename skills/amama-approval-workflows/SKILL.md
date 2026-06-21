@@ -13,6 +13,11 @@ GovernanceRequest API workflows. Two tracks:
 - **Governance** (this skill): Team, COS, agent lifecycle, transfers.
 - **Operational** (`amama-amcos-coordination`): Deploys, merges, tests.
 
+**Tier ladder:** these approvals sit on the canonical required-permissions ladder in
+`~/.claude/rules/trdd-approval-tiers.md` (Tier 0 agent-independent → 1 COS → 2 MANAGER →
+3 USER/MAESTRO; operationalized by the `amama-proposal-approvals` skill). A request only the
+user can grant is **Tier 3 = escalate-to-MAESTRO**.
+
 ## Prerequisites
 
 - AI Maestro v2+ reachable via the frozen `aimaestro-governance.sh` CLI
