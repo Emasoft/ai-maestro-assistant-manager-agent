@@ -84,10 +84,29 @@ def send_ai_maestro_message(
             text=True,
             timeout=30,
         )
-        return result.returncode == 0
-    except Exception as e:
-        print(f"Error: {e}")
+    except FileNotFoundError:
+        # amp-send is the AI Maestro messaging CLI; a missing binary is a distinct,
+        # actionable cause — NOT a generic "service down". Surface it, don't hide it.
+        print(
+            "ERROR: 'amp-send' not found on PATH — the AI Maestro messaging CLI is "
+            "not installed.",
+            file=sys.stderr,
+        )
         return False
+    except subprocess.TimeoutExpired:
+        print(
+            "ERROR: 'amp-send' timed out after 30s — the AI Maestro service may be "
+            "unresponsive.",
+            file=sys.stderr,
+        )
+        return False
+    # Any OTHER exception is deliberately NOT caught — it propagates (fail-fast) so a
+    # real bug is never masked as a generic send failure (M7 was a broad except).
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip() or "(no output)"
+        print(f"ERROR: amp-send exited {result.returncode}: {detail}", file=sys.stderr)
+        return False
+    return True
 
 
 def main() -> int:
@@ -150,8 +169,7 @@ def main() -> int:
         print(f"  Priority: {args.priority}")
         return 0
     else:
-        print("✗ Failed to send message")
-        print("  Check AI Maestro service status")
+        print("✗ Failed to send message (the cause is reported above).", file=sys.stderr)
         return 1
 
 

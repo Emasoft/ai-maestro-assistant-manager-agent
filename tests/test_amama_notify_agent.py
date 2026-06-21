@@ -18,6 +18,8 @@ Run: python3 tests/test_amama_notify_agent.py      (exit 0 = all pass)
 
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import stat
 import sys
@@ -175,6 +177,24 @@ def test_send_message_returns_false_on_nonzero_exit_and_missing_binary():
             assert na.send_ai_maestro_message("sess", "S", "M") is False
         finally:
             os.environ["PATH"] = old_path
+
+
+def test_send_message_surfaces_actionable_cause_when_amp_send_missing():
+    """M7: a missing amp-send surfaces an actionable cause to stderr, not a generic message."""
+    with tempfile.TemporaryDirectory(prefix="na-amp-cause-") as d:
+        empty_bin = Path(d) / "empty"
+        empty_bin.mkdir()
+        old_path = os.environ.get("PATH", "")
+        os.environ["PATH"] = str(empty_bin)  # ONLY an empty dir → amp-send unresolvable
+        err = io.StringIO()
+        try:
+            with contextlib.redirect_stderr(err):
+                result = na.send_ai_maestro_message("sess", "S", "M")
+        finally:
+            os.environ["PATH"] = old_path
+        assert result is False
+        msg = err.getvalue()
+        assert "amp-send" in msg and ("not found" in msg or "PATH" in msg)
 
 
 if __name__ == "__main__":

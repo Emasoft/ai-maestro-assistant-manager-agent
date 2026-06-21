@@ -17,8 +17,10 @@ Run: python3 tests/test_amama_download.py      (exit 0 = all pass)
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import http.server
+import io
 import json
 import os
 import shutil
@@ -257,6 +259,36 @@ def test_redownload_into_same_folder_succeeds():  # 🐌 spins a real HTTP serve
         srv.server_close()
         _rmtree(root)
         _rmtree(src)
+
+
+def test_main_download_failure_surfaces_cause_on_stderr():
+    """H4: main()'s download command writes the failure cause to stderr (not only the report)."""
+    root = _tmp()
+    missing_dir = _tmp()
+    missing = missing_dir / f"absent-{uuid.uuid4().hex}.md"  # guaranteed not to exist
+    argv = [
+        "amama_download.py", "download",
+        "--url", f"file://{missing}",
+        "--task-id", "GH-x", "--category", "tasks",
+        "--project-root", str(root),
+    ]
+    prev_argv, prev_env = sys.argv, os.environ.get("CLAUDE_PROJECT_DIR")
+    sys.argv = argv
+    os.environ["CLAUDE_PROJECT_DIR"] = str(root)  # ReportWriter writes under the temp root
+    err = io.StringIO()
+    try:
+        with contextlib.redirect_stderr(err):
+            rc = dl.main()
+    finally:
+        sys.argv = prev_argv
+        if prev_env is None:
+            os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        else:
+            os.environ["CLAUDE_PROJECT_DIR"] = prev_env
+        _rmtree(root)
+        _rmtree(missing_dir)
+    assert rc == 1
+    assert "ERROR: Download failed" in err.getvalue()
 
 
 # --------------------------------------------------------------------------- #

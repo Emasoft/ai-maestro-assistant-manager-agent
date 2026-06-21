@@ -575,6 +575,13 @@ def main() -> int:
             rw.print_summary(f"{result.name} saved to {result.parent}", report_path)
             return 0
         else:
+            # Surface the captured failure cause on stderr (H4): main() redirects
+            # download_document's stdout into the report buffer, so without this the
+            # operator sees only the [FAILED] summary and must open the report to
+            # learn WHY. Writing the buffer to stderr keeps the cause both in the
+            # report AND visible on the terminal (download_document keeps its tested
+            # return-None contract; the excepts inside it are already specific).
+            sys.stderr.write(buf.getvalue())
             rw.print_failure("Download failed", report_path)
             return 1
 
