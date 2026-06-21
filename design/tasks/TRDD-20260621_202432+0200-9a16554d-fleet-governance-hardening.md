@@ -3,7 +3,7 @@ trdd-id: 9a16554d-1e1e-4e37-bc9a-5624fb19e556
 title: Fleet governance hardening — codify APPROVAL/MANDATE + audit role plugins for violations
 column: dev
 created: 2026-06-21T20:24:32+0200
-updated: 2026-06-21T20:24:32+0200
+updated: 2026-06-21T21:12:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -52,16 +52,43 @@ project scoped, so they are git tracked."
   (`.claude/project/memory/`, git-tracked), committed `41bdb34`. (First written
   to USER scope, then relocated per the MAESTRO's "make the memory project
   scoped" correction; USER-scope copies pending cleanup-permission per RULE 0.)
-- **Phase 2 — governance audit: NEXT.** Parallel agents (one per cached plugin)
-  read the plugin's cache against the rubric below + write a findings report to
-  `reports/governance-audit/`. Non-cached 5 → gh-fetch persona audit or
-  self-audit issue.
-- **Phase 3 — remediate:** AMAMA violations → fix directly (own TRDDs); other
-  plugins → per-repo issues; ai-maestro issue → enshrine APPROVAL/MANDATE in the
-  governance SSOT (GOVERNANCE-RULES.md) + request the signature-verification
-  script verbs (so "the agent can verify" a signature is real).
+- **Phase 2 — governance audit: ✅ DONE.** 5 cached plugins audited (parallel
+  sonnet agents) + ALL reports verified against the LIVE working trees. KEY
+  FINDING: auditors saw the stale installed CACHES (AMAMA 2.9.1 vs live 2.12.8;
+  maintainer 1.5.0; core 2.7.6; autonomous 1.3.3; amvcp 1.3.6) → systematically
+  OVER-reported. Most HIGH/CRITICAL = already-tracked fleet work: core CRITICAL
+  (`ai-maestro-hook.cjs` fetch bypass) = ai-maestro#37 (.cjs rewrite); AMAMA's 6
+  decoupling HIGH = the #12 `DECOUPLE-BLOCKED` residuals (blocked on #45). Stale-
+  but-fixed: AMAMA R6 (report-generator memory present in live), R2/R4/R1 (PRRD/
+  G1.1/tiers in live persona). GENUINE residue: A (G1.1 in skill TEMPLATES not
+  just persona — fleet), B (memory-recall in individual SKILLS — fleet), C
+  (autonomous silver `--user` default), D (autonomous Q7 raw /api/), E
+  (status≠work-orders, minor), F (amvcp share-page public-deploy warning).
+  Reports: `reports/governance-audit/` (gitignored).
+- **Phase 3 — remediate: IN PROGRESS.**
+  - ✅ **ai-maestro#47** — enshrine APPROVAL/MANDATE in GOVERNANCE-RULES.md +
+    verifiable-signature verbs (the MANDATE counterpart + `verify` surface that
+    #27 lacked; cross-refs #27/#37/#46/#33).
+  - ✅ **per-repo issues** (genuine findings, framed screening-vs-cache):
+    maintainer#18 (A), autonomous#12 (C/D/E/F4), amvcp#7 (B/F), core#14 (B +
+    team-governance tier/G1.1; decoupling=#37 noted not re-filed).
+  - ⬜ **AMAMA direct fixes** (my plugin; edit+commit, NO push): A (G1.1 in the
+    gh-creation skill templates — verify amama-label-taxonomy / amama-github-
+    routing / amama-approve-plan against live first), B (memory-recall reminder in
+    skills), E (status≠work-orders line). NOTE: AMAMA R5 decoupling = the #12
+    blocked residuals — do NOT touch (blocked on #45).
+  - ⬜ **5 non-cached plugins** (orchestrator, architect, integrator, programmer,
+    chief-of-staff) — not in this machine's cache, can't read source → file a
+    self-audit issue each: run the 8-rubric + the 2 wikimems against their LIVE
+    trees (same pattern as the #32 ledger).
 
-**NEXT ACTION:** launch the Phase-2 parallel audit of the 5 cached plugins.
+**NEXT ACTION:** verify + fix AMAMA finding A (G1.1 self-id in the gh-creation
+skill templates) against the live working tree; then file the 5 non-cached
+self-audit issues.
+
+**OPEN HOUSEKEEPING:** the 2 USER-scope wikimem copies (janitor plugin-data dir)
+created before the MAESTRO's "project scoped" correction are superseded dupes
+pending RULE-0 deletion permission.
 
 ## Governance rubric (what the audit checks each plugin against)
 
