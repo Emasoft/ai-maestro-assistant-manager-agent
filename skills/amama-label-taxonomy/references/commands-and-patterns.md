@@ -9,8 +9,11 @@
 
 ### When User Creates Request
 
+> **G1.1 (PRRD G1.1, GOLDEN)**: every issue, PR, and comment body MUST begin with the self-identification line, then a blank line, then the body:
+> `_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._`
+
 ```bash
-# Create issue with initial labels
+# Create issue with initial labels (the --body MUST begin with the G1.1 self-id line)
 gh issue create \
   --title "$USER_REQUEST_TITLE" \
   --body "$USER_REQUEST_BODY" \
@@ -99,7 +102,7 @@ The implementation agent is actively working on this task.
 ```bash
 gh issue create \
   --title "Login page broken" \
-  --body "User reported urgent login page issue" \
+  --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._' 'User reported urgent login page issue')" \
   --label "type:bug" \
   --label "priority:critical" \
   --label "status:backlog"

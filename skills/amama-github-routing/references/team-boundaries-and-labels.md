@@ -18,6 +18,8 @@ All GitHub issues must be tagged with a team label to enforce team boundaries. T
 
 When creating or routing an issue:
 
+> **G1.1 (PRRD G1.1, GOLDEN)**: any issue/PR/comment `--body` you write MUST begin with the self-identification line (`_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._`), then a blank line, then the body. The label-only commands below omit `--body` purely to demonstrate label syntax.
+
 ```bash
 # Add team label on issue creation
 gh issue create --title "Fix login timeout" --label "bug,team:backend"
