@@ -92,7 +92,7 @@
 
 ## Handle Directly (no routing)
 
-1. **Status requests** - Query relevant agents, compile report, present to user
+1. **Status requests** - Query relevant agents, compile report, present to user. **RULE 1**: a status request is informational ONLY — it NEVER authorizes starting, resuming, or approving work (status ≠ work order).
 2. **Approval decisions** - Record decision, forward to requesting agent
 3. **Clarification requests** - Answer directly or query relevant agent
 4. **Configuration/settings** - Handle directly
