@@ -1,9 +1,9 @@
 ---
 trdd-id: 6fc2c762-6c80-4adb-9241-209834425ecb
 title: Dedupe test scaffolding to clear the Mega-Linter jscpd CI gate
-column: dev
+column: testing
 created: 2026-06-21T16:38:10+0200
-updated: 2026-06-21T16:38:10+0200
+updated: 2026-06-21T17:55:00+0200
 current-owner: amama
 assignee: cpv-plugin-fixer
 priority: 1
@@ -75,4 +75,33 @@ pre-push hook mandates publish.py), then **watches CI to GREEN** (publish.py exi
 6. `publish.py --patch` → v2.12.7 published, AND CI run is **fully green**
    (Lint included), confirmed via `gh run watch --exit-status`.
 
+## Progress — 2026-06-21 (cpv-plugin-fixer)
+
+DRY extraction applied. `tests/_harness.py` now holds the single copy of the
+result-table renderer (`_table`) + the standalone runner (`run_standalone`).
+All 12 test files (11 new + `test_proposal_approvals.py`) import it and replace
+their copied runner block with `if __name__ == "__main__": sys.exit(run_standalone(globals()))`.
+Per-file slow-test 🐌 markers preserved via `run_standalone(globals(), slow=_SLOW)`
+(download: 1 slow, user_prompt_submit: 4 slow); empty-`_SLOW` placeholders removed.
+
+Local verification (faithful CI repro = `npx jscpd@4.0.5 --reporters console --threshold 5 --format python tests scripts shared`):
+- jscpd: **7.36% (15 clones) → 0.32% (1 clone)**, exit 0. The 1 residual clone is the
+  `_run()` subprocess helper between orchestration_status/planning_status (18 lines,
+  169 tokens) — far under 5%, no further extraction needed.
+- pytest: 67 passed (unchanged). Each test file standalone: exit 0 + unicode table.
+- ruff (E,F,W,I) clean (isort auto-fixed the 2 added imports); mypy clean;
+  `cpv-remote-validate lint` → CRITICAL/MAJOR/MINOR/WARNING all 0.
+
+NEXT: publish via `publish.py --patch` (→ v2.12.7), then watch CI to GREEN (the Lint
+job runs the real jscpd; publish.py's local gates do NOT — CPV #143). On green CI,
+flip `column: complete`.
+
 ## Notes and lessons learned
+
+[^1]: [ocd:2026-06-21 lmd:2026-06-21] The local `npx jscpd` resolved to an
+  UNRELATED Rust tool (`cpd` v5) with different flags — to reproduce CI faithfully
+  you MUST pin the exact CI tool `jscpd@4.0.5` (the node MegaLinter linter) AND scope
+  it to the git-tracked python dirs (`tests scripts shared`), because a bare `.`
+  scan pulled in gitignored `.venv/`/`scripts_dev/` and diluted the % to a wrong 2%.
+  Lesson: reproduce a CI linter with the linter's EXACT version + the EXACT file set
+  CI sees (gitignore-filtered), or the local number is meaningless.

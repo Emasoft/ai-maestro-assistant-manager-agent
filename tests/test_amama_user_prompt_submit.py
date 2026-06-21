@@ -34,6 +34,7 @@ _SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
 sys.path.insert(0, str(_SCRIPTS))
 
 import amama_user_prompt_submit as ups  # noqa: E402  # pyright: ignore[reportMissingImports]
+from _harness import run_standalone  # noqa: E402
 
 _SCRIPT = _SCRIPTS / "amama_user_prompt_submit.py"
 
@@ -152,7 +153,7 @@ def test_no_aid_auth_skips_silently_without_network():
 
 
 # --------------------------------------------------------------------------- #
-# Runner + result table
+# Slow tests (real local HTTP server round-trips) get a 🐌 marker in the table.
 # --------------------------------------------------------------------------- #
 _SLOW = {"test_normal_user_prompt_posts_presence_with_bearer",
          "test_system_injected_cron_prompt_is_filtered_no_post",
@@ -160,40 +161,5 @@ _SLOW = {"test_normal_user_prompt_posts_presence_with_bearer",
          "test_no_aid_auth_skips_silently_without_network"}
 
 
-def _table(rows: list[tuple[str, str, str]]) -> str:
-    name_w = max(len(r[0]) for r in rows)
-    desc_w = max(len(r[2]) for r in rows)
-    top = f"┏━{'━' * name_w}━┳━━━━━━━━┳━{'━' * desc_w}━┓"
-    head = f"┃ {'Test':<{name_w}} ┃ Status ┃ {'Description':<{desc_w}} ┃"
-    sep = f"┡━{'━' * name_w}━╇━━━━━━━━╇━{'━' * desc_w}━┩"
-    bot = f"└─{'─' * name_w}─┴────────┴─{'─' * desc_w}─┘"
-    out = [top, head, sep]
-    for name, status, desc in rows:
-        out.append(f"│ {name:<{name_w}} │ {status:<6} │ {desc:<{desc_w}} │")
-    out.append(bot)
-    return "\n".join(out)
-
-
-def main() -> int:
-    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
-    rows: list[tuple[str, str, str]] = []
-    failed = 0
-    for fn in tests:
-        desc = (fn.__doc__ or "").strip().split("\n")[0]
-        marker = " 🐌" if fn.__name__ in _SLOW else ""
-        try:
-            fn()
-            rows.append((fn.__name__, "PASS", f"{desc}{marker}"))
-        except AssertionError as exc:
-            failed += 1
-            rows.append((fn.__name__, "FAIL", f"{desc}  [{exc}]"))
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            rows.append((fn.__name__, "ERROR", f"{desc}  [{type(exc).__name__}: {exc}]"))
-    print(_table(rows))
-    print(f"\n{len(tests) - failed}/{len(tests)} passed.")
-    return 1 if failed else 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run_standalone(globals(), slow=_SLOW))

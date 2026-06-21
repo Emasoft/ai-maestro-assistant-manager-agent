@@ -36,6 +36,7 @@ _SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
 sys.path.insert(0, str(_SCRIPTS))
 
 import amama_stop_check as sc  # noqa: E402  # pyright: ignore[reportMissingImports]
+from _harness import run_standalone  # noqa: E402
 
 
 # --------------------------------------------------------------------------- #
@@ -159,46 +160,5 @@ def test_malformed_stdin_falls_back_and_does_not_crash():
         assert out.strip() == "", "no blocking issues → silent allow"
 
 
-# --------------------------------------------------------------------------- #
-# Runner + result table
-# --------------------------------------------------------------------------- #
-_SLOW: set[str] = set()  # none of these are slow; placeholder for the 🐌 marker convention
-
-
-def _table(rows: list[tuple[str, str, str]]) -> str:
-    name_w = max(len(r[0]) for r in rows)
-    desc_w = max(len(r[2]) for r in rows)
-    top = f"┏━{'━' * name_w}━┳━━━━━━━━┳━{'━' * desc_w}━┓"
-    head = f"┃ {'Test':<{name_w}} ┃ Status ┃ {'Description':<{desc_w}} ┃"
-    sep = f"┡━{'━' * name_w}━╇━━━━━━━━╇━{'━' * desc_w}━┩"
-    bot = f"└─{'─' * name_w}─┴────────┴─{'─' * desc_w}─┘"
-    out = [top, head, sep]
-    for name, status, desc in rows:
-        out.append(f"│ {name:<{name_w}} │ {status:<6} │ {desc:<{desc_w}} │")
-    out.append(bot)
-    return "\n".join(out)
-
-
-def main() -> int:
-    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
-    rows: list[tuple[str, str, str]] = []
-    failed = 0
-    for fn in tests:
-        snail = " 🐌" if fn.__name__ in _SLOW else ""
-        desc = (fn.__doc__ or "").strip().split("\n")[0] + snail
-        try:
-            fn()
-            rows.append((fn.__name__, "PASS", desc))
-        except AssertionError as exc:
-            failed += 1
-            rows.append((fn.__name__, "FAIL", f"{desc}  [{exc}]"))
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            rows.append((fn.__name__, "ERROR", f"{desc}  [{type(exc).__name__}: {exc}]"))
-    print(_table(rows))
-    print(f"\n{len(tests) - failed}/{len(tests)} passed.")
-    return 0 if failed == 0 else 1
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run_standalone(globals()))
