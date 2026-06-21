@@ -27,11 +27,11 @@ import json
 import os
 import shutil
 import stat
+import sys
 import tempfile
 from pathlib import Path
 
 _SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
-import sys
 
 sys.path.insert(0, str(_SCRIPTS))
 
