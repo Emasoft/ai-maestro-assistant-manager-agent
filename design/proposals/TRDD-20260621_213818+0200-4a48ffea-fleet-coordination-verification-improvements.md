@@ -96,8 +96,8 @@ audit/scan skills already hand-roll this; this lesson is the durable artifact.)
 
 ## Routing
 
-On MAESTRO review: P5 → janitor + audit skills; P6 → ai-maestro server (relates to
-#46); P7 → CPV #44 acceptance; P8 → janitor; P9 stays a documented constraint (no
+On MAESTRO review: P5 → janitor + audit skills; P6 → ai-maestro server (relates to #46);
+P7 → CPV #44 acceptance; P8 → janitor; P9 stays a documented constraint (no
 repo to file against).
 
 ## Notes and lessons learned

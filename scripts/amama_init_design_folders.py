@@ -21,10 +21,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# amama_atomic_write is a SIBLING module; it only resolves after the sys.path
+# insert above. Keep this import below that statement (and apart from the
+# third-party block) so an import-sorter can't hoist it up and break the import.
 from amama_atomic_write import atomic_write
 
 # Default root location
