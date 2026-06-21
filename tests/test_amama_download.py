@@ -65,8 +65,28 @@ def _serve_dir(directory: Path) -> tuple[socketserver.TCPServer, int]:
     return srv, srv.server_address[1]
 
 
+def _write_gh_shim(bindir: Path, *, body: str) -> None:
+    """Create an executable fake ``gh`` that prints ``body`` for the comment-fetch call.
+
+    ``gh`` is the external dependency (the GitHub API transport), NOT the function
+    under test. extract_attachment_url still runs the real ``subprocess.run`` against
+    this shim and really reads its stdout — only the network round-trip is stood in
+    for. The shim ignores its args and emits the body the real ``--jq .body`` would,
+    so the function's regex-scan of the comment body is exercised for real.
+    """
+    shim = bindir / "gh"
+    shim.write_text(
+        "#!/usr/bin/env python3\n"
+        "import sys\n"
+        f"sys.stdout.write({body!r})\n"
+        "sys.exit(0)\n",
+        encoding="utf-8",
+    )
+    shim.chmod(shim.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+
 # --------------------------------------------------------------------------- #
-# Tests (exactly 7)
+# Tests
 # --------------------------------------------------------------------------- #
 def test_get_storage_root_resolution():
     """get_storage_root honours project_root, then AMAMA_STORAGE_ROOT, then cwd."""
@@ -307,10 +327,201 @@ def test_main_rejects_task_id_with_glob_metacharacters():
         assert code not in (0, None), f"task-id {bad!r} must be rejected (got exit {code!r})"
 
 
+def test_init_storage_creates_category_dirs():
+    """init_storage builds the storage root with every category folder and its subfolders."""
+    root = _tmp()
+    try:
+        dl.init_storage(root)
+        store = dl.get_storage_root(root)
+        assert store.is_dir(), "storage root must be created"
+        # Every category in CATEGORIES gets its own folder...
+        for category, config in dl.CATEGORIES.items():
+            cat_path = store / category
+            assert cat_path.is_dir(), f"category folder missing: {category}"
+            # ...and each declared subfolder exists under it.
+            for subfolder in config["subfolders"]:
+                assert (cat_path / subfolder).is_dir(), f"subfolder missing: {category}/{subfolder}"
+        # The sibling archive folder and the .gitkeep marker are created too.
+        assert (store.parent / "archive").is_dir()
+        assert (store.parent / ".gitkeep").is_file()
+        # A fresh project root gets a .gitignore that excludes the local cache.
+        gitignore = (root / ".gitignore").read_text(encoding="utf-8")
+        assert ".aimaestro/" in gitignore
+    finally:
+        _rmtree(root)
+
+
+def test_extract_attachment_url_happy_path_from_gh_comment():
+    """extract_attachment_url pulls the .md link from a real (shimmed) gh comment body."""
+    root = _tmp()  # holds the fake `gh` on PATH; isolates the test
+    md_url = "https://github.com/owner/repo/files/12345/completion-report.md"
+    comment_body = (
+        "Here is the completion report for the task.\n\n"
+        f"Attachment: [completion-report.md]({md_url})\n\n"
+        "Please review and ack.\n"
+    )
+    _write_gh_shim(root, body=comment_body)
+    comment_url = "https://github.com/owner/repo/issues/42#issuecomment-998877"
+    old_path = os.environ.get("PATH", "")
+    os.environ["PATH"] = f"{root}{os.pathsep}{old_path}"
+    try:
+        result = dl.extract_attachment_url(comment_url)
+    finally:
+        os.environ["PATH"] = old_path
+        _rmtree(root)
+    # The regex accepted the issue-comment URL, the real subprocess ran the shim,
+    # and the .md link was extracted from the body the shim emitted.
+    assert result == md_url
+
+
+def test_lookup_documents_finds_downloaded_doc_and_parses_metadata():  # 🐌 spins a real HTTP server
+    """lookup_documents locates a really-downloaded doc and parses its metadata.json sidecar."""
+    root = _tmp()
+    src = _tmp()
+    payload = b"# delegation\n\nDo TASK-123.\n"
+    (src / "deleg.md").write_bytes(payload)
+    srv, port = _serve_dir(src)
+    try:
+        downloaded = dl.download_document(
+            url=f"http://127.0.0.1:{port}/deleg.md",
+            task_id="GH-123",
+            category="tasks",
+            doc_type="delegation",
+            sender="amama-orchestrator",
+            project_root=root,
+        )
+        assert downloaded is not None and downloaded.exists()
+
+        # lookup with NO category filter walks every category and must find the doc.
+        results = dl.lookup_documents("GH-123", project_root=root)
+        assert len(results) == 1, "the one downloaded doc must be found exactly once"
+        found = results[0]
+        assert found["category"] == "tasks"
+        assert found["task_id"] == "GH-123"
+        assert Path(found["path"]) == downloaded
+        # The sidecar metadata.json was parsed (not an empty {}): real fields present.
+        meta = found["metadata"]
+        assert meta["task_id"] == "GH-123"
+        assert meta["category"] == "tasks"
+        assert meta["sender"]["agent"] == "amama-orchestrator"
+        import hashlib
+
+        assert meta["download"]["sha256"] == hashlib.sha256(payload).hexdigest()
+
+        # A category filter that does not contain the doc returns nothing.
+        assert dl.lookup_documents("GH-123", project_root=root, category="reports") == []
+        # An unknown task id finds nothing either.
+        assert dl.lookup_documents("GH-404", project_root=root) == []
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
+def test_main_dispatches_download_lookup_verify_subcommands():  # 🐌 spins a real HTTP server
+    """main() dispatches download (rc0+file), then lookup (rc0) and verify (rc0, clean) on the store."""
+    root = _tmp()
+    src = _tmp()
+    (src / "spec.md").write_bytes(b"# toolchain spec\nversion: 7\n")
+    srv, port = _serve_dir(src)
+    prev_argv = sys.argv
+    prev_env = os.environ.get("CLAUDE_PROJECT_DIR")
+    # ReportWriter writes under CLAUDE_PROJECT_DIR — point it at the temp root so
+    # the smoke test never litters the real repo's reports/ tree.
+    os.environ["CLAUDE_PROJECT_DIR"] = str(root)
+    try:
+        # 1) download subcommand → rc 0 and the file actually lands in the store.
+        sys.argv = [
+            "amama_download.py", "download",
+            "--url", f"http://127.0.0.1:{port}/spec.md",
+            "--task-id", "GH-7", "--category", "specs",
+            "--subcategory", "toolchains", "--doc-type", "toolchain",
+            "--project-root", str(root),
+        ]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            rc_dl = dl.main()
+        assert rc_dl == 0
+        store = dl.get_storage_root(root)
+        landed = list((store / "specs" / "toolchains").glob("*.md"))
+        assert len(landed) == 1, "download subcommand must write exactly one .md"
+
+        # 2) lookup subcommand → rc 0 (it always returns 0; the dispatch ran).
+        sys.argv = [
+            "amama_download.py", "lookup",
+            "--task-id", "GH-7", "--project-root", str(root),
+        ]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            rc_lookup = dl.main()
+        assert rc_lookup == 0
+
+        # 3) verify subcommand on a healthy store → rc 0 (no integrity/permission issues).
+        sys.argv = [
+            "amama_download.py", "verify",
+            "--project-root", str(root), "--json",
+        ]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            rc_verify = dl.main()
+        assert rc_verify == 0, "a clean store must verify with rc 0"
+    finally:
+        sys.argv = prev_argv
+        if prev_env is None:
+            os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        else:
+            os.environ["CLAUDE_PROJECT_DIR"] = prev_env
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
+def test_main_verify_returns_rc1_when_store_has_issues():  # 🐌 spins a real HTTP server
+    """main() verify exits 1 when the store has issues (a tampered, now-writable file)."""
+    root = _tmp()
+    src = _tmp()
+    (src / "doc.md").write_bytes(b"# report\nbody\n")
+    srv, port = _serve_dir(src)
+    prev_argv = sys.argv
+    prev_env = os.environ.get("CLAUDE_PROJECT_DIR")
+    os.environ["CLAUDE_PROJECT_DIR"] = str(root)  # keep ReportWriter inside the temp root
+    try:
+        downloaded = dl.download_document(
+            url=f"http://127.0.0.1:{port}/doc.md",
+            task_id="GH-8", category="reports", subcategory="status",
+            doc_type="status", project_root=root,
+        )
+        assert downloaded is not None
+        # Tamper: restore the write bit and change the bytes → both a writable_file
+        # and an integrity_violation issue, which the verify command must report.
+        downloaded.chmod(downloaded.stat().st_mode | stat.S_IWUSR)
+        downloaded.write_bytes(b"# report\nTAMPERED\n")
+
+        sys.argv = ["amama_download.py", "verify", "--project-root", str(root)]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            rc = dl.main()
+        assert rc == 1, "verify must exit non-zero when issues are present"
+    finally:
+        sys.argv = prev_argv
+        if prev_env is None:
+            os.environ.pop("CLAUDE_PROJECT_DIR", None)
+        else:
+            os.environ["CLAUDE_PROJECT_DIR"] = prev_env
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
 # --------------------------------------------------------------------------- #
 # Slow tests (spin a real local HTTP server) get a 🐌 marker in the result table.
 # --------------------------------------------------------------------------- #
-_SLOW = {"test_download_real_file_via_local_http_server", "test_redownload_into_same_folder_succeeds"}
+_SLOW = {
+    "test_download_real_file_via_local_http_server",
+    "test_redownload_into_same_folder_succeeds",
+    "test_lookup_documents_finds_downloaded_doc_and_parses_metadata",
+    "test_main_dispatches_download_lookup_verify_subcommands",
+    "test_main_verify_returns_rc1_when_store_has_issues",
+}
 
 
 if __name__ == "__main__":
