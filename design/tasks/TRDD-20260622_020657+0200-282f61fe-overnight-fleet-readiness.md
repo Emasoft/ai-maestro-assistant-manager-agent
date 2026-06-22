@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-22T02:06:57+0200
+updated: 2026-06-22T03:08:54+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -41,10 +41,46 @@ before claiming; gh bodies via single-quoted heredoc (backtick hazard); every gh
 post starts with the G1.1 self-id line.
 
 ### NEXT ACTION
-Read ai-maestro#43 (kanban round-trip hand-off to MANAGER) + #46 (AMP identity
-blocker) + #40 — determine whether I can RUN the kanban round-trip tonight to
-verify + close #40 (the fleet-wide kanban-pillar blocker). If #46 (AMP identity)
-blocks it, post the precise blocker on #43/#40 and move to the coordination sweep.
+Publish AMAMA v2.12.10 (ships C2) via the strict gate (dry-run → real), watch CI;
+then post the consolidated FLEET MORNING-BRIEF on the hub (ai-maestro#35) + update
+memory. Loop.
+
+### DECISIONS RESOLVED (5 surfaced in TRDD-4c388042 bucket C) — 2026-06-22
+- **C2 ✅ DONE** — approve_plan made honest (removed the GitHub-issues stub + dead
+  `--skip-issues`/`--verbose` flags); committed f0cec77; 93 tests + ruff + mypy green.
+- **C3 ✅ NO-OP** — `--password` is already correctly caveated everywhere as a
+  USER/UI R32 residual AMAMA never supplies (verified across 6 skill refs).
+- **C4 ✅ KEEP** — the 2 `model: opus` agent pins stay (USER: only Opus; guarantees
+  it regardless of session model; the CPV CA-04 cache-warmth nit is non-blocking).
+- **C1 ⏸ DEFER→USER** — retire the CozoDB `amama-session-memory` skill. It
+  contradicts CLAUDE.md ("ships no per-plugin memory skills") BUT both agents +
+  the main-agent body (L53/L544) actively depend on it for user-continuity →
+  retire-vs-reconcile is a real architecture decision with live deps + product
+  impact. RECOMMEND retire (continuity via janitor memory + presence-tracker), USER decides.
+- **F7 ⏸ DEFER→USER** — gate the Stop-hook GitHub-issue block on `$AID_AUTH`. The
+  hook ALREADY fail-softs when gh is unavailable (the common solo case), so the
+  "wrongly blocked" risk is narrow; AID-gating is a low-stakes semantic refinement.
+  RECOMMEND add the AID gate (fleet-only block), not urgent — USER call.
+
+### MORNING USER-ACTIONS (verified — hand to USER)
+1. **Redeploy the agent CLIs** (unblocks AMAMA #12 + makes the 4 #45 verbs + ~10
+   drifted scripts live): `bash ~/ai-maestro/install-agent-cli.sh` (verified
+   deployer, INSTALL_DIR=$HOME/.local/bin). 10/32 deployed aimaestro-*/amp-* are
+   stale vs the governance-rules source.
+2. After redeploy → ORCHESTRATOR runs the kanban round-trip (orchestrator#24) →
+   MANAGER verifies + closes ai-maestro#40.
+3. Nudge each idle plugin Claude to action its [fleet #44] + decoupling + gov-audit
+   issue (idle agents don't poll — they need a USER nudge per memory).
+
+### PROGRESS (2026-06-22 night)
+- ✅ AMAMA v2.12.9 published + CI green (all 4 workflows).
+- ✅ Kanban verb re-verify: corrected the architect's STALE #43 blocker — the
+  create-task verb HAS the relationship flags (flag is `--parent`, NOT
+  `--parent-task`), commit 6e1eeb57, DEPLOYED on-host (deployed==source byte-id).
+  Posted #43 + nudged orchestrator#24.
+- ✅ #45 verbs: verified BUILT in source (governance-rules) but NOT deployed
+  (10/32 drift) → redeploy = morning user-action #1. AMAMA #12 residuals stay
+  blocked-on-deploy (correctly NOT repointed to undeployed verbs). Posted #45.
 
 ### WORKLIST (highest-leverage first)
 - [ ] **Kanban round-trip** (#43→#40, orchestrator#24): server says deployed;
