@@ -2,11 +2,18 @@
 """
 Approve Plan Command - Transition from Plan Phase to Orchestration Phase
 
-This script handles plan approval workflow:
-1. Validates plan completeness
-2. Creates GitHub Issues for modules (unless --skip-issues)
-3. Updates state files
-4. Outputs transition summary
+This script handles the plan -> orchestration phase transition:
+1. Validates prerequisites (plan-phase state file + USER_REQUIREMENTS.md)
+2. Writes the orchestration-phase state file
+3. Marks the plan phase complete
+4. Outputs a transition summary
+
+NOTE: this command does NOT create GitHub issues. An earlier draft advertised
+per-module issue creation that was never implemented (``modules`` was hardcoded
+empty); the false claim and its dead ``--skip-issues`` flag were removed so the
+command's contract matches its behaviour (fail-fast / honesty — no stub that
+lies). Per-module issue creation, if wanted later, is a separate feature with
+its own design.
 """
 
 import argparse
@@ -25,18 +32,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Approve plan and transition to Orchestration Phase"
     )
-    parser.add_argument(
-        "--skip-issues",
-        action="store_true",
-        help="Skip GitHub Issue creation (for offline work)",
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Show detailed output",
-    )
-
-    args = parser.parse_args()
+    # No options: parse only to enable -h/--help and to fail-fast on any
+    # unknown argument. This command is a pure phase transition driven by the
+    # state files; the previous --verbose/--skip-issues flags were dead (never
+    # read / never created issues) and were removed.
+    parser.parse_args()
 
     # Project root + the canonical phase-state files. One source of truth —
     # the writer and every reader MUST resolve these the same way (the C1 bug
@@ -65,7 +65,6 @@ def main() -> int:
     plan_data = {
         "plan_id": f"plan-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
         "goal": "Implementation plan",
-        "modules": [],  # TODO: Implement real plan module loading via design documents
     }
 
     # Create orchestration state file
@@ -102,15 +101,6 @@ Plan Approved: true
     lines.append("╠════════════════════════════════════════════════════════════════╣")
     lines.append(f"║ Plan ID: {plan_data['plan_id']:<52} ║")
     lines.append(f"║ Goal: {plan_data['goal']:<55} ║")
-    lines.append("╠════════════════════════════════════════════════════════════════╣")
-
-    if args.skip_issues:
-        lines.append("║ GitHub Issues: SKIPPED (--skip-issues flag)                   ║")
-    else:
-        lines.append("║ GITHUB ISSUES CREATED                                          ║")
-        lines.append("╠════════════════════════════════════════════════════════════════╣")
-        lines.append("║ (No modules defined - issues will be created during planning)  ║")
-
     lines.append("╠════════════════════════════════════════════════════════════════╣")
     lines.append("║ NEXT STEPS                                                     ║")
     lines.append("╠════════════════════════════════════════════════════════════════╣")

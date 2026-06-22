@@ -89,7 +89,7 @@ def _run(*argv: str) -> int:
 def test_approve_happy_path_creates_exec_state_and_flips_plan():
     """Happy path: exec-phase state file is written and plan flips to complete."""
     with temp_project(plan_incomplete=True) as root:
-        rc = _run("--skip-issues")
+        rc = _run()
         assert rc == 0
         exec_state = root / ".claude" / "orchestrator-exec-phase.local.md"
         assert exec_state.exists()

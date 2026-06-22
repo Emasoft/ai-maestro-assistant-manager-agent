@@ -87,7 +87,7 @@ def test_writer_and_readers_agree_end_to_end():
             )
 
         # 1. Writer: approve the plan -> writes the exec-phase state file.
-        approve = run("amama_approve_plan.py", "--skip-issues")
+        approve = run("amama_approve_plan.py")
         assert approve.returncode == 0, approve.stderr
         assert sp.exec_state_path(root).exists()
 

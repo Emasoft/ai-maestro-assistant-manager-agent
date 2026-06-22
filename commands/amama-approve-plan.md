@@ -1,123 +1,78 @@
 ---
 name: amama-approve-plan
 description: "Approve the plan and transition from Plan Phase to Orchestration Phase"
-argument-hint: "[--skip-issues]"
+argument-hint: ""
 allowed-tools: ["Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/amama_approve_plan.py:*)"]
 ---
 
 # Approve Plan Command
 
-Mark the plan as approved and transition from Plan Phase to Orchestration Phase. This is the critical transition point that creates GitHub Issues and enables implementation.
+Mark the plan as approved and transition from Plan Phase to Orchestration Phase. This is the critical transition point that enables implementation.
 
 ## Usage
 
 ```!
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/amama_approve_plan.py" $ARGUMENTS
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/amama_approve_plan.py"
 ```
+
+This command takes no arguments.
 
 ## What This Command Does
 
-1. **Validates Plan Completeness**
-   - Checks all requirement sections are complete
-   - Verifies all modules have acceptance criteria
-   - Confirms USER_REQUIREMENTS.md exists
+1. **Validates prerequisites**
+   - The plan-phase state file (`.claude/orchestrator-plan-phase.local.md`) exists
+   - `USER_REQUIREMENTS.md` exists
 
-2. **Creates GitHub Issues** (unless `--skip-issues`)
-   - One issue per module with:
-     - Module specs from plan
-     - Acceptance criteria
-     - Priority labels
-   - Adds all issues to GitHub Project board
+2. **Writes the orchestration-phase state file**
+   - Creates `.claude/orchestrator-exec-phase.local.md` with `Status: ready` and `Plan Approved: true`
 
-3. **Updates State Files**
-   - Marks plan phase as complete
-   - Creates orchestration phase state file
-   - Links modules to GitHub issue numbers
+3. **Marks the plan phase complete**
+   - Flips `plan_phase_complete: false` → `true` in the plan-phase state file (idempotent — a plan already marked complete is left byte-identical)
 
-4. **Outputs Transition Summary**
-   - Lists created issues with URLs
-   - Shows next steps for orchestration
+4. **Outputs a transition summary**
+   - Prints a one-line summary to stdout; writes the full table to a report file under `reports/plan-approval/`
+
+> This command does **not** create GitHub issues. An earlier draft advertised per-module issue creation that was never implemented (`modules` was hardcoded empty); the false claim and its dead `--skip-issues` flag were removed so the command's contract matches its behaviour. Per-module issue creation, if wanted later, is a separate feature with its own design.
 
 ## Prerequisites
 
 Before running this command:
-- [ ] USER_REQUIREMENTS.md must be complete
-- [ ] All modules must have acceptance criteria defined
-- [ ] All requirement sections must have `complete` status
+- [ ] `USER_REQUIREMENTS.md` must exist
+- [ ] You must be in the Plan Phase (the plan-phase state file must exist)
 
-Use `/amama-planning-status` to verify all criteria are met.
-
-## Options
-
-| Option | Description |
-|--------|-------------|
-| `--skip-issues` | Skip GitHub Issue creation (for offline work) |
+Use `/amama-planning-status` to verify.
 
 ## Transition Flow
 
 ```
 Plan Phase State File (.claude/orchestrator-plan-phase.local.md)
     |
-    | /amama-approve-plan validates and updates
+    | /amama-approve-plan validates prerequisites
     v
 plan_phase_complete: true
     |
-    | Creates GitHub Issues for all modules
     v
 Orchestration Phase State File (.claude/orchestrator-exec-phase.local.md)
     |
-    | Ready for orchestration phase
     v
 Orchestration Phase begins
 ```
 
-## GitHub Issue Creation
-
-For each module in the plan, creates an issue:
-
-```markdown
-# Module: [module_name]
-
-## Description
-[From plan specifications]
-
-## Acceptance Criteria
-- [ ] [criterion 1]
-- [ ] [criterion 2]
-- [ ] [criterion 3]
-
-## Priority
-[priority_label]
-
-## Related
-- Plan ID: [plan_id]
-- Requirements: USER_REQUIREMENTS.md
-```
-
-Labels applied:
-- `module`
-- `priority-[level]`
-- `status-todo`
-
 ## Output Example
 
-The script prints a concise summary to stdout and writes the full detailed table to a report file:
+The script prints a concise summary to stdout and writes the full table to a report file:
 
 ```
-[DONE] approve-plan - Plan plan-20260108-143022 approved. 3 GitHub issues created.
-Report: design/reports/plan-approval_20260108_143022.md
+[DONE] approve-plan - Plan plan-20260108-143022 approved. State files created.
+Report: reports/plan-approval/20260108_143022-plan-approval.md
 ```
-
-The full report file contains the detailed table with issue URLs, labels, and next steps.
 
 ## Error Conditions
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| "Requirements incomplete" | Requirement sections not complete | Mark all sections complete |
-| "Module missing criteria" | Module has no acceptance criteria | Add acceptance criteria to the module |
+| "No plan phase state file found" | Not in Plan Phase | Run `/start-planning` first |
 | "USER_REQUIREMENTS.md not found" | File doesn't exist | Create the requirements document |
-| "Not in Plan Phase" | No plan phase state file | Enter plan phase first |
 
 ## Related Commands
 
