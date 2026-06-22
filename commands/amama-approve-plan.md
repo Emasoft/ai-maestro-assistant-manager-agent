@@ -1,7 +1,6 @@
 ---
 name: amama-approve-plan
 description: "Approve the plan and transition from Plan Phase to Orchestration Phase"
-argument-hint: ""
 allowed-tools: ["Bash(python3 ${CLAUDE_PLUGIN_ROOT}/scripts/amama_approve_plan.py:*)"]
 ---
 
