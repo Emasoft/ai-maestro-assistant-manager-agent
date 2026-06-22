@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-22T03:08:54+0200
+updated: 2026-06-22T10:19:35+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -41,9 +41,10 @@ before claiming; gh bodies via single-quoted heredoc (backtick hazard); every gh
 post starts with the G1.1 self-id line.
 
 ### NEXT ACTION
-Publish AMAMA v2.12.10 (ships C2) via the strict gate (dry-run → real), watch CI;
-then post the consolidated FLEET MORNING-BRIEF on the hub (ai-maestro#35) + update
-memory. Loop.
+AMAMA fully shipped + coordinated for the morning. Remaining is monitor-and-advance:
+watch for peer responses on #43 / orchestrator#24 / #45 / #35, run MANAGER
+verify-acks if a peer reports ready, and loop via the heartbeat. No AMAMA in-control
+code changes pending (C1/F7 await USER). Awaiting the USER's morning (3 USER actions on #35).
 
 ### DECISIONS RESOLVED (5 surfaced in TRDD-4c388042 bucket C) — 2026-06-22
 - **C2 ✅ DONE** — approve_plan made honest (removed the GitHub-issues stub + dead
@@ -81,6 +82,11 @@ memory. Loop.
 - ✅ #45 verbs: verified BUILT in source (governance-rules) but NOT deployed
   (10/32 drift) → redeploy = morning user-action #1. AMAMA #12 residuals stay
   blocked-on-deploy (correctly NOT repointed to undeployed verbs). Posted #45.
+- ✅ AMAMA v2.12.10 published + CI green — ships C2 (honest approve_plan: removed
+  the GitHub-issues stub + dead --skip-issues/--verbose flags; doc rewritten).
+- ✅ FLEET MORNING-BRIEF posted on ai-maestro#35 (per-plugin blocking-issue index
+  + the 3 USER actions). Memory + the source-vs-deployed lesson updated.
+- ✅ 5 decisions: C2 done · C3 no-op · C4 keep · C1+F7 deferred→USER (recs recorded).
 
 ### WORKLIST (highest-leverage first)
 - [ ] **Kanban round-trip** (#43→#40, orchestrator#24): server says deployed;
