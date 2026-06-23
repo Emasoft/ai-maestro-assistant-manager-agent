@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-23T10:05:08+0200
+updated: 2026-06-23T10:47:11+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -98,6 +98,9 @@ AMAMA in-control code changes pending (C1/F7 await USER).
 - ⚠️ orchestrator head **v1.9.2 RED CI** (Release+CI failed = post-canon regression) — flagged orchestrator#24 with run links; the canon row stands.
 - ✅ Architect CONFIRMED #43 flags work (epic tree unblocked); verified its 2 parity gaps (`amp-kanban-create-task` no `--attachments`; `amp-kanban-list` no `--parent` filter) → acked + server-routed (non-blocking).
 - ✅ Posted canon-**v2.143.0** fleet heads-up on #44: zizmor DROPPED by canon ci.yml (re-add workflow-security); the-skills-menu empty-catalog break (CPV#150, exclude); ci.yml/commitlint/publish.py defects (CPV#151); SBOM defer for post-hoc release.yml.
+- ✅ Refreshed all 4 remaining #44 trackers (core#13, integrator#20, janitor#51, vc#6) with the v2.143.0 landmines + the 4 verified exemplars — each ready to run first-try (all 4 have green CI but have NOT run the canon upgrade; idle, not blocked).
+- ✅ Server keystone re-checked: #40/#45/#46/#48/#49/#42/#47/#39 all OPEN + stalled (server Claude inactive 1-4 days). Critical path to "fleet ready" = the USER wakes the idle Claudes (server, the 4 plugins, orchestrator) — they don't poll; AMP unaddressable from MANAGER; PushNotify spent. Gave the USER the per-session nudge sequence.
+- ⏸ USER took ownership of the janitor-wikimem ↔ harness-MEMORY.md conflict ("I will personally fix this"). PAUSING autonomous memory-maintenance passes (repair/split/harvest/consolidate/conflict) on heartbeat markers until the USER confirms — see [[user-owns-memory-md-wikimem-conflict]]. The heartbeat stub still runs (keepalive + fleet/stale nudges); recall-for-reading still used.
 
 ### WORKLIST (highest-leverage first)
 - [ ] **Kanban round-trip** (#43→#40, orchestrator#24): server says deployed;
