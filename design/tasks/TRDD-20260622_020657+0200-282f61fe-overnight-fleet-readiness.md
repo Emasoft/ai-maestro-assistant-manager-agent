@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-22T10:19:35+0200
+updated: 2026-06-23T10:05:08+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -41,10 +41,14 @@ before claiming; gh bodies via single-quoted heredoc (backtick hazard); every gh
 post starts with the G1.1 self-id line.
 
 ### NEXT ACTION
-AMAMA fully shipped + coordinated for the morning. Remaining is monitor-and-advance:
-watch for peer responses on #43 / orchestrator#24 / #45 / #35, run MANAGER
-verify-acks if a peer reports ready, and loop via the heartbeat. No AMAMA in-control
-code changes pending (C1/F7 await USER). Awaiting the USER's morning (3 USER actions on #35).
+Monitor-and-advance (campaign is peer/USER-gated). **#44 canon tally 6/10**
+(autonomous·COS·programmer·architect·maintainer verified green + orchestrator
+canon-green-but-head-RED). Compute each new DONE row LIVE — count #44 rows + check
+the CURRENT head, not the row's claimed version. Remaining 4 #44 rows: core,
+integrator, janitor, visual-communicator. Open MANAGER items: re-verify orchestrator
+once its v1.9.2 CI is green (flagged orchestrator#24); the 2 #43 parity gaps are
+server-routed (non-blocking). Still gated on the 3 USER actions (#35) + #46. No
+AMAMA in-control code changes pending (C1/F7 await USER).
 
 ### DECISIONS RESOLVED (5 surfaced in TRDD-4c388042 bucket C) — 2026-06-22
 - **C2 ✅ DONE** — approve_plan made honest (removed the GitHub-issues stub + dead
@@ -87,6 +91,13 @@ code changes pending (C1/F7 await USER). Awaiting the USER's morning (3 USER act
 - ✅ FLEET MORNING-BRIEF posted on ai-maestro#35 (per-plugin blocking-issue index
   + the 3 USER actions). Memory + the source-vs-deployed lesson updated.
 - ✅ 5 decisions: C2 done · C3 no-op · C4 keep · C1+F7 deferred→USER (recs recorded).
+
+### PROGRESS (2026-06-23 — resume after restart)
+- ✅ Heartbeat re-armed (session-only; durable→session-only downgrade, re-arms at SessionStart). Corrected the [[janitor-reload-not-agent-runnable]] memory: the janitor `janitor-reload-plugins` wrapper IS agent-runnable (keystroke injection).
+- ✅ #44 canon tally re-counted LIVE = **6/10** (I'd nearly posted a stale 3/10): autonomous · COS · programmer v1.4.4 · architect v2.10.2 · maintainer v1.7.2 · orchestrator v1.9.1(canon). 5 verified green; posted the corrected tally on #44.
+- ⚠️ orchestrator head **v1.9.2 RED CI** (Release+CI failed = post-canon regression) — flagged orchestrator#24 with run links; the canon row stands.
+- ✅ Architect CONFIRMED #43 flags work (epic tree unblocked); verified its 2 parity gaps (`amp-kanban-create-task` no `--attachments`; `amp-kanban-list` no `--parent` filter) → acked + server-routed (non-blocking).
+- ✅ Posted canon-**v2.143.0** fleet heads-up on #44: zizmor DROPPED by canon ci.yml (re-add workflow-security); the-skills-menu empty-catalog break (CPV#150, exclude); ci.yml/commitlint/publish.py defects (CPV#151); SBOM defer for post-hoc release.yml.
 
 ### WORKLIST (highest-leverage first)
 - [ ] **Kanban round-trip** (#43→#40, orchestrator#24): server says deployed;
