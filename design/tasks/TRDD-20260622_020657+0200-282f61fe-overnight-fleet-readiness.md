@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T17:37:46+0200
+updated: 2026-06-24T17:54:44+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -20,6 +20,15 @@ test-requirements: [unit, lint, typecheck]
 # Overnight fleet-readiness campaign
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
+
+**✅ PUBLISHED 2026-06-24 — AMAMA v2.12.11 SHIPPED + ALL CI GREEN.** Release[v2.12.11] ✅,
+CI[main] ✅, Notify-Marketplace ✅, Dependency-Graph ✅; origin/main == local, clean tree.
+Now live: the title-assignment doc fix (was pointing at a non-existent verb), the reassign-cos
+doc fix, and the publish.py CPV-pin (local gate == CI). The dry-run-FIRST caught + fixed an
+MD004 NIT (hard-wrapped prose starting with a plus-marker poisons markdownlint's ul-style
+inference, issue #113) before the push — guardrail recorded in commit a5ed941. publish.py
+exit codes: 1-4 (CRITICAL/MAJOR/MINOR/NIT) all block under --strict, so even a lone NIT fails
+the gate — always dry-run before a real publish.
 
 **✅ UPDATE 2026-06-24 (evening) — orchestrator @main FIXED by its Claude; new red diagnosed
 and the #44 tally re-verified.**
