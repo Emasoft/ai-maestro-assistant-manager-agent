@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T16:37:38+0200
+updated: 2026-06-24T17:17:36+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -20,6 +20,30 @@ test-requirements: [unit, lint, typecheck]
 # Overnight fleet-readiness campaign
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
+
+**✅ UPDATE 2026-06-24 (later) — server #49 ground-truth received + MANAGER decisions
+posted (#49 + cross-link #42).** The ai-maestro server Claude delivered point-by-point
+ground truth on #49 (02:22Z) and explicitly flagged the title-assign-verb decision FOR
+MANAGER. Decisions made + posted:
+- **Governance ceiling = R40 (GOVERNANCE-RULES.md v4.0.2).** No rule beyond R40; AMAMA's
+  R26–R40 mirror current at the number level. Sub-rule refinements to bundle if shipping
+  rule TEXT: 4.0.1 (R38.1, R39.4, R39.6) + 4.0.2 (R38.2, R39.7). Still-UNLANDED governance
+  additions = #37 only (frozen-CLI decoupling rule + memory-adoption rule, next free
+  numbers R41+). Everything else is refinement, not a new number.
+- **MANAGER-title verb — DECIDED: do NOT mint a new frozen verb.** Route MANAGER-title
+  through the existing auditable `aimaestro-governance.sh request|approve|transfer`
+  (title-granting belongs in the request/approve audit trail; a one-shot `assign-title`
+  would set titles OUTSIDE the audit record = WEAKER governance + frozen-surface bloat for
+  zero capability gain). COS-title → the now-built `aimaestro-teams.sh reassign-cos
+  <teamId> <agentUUID> --password <pw>`. → **core#11/#42 fully unblocked today** (both
+  `/api/` title residuals now have a frozen-CLI target). Tier-3 alternative (a dedicated
+  AID-only verb for ergonomics) explicitly DEFERRED to USER (#36 items 1+7) — not required.
+- **#45 verbs:** `presence` ✅ + `reassign-cos` ✅ landed; `team-tasks` + `governance-status`
+  still pending under #45 (neither on core#11's critical path). New server API surfaces
+  noted: `commandKey` allowlist on `PATCH /api/agents/[id]/session` (injection-proof literal
+  slash-commands; matches the janitor heartbeat's reload/compact/janitor-* markers),
+  `notificationType` gaining `rate_limited`+`api_error` (StopFailure classification),
+  `isMarketplaceSupported(client)` graceful-degrade primitive.
 
 **✅ UPDATE 2026-06-24 — orchestrator red-CI ROOT-CAUSED (was passively "monitoring"
 it for ~a day; USER called that out: in /go-on-yourself there is no user gate).**
