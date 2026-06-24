@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T17:34:43+0200
+updated: 2026-06-24T17:37:46+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -38,6 +38,12 @@ test-requirements: [unit, lint, typecheck]
 - **Derived AMAMA doc fixes shipped (commit 127e6be):** title-assignment privilege row corrected
   (deployed `cmd_update` has NO title field → governance request→approve→transfer flow) +
   reassign-cos "not-deployed" residual removed. See the (later) entry below for the #49 decision.
+- **Minor backlog (fold into #14, gated on #37):** AMAMA bundles NO GOVERNANCE-RULES mirror
+  (good — relies on canonical), but cites rules version **v4.0.1** in `agents/…-main-agent.md:115`
+  + `tests/scenarios/governance-scenarios.md:4`; #49 confirms current is **v4.0.2** (+R38.2
+  user↔user-forbidden, +R39.7 ASSISTANT task-inheritance). Content already reflects R39.7;
+  refresh the citation to v4.0.2 + verify R38.2 wording against the canonical text during the
+  #14 propagation wave — NOT a standalone churn (content is correct; only the version# is stale).
 
 **✅ UPDATE 2026-06-24 (later) — server #49 ground-truth received + MANAGER decisions
 posted (#49 + cross-link #42).** The ai-maestro server Claude delivered point-by-point
