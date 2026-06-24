@@ -24,8 +24,9 @@ test-requirements: [unit, lint, typecheck]
 **↻ 2026-06-24T20:34 — quiet-hold re-verification (autonomous tick; nothing AMAMA-actionable).**
 Re-checked each track INDEPENDENTLY (per the "one blocker ≠ all blocked" correction), not assumed:
 AMAMA CI green on v2.12.11 (`baebd60`); no new inbound on tracked issues #21/#22/#42/#49 (latest
-comment on each is AMAMA's OWN, confirmed via the G1.1 line); upstream #37 (R41+ decoupling+memory),
-#47 (APPROVAL/MANDATE), #42/#49 (core handshake) all still OPEN → peer/USER-gated. Decouple
+comment on each is AMAMA's OWN, confirmed via the G1.1 line); the upstream blockers #37 (R41+
+decoupling+memory), #47 (APPROVAL/MANDATE), #42/#49 (core handshake) are all still OPEN →
+peer/USER-gated. Decouple
 residuals RE-VERIFIED still blocked: deployed `~/.local/bin/aimaestro-teams.sh` has NO `tasks` verb
 and no `presence` verb → ai-maestro `governance-rules` branch NOT yet merged+deployed, so
 5fc2cb0a-A.5 + the presence/team-tasks `/api/` fallbacks stay USER-gated (recalled
