@@ -22,7 +22,7 @@ test-requirements: [unit, lint, typecheck]
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
 
 **✅ UPDATE 2026-06-24 (evening) — orchestrator @main FIXED by its Claude; new red diagnosed
-+ #44 tally re-verified.**
+and the #44 tally re-verified.**
 - **orchestrator: @main re-pin LANDED** — its Claude re-pinned CPV `@main`→`@v2.147.1` in BOTH
   ci.yml+release.yml; **v1.9.3 PUBLISHED**, CPV gate green. The remaining CI-on-main red is a
   **DIFFERENT** job: Mega-Linter `COPYPASTE_JSCPD` = **9.86% dup > 5% threshold** (whole-repo
@@ -40,7 +40,7 @@ test-requirements: [unit, lint, typecheck]
   reassign-cos "not-deployed" residual removed. See the (later) entry below for the #49 decision.
 - **Minor backlog (fold into #14, gated on #37):** AMAMA bundles NO GOVERNANCE-RULES mirror
   (good — relies on canonical), but cites rules version **v4.0.1** in `agents/…-main-agent.md:115`
-  + `tests/scenarios/governance-scenarios.md:4`; #49 confirms current is **v4.0.2** (+R38.2
+  and `tests/scenarios/governance-scenarios.md:4`; #49 confirms current is **v4.0.2** (+R38.2
   user↔user-forbidden, +R39.7 ASSISTANT task-inheritance). Content already reflects R39.7;
   refresh the citation to v4.0.2 + verify R38.2 wording against the canonical text during the
   #14 propagation wave — NOT a standalone churn (content is correct; only the version# is stale).
@@ -165,7 +165,7 @@ AMAMA in-control code changes pending (C1/F7 await USER).
 - ✅ AMAMA v2.12.10 published + CI green — ships C2 (honest approve_plan: removed
   the GitHub-issues stub + dead --skip-issues/--verbose flags; doc rewritten).
 - ✅ FLEET MORNING-BRIEF posted on ai-maestro#35 (per-plugin blocking-issue index
-  + the 3 USER actions). Memory + the source-vs-deployed lesson updated.
+  plus the 3 USER actions). Memory + the source-vs-deployed lesson updated.
 - ✅ 5 decisions: C2 done · C3 no-op · C4 keep · C1+F7 deferred→USER (recs recorded).
 
 ### PROGRESS (2026-06-23 — resume after restart)
