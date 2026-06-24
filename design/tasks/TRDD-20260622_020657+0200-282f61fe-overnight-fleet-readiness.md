@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-23T10:47:11+0200
+updated: 2026-06-24T16:37:38+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -20,6 +20,26 @@ test-requirements: [unit, lint, typecheck]
 # Overnight fleet-readiness campaign
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
+
+**✅ UPDATE 2026-06-24 — orchestrator red-CI ROOT-CAUSED (was passively "monitoring"
+it for ~a day; USER called that out: in /go-on-yourself there is no user gate).**
+The orchestrator's `v1.9.2` Release CI is red NOT from a plugin finding — its
+`ci.yml`+`release.yml` pin the CPV gate to `@main`, and **CPV removed its `main`
+branch** (default is now `master`), so `uvx --from git+…claude-plugins-validation@main`
+fails to resolve (`couldn't find remote ref refs/heads/main`); `uv` exits 1 and the
+workflow mis-maps exit 1 → "CRITICAL findings". Verified by local repro + run 27940567560.
+**Fleet blast radius (audited all 10 role plugins' workflows):** orchestrator is the
+ONLY plugin still on `@main` (broken); AMAMA/autonomous/integrator pin `@v2.136.1`,
+core/maintainer pin `@v2.137.0`/`@v2.143.0` (safe); 6 workflows are no-ref (float to
+`master`, resolve now but unpinned). **Actions (in-bounds, Method-1):** CPV heads-up
+= claude-plugins-validation#153; turnkey fix on orchestrator#22 (`@main`→`@v2.136.1`
+in both workflows); fleet audit note on ai-maestro#44. **AMAMA in-yard fix:**
+`publish.py` had an UNPINNED CPV ref → pinned to `@v2.136.1` via `CPV_VERSION`/`CPV_FROM`
+constants (commit `31b9173`, local, not published). **ONE remaining gated step:** author
+the orchestrator fork+PR (Method-2) — per the cross-project hard rule this needs an
+explicit USER "author the PR" greenlight; offered on #22 + to USER. **In-bounds next
+(no gate):** #24 residue A/B in AMAMA's OWN skills (G1.1 in skill templates;
+memory-recall in individual skills) + #25 non-memory improvement proposals.
 
 **USER directive (2026-06-22 ~02:00, going to sleep):** "be sure to solve all
 issues, and to coordinate with the other claude via github issues. don't stop or
