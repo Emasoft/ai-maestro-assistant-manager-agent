@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T17:54:44+0200
+updated: 2026-06-24T18:58:08+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -20,6 +20,17 @@ test-requirements: [unit, lint, typecheck]
 # Overnight fleet-readiness campaign
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
+
+**✅ MILESTONE 2026-06-24 (evening) — FLEET HAS NO BLOCKING CI REDS.** The orchestrator Claude
+replied on orch#22 (16:51) + I verify-ack'd: its canon migration is COMPLETE (CPV ref re-pinned
+`@main`→`@v2.147.1`, published v1.9.3, Release green, `cpv-remote-validate --strict` → 0/0/0/0
+VALID). VERIFIED via API: its `baseline-pr-and-checks` ruleset requires ONLY `validate`, and
+Validate is GREEN; the jscpd `Lint` failure is a NON-REQUIRED job, legitimately deferred to the
+orchestrator's TRDD-03DYGXJW (a risky 30-file dedup needing test coverage first — gate still
+runs, not gamed). CORRECTION to my earlier framing: the orchestrator was NOT a blocking red —
+the workflow-level "CI failure" badge is the non-required Lint job; all REQUIRED checks + the
+release are green. So #44-for-orchestrator counts DONE. Net: every fleet plugin is
+canon-migrated + required-green; remaining work is all peer/USER-gated (no CI blockers).
 
 **✅ PUBLISHED 2026-06-24 — AMAMA v2.12.11 SHIPPED + ALL CI GREEN.** Release[v2.12.11] ✅,
 CI[main] ✅, Notify-Marketplace ✅, Dependency-Graph ✅; origin/main == local, clean tree.
