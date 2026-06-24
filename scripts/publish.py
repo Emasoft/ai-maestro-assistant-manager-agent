@@ -661,6 +661,7 @@ def language_bump_version(info: ProjectInfo, new_version: str) -> list[tuple[boo
 
     if info.has_kind(ProjectKind.CLAUDE_PLUGIN):
         results.append(update_plugin_json(info.root, new_version))
+        results.append(_sync_readme_version(info.root, new_version))
 
     if info.has_kind(ProjectKind.PYTHON):
         results.append(update_pyproject_toml(info.root, new_version))
@@ -691,6 +692,39 @@ def _update_package_json(root: Path, new_version: str) -> tuple[bool, str]:
         return True, f"package.json: {old} -> {new_version}"
     except Exception as e:
         return False, f"package.json error: {e}"
+
+
+def _sync_readme_version(root: Path, new_version: str) -> tuple[bool, str]:
+    """Mirror the README's ``**Version**:`` badge from plugin.json on every bump.
+
+    plugin.json is the single source of truth; the README badge is only a mirror.
+    Without this sync the badge silently drifts behind every release (it had, by
+    6 minors — TRDD-SVEILW09) because nothing else updated it. A missing README
+    or a README without the badge line is a no-op skip, never a failure — the
+    badge is documentation, not a release gate.
+    """
+    path = root / "README.md"
+    if not path.exists():
+        return True, "README.md not found (skipped)"
+    try:
+        content = path.read_text(encoding="utf-8")
+        # Replace the whole badge line so a suffix or trailing space can't dodge
+        # the match; count=1 so only the leading badge (not prose) is touched.
+        new_content, n = re.subn(
+            r"^\*\*Version\*\*:.*$",
+            f"**Version**: {new_version}",
+            content,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        if n == 0:
+            return True, "README.md has no **Version** badge (skipped)"
+        if new_content == content:
+            return True, f"README.md **Version** already {new_version}"
+        path.write_text(new_content, encoding="utf-8")
+        return True, f"README.md **Version**: -> {new_version}"
+    except Exception as e:
+        return False, f"README.md version sync error: {e}"
 
 
 def _sync_uv_lock(root: Path) -> tuple[bool, str]:

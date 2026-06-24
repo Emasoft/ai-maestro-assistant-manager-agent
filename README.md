@@ -1,6 +1,6 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.6.7
+**Version**: 2.12.11
 
 Part of the [AI Maestro](https://github.com/Emasoft/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/Emasoft/ai-maestro-plugins).
 
@@ -120,6 +120,8 @@ the core `ama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
 | `amama-github-routing` | 7 | Routing GitHub operations (issues, PRs, projects, releases) via team labels |
 | `amama-label-taxonomy` | 2 | GitHub label taxonomy management and triage |
 | `amama-session-memory` | 5 | CozoDB-backed session memory, preferences, handoff tracking |
+| `amama-autonomous-fallback` | 2 | Approve-autonomously / defer / escalate when a peer approval arrives and the user is unavailable |
+| `amama-presence-tracker` | 1 | Compute the user's availability state (active/monitoring/away/dnd) for autonomous-fallback gating |
 
 ### Hooks
 
@@ -180,7 +182,7 @@ This plugin ships with AI Maestro. It is installed automatically when AI Maestro
 
 ```bash
 # Start a session with the main agent
-claude --agent amama-assistant-manager-main-agent
+claude --agent ai-maestro-assistant-manager-agent-main-agent
 ```
 
 ### Development Only (--plugin-dir)
@@ -204,7 +206,7 @@ uvx --from git+https://github.com/Emasoft/claude-plugins-validation \
 
 ## Token Optimization
 
-All AMAMA scripts write verbose output to timestamped report files in `design/reports/` and print only 2-3 line summaries to stdout. Sub-agents must follow the same pattern — see the main agent's "Sub-Agent Output Rules" section.
+All AMAMA scripts write verbose output to timestamped report files in the gitignored `reports/<component>/` (never the git-tracked `design/` tree) and print only 2-3 line summaries to stdout. Sub-agents must follow the same pattern — see the main agent's "Sub-Agent Output Rules" section.
 
 ## Scripts
 
@@ -235,7 +237,7 @@ ai-maestro-assistant-manager-agent/
 ├── .claude-plugin/
 │   └── plugin.json                    # Plugin manifest
 ├── agents/
-│   ├── amama-assistant-manager-main-agent.md  # Main agent definition
+│   ├── ai-maestro-assistant-manager-agent-main-agent.md  # Main agent definition
 │   └── amama-report-generator.md              # Report generator agent
 ├── commands/
 │   ├── amama-approve-plan.md          # Approve plan command
@@ -254,8 +256,10 @@ ai-maestro-assistant-manager-agent/
 ├── skills/
 │   ├── amama-amcos-coordination/      # AMCOS coordination skill + 16 reference docs
 │   ├── amama-approval-workflows/      # Governance approval workflows + 11 reference docs
+│   ├── amama-autonomous-fallback/     # Approve/defer/escalate when user unavailable + 2 reference docs
 │   ├── amama-github-routing/          # GitHub operations routing + 7 reference docs
 │   ├── amama-label-taxonomy/          # GitHub label management + 2 reference docs
+│   ├── amama-presence-tracker/        # User availability state for autonomous-fallback + 1 reference doc
 │   ├── amama-role-routing/            # Request routing to specialists + 4 reference docs
 │   ├── amama-session-memory/          # CozoDB session memory + 5 reference docs
 │   ├── amama-status-reporting/        # Status report generation + 4 reference docs
