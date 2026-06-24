@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T18:58:08+0200
+updated: 2026-06-24T20:34:05+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -20,6 +20,20 @@ test-requirements: [unit, lint, typecheck]
 # Overnight fleet-readiness campaign
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
+
+**↻ 2026-06-24T20:34 — quiet-hold re-verification (autonomous tick; nothing AMAMA-actionable).**
+Re-checked each track INDEPENDENTLY (per the "one blocker ≠ all blocked" correction), not assumed:
+AMAMA CI green on v2.12.11 (`baebd60`); no new inbound on tracked issues #21/#22/#42/#49 (latest
+comment on each is AMAMA's OWN, confirmed via the G1.1 line); upstream #37 (R41+ decoupling+memory),
+#47 (APPROVAL/MANDATE), #42/#49 (core handshake) all still OPEN → peer/USER-gated. Decouple
+residuals RE-VERIFIED still blocked: deployed `~/.local/bin/aimaestro-teams.sh` has NO `tasks` verb
+and no `presence` verb → ai-maestro `governance-rules` branch NOT yet merged+deployed, so
+5fc2cb0a-A.5 + the presence/team-tasks `/api/` fallbacks stay USER-gated (recalled
+[[amama-12-decoupling-residuals-blocked-on-verbs]] FIRST → avoided repeating the reverted premature
+repoint; #36 closing does NOT unblock these, as the memo's lesson predicted). 4c388042 in-control
+work DONE (C1 CRITICAL fixed `b04ab8a`; Bucket-B fail-fast complete; D routed CPV#146; E +15 tests);
+remainder = C judgment-calls + L1 dead-`thresholds.py`, both USER-surfaced. axiom reload generation
+handled (/reload-plugins ran). NET: AMAMA ready; quiet hold continues.
 
 **✅ MILESTONE 2026-06-24 (evening) — FLEET HAS NO BLOCKING CI REDS.** The orchestrator Claude
 replied on orch#22 (16:51) + I verify-ack'd: its canon migration is COMPLETE (CPV ref re-pinned
