@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T17:17:36+0200
+updated: 2026-06-24T17:28:29+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -44,6 +44,14 @@ MANAGER. Decisions made + posted:
   slash-commands; matches the janitor heartbeat's reload/compact/janitor-* markers),
   `notificationType` gaining `rate_limited`+`api_error` (StopFailure classification),
   `isMarketplaceSupported(client)` graceful-degrade primitive.
+- **Derived AMAMA doc fixes from the #49 ground-truth (verified vs deployed source):**
+  (a) `creating-amcos-instance.md` — removed the stale `DECOUPLE-BLOCKED reassign-cos not
+  yet deployed` residual → the verb IS deployed (`aimaestro-teams.sh reassign-cos`).
+  (b) `agents/…-main-agent.md` privilege table — the "Change agent titles via
+  `aimaestro-agent.sh update governanceTitle`" row was **factually wrong**: read the
+  deployed `agent-commands.sh::cmd_update` — it accepts ONLY task/model/args/tags, has
+  NO title field. Corrected to the governance request→approve→transfer flow + `reassign-cos`
+  (TITLE is MAESTRO-sudo-only, R39.4). Commit pending this session.
 
 **✅ UPDATE 2026-06-24 — orchestrator red-CI ROOT-CAUSED (was passively "monitoring"
 it for ~a day; USER called that out: in /go-on-yourself there is no user gate).**

@@ -191,7 +191,7 @@ As MANAGER, your AID session secret grants you these privileges via the frozen C
 | **Delete teams** | `aimaestro-teams.sh delete <teamId> [--delete-agents]` | AID-authorized (R29 — you delete teams on your own). Strips titles → AUTONOMOUS, hibernates all agents. (The deployed CLI's `--password` is a USER/UI residual, R32 — not supplied by you.) |
 | **Wake any agent** | `aimaestro-agent.sh wake <id>` | Any agent on this host |
 | **Hibernate any agent** | `aimaestro-agent.sh hibernate <id>` | Any agent on this host |
-| **Change agent titles** | `aimaestro-agent.sh update <id>` (e.g. `governanceTitle`) | Assign/remove governance titles |
+| **Assign / transfer governance titles** | `aimaestro-governance.sh` `request`→`approve`→`transfer`; COS via `aimaestro-teams.sh reassign-cos <teamId> <agentUUID>` | No standalone `assign-title` verb (ai-maestro#49) — title-granting flows through the auditable request→approve path; `aimaestro-agent.sh update` has **no** title field (only task/model/args/tags). TITLE is a MAESTRO-sudo-only locked field (R39.4). |
 | **Delete agents** | `aimaestro-agent.sh delete <id>` | Step-by-step, one at a time |
 | **Approve GovernanceRequests** | `aimaestro-governance.sh approve <id>` | AID-authorized (R28). Cross-host approval is password-gated (USER/UI, R32) — surface it to the MAESTRO; never supply a password yourself. |
 

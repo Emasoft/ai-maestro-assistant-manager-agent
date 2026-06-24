@@ -55,7 +55,13 @@ You delete teams (and thereby their COS) on your own (R29):
 aimaestro-teams.sh delete <team-id> [--delete-agents]
 ```
 
-Re-assigning an existing team's COS to a different agent uses the teams CLI. If no deployed verb covers that sub-case yet, it is a transition residual (`<!-- DECOUPLE-BLOCKED ai-maestro#36: reassign-cos verb not yet deployed -->`) — never fall back to a sudo/password path (R32).
+Re-assigning an existing team's COS to a different agent uses the deployed teams CLI verb:
+
+```bash
+aimaestro-teams.sh reassign-cos <team-id> <agent-uuid>
+```
+
+(Deployed per ai-maestro#36 — confirmed by the scripts owner on ai-maestro#49. The deployed CLI's `--password <governance-password>` is a USER/UI residual, R32: AID resolves your auth for the same-host case, so you do **not** supply a password; surface any password-gated cross-host sub-case to the MAESTRO, and never fall back to a sudo path.)
 
 ### Naming Convention for the COS
 
