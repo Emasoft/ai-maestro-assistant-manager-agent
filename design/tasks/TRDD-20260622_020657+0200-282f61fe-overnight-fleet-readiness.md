@@ -3,7 +3,7 @@ trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-06-24T17:28:29+0200
+updated: 2026-06-24T17:34:43+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -20,6 +20,24 @@ test-requirements: [unit, lint, typecheck]
 # Overnight fleet-readiness campaign
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
+
+**✅ UPDATE 2026-06-24 (evening) — orchestrator @main FIXED by its Claude; new red diagnosed
++ #44 tally re-verified.**
+- **orchestrator: @main re-pin LANDED** — its Claude re-pinned CPV `@main`→`@v2.147.1` in BOTH
+  ci.yml+release.yml; **v1.9.3 PUBLISHED**, CPV gate green. The remaining CI-on-main red is a
+  **DIFFERENT** job: Mega-Linter `COPYPASTE_JSCPD` = **9.86% dup > 5% threshold** (whole-repo
+  scan of the split error-handling skill references). Diagnosed on **orch#22**: its
+  `.mega-linter.yml` is byte-equivalent to AMAMA's (NOT a config gap — genuine doc dup); gave
+  exemplar-grounded options (a=dedupe / b=`--ignore '**/references/**'` / c=NOT raise threshold).
+  Also flagged its Release-v1.9.3 run hung ~2h (`28109731021` in_progress). **This is THEIRS to
+  apply (Method-1).**
+- **#44 tally re-verified (read-only):** the 4 previously-"remaining" plugins now show GREEN
+  latest CI — core `v2.7.14`, integrator `v1.3.7`, janitor `v0.18.2`, amvcp `v1.4.0`. Their
+  per-plugin #44 trackers still need a close-confirm, but CI-wise they're green. Net fleet red
+  = **orchestrator's jscpd ONLY** (non-release-blocking; v1.9.3 is live).
+- **Derived AMAMA doc fixes shipped (commit 127e6be):** title-assignment privilege row corrected
+  (deployed `cmd_update` has NO title field → governance request→approve→transfer flow) +
+  reassign-cos "not-deployed" residual removed. See the (later) entry below for the #49 decision.
 
 **✅ UPDATE 2026-06-24 (later) — server #49 ground-truth received + MANAGER decisions
 posted (#49 + cross-link #42).** The ai-maestro server Claude delivered point-by-point
