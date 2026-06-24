@@ -1,9 +1,9 @@
 ---
 trdd-id: SVEILW09
 title: AMAMA doc-accuracy sweep — stale agent name, design/reports data-hygiene, README version + missing skills
-column: dev
+column: complete
 created: 2026-06-24T23:09:49+0200
-updated: 2026-06-24T23:26:56+0200
+updated: 2026-06-24T23:30:19+0200
 current-owner: amama
 assignee: amama
 priority: 2
