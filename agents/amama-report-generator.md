@@ -62,7 +62,7 @@ protocol in `~/.claude/rules/markdown-memory-recall.md`).
 | **No Execution** | Never run tests, builds, or deployment scripts |
 | **No Delegation** | Never spawn subagents or delegate tasks |
 | **Minimal Response** | Return `[DONE/FAILED] report-type - file_path` only |
-| **Output Location** | All reports to `design/reports/` with timestamped names |
+| **Output Location** | All reports to `reports/report-generator/` with timestamped names |
 
 ---
 
@@ -120,7 +120,7 @@ All reports MUST include a **Requirement Compliance** section tracing features t
 - For detailed reports, write to a .md file and provide the path
 
 ### File Output Convention (Token Conservation)
-- All reports MUST be written to `design/reports/` with pattern: `{report-type}-{context}-{YYYYMMDD-HHMMSS}.md`
+- All reports MUST be written to `reports/report-generator/` with pattern: `{report-type}-{context}-{YYYYMMDD-HHMMSS}.md`
 - Response to orchestrator: max 5 lines (the Output Format below is the maximum)
 - NEVER return raw data, code blocks, or full file contents inline
 
@@ -180,7 +180,7 @@ user: Generate a progress report for the authentication module implementation.
 assistant: [DONE] report-generator: progress report generated
 
 Summary: Authentication module 8/12 tasks complete (67%)
-Output: design/reports/progress-auth-module-2026-02-05-143022.md
+Output: reports/report-generator/progress-auth-module-2026-02-05-143022.md
 Health: Green
 Issues: 1 blocker (OAuth2 provider config)
 
@@ -193,7 +193,7 @@ user: I need a quality report before we release version 2.0.
 assistant: [DONE] report-generator: quality report generated
 
 Summary: Test coverage 87%, 3 lint warnings, docs 92% complete
-Output: design/reports/quality-v2.0-release-2026-02-05-143545.md
+Output: reports/report-generator/quality-v2.0-release-2026-02-05-143545.md
 Health: Yellow
 Issues: 3 minor lint warnings, 2 missing docstrings
 </example>
@@ -204,7 +204,7 @@ user: Generate completion report for issue #42.
 assistant: [DONE] report-generator: completion report generated
 
 Summary: Issue #42 verification complete - INCOMPLETE (2/5 acceptance criteria unmet)
-Output: design/reports/completion-issue-42-2026-02-05-144201.md
+Output: reports/report-generator/completion-issue-42-2026-02-05-144201.md
 Health: Red
 Issues: Missing integration tests, documentation incomplete
 

@@ -3,7 +3,7 @@ name: amama-user-communication
 description: Use when communicating with the MAESTRO user for clarification, presenting options, requesting approval, or reporting completion. The MANAGER obeys only the active MAESTRO/DELEGATE (R36); other users are subordinate and have their own ASSISTANT (R38/R39). Loaded by ai-maestro-assistant-manager-agent-main-agent.
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-assistant-manager-main-agent
+agent: ai-maestro-assistant-manager-agent-main-agent
 user-invocable: false
 ---
 

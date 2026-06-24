@@ -2,7 +2,7 @@
 name: amama-presence-tracker
 description: Use when computing the user's availability state (active/monitoring/away/dnd/unknown) for autonomous-fallback gating. Trigger with availability-state checks before any decision that depends on whether the user is at the keyboard.
 context: fork
-agent: amama-assistant-manager-main-agent
+agent: ai-maestro-assistant-manager-agent-main-agent
 ---
 
 # Presence Tracker Skill

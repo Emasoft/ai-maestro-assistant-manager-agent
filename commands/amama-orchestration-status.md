@@ -31,7 +31,7 @@ The script prints a concise summary to stdout and writes the full detailed table
 
 ```
 [DONE] orchestration-status - Plan: plan-20260108-143022, Status: executing, Progress: 1/3
-Report: design/reports/orchestration-status_20260108_143022.md
+Report: reports/orchestration-status/orchestration-status_20260108_143022.md
 ```
 
 The full report file contains the detailed ASCII table with module status, agent registry, active assignments, and verification status.

@@ -29,7 +29,7 @@ The script prints a concise summary to stdout and writes the full detailed table
 
 ```
 [DONE] planning-status - Plan: plan-20260108-143022, Status: drafting, 4 exit criteria remaining
-Report: design/reports/planning-status_20260108_143022.md
+Report: reports/planning-status/planning-status_20260108_143022.md
 ```
 
 The full report file contains the detailed ASCII table with requirements progress, module definitions, and exit criteria checklist.

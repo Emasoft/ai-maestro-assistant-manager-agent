@@ -21,10 +21,10 @@
 
 | Report Type | Format | Location |
 |-------------|--------|----------|
-| Quick Status | Markdown summary | `design/reports/status-{date}.md` |
-| Progress Report | Markdown with sections | `design/reports/progress-{date}.md` |
-| Handoff Summary | Markdown with task lists | `design/reports/handoff-{date}.md` |
-| Blocker Report | Markdown with blocker details | `design/reports/blockers-{date}.md` |
+| Quick Status | Markdown summary | `reports/status-reporting/status-{date}.md` |
+| Progress Report | Markdown with sections | `reports/status-reporting/progress-{date}.md` |
+| Handoff Summary | Markdown with task lists | `reports/status-reporting/handoff-{date}.md` |
+| Blocker Report | Markdown with blocker details | `reports/status-reporting/blockers-{date}.md` |
 
 ## Report Sections
 

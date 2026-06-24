@@ -3,7 +3,7 @@ name: amama-status-reporting
 description: Use when generating status reports. Queries AI Maestro APIs (sessions, agents, teams, tasks) for live data. Trigger with status report requests.
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-assistant-manager-main-agent
+agent: ai-maestro-assistant-manager-agent-main-agent
 user-invocable: true
 ---
 
@@ -22,7 +22,7 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 
 - AI Maestro running and reachable (the frozen CLIs resolve auth internally)
 - GitHub CLI (`gh`) installed for issue/PR status
-- `design/reports/` directory must exist (create if missing)
+- `reports/status-reporting/` directory must exist (create if missing)
 
 ## Instructions
 
@@ -34,7 +34,7 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
    - team tasks with Kanban statuses: <!-- DECOUPLE-BLOCKED ai-maestro#36: team tasks read — CLI verb not yet deployed --> fall back to `GET /api/teams/{id}/tasks` until a `aimaestro-teams.sh tasks` verb lands
 3. Query GitHub for issue/PR status via `gh` CLI
 4. Read session memory files for additional context
-5. Compile into report format and save to `design/reports/`
+5. Compile into report format and save to `reports/status-reporting/`
 6. Present formatted report to user
 
 Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See task-system reference for details.
@@ -43,7 +43,7 @@ For API query examples, see api-endpoints reference.
 
 ## Output
 
-Reports are saved as Markdown to `design/reports/`:
+Reports are saved as Markdown to `reports/status-reporting/`:
 - `status-{date}.md` -- Quick status
 - `progress-{date}.md` -- Progress report
 - `handoff-{date}.md` -- Handoff summary
@@ -60,7 +60,7 @@ For detailed report section formats, see report-formats reference.
 | Session inactive / stale | Escalate to AMCOS for recovery |
 | Team/task 404 | Verify team ID, create if needed |
 | GitHub API failure | Use cached data, note staleness |
-| Report dir missing | Create `design/reports/` automatically |
+| Report dir missing | Create `reports/status-reporting/` automatically |
 
 ## Examples
 
@@ -88,7 +88,7 @@ Copy this checklist and track your progress:
 - [ ] Query AI Maestro APIs for sessions, agents, teams, tasks
 - [ ] Query GitHub for issue/PR status via `gh` CLI
 - [ ] Read session memory files for context
-- [ ] Compile report and save to `design/reports/`
+- [ ] Compile report and save to `reports/status-reporting/`
 - [ ] Present formatted report to user
 
 ## Resources

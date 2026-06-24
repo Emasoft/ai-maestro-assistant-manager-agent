@@ -17,6 +17,6 @@ Copy this checklist and track your progress:
 - [ ] Query GitHub for issue and PR status
 - [ ] Read session memory files for context
 - [ ] Compile all information into unified report format
-- [ ] Create `design/reports/` directory if it doesn't exist
-- [ ] Save report to `design/reports/status-{date}.md`
+- [ ] Create `reports/status-reporting/` directory if it doesn't exist
+- [ ] Save report to `reports/status-reporting/status-{date}.md`
 - [ ] Present formatted report to user

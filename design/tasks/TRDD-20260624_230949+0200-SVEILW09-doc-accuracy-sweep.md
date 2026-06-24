@@ -3,7 +3,7 @@ trdd-id: SVEILW09
 title: AMAMA doc-accuracy sweep — stale agent name, design/reports data-hygiene, README version + missing skills
 column: dev
 created: 2026-06-24T23:09:49+0200
-updated: 2026-06-24T23:09:49+0200
+updated: 2026-06-24T23:26:56+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -27,6 +27,15 @@ external-refs: []
 # TRDD-SVEILW09 — AMAMA doc-accuracy sweep
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-06-24T23:09
+
+**✅ EXECUTED + VERIFIED 2026-06-24T23:26 — all 4 phases done; CPV --strict clean (NIT=0).**
+P1 committed `ccd81fd` (README 7 fixes + publish.py `_sync_readme_version` + 5 tests; suite 93→98).
+P2/P3 ran via 4 parallel spark agents: 10 skills' `agent:` field corrected, and `design/reports/`
+became `reports/<component>/` across the status-reporting skill (+2 refs), 2 commands, 2 agent docs.
+P4 verified: repo-wide grep shows zero stale agent names and zero `design/reports/` in source; the
+CPV strict gate caught one self-inflicted MD018 (the campaign-tracker re-verification note had a
+wrapped line beginning with a hash) which is now fixed; full suite 98 green; ruff and mypy clean.
+Commit-not-push.
 
 **Trigger:** USER re-invoked `/go-on-yourself`. A fresh-eyes evaluation of AMAMA's
 user-facing surface (all in-control audit work from TRDD-4c388042 already done;
@@ -81,6 +90,11 @@ not cosmetics. All facts VERIFIED against live source before scoping.
 - The `while ls design/tasks/TRDD-*-<id>-*.md` collision idiom is BROKEN under
   nullglob (unmatched glob → `ls` lists cwd → exit 0 → false "exists" → infinite
   loop / 8-min hang). Use `find design/tasks -name "*<id>*"` instead.
+- MARKDOWN HYGIENE for the publish gate: never let a hard-wrapped line START with a
+  markdown-special char — `#` (→ MD018 no-space-atx, hit here in the 282f61fe note),
+  `+`/`* ` (→ MD004 ul-style poison, hit last session), `>` (blockquote), or `N.`
+  (ordered list). CPV --strict markdownlint scans `design/tasks/*.md` too, so reword
+  the line to begin with a word or a backtick.
 
 ## Why this is in-control + safe
 Doc-only edits (+ a small, tested `publish.py` README-sync). No runtime logic

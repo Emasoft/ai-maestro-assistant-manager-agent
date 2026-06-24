@@ -3,7 +3,7 @@ name: amama-role-routing
 description: Use when routing user requests to specialist agents. Trigger with work delegation needs. Loaded by ai-maestro-assistant-manager-agent-main-agent
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-assistant-manager-main-agent
+agent: ai-maestro-assistant-manager-agent-main-agent
 user-invocable: false
 ---
 

@@ -3,7 +3,7 @@ name: amama-amcos-coordination
 description: Use when coordinating with COS for approvals and delegation. Trigger with COS coordination requests. Loaded by ai-maestro-assistant-manager-agent-main-agent
 compatibility: Requires AI Maestro installed.
 context: fork
-agent: amama-assistant-manager-main-agent
+agent: ai-maestro-assistant-manager-agent-main-agent
 user-invocable: false
 ---
 

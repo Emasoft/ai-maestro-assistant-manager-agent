@@ -337,13 +337,13 @@ When spawning ANY sub-agent, include these mandatory instructions in the prompt:
 **Mandatory Reporting Suffix** (append to every sub-agent prompt):
 ```
 REPORTING RULES:
-- Write ALL detailed output to a timestamped .md file in design/reports/
+- Write ALL detailed output to a timestamped .md file in reports/<component>/
 - Return ONLY: "[DONE/FAILED] <task> - <one-line result>. Report: <filepath>"
 - NEVER return code blocks, file contents, long lists, or verbose explanations
 - Max 2 lines of text back to caller
 ```
 
-**Script Output Convention**: All AMAMA scripts write full output to `design/reports/{script}_{timestamp}.md` and print only a 2-3 line summary to stdout. Do NOT request verbose mode unless debugging.
+**Script Output Convention**: All AMAMA scripts write full output to `reports/<component>/{script}_{timestamp}.md` and print only a 2-3 line summary to stdout. Do NOT request verbose mode unless debugging.
 
 ## Core Responsibilities
 
