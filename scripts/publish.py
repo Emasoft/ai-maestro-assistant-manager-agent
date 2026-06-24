@@ -56,6 +56,19 @@ NC = "\033[0m" if _USE_COLOR else ""
 _gi = None
 
 
+# ── CPV (claude-plugins-validation) gate version ────────────────────────────
+# Pin the remote CPV validator to a fixed release TAG so the local publish gate
+# validates against the EXACT same CPV version as CI — .github/workflows/ci.yml
+# and release.yml both pin @v2.136.1. An unpinned `git+` ref floats to CPV's
+# default branch, which is (a) non-reproducible and (b) exactly what silently
+# broke downstream when CPV renamed its default branch main -> master
+# (claude-plugins-validation#153): a bare `@main` pin stopped resolving. Keep
+# this constant in sync with the two workflow files (single source of truth here
+# for the script's two call sites below).
+CPV_VERSION = "v2.136.1"
+CPV_FROM = f"git+https://github.com/Emasoft/claude-plugins-validation@{CPV_VERSION}"
+
+
 # ── pre-push hook (strict publish enforcement) ──────────────────────────────
 #
 # The pre-push hook refuses any `git push` that is not invoked from this
@@ -1318,7 +1331,7 @@ Examples:
     if info.has_kind(ProjectKind.CLAUDE_PLUGIN):
         print(f"\n{BLUE}=== Step 4: CPV lint (mandatory for claude plugins) ==={NC}")
         run([
-            "uvx", "--from", "git+https://github.com/Emasoft/claude-plugins-validation",
+            "uvx", "--from", CPV_FROM,
             "--with", "pyyaml", "cpv-remote-validate", "lint", str(plugin_root),
         ], cwd=git_root)
         print(f"{GREEN}ok CPV lint passed with zero errors{NC}")
@@ -1332,7 +1345,7 @@ Examples:
     if info.has_kind(ProjectKind.CLAUDE_PLUGIN):
         print(f"\n{BLUE}=== Step 5: CPV strict validate plugin (mandatory) ==={NC}")
         run([
-            "uvx", "--from", "git+https://github.com/Emasoft/claude-plugins-validation",
+            "uvx", "--from", CPV_FROM,
             "--with", "pyyaml", "cpv-remote-validate", "plugin", str(plugin_root), "--strict",
         ], cwd=git_root)
         print(f"{GREEN}ok CPV strict validation passed{NC}")
