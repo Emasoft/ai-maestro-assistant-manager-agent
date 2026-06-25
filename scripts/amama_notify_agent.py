@@ -53,8 +53,14 @@ def parse_frontmatter(file_path: Path) -> tuple[dict[str, Any], str]:
 
 def find_agent_session(data: dict[str, Any], agent_id: str) -> str | None:
     """Find the session name for an AI agent."""
-    agents: dict[str, Any] = data.get("registered_agents", {})
-    for agent in agents.get("ai_agents", []):
+    # A state file may carry `registered_agents:` (or a nested `ai_agents:`) with an
+    # EMPTY value, which YAML parses to None — semantically identical to "absent".
+    # `or {}` / `or []` coerces that None to the empty container so a sparsely-filled
+    # state file yields a clean "not registered" result (the function's documented
+    # contract: returns None, never raises), instead of an AttributeError/TypeError
+    # crash on `None.get(...)` / iterating None.
+    agents: dict[str, Any] = data.get("registered_agents") or {}
+    for agent in agents.get("ai_agents") or []:
         if agent.get("agent_id") == agent_id:
             return cast(str | None, agent.get("session_name"))
     return None
@@ -146,9 +152,11 @@ def main() -> int:
     # Find agent session
     session = find_agent_session(data, args.agent_id)
     if not session:
-        # Check if it's a human agent
-        agents = data.get("registered_agents", {})
-        for dev in agents.get("human_developers", []):
+        # Check if it's a human agent. Same null-coercion as find_agent_session:
+        # `registered_agents:` / `human_developers:` may be an empty (None) YAML
+        # value, so `or {}` / `or []` avoids a None.get / iterate-None crash.
+        agents = data.get("registered_agents") or {}
+        for dev in agents.get("human_developers") or []:
             if dev.get("github_username") == args.agent_id:
                 print(f"ERROR: '{args.agent_id}' is a human developer")
                 print("Use GitHub notifications for human agents")

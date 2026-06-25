@@ -118,6 +118,14 @@ def test_find_agent_session_match_and_miss():
     # empty / missing structure → None (no KeyError)
     assert na.find_agent_session({}, "impl-2") is None
     assert na.find_agent_session({"registered_agents": {}}, "impl-2") is None
+    # Regression: a key PRESENT but null (what YAML parses `registered_agents:` /
+    # `ai_agents:` with an empty value into) must also return None, not crash. The
+    # old code did `None.get(...)` / iterated None -> AttributeError / TypeError.
+    assert na.find_agent_session({"registered_agents": None}, "impl-2") is None
+    assert (
+        na.find_agent_session({"registered_agents": {"ai_agents": None}}, "impl-2")
+        is None
+    )
 
 
 def test_send_message_builds_exact_argv_and_returns_true_on_success():

@@ -80,11 +80,16 @@ def display_status(verbose: bool = False) -> bool:
         writer.print_failure("Could not parse plan state file")
         return False
 
-    plan_id = data.get("plan_id", "unknown")
-    status = data.get("status", "unknown")
-    goal = data.get("goal", "No goal set")
-    requirements_sections = data.get("requirements_sections", [])
-    modules = data.get("modules", [])
+    # `or <default>` (not `.get(key, default)`): a state file may carry a key with an
+    # EMPTY value (e.g. `modules:`), which YAML parses to None. `.get` only substitutes
+    # its default when the key is ABSENT, so a present-but-null key would flow None
+    # downstream and crash — `len(None)` (modules), `None[:54]` (goal), and a format
+    # spec on None (plan_id/status). `or` coerces that None to the intended default.
+    plan_id = data.get("plan_id") or "unknown"
+    status = data.get("status") or "unknown"
+    goal = data.get("goal") or "No goal set"
+    requirements_sections = data.get("requirements_sections") or []
+    modules = data.get("modules") or []
     plan_complete = data.get("plan_phase_complete", False)
 
     # Build header

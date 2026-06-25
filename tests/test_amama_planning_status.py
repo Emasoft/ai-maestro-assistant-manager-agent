@@ -223,5 +223,41 @@ def test_plan_complete_flips_summary_and_exit_criterion():
         shutil.rmtree(root, ignore_errors=True)
 
 
+def test_null_valued_keys_render_without_crash():
+    """A state file whose keys are present but EMPTY (YAML null) renders, not crashes.
+
+    Regression: `.get(key, default)` only substitutes its default when the key is
+    ABSENT. With `modules:` / `goal:` / `plan_id:` present-but-null, the parsed value
+    is None and the old code crashed — `len(None)` (module_count), `None[:54]` (goal
+    slice), and a format spec applied to None (plan_id/status). The fix coerces null
+    to the intended default (`or`), so the run succeeds and shows the defaults.
+    """
+    state = (
+        "---\n"
+        "plan_id:\n"
+        "status:\n"
+        "goal:\n"
+        "requirements_sections:\n"
+        "modules:\n"
+        "plan_phase_complete:\n"
+        "---\n\n# null-valued state\n"
+    )
+    root = _make_project(state)
+    try:
+        cp = _run(root)
+        assert cp.returncode == 0, f"expected rc 0, got {cp.returncode} ({cp.stderr})"
+        # Null plan_id/status fall back to the 'unknown' defaults in the summary.
+        assert "Plan: unknown, Status: unknown" in cp.stdout
+        report = _report_text(root)
+        # Null goal renders the 'No goal set' default; null modules render the empty
+        # placeholder (proving len(None) no longer fires before the `if modules` guard).
+        assert "No goal set" in report
+        assert "MODULES DEFINED (0)" in report
+        assert "No modules defined yet" in report
+        assert "No requirement sections defined" in report
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))
