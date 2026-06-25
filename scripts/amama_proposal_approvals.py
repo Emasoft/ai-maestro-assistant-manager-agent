@@ -431,7 +431,23 @@ def build_plan(manifest: dict, approved: list[int], refused: list[int]) -> dict:
 
     complement_used = False
     if refuse_set and not approve_set:
-        # refused-only: approve every OTHER listed proposal (bulk complement)
+        # refused-only: approve every OTHER listed proposal (bulk complement).
+        # FAIL-FAST GUARD: if NOT ONE refused number resolves to a listed
+        # proposal, the instruction is meaningless — refusing nothing real —
+        # yet the complement `known - refuse_set` would still fire and
+        # MASS-APPROVE the entire backlog off a phantom subtrahend (a stale or
+        # typo'd number like `--refused 99` silently approving everything). The
+        # `refused:` verb's contract (trdd-approval-tiers.md Part A) is
+        # "refuse the named few, approve the rest" — it presumes the named few
+        # are real. With zero real targets there is no defensible "rest" to
+        # approve, so we reject instead of acting. A MIX of valid+unknown
+        # refused numbers is left to proceed (the user named ≥1 real target).
+        if not (refuse_set & known):
+            raise ValueError(
+                f"refused-only mode: none of the refused numbers {sorted(refuse_set)} "
+                f"are in the current listing — refusing to mass-approve the whole "
+                f"backlog by complement. Re-run `list` and use current numbers."
+            )
         approve_set = known - refuse_set
         complement_used = True
 
@@ -645,10 +661,28 @@ def cmd_open(args: argparse.Namespace) -> int:
     return 0
 
 
+class AmbiguousId(ValueError):
+    """A short id matched MORE THAN ONE distinct TRDD in a folder.
+
+    The full trdd-id is unique by the create-time check, but the 8-char SHORT
+    form is only a "casual" reference and CAN collide across two distinct full
+    ids. Acting on the first sorted match would silently mis-route (archive /
+    cancel the WRONG TRDD), so the lookup fails fast and lists the candidates
+    instead — the caller surfaces it; the user re-runs with the full id.
+    """
+
+
 def find_in(folder: Path, ident: str) -> Path | None:
-    """Locate a TRDD by full trdd-id or 8-char short id within one folder (non-recursive)."""
+    """Locate a TRDD by full trdd-id or 8-char short id within one folder (non-recursive).
+
+    An exact FULL-id match is unambiguous and wins outright. A SHORT-id match is
+    accepted only when it resolves to exactly one TRDD; if the short id matches
+    two distinct TRDDs, raise ``AmbiguousId`` rather than silently picking the
+    first sorted file (which would mis-route the action onto the wrong TRDD).
+    """
     if not folder.is_dir():
         return None
+    short_matches: list[Path] = []
     for path in sorted(folder.glob("*.md")):
         if path.name.lower() == "readme.md":
             continue
@@ -657,9 +691,21 @@ def find_in(folder: Path, ident: str) -> Path | None:
         except OSError:
             continue  # unreadable (perms/race/broken symlink) can't be the target — skip, don't crash the search (F6)
         tid = fm.get("trdd-id", "")
-        if tid and (tid == ident or tid[:8] == ident):
-            return path
-    return None
+        if not tid:
+            continue
+        if tid == ident:
+            return path  # exact full-id match — always unambiguous, wins immediately
+        if tid[:8] == ident:
+            short_matches.append(path)
+    if not short_matches:
+        return None
+    if len(short_matches) > 1:
+        names = ", ".join(p.name for p in short_matches)
+        raise AmbiguousId(
+            f"short id {ident!r} matches {len(short_matches)} distinct TRDDs "
+            f"in {folder.name}/ ({names}) — pass the full trdd-id to disambiguate."
+        )
+    return short_matches[0]
 
 
 def cmd_archive(args: argparse.Namespace) -> int:
@@ -673,10 +719,23 @@ def cmd_archive(args: argparse.Namespace) -> int:
     results: list[dict] = []
     missing: list[str] = []
     redirect: list[str] = []   # pending proposals — must be refused, not archived
+    ambiguous: list[str] = []  # short id matched >1 distinct TRDD — never guess
     for ident in args.id:
-        path = find_in(tasks_dir(root), ident)   # ONLY approved tasks reach archived/
+        # An ambiguous short id must NOT silently archive the first match (wrong
+        # TRDD). Surface it per-ident so the rest of the batch still proceeds and
+        # earlier successful moves are not stranded by a mid-loop crash (F6).
+        try:
+            path = find_in(tasks_dir(root), ident)   # ONLY approved tasks reach archived/
+            if path is None:
+                redirected = find_in(proposals_dir(root), ident) is not None
+            else:
+                redirected = False
+        except AmbiguousId as exc:
+            print(f"  ! {exc}", file=sys.stderr)
+            ambiguous.append(ident)
+            continue
         if path is None:
-            if find_in(proposals_dir(root), ident) is not None:
+            if redirected:
                 redirect.append(ident)   # it's still a proposal → refuse it instead
             else:
                 missing.append(ident)
@@ -708,7 +767,8 @@ def cmd_archive(args: argparse.Namespace) -> int:
         results.append(rec)
     if args.json:
         print(json.dumps({"archived": results, "state": state,
-                          "redirect_to_refuse": redirect, "missing": missing}, indent=2))
+                          "redirect_to_refuse": redirect, "missing": missing,
+                          "ambiguous": ambiguous}, indent=2))
     else:
         for r in results:
             print(f"  ⊗ {r['short']} → {r['to']}  [{state}]  ({r['title']})")
@@ -717,9 +777,12 @@ def cmd_archive(args: argparse.Namespace) -> int:
                   f"(→ design/refused/), don't archive it.")
         for ident in missing:
             print(f"  ! not found in design/tasks/: {ident}")
+        for ident in ambiguous:
+            print(f"  ! {ident} is an ambiguous short id (matched >1 TRDD) — "
+                  f"pass the full trdd-id.")
         if not args.dry_run and results:
             print("\nReview `git status`, then commit the moves when ready.")
-    return 0 if not (missing or redirect) else 1
+    return 0 if not (missing or redirect or ambiguous) else 1
 
 
 def cmd_decide(args: argparse.Namespace) -> int:

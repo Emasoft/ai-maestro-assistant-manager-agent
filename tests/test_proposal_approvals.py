@@ -351,5 +351,76 @@ def test_find_in_skips_unreadable_entry():
         assert found is not None and "p3" in found.name
 
 
+def test_refused_only_all_unknown_does_not_mass_approve():
+    """Fail-fast: `refused: N` where N is NOT in the listing must NOT mass-approve the backlog.
+
+    Before the guard, a stale/typo refused number resolved to nothing yet the
+    complement `known - {N}` still fired and silently approved EVERY proposal
+    (moving the whole backlog to design/tasks/ with rc=0). The refused-only verb
+    presumes the named few are real; with zero real targets there is no
+    defensible "rest" to approve, so the decision must be rejected and nothing
+    must move.
+    """
+    with temp_repo() as (root, _ids):
+        _run(root, "list")
+        # 99 is not in the 5-item listing → build_plan must raise (no complement).
+        raised = False
+        try:
+            ppa.decide(root, [], [99], approver="USER",
+                       reason_approve="r", reason_refuse="r", dry_run=False)
+        except ValueError:
+            raised = True
+        assert raised, "refused-only with all-unknown numbers must raise, not mass-approve"
+        # Absolutely nothing moved: all 5 still pending, tasks/ and refused/ empty.
+        assert len(list(ppa.proposals_dir(root).glob("*.md"))) == 5
+        assert not list(ppa.tasks_dir(root).glob("*.md"))
+        assert not (ppa.refused_dir(root).is_dir() and list(ppa.refused_dir(root).glob("*.md")))
+        # The CLI surfaces it as a clean rc=1 error, not a silent success.
+        with contextlib.redirect_stderr(io.StringIO()):
+            rc = ppa.main(["--root", str(root), "decide", "--refused", "99"])
+        assert rc == 1
+        assert not list(ppa.tasks_dir(root).glob("*.md"))
+
+
+def test_ambiguous_short_id_does_not_misroute_archive():
+    """A short id matching two distinct TRDDs must NOT archive the first one — it is rejected.
+
+    The full trdd-id is unique, but the 8-char short form can collide across two
+    distinct ids. Silently archiving the first sorted match would cancel/archive
+    the WRONG TRDD. find_in must raise AmbiguousId, and `cancel --id <short>`
+    must archive NEITHER file (rc=1, both left untouched in design/tasks/).
+    """
+    with temp_repo() as (root, _ids):
+        tdir = ppa.tasks_dir(root)
+        tdir.mkdir(parents=True, exist_ok=True)
+        # Two APPROVED tasks whose full ids share the same first 8 chars.
+        for suffix, slug in (("1111-2222-3333-444444444444", "first"),
+                             ("2222-3333-4444-555555555555", "second")):
+            (tdir / f"TRDD-collide-aaaaaaaa-{slug}.md").write_text(
+                f"---\ntrdd-id: aaaaaaaa-{suffix}\n"
+                f"title: Collide {slug}\ncolumn: dev\n"
+                f"created: 2026-06-01T10:00:00+0200\n"
+                f"updated: 2026-06-01T10:00:00+0200\napproval-tier: 2\n"
+                f"---\n\n# Collide {slug}\n\n## Approval log\n",
+                encoding="utf-8",
+            )
+        # find_in itself fails fast on the colliding short id.
+        raised = False
+        try:
+            ppa.find_in(tdir, "aaaaaaaa")
+        except ppa.AmbiguousId:
+            raised = True
+        assert raised, "find_in must raise AmbiguousId on a colliding short id"
+        # The archive CLI surfaces it (rc=1) and archives NEITHER TRDD.
+        with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+            rc = ppa.main(["--root", str(root), "cancel", "--id", "aaaaaaaa"])
+        assert rc == 1
+        assert not (ppa.archived_dir(root).is_dir() and list(ppa.archived_dir(root).glob("*.md")))
+        assert len(list(tdir.glob("*collide*.md"))) == 2   # both still in tasks/
+        # An EXACT full id is still unambiguous and resolves to exactly one file.
+        exact = ppa.find_in(tdir, "aaaaaaaa-1111-2222-3333-444444444444")
+        assert exact is not None and "first" in exact.name
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))
