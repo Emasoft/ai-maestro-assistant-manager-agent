@@ -3,7 +3,7 @@ trdd-id: G290DKHM
 title: AMAMA script correctness review — fix CRITICAL mass-approve + HIGH id-collision + HIGH sidecar-orphan bugs
 column: complete
 created: 2026-06-25T06:24:48+0200
-updated: 2026-06-25T06:32:03+0200
+updated: 2026-06-25T06:42:32+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -28,9 +28,11 @@ external-refs: []
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-06-25T06:24
 
-**✅ EXECUTED + VERIFIED — 5 real bugs fixed (3 below + the 2 lookup gaps), full suite green
-(105 passed), ruff + mypy clean. All landed in 4 commits on `main` (unpushed): 9de61a6 (approvals),
-484fdc1 + 9d3523c (download), f54010c (this TRDD).**
+**✅ EXECUTED + VERIFIED — 7 real bugs fixed across 4 scripts, full suite green (106 passed),
+ruff + mypy clean.** Batch 1 (the 5 below): 9de61a6 (approvals), 484fdc1 + 9d3523c (download),
+f54010c + a3fe248 (this TRDD). Batch 2 (2 more, see "Batch 2" section): bbec046 (design-search),
+5df63a5 (init-design). All on `main`, unpushed — ride the next publish.py pending USER approval.
+Review reports (gitignored): `reports/amama-code-review/20260625_06*.md` (5 files).
 Trigger: USER challenge "why are you not working??" → `/go-on-yourself` in-control improvement.
 A fresh-eyes correctness review of AMAMA's two most complex AMAMA-specific scripts (delegated to
 two parallel Opus reviewers, GOLDEN-RULE whole-file read; findings verified by me against the
@@ -83,6 +85,25 @@ bugs that the existing test suite did not catch.
 The `while ls design/tasks/TRDD-*-$ID-*.md` collision idiom hung 8 min AGAIN (nullglob → `ls`
 lists cwd → exit 0 → infinite loop) — the exact SVEILW09 gotcha. Re-confirmed: use
 `while [ -n "$(find design/tasks -name "TRDD-*-$ID-*.md")" ]` for the create-time collision check.
+
+## Batch 2 — next-largest scripts (design_search 444 LOC, init_design_folders 386 LOC)
+Two more parallel Opus GOLDEN-RULE reviews; fixes verified against the diffs + full suite.
+- **FIXED (LOW) `amama_design_search.py::extract_title_from_content`** (commit bbec046) — filename
+  fallback used `filename.replace('.md','')` (strips EVERY `.md`) → corrupted the fallback title for a
+  scanned file with an internal `.md` in its stem. Now `removesuffix('.md')`. Same class as the
+  download sidecar bug. Test strengthened with the internal-`.md` case.
+- **FIXED (MEDIUM) `amama_init_design_folders.py` `--platforms` dedup** (commit 5df63a5) — argparse
+  `nargs='+'` repeats + out-of-first-position `shared` flowed verbatim into `index.yaml`
+  (`['shared','web','web']`). Now `list(dict.fromkeys(['shared', *platforms]))` (order-preserving,
+  shared-first); carries an explicit `results: dict[str, Any]` (a derived mypy regression the agent
+  caught + fixed pre-ship). Regression test added.
+- **Flagged (triaged, DEFERRED — recorded so not lost):** design_search FL1/FL2 (substring
+  `uuid:`/`status:` key matching) are *theoretical* on AMAMA's v2 schema (it uses `trdd-id:`/
+  `parent-trdd:`, not `uuid:`/`parent-uuid:`) → low priority; FL3 status-fall-through, FL4-FL8
+  cosmetic/heuristic. init Finding 2 (`--force` clobbers index `documents`/`stats` — by-design per
+  the flag's help; a backup/merge contract is a product call), Finding 3 (the structured-error model
+  vs strict fail-fast — a whole-model decision), Finding 4 (dead `write_json_file` — NIT cleanup).
+  None are observed correctness bugs; deferred per "write only what is strictly necessary."
 
 ## Why this is in-control + safe
 Pure correctness fixes to AMAMA's OWN scripts (no external dependency, no peer/USER gate). Each is a
