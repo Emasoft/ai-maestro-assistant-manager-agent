@@ -3,7 +3,7 @@ trdd-id: G290DKHM
 title: AMAMA script correctness review — fix CRITICAL mass-approve + HIGH id-collision + HIGH sidecar-orphan bugs
 column: complete
 created: 2026-06-25T06:24:48+0200
-updated: 2026-06-25T06:42:32+0200
+updated: 2026-06-25T07:01:23+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -28,11 +28,13 @@ external-refs: []
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-06-25T06:24
 
-**✅ EXECUTED + VERIFIED — 7 real bugs fixed across 4 scripts, full suite green (106 passed),
-ruff + mypy clean.** Batch 1 (the 5 below): 9de61a6 (approvals), 484fdc1 + 9d3523c (download),
-f54010c + a3fe248 (this TRDD). Batch 2 (2 more, see "Batch 2" section): bbec046 (design-search),
-5df63a5 (init-design). All on `main`, unpushed — ride the next publish.py pending USER approval.
-Review reports (gitignored): `reports/amama-code-review/20260625_06*.md` (5 files).
+**✅ CAMPAIGN COMPLETE — 14 AMAMA-specific scripts reviewed; 11 real bugs fixed across 8 scripts;
+6 scripts CLEAN. Full suite 109 passed (98 prior + 11 new regression tests), ruff + mypy clean.**
+See "CAMPAIGN TOTAL" near the end for the full per-batch breakdown + commit list. Batches: 1
+(proposal_approvals + download), 2 (design_search + init_design), 3 (hooks), 4 (status reporters),
+5 (foundational utils). All commits on `main`, UNPUSHED — ride the next publish.py pending USER
+approval. The 11 fixes are pure correctness (no logic redesign); deferred design-flags are recorded,
+none are observed bugs.
 Trigger: USER challenge "why are you not working??" → `/go-on-yourself` in-control improvement.
 A fresh-eyes correctness review of AMAMA's two most complex AMAMA-specific scripts (delegated to
 two parallel Opus reviewers, GOLDEN-RULE whole-file read; findings verified by me against the
@@ -104,6 +106,35 @@ Two more parallel Opus GOLDEN-RULE reviews; fixes verified against the diffs + f
   the flag's help; a backup/merge contract is a product call), Finding 3 (the structured-error model
   vs strict fail-fast — a whole-model decision), Finding 4 (dead `write_json_file` — NIT cleanup).
   None are observed correctness bugs; deferred per "write only what is strictly necessary."
+
+## Batches 3-5 — hooks, status reporters, foundational utils (CAMPAIGN COMPLETE)
+Extended the GOLDEN-RULE review to the rest of AMAMA's scripts.
+- **Batch 3 (runtime-critical hooks)** commit 93e4d3c — `amama_stop_check` HIGH: valid-but-non-object
+  JSON stdin (`5`/`[]`/`"x"`) crashed the Stop hook with an AttributeError traceback at the session
+  boundary → coerce non-dict payload to `{}`. `amama_session_start` HIGH: `sys.stdin.read()` OSError
+  (broken pipe/EIO) was uncaught → guard `(JSONDecodeError, OSError)` for parity with the sibling
+  `amama_user_prompt_submit` (reviewed CLEAN). Hooks must be fail-SAFE at the boundary.
+- **Batch 4 (status reporters)** commit 35bbfb0 — `amama_planning_status` + `amama_notify_agent`:
+  both used `data.get(key, default)`, which only substitutes on an ABSENT key; a present-but-null
+  YAML value (`modules:`) flowed `None` downstream and crashed (`len(None)`, `None[:54]`,
+  `None.get(...)`, iterate-None). Coerced with `or`. `amama_approve_plan` + `amama_orchestration_status`
+  reviewed CLEAN (C2 honesty-cleanup confirmed complete, no dangling refs).
+- **Batch 5 (foundational utils)** — `amama_state_paths` + `amama_report_writer` reviewed CLEAN
+  (no antipattern; C1 path-helper mismatch confirmed fixed). 2 design-flags DEFERRED: report_writer
+  uses `project_root()` (worktree-vs-main-root — deliberate, fine for AMAMA's main-checkout usage),
+  and same-second report filename clobber (acceptable for write-once throwaway reports).
+  `amama_atomic_write` cleared incidentally by multiple reviewers ("sound"). `publish.py` excluded
+  (canonical/CPV-owned — its AMAMA-specific addition `_sync_readme_version` is already tested).
+
+### CAMPAIGN TOTAL
+**14 AMAMA-specific scripts reviewed; 11 real bugs fixed across 8 scripts; 6 scripts CLEAN.**
+A recurring antipattern surfaced 3× (`str.replace('.md','')` extension-strip → `Path().stem`/
+`removesuffix`) and a 2nd recurring class (present-but-null YAML key crashing `.get(k,default)`
+consumers, fixed via `or`). Full suite **109 passed** (98 prior + 11 new regression tests), ruff +
+mypy clean throughout. 11 commits on `main` (unpushed): 9de61a6, 484fdc1, 9d3523c, bbec046, 5df63a5,
+93e4d3c, 35bbfb0 + the TRDD-doc commits f54010c/a3fe248/5b6917a + (this one). All 6 review reports
+in `reports/amama-code-review/` (gitignored). Deferred flags recorded above + in Batch 2 — none are
+observed correctness bugs.
 
 ## Why this is in-control + safe
 Pure correctness fixes to AMAMA's OWN scripts (no external dependency, no peer/USER gate). Each is a
