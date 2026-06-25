@@ -381,30 +381,44 @@ def lookup_documents(
         if not cat_path.exists():
             continue
 
-        # Search for task_id folders
-        for task_folder in cat_path.rglob(task_id):
-            if task_folder.is_dir():
-                for md_file in task_folder.glob("*.md"):
-                    metadata_file = md_file.with_suffix("").with_name(
-                        f"{md_file.stem}_metadata.json"
-                    )
-                    metadata = {}
-                    if metadata_file.exists():
-                        try:
-                            metadata = json.loads(
-                                metadata_file.read_text(encoding="utf-8")
-                            )
-                        except json.JSONDecodeError:
-                            pass
+        # Match docs by their metadata sidecar's task_id, walking the category
+        # tree RECURSIVELY. This single strategy fixes BOTH read-path bugs and
+        # stays correct for the task-id-path categories:
+        #   - Categories whose path template has NO "{task_id}" (specs, sync)
+        #     store the id ONLY in the metadata JSON, so the old folder-name match
+        #     (rglob(task_id)) never found their docs. Metadata-match finds them.
+        #   - Docs placed in a --subcategory subfolder were missed by the old
+        #     non-recursive glob("*.md") while verify_storage (rglob) counted them,
+        #     so the two read paths disagreed. rglob here makes them agree.
+        #   - task-id-path categories (tasks/reports/acks/plans) still match
+        #     because their sidecars carry the same task_id too.
+        # Sidecar name reconstruction mirrors the write side exactly (Path.stem).
+        for md_file in cat_path.rglob("*.md"):
+            metadata_file = md_file.with_suffix("").with_name(
+                f"{md_file.stem}_metadata.json"
+            )
+            # Skip a doc whose sidecar is missing OR unreadable WITHOUT crashing
+            # the whole lookup — but never treat a present-but-unparseable sidecar
+            # as a match (that would be a silent false positive that hides real
+            # corruption; fail-fast on the match decision, lenient on the scan).
+            if not metadata_file.exists():
+                continue
+            try:
+                metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
 
-                    results.append(
-                        {
-                            "path": str(md_file),
-                            "category": cat,
-                            "task_id": task_id,
-                            "metadata": metadata,
-                        }
-                    )
+            if metadata.get("task_id") != task_id:
+                continue
+
+            results.append(
+                {
+                    "path": str(md_file),
+                    "category": cat,
+                    "task_id": task_id,
+                    "metadata": metadata,
+                }
+            )
 
     return results
 

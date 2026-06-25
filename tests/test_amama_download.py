@@ -582,6 +582,154 @@ def test_metadata_sidecar_name_matches_read_side_when_filename_has_inner_md():  
         _rmtree(src)
 
 
+def test_lookup_finds_doc_in_no_task_id_category():  # 🐌 spins a real HTTP server
+    """HIGH-bug regression: a doc in a NO-{task_id}-path category (``specs``) is found by
+    lookup --task-id. ``specs`` stores the id ONLY in the metadata JSON (its folder is a
+    flat ``specs/``, never ``specs/<task_id>/``), so the old folder-name match
+    (``rglob(task_id)``) never located it. The metadata-match strategy does.
+
+    Before the fix: lookup returns [] (folder ``GH-spec`` does not exist under specs/) →
+    this assertion fails. After: the sidecar's ``task_id`` matches → it is found.
+    """
+    root = _tmp()
+    src = _tmp()
+    payload = b"# toolchain spec for GH-spec\nversion: 2\n"
+    (src / "spec.md").write_bytes(payload)
+    srv, port = _serve_dir(src)
+    try:
+        downloaded = dl.download_document(
+            url=f"http://127.0.0.1:{port}/spec.md",
+            task_id="GH-spec",
+            category="specs",  # path template is "specs" — NO "{task_id}" segment
+            doc_type="toolchain",
+            sender="amama-architect",
+            project_root=root,
+        )
+        assert downloaded is not None and downloaded.exists()
+        # Precondition: the doc really lives in a FLAT specs/ dir, not specs/<task_id>/.
+        store = dl.get_storage_root(root)
+        assert downloaded.parent == store / "specs", "precondition: no per-task-id subfolder"
+
+        results = dl.lookup_documents("GH-spec", project_root=root)
+        assert len(results) == 1, "the no-task-id-category doc must now be found"
+        found = results[0]
+        assert found["category"] == "specs"
+        assert Path(found["path"]) == downloaded
+        assert found["metadata"]["task_id"] == "GH-spec"  # matched via metadata, not folder name
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
+def test_lookup_finds_doc_in_subcategory_subfolder():  # 🐌 spins a real HTTP server
+    """MEDIUM-bug regression: a doc downloaded WITH a --subcategory lands in a subfolder
+    (``reports/<task_id>/completion/``). The old non-recursive ``glob('*.md')`` over the
+    task folder missed it (while verify_storage's ``rglob`` counted it — the two read
+    paths disagreed). The recursive metadata-match finds it.
+
+    Before the fix: lookup's ``glob('*.md')`` on ``reports/GH-sub/`` does not descend into
+    ``completion/`` → returns [] → this assertion fails. After (``rglob``): it is found.
+    """
+    root = _tmp()
+    src = _tmp()
+    payload = b"# completion report in a subfolder\n"
+    (src / "rep.md").write_bytes(payload)
+    srv, port = _serve_dir(src)
+    try:
+        downloaded = dl.download_document(
+            url=f"http://127.0.0.1:{port}/rep.md",
+            task_id="GH-sub",
+            category="reports",
+            subcategory="completion",  # forces a subfolder: reports/GH-sub/completion/
+            doc_type="completion",
+            project_root=root,
+        )
+        assert downloaded is not None and downloaded.exists()
+        # Precondition: the doc is one level DEEPER than the task folder.
+        store = dl.get_storage_root(root)
+        assert downloaded.parent == store / "reports" / "GH-sub" / "completion"
+
+        results = dl.lookup_documents("GH-sub", project_root=root)
+        assert len(results) == 1, "the doc in a --subcategory subfolder must now be found"
+        assert Path(results[0]["path"]) == downloaded
+        assert results[0]["category"] == "reports"
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
+def test_lookup_task_id_path_category_still_found():  # 🐌 spins a real HTTP server
+    """No-regression: a doc in a task-id-PATH category (``tasks/<task_id>/``, no subfolder)
+    is STILL found after switching to metadata-match. Its sidecar carries the same task_id,
+    so the new strategy locates it exactly as the old folder-name match did."""
+    root = _tmp()
+    src = _tmp()
+    payload = b"# delegation for GH-keep\n"
+    (src / "deleg.md").write_bytes(payload)
+    srv, port = _serve_dir(src)
+    try:
+        downloaded = dl.download_document(
+            url=f"http://127.0.0.1:{port}/deleg.md",
+            task_id="GH-keep",
+            category="tasks",  # path template "tasks/{task_id}" → folder IS named after the id
+            doc_type="delegation",
+            project_root=root,
+        )
+        assert downloaded is not None and downloaded.exists()
+        store = dl.get_storage_root(root)
+        assert downloaded.parent == store / "tasks" / "GH-keep"
+
+        results = dl.lookup_documents("GH-keep", project_root=root)
+        assert len(results) == 1, "the task-id-path-category doc must STILL be found (no regression)"
+        assert Path(results[0]["path"]) == downloaded
+        assert results[0]["category"] == "tasks"
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
+def test_lookup_does_not_return_other_task_id():  # 🐌 spins a real HTTP server
+    """No-false-positives: a doc stored under task_id A is NOT returned when looking up
+    task_id B. With metadata-match, only sidecars whose ``task_id`` equals the query are
+    included — a doc in a flat category (``specs``) shared by many tasks must not leak."""
+    root = _tmp()
+    src = _tmp()
+    (src / "a.md").write_bytes(b"# spec for task A\n")
+    (src / "b.md").write_bytes(b"# spec for task B\n")
+    srv, port = _serve_dir(src)
+    try:
+        # Two docs land in the SAME flat specs/ directory but carry DIFFERENT task ids.
+        doc_a = dl.download_document(
+            url=f"http://127.0.0.1:{port}/a.md",
+            task_id="GH-aaa", category="specs", doc_type="toolchain", project_root=root,
+        )
+        doc_b = dl.download_document(
+            url=f"http://127.0.0.1:{port}/b.md",
+            task_id="GH-bbb", category="specs", doc_type="platform", project_root=root,
+        )
+        assert doc_a is not None and doc_b is not None
+        assert doc_a.parent == doc_b.parent, "precondition: both in the one flat specs/ dir"
+
+        # Looking up A returns ONLY A's doc, never B's (no false positive across shared dir).
+        results_a = dl.lookup_documents("GH-aaa", project_root=root)
+        assert len(results_a) == 1
+        assert Path(results_a[0]["path"]) == doc_a
+        assert results_a[0]["metadata"]["task_id"] == "GH-aaa"
+        # And a task id that exists in NEITHER sidecar finds nothing at all.
+        assert dl.lookup_documents("GH-zzz", project_root=root) == []
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
 # --------------------------------------------------------------------------- #
 # Slow tests (spin a real local HTTP server) get a 🐌 marker in the result table.
 # --------------------------------------------------------------------------- #
@@ -592,6 +740,10 @@ _SLOW = {
     "test_main_dispatches_download_lookup_verify_subcommands",
     "test_main_verify_returns_rc1_when_store_has_issues",
     "test_metadata_sidecar_name_matches_read_side_when_filename_has_inner_md",
+    "test_lookup_finds_doc_in_no_task_id_category",
+    "test_lookup_finds_doc_in_subcategory_subfolder",
+    "test_lookup_task_id_path_category_still_found",
+    "test_lookup_does_not_return_other_task_id",
 }
 
 
