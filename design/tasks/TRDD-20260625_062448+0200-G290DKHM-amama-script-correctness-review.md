@@ -3,7 +3,7 @@ trdd-id: G290DKHM
 title: AMAMA script correctness review — fix CRITICAL mass-approve + HIGH id-collision + HIGH sidecar-orphan bugs
 column: complete
 created: 2026-06-25T06:24:48+0200
-updated: 2026-06-25T06:24:48+0200
+updated: 2026-06-25T06:32:03+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -28,7 +28,9 @@ external-refs: []
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-06-25T06:24
 
-**✅ EXECUTED + VERIFIED — 3 real bugs fixed, full suite green (101 passed), ruff + mypy clean.**
+**✅ EXECUTED + VERIFIED — 5 real bugs fixed (3 below + the 2 lookup gaps), full suite green
+(105 passed), ruff + mypy clean. All landed in 4 commits on `main` (unpushed): 9de61a6 (approvals),
+484fdc1 + 9d3523c (download), f54010c (this TRDD).**
 Trigger: USER challenge "why are you not working??" → `/go-on-yourself` in-control improvement.
 A fresh-eyes correctness review of AMAMA's two most complex AMAMA-specific scripts (delegated to
 two parallel Opus reviewers, GOLDEN-RULE whole-file read; findings verified by me against the
@@ -57,26 +59,25 @@ bugs that the existing test suite did not catch.
    verification undetected. Fix: write side uses `Path(filename).stem` (single source of truth with
    the read side). Test: `test_metadata_sidecar_name_matches_read_side_when_filename_has_inner_md`.
 
-### Flagged for MANAGER decision (real, NOT auto-fixed — design-level) — see download report
-- **[HIGH] `lookup_documents` can't find docs in no-task-id categories (`specs`, `sync`).** It
-  searches for a folder literally named `{task_id}`, but those categories store the task_id only in
-  the metadata JSON, never in the path → docs are unfindable by `lookup --task-id`.
-- **[MEDIUM] `lookup_documents` misses subcategory subfolders.** It globs `*.md` non-recursively;
-  docs downloaded with `--subcategory` sit in a subfolder → unfindable by `lookup`, though `verify`
-  (rglob) counts them — the two read paths disagree.
-- **[LOW]** empty task folder left behind on download failure (cosmetic litter).
-- **[NIT]** `init_storage` `.gitignore` "already present?" check is a coarse substring match.
-
-**DECISION (next in-control step):** fix the two `lookup_documents` gaps together as ONE coherent
-design change (recursive search + consult `metadata["task_id"]` for the no-task-id categories) with
-its own regression tests — they are real functional gaps in a MANAGER tool. The LOW/NIT items are
-deferred (negligible impact; fixing them now would be churn against `/go-on-yourself` "write only
-what is strictly necessary"). Tracked as the follow-up to this TRDD.
+### Flagged items — RESOLVED / deferred
+- **[HIGH] ✅ FIXED (commit 9d3523c)** — `lookup_documents` couldn't find docs in no-task-id
+  categories (`specs`, `sync`): it matched a folder literally named `{task_id}`, but those categories
+  store the id only in the metadata JSON.
+- **[MEDIUM] ✅ FIXED (commit 9d3523c)** — `lookup_documents` missed `--subcategory` subfolders
+  (non-recursive `glob("*.md")` vs `verify`'s `rglob`).
+  → Both fixed by ONE coherent strategy: recursive `rglob("*.md")` per category + include a doc iff
+  its metadata sidecar's `task_id` matches (subsumes both gaps, stays correct for task-id-path
+  categories, agrees with `verify_storage`). 4 fail-before/pass-after tests.
+- **[LOW] DEFERRED** — empty task folder left behind on download failure (cosmetic litter).
+- **[NIT] DEFERRED** — `init_storage` `.gitignore` "already present?" coarse substring match.
+  → Both deferred deliberately: negligible real-world impact; fixing now would be churn against
+  `/go-on-yourself` "write only what is strictly necessary." Recorded here so they are not lost.
 
 ### Verification
-`uv run --with pytest pytest tests/ -q` → **101 passed** (98 prior + 3 new). `ruff check scripts/
-tests/` → all passed. `mypy scripts/` → no issues (15 files). Reviewer reports:
-`reports/amama-code-review/20260625_06*-{proposal-approvals,amama-download}.md` (gitignored).
+`uv run --with pytest pytest tests/ -q` → **105 passed** (98 prior + 7 new regression tests).
+`ruff check scripts/ tests/` → all passed. `mypy scripts/` → no issues (15 files). Reviewer reports:
+`reports/amama-code-review/20260625_06*-{proposal-approvals,amama-download,download-lookup-fix}.md`
+(gitignored).
 
 ### Gotcha re-encountered (and the lesson held)
 The `while ls design/tasks/TRDD-*-$ID-*.md` collision idiom hung 8 min AGAIN (nullglob → `ls`
