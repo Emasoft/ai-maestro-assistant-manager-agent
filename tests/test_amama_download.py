@@ -512,6 +512,76 @@ def test_main_verify_returns_rc1_when_store_has_issues():  # 🐌 spins a real H
         _rmtree(src)
 
 
+def test_metadata_sidecar_name_matches_read_side_when_filename_has_inner_md():  # 🐌 spins a real HTTP server
+    """Metadata orphaning regression: a doc_type containing '.md' produces a filename
+    with an inner '.md' (``<ts>_spec.md.md``). The metadata sidecar must be written
+    under the SAME name the read side reconstructs from ``md_file.stem`` — otherwise
+    lookup returns empty metadata and verify falsely reports 'missing_metadata' while
+    silently skipping the SHA256 integrity check (tampering goes undetected).
+
+    Before the fix (write side used ``filename.replace('.md', '')``) the sidecar was
+    named ``..._spec_metadata.json`` while the read side looked for
+    ``..._spec.md_metadata.json`` → this test fails. After the fix (write side uses
+    ``Path(filename).stem``) both agree → it passes.
+    """
+    root = _tmp()
+    src = _tmp()
+    payload = b"# report inner-md\nversion: 3\n"
+    (src / "doc.md").write_bytes(payload)
+    srv, port = _serve_dir(src)
+    try:
+        # doc_type "review.md" → filename "<ts>_review.md.md" (an inner '.md').
+        # Category "reports" has "{task_id}" in its path AND no subcategory is used,
+        # so the doc lands directly in reports/GH-md/ where lookup's non-recursive
+        # glob finds it — isolating THIS test to the metadata-naming bug, not the
+        # separate lookup limitations (no-task-id categories + subfolder docs),
+        # which are FLAGGED for MANAGER review, not fixed here.
+        downloaded = dl.download_document(
+            url=f"http://127.0.0.1:{port}/doc.md",
+            task_id="GH-md", category="reports",
+            doc_type="review.md", project_root=root,
+        )
+        assert downloaded is not None and downloaded.exists()
+        assert downloaded.name.endswith("_review.md.md"), "precondition: filename has an inner '.md'"
+
+        # 1) The sidecar exists under the READ-side name (md_file.stem-based).
+        expected_meta = downloaded.with_name(f"{downloaded.stem}_metadata.json")
+        assert expected_meta.exists(), (
+            "metadata sidecar must live under the read-side name; a write side that "
+            "stripped every '.md' would orphan it here"
+        )
+
+        # 2) lookup parses REAL metadata (not the silent empty-{} fallback).
+        results = dl.lookup_documents("GH-md", project_root=root)
+        assert len(results) == 1
+        meta = results[0]["metadata"]
+        assert meta != {}, "lookup must find and parse the sidecar, not fall back to {}"
+        import hashlib
+
+        assert meta["download"]["sha256"] == hashlib.sha256(payload).hexdigest()
+
+        # 3) verify on the clean store reports NO missing_metadata and NO issues.
+        clean = dl.verify_storage(root)
+        clean_types = {i["type"] for i in clean["issues"]}
+        assert "missing_metadata" not in clean_types, (
+            "an orphaned sidecar would make verify cry 'missing_metadata' falsely"
+        )
+        assert clean["issues"] == []
+
+        # 4) Integrity check is actually wired: tampering is DETECTED (it would be
+        # silently skipped if the sidecar were orphaned, since the SHA256 check
+        # lives in the metadata-found branch).
+        downloaded.chmod(downloaded.stat().st_mode | stat.S_IWUSR)
+        downloaded.write_bytes(b"# toolchain spec inner-md\nversion: 999 TAMPERED\n")
+        tampered = dl.verify_storage(root)
+        assert "integrity_violation" in {i["type"] for i in tampered["issues"]}
+    finally:
+        srv.shutdown()
+        srv.server_close()
+        _rmtree(root)
+        _rmtree(src)
+
+
 # --------------------------------------------------------------------------- #
 # Slow tests (spin a real local HTTP server) get a 🐌 marker in the result table.
 # --------------------------------------------------------------------------- #
@@ -521,6 +591,7 @@ _SLOW = {
     "test_lookup_documents_finds_downloaded_doc_and_parses_metadata",
     "test_main_dispatches_download_lookup_verify_subcommands",
     "test_main_verify_returns_rc1_when_store_has_issues",
+    "test_metadata_sidecar_name_matches_read_side_when_filename_has_inner_md",
 }
 
 

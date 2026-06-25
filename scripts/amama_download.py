@@ -336,7 +336,18 @@ def download_document(
         "ack_timestamp": None,
     }
 
-    metadata_path = folder_path / f"{filename.replace('.md', '')}_metadata.json"
+    # Derive the metadata sidecar name by stripping ONLY the final suffix
+    # (Path.stem), to match exactly how the read side (lookup_documents /
+    # verify_storage) reconstructs it via `md_file.stem`. A naive
+    # `filename.replace('.md', '')` strips EVERY '.md' occurrence, so a filename
+    # whose doc_type or URL basename contains '.md' in the middle (e.g.
+    # '<ts>_report.md.md', or --doc-type 'spec.md') would write the sidecar under
+    # a name the read side never reconstructs — orphaning the metadata. The
+    # consequence was silent: lookup returned empty metadata, and verify reported
+    # a false 'missing_metadata' AND skipped the SHA256 integrity check, so file
+    # tampering went undetected. Path.stem is the single source of truth for both
+    # sides.
+    metadata_path = folder_path / f"{Path(filename).stem}_metadata.json"
     atomic_write(metadata_path, json.dumps(metadata, indent=2))
 
     # Lock the downloaded file + its metadata read-only for integrity. Do NOT lock
