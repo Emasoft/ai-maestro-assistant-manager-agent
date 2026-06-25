@@ -84,5 +84,28 @@ def test_malformed_stdin_does_not_crash():
     assert _run_hook("").returncode == 0
 
 
+def test_unreadable_stdin_does_not_crash():
+    """An OSError while reading stdin (broken pipe / EIO) is swallowed; the hook returns 0, never raises."""
+    # A SessionStart hook must be fail-safe at the boundary: a parent that closes
+    # the stdin channel early makes sys.stdin.read() raise OSError. Drive main()
+    # in-process with a REAL stdin-like object whose read() raises that exact
+    # error (no mock — a concrete object with concrete behavior, like the
+    # io.StringIO the other tests use). Before the fix this propagated an
+    # unhandled OSError and crashed the user's session.
+    class _BrokenStdin:
+        def read(self) -> str:
+            raise OSError("Input/output error")
+
+    original_stdin = sys.stdin
+    sys.stdin = _BrokenStdin()  # type: ignore[assignment]
+    try:
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            rc = ss.main()
+    finally:
+        sys.stdin = original_stdin
+    assert rc == 0, "an unreadable stdin must degrade to a clean exit 0, not a traceback"
+    assert out.getvalue() == ""
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))

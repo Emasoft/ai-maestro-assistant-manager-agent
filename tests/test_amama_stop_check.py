@@ -160,5 +160,22 @@ def test_malformed_stdin_falls_back_and_does_not_crash():
         assert out.strip() == "", "no blocking issues → silent allow"
 
 
+def test_valid_nonobject_stdin_does_not_crash():
+    """Valid JSON that is NOT an object (int/list/str) must NOT crash the hook.
+
+    `5`, `[]`, `"x"` all parse cleanly via json.loads but have no `.get()`, so a
+    later `hook_input.get("agent_id")` would raise AttributeError and dump a
+    traceback into the user's session. A Stop hook must be fail-safe at the
+    boundary: a non-object payload degrades to {} → checks run → clean CLIs
+    allow (0). Before the isinstance(...) coercion this raised AttributeError
+    (caught here as ERROR, not just a failed assert).
+    """
+    for payload in ("5", "[]", '"hello"', "true", "null"):
+        with hook_env(amp_stdout="0", gh_stdout="[]") as (_proj, run):
+            rc, out = run(payload)
+            assert rc == 0, f"non-object stdin {payload!r} must allow (0), got {rc}"
+            assert out.strip() == "", f"non-object stdin {payload!r} → silent allow"
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))

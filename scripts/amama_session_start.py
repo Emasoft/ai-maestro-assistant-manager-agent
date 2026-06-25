@@ -35,13 +35,19 @@ def main() -> int:
         Exit code: 0 for success
     """
     # Read hook input from stdin (may be empty for SessionStart).
+    # A SessionStart hook MUST be fail-safe at the boundary: never crash the
+    # user's session with a traceback on a broken/unreadable stdin or malformed
+    # JSON. sys.stdin.read() can raise OSError (e.g. a broken pipe / EIO when the
+    # parent closes the channel early), so it is guarded alongside the JSON parse
+    # — degrade to an empty payload and exit 0 rather than propagate. (The sibling
+    # UserPromptSubmit hook guards the same read identically.)
     try:
         stdin_data = sys.stdin.read()
         if stdin_data.strip():
             hook_input = json.loads(stdin_data)
         else:
             hook_input = {}
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, OSError):
         hook_input = {}
 
     # Subagent runs carry agent_id (2.1.69+); nothing to do for them either.

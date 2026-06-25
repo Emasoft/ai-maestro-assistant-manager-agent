@@ -150,6 +150,15 @@ def main() -> int:
     except json.JSONDecodeError:
         hook_input = {}
 
+    # A Stop hook must NEVER crash the session on an unexpected payload. Valid
+    # JSON that is not an object (e.g. `5`, `[]`, `"x"`) parses fine above but
+    # has no `.get()`, so any later `hook_input.get(...)` would raise
+    # AttributeError and dump a traceback into the user's session. Coerce any
+    # non-dict payload to {} — same "unusable payload → empty" handling already
+    # applied to blank/invalid stdin.
+    if not isinstance(hook_input, dict):
+        hook_input = {}
+
     # Skip blocking for subagents — only block main agent exits (2.1.69+: agent_id present means subagent)
     if hook_input.get("agent_id"):
         return 0
