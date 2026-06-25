@@ -116,6 +116,23 @@ def test_index_yaml_written_and_parseable():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def test_duplicate_platforms_are_deduped_in_index():
+    """Repeated --platforms values are de-duplicated (order-preserving) in the index, with 'shared' first."""
+    tmp = _tmp()
+    try:
+        root = tmp / "design"
+        # argparse nargs="+" accepts repeats; 'web' twice + 'shared' given
+        # explicitly out of first position must NOT produce a malformed manifest.
+        assert _run_cli(root, "--platforms", "web", "web", "shared", "ios").returncode == 0
+        data = yaml.safe_load((root / "index.yaml").read_text(encoding="utf-8"))
+        # No duplicate 'web'; 'shared' forced first; first-seen order otherwise.
+        assert data["platforms"] == ["shared", "web", "ios"], data["platforms"]
+        # by_platform stats key set matches the deduped platform list.
+        assert set(data["stats"]["by_platform"]) == {"shared", "web", "ios"}
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def test_reinit_without_force_is_safe_noop_exit1():
     """Re-running on an already-initialized root is a SAFE no-op: exit 1, no error, files untouched."""
     tmp = _tmp()

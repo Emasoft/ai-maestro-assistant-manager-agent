@@ -287,13 +287,21 @@ def main() -> int:
     args = parser.parse_args()
 
     root = Path(args.root)
-    platforms = args.platforms
 
-    # Ensure 'shared' is always included
-    if "shared" not in platforms:
-        platforms = ["shared"] + platforms
+    # Normalize the platform list: 'shared' is always present and first, and
+    # duplicates are dropped while preserving first-seen order. argparse
+    # (nargs="+") happily accepts repeats like `--platforms web web`; without
+    # this dedup those repeats are written verbatim into index.yaml's
+    # `platforms:` list (a malformed manifest) and cause redundant mkdir/template
+    # passes. dict.fromkeys is the order-preserving unique-ifier.
+    platforms = list(dict.fromkeys(["shared", *args.platforms]))
 
-    results = {
+    # Heterogeneous result record (bool/str/list values); annotate explicitly so
+    # the mutating fields below (.append, len()) type-check. Previously this dict
+    # was inferred loosely because `platforms` came straight off argparse as Any;
+    # de-duplicating it made `platforms` a concrete list[str], collapsing the
+    # value type to `object` and breaking those mutations — hence the annotation.
+    results: dict[str, Any] = {
         "success": True,
         "root": str(root),
         "platforms": platforms,
