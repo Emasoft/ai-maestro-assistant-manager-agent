@@ -133,6 +133,15 @@ def test_extract_title_frontmatter_h1_and_filename_fallback():
         == "Auth Design Spec"
     )
 
+    # Edge: a filename whose STEM contains an internal '.md' substring. Only the
+    # trailing '.md' extension is stripped (removesuffix), never the inner one.
+    # A naive str.replace('.md', '') would wrongly delete the middle '.md' too,
+    # yielding 'V1.2 Notes' instead of the correct 'V1.2.Md Notes'.
+    assert (
+        ads.extract_title_from_content("Body, no heading.\n", "v1.2.md-notes.md")
+        == "V1.2.Md Notes"
+    )
+
 
 def test_extract_keywords_merges_keywords_and_tags():
     """extract_keywords_from_content unions frontmatter keywords[] + tags[] (deduped) and is empty when absent."""

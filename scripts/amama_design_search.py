@@ -155,8 +155,13 @@ def extract_title_from_content(content: str, filename: str) -> str:
     if h1_match:
         return h1_match.group(1).strip()
 
-    # Fall back to filename
-    return filename.replace(".md", "").replace("-", " ").replace("_", " ").title()
+    # Fall back to a humanised filename. Strip ONLY the trailing ".md" extension
+    # via removesuffix — NOT str.replace(".md", ""), which is a global substring
+    # replace that also deletes any internal ".md" (e.g. "v1.2.md-notes.md" would
+    # lose the middle ".md" and become "V1.2 Notes" instead of "V1.2.Md Notes").
+    return (
+        filename.removesuffix(".md").replace("-", " ").replace("_", " ").title()
+    )
 
 
 def extract_keywords_from_content(content: str) -> list[str]:
