@@ -41,7 +41,6 @@ recommended = [
 [hooks]
 recommended = [
     "amama-memory-load",
-    "amama-memory-save",
     "amama-stop-check",
 ]
 
