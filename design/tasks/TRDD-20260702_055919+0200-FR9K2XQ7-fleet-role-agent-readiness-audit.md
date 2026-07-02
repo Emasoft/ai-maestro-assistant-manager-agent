@@ -3,7 +3,7 @@ trdd-id: FR9K2XQ7
 title: Fleet role-agent governance + 3-pillars readiness audit — 7 issues filed
 column: dev
 created: 2026-07-02T05:59:19+0200
-updated: 2026-07-02T05:59:19+0200
+updated: 2026-07-02T06:08:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -36,6 +36,8 @@ external-refs: ["github.com/Emasoft/ai-maestro-chief-of-staff/issues/24", "githu
 | programmer | 0/1/3 | #25 (new) |
 | autonomous | 0/1/1 | #12 (comment) |
 | maintainer | 0/2/1 | #18 (comment) |
+
+**Foundation — CORE `ai-maestro-plugin` = READY** (audited 2026-07-02, v2.7.14): all 10 `ama-*` skills present + genuinely governance-enforcing (hard `caller_is_manager()` exit-4 gates; read-only tool-lock; matrix-gated transitions); the 4 rules are bundled + SessionStart auto-installs them. ONE HIGH gap — the installer is install-if-missing only (no overwrite-on-version-change → silent rule-drift on existing machines; origin #8 now closed → untracked) → filed **ai-maestro-plugin#16**; memory-recall scope-note added to **#14**. Core PRODUCES correctly — the readiness gap is entirely the role plugins CONSUMING it.
 
 **UNIFORM DRIFT (the fleet-wide gap — per-plugin detail is in each issue + report):**
 1. All operate the 3 pillars via LOCAL skills (`amia-*`/`amoa-*`/…) instead of the core `ama-*` granular skills — the redundancy the standard forbids ([[f5883dcc]] A1/A4).
