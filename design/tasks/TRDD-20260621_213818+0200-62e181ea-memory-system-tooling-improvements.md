@@ -1,9 +1,9 @@
 ---
 trdd-id: 62e181ea-20b1-4614-ad9f-0893117b4857
 title: Memory-system tooling improvements — is-due CLI, marker due-gating, gate↔model tier, frontmatter placement
-column: proposal
+column: planned
 created: 2026-06-21T21:38:18+0200
-updated: 2026-06-21T21:38:18+0200
+updated: 2026-07-02T06:15:00+0200
 current-owner: amama
 assignee: amama
 priority: 3
@@ -20,7 +20,11 @@ external-refs: ["github.com/Emasoft/ai-maestro-janitor"]
 
 # TRDD-62e181ea — Memory-system tooling improvements (proposals)
 
-## ⏵ STATE — READ THIS FIRST — 2026-06-21
+## ⏵ STATE — READ THIS FIRST — 2026-07-02
+
+**✅ APPROVED + FILED 2026-07-02** (MANAGER, tier-2): P1-P4 routed as **ai-maestro-janitor#68**. Verify-before-file flagged P2/P4 may be superseded by CLOSED janitor #50/#56/#33 (maintainer to disregard if resolved); P1/P3 genuinely new; cross-reffed #45/#46/#47. AMAMA coordination complete → janitor executes; MANAGER verify-acks on release.
+
+_(historical proposal STATE — 2026-06-21)_
 
 Improvement PROPOSALS for the janitor wikimem system, distilled from lessons hit
 THIS session (the MAESTRO asked, 2026-06-21: "create TRDDs with all the proposals

@@ -1,9 +1,9 @@
 ---
 trdd-id: 4a48ffea-7c49-4cde-8831-b2997ff8bf7a
 title: Fleet coordination + verification improvements — cache staleness, idle-agent wake, coverage audit, marker friction
-column: proposal
+column: planned
 created: 2026-06-21T21:38:18+0200
-updated: 2026-06-21T21:38:18+0200
+updated: 2026-07-02T06:15:00+0200
 current-owner: amama
 assignee: amama
 priority: 3
@@ -20,7 +20,11 @@ external-refs: ["github.com/Emasoft/ai-maestro-janitor", "github.com/Emasoft/ai-
 
 # TRDD-4a48ffea — Fleet coordination + verification improvements (proposals)
 
-## ⏵ STATE — READ THIS FIRST — 2026-06-21
+## ⏵ STATE — READ THIS FIRST — 2026-07-02
+
+**✅ APPROVED + FILED 2026-07-02** (MANAGER, tier-2): P5→**ai-maestro-janitor#69**, P6→**ai-maestro#51**, P7→**claude-plugins-validation#155**, P8→**ai-maestro-janitor#70**; P9 stays a documented harness constraint (no repo owns it). AMAMA coordination complete → owner repos execute; MANAGER verify-acks on their releases.
+
+_(historical proposal STATE — 2026-06-21)_
 
 Cross-project improvement PROPOSALS distilled from recurring fleet-work pain this
 session and prior (MAESTRO request 2026-06-21). On approval each routes to its owner
