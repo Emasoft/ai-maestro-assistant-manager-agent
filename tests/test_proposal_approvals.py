@@ -422,5 +422,48 @@ def test_ambiguous_short_id_does_not_misroute_archive():
         assert exact is not None and "first" in exact.name
 
 
+def _write_task(tdir: Path, tid: str, slug: str) -> Path:
+    """Write one synthetic APPROVED task with a given trdd-id; return its path."""
+    tdir.mkdir(parents=True, exist_ok=True)
+    path = tdir / f"TRDD-idcase-{slug}.md"
+    path.write_text(
+        f"---\ntrdd-id: {tid}\n"
+        f"title: Idcase {slug}\ncolumn: dev\n"
+        f"created: 2026-06-01T10:00:00+0200\n"
+        f"updated: 2026-06-01T10:00:00+0200\napproval-tier: 2\n"
+        f"---\n\n# Idcase {slug}\n\n## Approval log\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_find_in_short_and_full_id_are_case_insensitive():
+    """A trdd-id is written uppercase but looked up case-insensitively (UPPER/lower/MiXeD all resolve)."""
+    with temp_repo() as (root, _ids):
+        tdir = ppa.tasks_dir(root)
+        want = _write_task(tdir, "K3QX9P2W", "canonical8")  # canonical 8-char base36 id
+        for ident in ("K3QX9P2W", "k3qx9p2w", "K3qx9P2w"):
+            got = ppa.find_in(tdir, ident)
+            assert got == want, f"lookup {ident!r} should resolve the uppercase-stored id"
+
+
+def test_case_folding_does_not_defeat_ambiguous_guard():
+    """Case-insensitive lookup must still raise AmbiguousId on two distinct ids sharing a short prefix."""
+    with temp_repo() as (root, _ids):
+        tdir = ppa.tasks_dir(root)
+        # Two DISTINCT ids sharing the same first 8 chars (case-insensitively).
+        _write_task(tdir, "K3QX9P2WAAAA", "collide_a")
+        _write_task(tdir, "K3QX9P2WBBBB", "collide_b")
+        raised = False
+        try:
+            ppa.find_in(tdir, "k3qx9p2w")  # lowercase short id — collides on both
+        except ppa.AmbiguousId:
+            raised = True
+        assert raised, "case-folding must not merge two distinct ids — AmbiguousId still fires"
+        # Each full id (any case) still resolves unambiguously to its own file.
+        assert (ppa.find_in(tdir, "k3qx9p2waaaa") or Path()).name.endswith("collide_a.md")
+        assert (ppa.find_in(tdir, "K3QX9P2WBBBB") or Path()).name.endswith("collide_b.md")
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))

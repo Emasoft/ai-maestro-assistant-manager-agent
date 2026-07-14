@@ -13,7 +13,7 @@
 | Quick Status | On demand | Current state summary | `aimaestro-agent.sh list` |
 | Progress Report | Daily/Weekly | Work completed, in progress, blocked | team tasks (`/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36) + GitHub |
 | Handoff Summary | On transition | What was handed to whom | `aimaestro-agent.sh list` + handoff files |
-| Blocker Report | As needed | What's blocking progress | team tasks (`/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36) (pending/in_progress) |
+| Blocker Report | As needed | What's blocking progress | team tasks (`/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36) (`blocked` + `dev`/`testing`) |
 
 **Note**: Blockers are reported to the user IMMEDIATELY when received, not held for the next scheduled status report.
 
@@ -31,18 +31,18 @@
 ### Quick Status Format
 - Agent sessions: online/offline counts (from `aimaestro-agent.sh list`)
 - Session liveness: active/inactive (from `aimaestro-agent.sh list` — proxies agent health; no dedicated agent-health command exists)
-- Current active tasks (from team tasks where status = `in_progress`; `/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36)
+- Current active tasks (from team tasks where status = `dev`; `/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36)
 - Next milestone
 - Blockers (if any)
 
 ### Progress Report Format
 - Period covered
 - **Kanban Summary** (from team tasks; `/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36):
-  - Tasks in `backlog`: count and titles
-  - Tasks `pending`: count and titles
-  - Tasks `in_progress`: count, titles, assignees
-  - Tasks in `review`: count and titles
-  - Tasks `completed` (this period): count, titles, completion dates
+  - Tasks in `backburner`/`todo`: count and titles
+  - Tasks in `dev`/`testing`: count, titles, assignees
+  - Tasks in `ai_review`/`human_review`: count and titles
+  - Tasks `complete` (this period): count, titles, completion dates
+  - Exception columns `blocked`/`failed`: count and titles
 - **Agent Status** (from `aimaestro-agent.sh list`):
   - Active sessions with uptime
   - Stale / inactive sessions (if any — these proxy "unresponsive" agents)
@@ -68,11 +68,11 @@ Session status proxies agent health: `active` with recent heartbeat = alive, `in
 ### Task Kanban
 | Status | Count | Tasks |
 |--------|-------|-------|
-| backlog | 3 | Session mgmt, Logging, Metrics |
-| pending | 1 | Auth middleware |
-| in_progress | 2 | Login endpoint, User model |
-| review | 1 | DB schema |
-| completed | 4 | Setup, Config, Router, Models |
+| backburner | 3 | Session mgmt, Logging, Metrics |
+| todo | 1 | Auth middleware |
+| dev | 2 | Login endpoint, User model |
+| ai_review | 1 | DB schema |
+| complete | 4 | Setup, Config, Router, Models |
 
 **Blockers**: AMIA integrator agent unresponsive — escalating to AMCOS
 ```
@@ -95,10 +95,10 @@ Session status proxies agent health: `active` with recent heartbeat = alive, `in
 - Logout endpoint (AMOA, started 2025-01-30)
 - Session management design (AMAA, started 2025-01-29)
 
-**Pending:**
+**Todo:**
 - Password reset endpoint (blocked by email service config)
 
-**Backlog:**
+**Backburner:**
 - OAuth2 integration
 - Rate limiting
 

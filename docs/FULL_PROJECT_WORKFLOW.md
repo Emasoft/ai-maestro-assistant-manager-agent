@@ -43,7 +43,7 @@ resolve AID auth internally; AMAMA supplies no governance/sudo password (R28/R32
 | Step | Actor | Action |
 |------|-------|--------|
 | 15 | Members | Work on assigned tasks |
-| 16 | COS | Move tasks: `pending` -> `in_progress` |
+| 16 | COS | Move tasks: `dispatch` -> `dev` |
 | 17 | Members | Complete work, notify COS |
 | 18 | COS | Approve PR creation |
 | 19 | Members | Create PRs |
@@ -54,14 +54,14 @@ resolve AID auth internally; AMAMA supplies no governance/sudo password (R28/R32
 |------|-------|--------|
 | 20 | COS | Request review from integrator-skilled member |
 | 21 | Member | Review PR, merge or reject |
-| 22 | COS | Handle failures: reassign, move back to `in_progress` |
+| 22 | COS | Handle failures: reassign, move back to `dev` |
 
 ### Phase 6: Completion
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 23 | COS | Move task to `review` then `completed` |
-| 24 | COS | For big tasks: escalate review to manager before completing |
+| 23 | COS | Move task to `ai_review` then `complete` |
+| 24 | COS | For big tasks: escalate to `human_review` (via manager) before completing |
 | 25 | COS | Report completion to manager |
 | 26 | COS | Assign next task to available member |
 
@@ -79,18 +79,24 @@ resolve AID auth internally; AMAMA supplies no governance/sudo password (R28/R32
 
 ## Task Statuses
 
-| # | Status | Code | Description |
-|---|--------|------|-------------|
-| 1 | Backlog | `backlog` | Entry point, not yet prioritized |
-| 2 | Pending | `pending` | Prioritized, ready to start |
-| 3 | In Progress | `in_progress` | Active work |
-| 4 | Review | `review` | Under review (AI or human) |
-| 5 | Completed | `completed` | Done |
+Task status is the **ratified 17-column kanban vocabulary**, 1:1 with the TRDD `column:`
+field — 14 lifecycle + 3 exception columns. Consumers align TO it, never the reverse
+(ai-maestro R25 / TRDD-YUGDER9D):
+
+```
+backburner → todo → design → dispatch → dev → testing → ai_review → human_review → complete
+  → publish → published   (tools)
+  → deploy → live → live_auditing   (services)
+exception (orthogonal): blocked · failed · superseded
+```
+
+See `skills/amama-github-routing/references/task-system-sync.md` for the full column table
+and the GitHub-Project mapping.
 
 ## Task Routing
 
-- **Small**: `in_progress` -> `review` -> `completed`
-- **Big**: `in_progress` -> `review` (escalate to manager) -> `completed`
+- **Small**: `dev` -> `testing` -> `ai_review` -> `complete`
+- **Big**: `dev` -> `testing` -> `ai_review` -> `human_review` (escalate to manager) -> `complete`
 
 ## Communication
 

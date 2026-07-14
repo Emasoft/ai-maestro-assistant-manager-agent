@@ -22,15 +22,18 @@ Label taxonomy for AMAMA. Manages priority labels, status labels, and translates
 ## Instructions
 
 1. **Analyze request** -- determine priority (`priority:critical|high|normal|low`) and type (`type:bug|feature|...`)
-2. **Create issue** with labels: `status:backlog`, `priority:*`, `type:*`
+2. **Create issue** with labels: `status:backburner`, `priority:*`, `type:*`
 3. **Monitor status changes** from other agents; translate to user messages
 4. **Update priorities** when user expresses urgency changes
 5. **Set blocked** (as a flag) when user requests pause
 6. **Facilitate review** when AMIA escalates
 7. **Report status** by querying issues with relevant labels
 
-**Sets**: `status:backlog|review`, all `priority:*`.
-**Monitors only**: `status:pending|in_progress|review|completed`, `assign:*`.
+Status labels use the ratified 17-column kanban vocabulary (1:1 with the TRDD `column:`;
+see label-tables reference). AMAMA touches only the entry + human-review + block columns:
+
+**Sets**: `status:backburner` (new task entry), `status:human_review` (escalate for user review), `status:blocked` (flag), all `priority:*`.
+**Monitors** (set by other agents): the lifecycle `status:todo|design|dispatch|dev|testing|ai_review|complete` and the release columns `status:publish|published|deploy|live|live_auditing`, plus `assign:*`.
 **Never sets**: `assign:*`, `review:*`, `effort:*`, `component:*`.
 
 See label-tables reference for full label tables and approval authority.
@@ -43,13 +46,13 @@ See label-tables reference for full label tables and approval authority.
 ```bash
 # Create issue (the --body MUST begin with the G1.1 self-id line)
 gh issue create --title "$TITLE" --body "$BODY" \
-  --label "status:backlog" --label "priority:$PRI" --label "type:$TYPE"
+  --label "status:backburner" --label "priority:$PRI" --label "type:$TYPE"
 # Change priority
 gh issue edit $NUM --remove-label "priority:normal" --add-label "priority:high"
 # Block/unblock
 gh issue edit $NUM --add-label "status:blocked"
 # Status report
-gh issue list --label "status:in-progress" --json number,title,labels
+gh issue list --label "status:dev" --json number,title,labels
 ```
 
 See commands-and-patterns reference for all commands and patterns.
@@ -93,7 +96,7 @@ Copy this checklist and track your progress:
 ```bash
 gh issue create --title "Login page broken" \
   --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._' 'User reported urgent login page issue')" \
-  --label "type:bug" --label "priority:critical" --label "status:backlog"
+  --label "type:bug" --label "priority:critical" --label "status:backburner"
 ```
 
 **Response**: "Created issue #123 (critical). The orchestrator will triage shortly."
@@ -112,5 +115,5 @@ See commands-and-patterns reference for more examples.
 
 ## Resources
 
-- [label-tables](references/label-tables.md): Priority Labels, Kanban Columns (Canonical 5-Status Model), Status Labels AMAMA Updates, Labels AMAMA Monitors, Labels AMAMA Never Sets, AMAMA's Approval Authority
+- [label-tables](references/label-tables.md): Priority Labels, Kanban Columns (ratified 17-column vocabulary), Status Labels AMAMA Updates, Labels AMAMA Monitors, Labels AMAMA Never Sets, AMAMA's Approval Authority
 - [commands-and-patterns](references/commands-and-patterns.md): Label Commands, User Communication Patterns, Full Examples

@@ -39,14 +39,14 @@
 - Issue number returned
 
 ### Task Sync Required
-- AI Maestro task status to set: backlog
+- AI Maestro task status to set: backburner
 - Task file: ~/.aimaestro/teams/tasks-backend.json
 
 # Output
 [ROUTED] GitHub issue → AMIA
 Team: team:backend
 Handoff: Sent
-Task Sync: Synced → backlog
+Task Sync: Synced → backburner
 Reference: #52
 ```
 
@@ -59,19 +59,19 @@ Reference: #52
 # AMAMA decision process
 1. Operation type: KANBAN (MOVE CARD)
 2. Check team label on #45: team:backend
-3. Map "In Review" column → AI Maestro status: review
+3. Map "In Review" column → AI Maestro status: ai_review
 4. Route to: AMIA
 
 # Task sync
 Update ~/.aimaestro/teams/tasks-backend.json:
-- Task linked to #45: status "in_progress" → "review"
+- Task linked to #45: status "dev" → "ai_review"
 - Append to statusHistory
 
 # Output
 [ROUTED] GitHub kanban → AMIA
 Team: team:backend
 Handoff: Sent
-Task Sync: Synced → review
+Task Sync: Synced → ai_review
 Reference: #45
 ```
 
@@ -88,13 +88,13 @@ Reference: #45
 4. Route to: AMAA
 
 # Task sync
-Create entry in ~/.aimaestro/teams/tasks-design.json with status: backlog
+Create entry in ~/.aimaestro/teams/tasks-design.json with status: backburner
 
 # Output
 [ROUTED] GitHub kanban → AMAA
 Team: team:design
 Handoff: Sent
-Task Sync: Synced → backlog
+Task Sync: Synced → backburner
 Reference: design-uuid-abc123
 ```
 

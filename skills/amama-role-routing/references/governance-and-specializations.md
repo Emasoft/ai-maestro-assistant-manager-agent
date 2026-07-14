@@ -52,8 +52,13 @@ This SUPERSEDES any older text stating team/COS creation needs USER approval, a 
 | Orchestrator | `amoa-` | ai-maestro-orchestrator-agent | `ORCHESTRATOR` |
 | Integrator | `amia-` | ai-maestro-integrator-agent | `INTEGRATOR` |
 | Member (programmer) | — | ai-maestro-programmer-agent | `MEMBER` |
+| Maintainer | `amma-` | ai-maestro-maintainer-agent | `MAINTAINER` |
+| Autonomous | `amaua-` | ai-maestro-autonomous-agent | `AUTONOMOUS` |
 
-Extra project-specific agents are MEMBER-titled on the member-agent role plugin (R30).
+Every persisted agent MUST carry exactly one role plugin (R9.13). The two governance-layer
+titles have a mandatory mapping: MAINTAINER → `ai-maestro-maintainer-agent`, AUTONOMOUS →
+`ai-maestro-autonomous-agent`. Extra project-specific agents are MEMBER-titled on the
+member-agent role plugin (R30).
 
 ## Communication Hierarchy
 

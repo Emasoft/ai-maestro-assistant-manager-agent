@@ -26,7 +26,7 @@
 - Verification criteria
 
 ### Task Sync Required
-- AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
+- AI Maestro task status to set: [one of the ratified 17 kanban columns — see task-system-sync reference]
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 
@@ -49,7 +49,7 @@
 - GitHub item updated with design reference
 
 ### Task Sync Required
-- AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
+- AI Maestro task status to set: [one of the ratified 17 kanban columns — see task-system-sync reference]
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 
@@ -72,7 +72,7 @@
 - Acceptance criteria
 
 ### Task Sync Required
-- AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
+- AI Maestro task status to set: [one of the ratified 17 kanban columns — see task-system-sync reference]
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 

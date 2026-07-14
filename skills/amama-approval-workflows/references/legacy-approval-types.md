@@ -13,7 +13,7 @@ GovernanceRequest API. They travel on the AMP messaging system, arriving from
 the team's **CHIEF-OF-STAFF** (R6 v3 — a team member never messages you directly;
 the COS is the sole entry point) and surfaced by you to the user. Publish,
 deploy, and security actions are **hard-floor escalations to the USER** (Tier 3,
-`trdd-approval-tiers.md` / `manager-approval-defaults.md`) regardless of any
+`aimaestro-trdd-approval.md` / `aimaestro-manager-approval-defaults.md`) regardless of any
 autonomous-fallback verdict.
 
 ## Push Approval

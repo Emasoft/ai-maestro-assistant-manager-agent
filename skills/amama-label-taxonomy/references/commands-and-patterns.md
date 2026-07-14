@@ -17,7 +17,7 @@
 gh issue create \
   --title "$USER_REQUEST_TITLE" \
   --body "$USER_REQUEST_BODY" \
-  --label "status:backlog" \
+  --label "status:backburner" \
   --label "priority:$PRIORITY" \
   --label "type:$TYPE"
 ```
@@ -33,31 +33,31 @@ gh issue edit $ISSUE_NUMBER --remove-label "priority:normal" --add-label "priori
 
 ```bash
 # Mark blocked
-gh issue edit $ISSUE_NUMBER --remove-label "status:in-progress" --add-label "status:blocked"
+gh issue edit $ISSUE_NUMBER --remove-label "status:dev" --add-label "status:blocked"
 ```
 
 ### When Facilitating Human Review
 
 ```bash
-# Present the task to the user for review (escalated from Review)
+# Present the task to the user for review (escalated to human_review)
 gh issue view $ISSUE_NUMBER --json title,body,labels
 # After user approves:
-gh issue edit $ISSUE_NUMBER --remove-label "status:review" --add-label "status:completed"
+gh issue edit $ISSUE_NUMBER --remove-label "status:human_review" --add-label "status:complete"
 # After user requests changes:
-gh issue edit $ISSUE_NUMBER --remove-label "status:review" --add-label "status:in-progress"
+gh issue edit $ISSUE_NUMBER --remove-label "status:human_review" --add-label "status:dev"
 ```
 
 ### When Generating Status Report
 
 ```bash
 # Get all active issues for user
-gh issue list --label "status:in-progress" --json number,title,labels
+gh issue list --label "status:dev" --json number,title,labels
 
 # Get issues in review
-gh issue list --label "status:review" --json number,title,labels
+gh issue list --label "status:human_review" --json number,title,labels
 
 # Get completed issues
-gh issue list --label "status:completed" --state closed --json number,title
+gh issue list --label "status:complete" --state closed --json number,title
 ```
 
 ---
@@ -71,7 +71,7 @@ When user asks "What's happening with my request?":
 ```markdown
 **Issue #42: Add user authentication**
 
-- **Status**: In Progress (`status:in-progress`)
+- **Status**: In Progress (`status:dev`)
 - **Priority**: High (`priority:high`)
 - **Assigned to**: Implementation Agent 1 (`assign:implementer-1`)
 - **Type**: New Feature (`type:feature`)
@@ -88,7 +88,7 @@ The implementation agent is actively working on this task.
 | "Something is broken" | `type:bug`, `priority:high` |
 | "Can you add..." | `type:feature` |
 | "Put this on hold" | `status:blocked` |
-| "Resume this" | Remove `status:blocked`, add `status:pending` |
+| "Resume this" | Remove `status:blocked`, add `status:todo` |
 
 ---
 
@@ -105,7 +105,7 @@ gh issue create \
   --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._' 'User reported urgent login page issue')" \
   --label "type:bug" \
   --label "priority:critical" \
-  --label "status:backlog"
+  --label "status:backburner"
 ```
 
 **User response**: "Created issue #123 with critical priority. The orchestrator will triage this shortly."
@@ -124,7 +124,7 @@ gh issue list --label "component:auth" --json number,title,labels
 **Authentication Issues**:
 
 - **#42**: Add OAuth support
-  - Status: In Progress (`status:in-progress`)
+  - Status: In Progress (`status:dev`)
   - Priority: High (`priority:high`)
   - Assigned to: Implementation Agent 1
 
