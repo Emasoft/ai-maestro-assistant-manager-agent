@@ -3,8 +3,9 @@
 AMAMA Proposal Approvals
 
 Batch-review the TRDD proposals in ``design/proposals/`` and act on them
-with the fast user/MANAGER syntax described in
-``~/.claude/rules/trdd-approval-tiers.md`` Part A (Batch approval syntax).
+with the fast user/MANAGER syntax described in the IND base
+``~/.claude/rules/trdd-design-tasks.md`` (folder lifecycle) and the
+ai-maestro overlay ``aimaestro-trdd-approval.md`` Part A (batch approval syntax).
 
 Two subcommands:
 
@@ -437,7 +438,7 @@ def build_plan(manifest: dict, approved: list[int], refused: list[int]) -> dict:
         # yet the complement `known - refuse_set` would still fire and
         # MASS-APPROVE the entire backlog off a phantom subtrahend (a stale or
         # typo'd number like `--refused 99` silently approving everything). The
-        # `refused:` verb's contract (trdd-approval-tiers.md Part A) is
+        # `refused:` verb's contract (aimaestro-trdd-approval.md Part A) is
         # "refuse the named few, approve the rest" — it presumes the named few
         # are real. With zero real targets there is no defensible "rest" to
         # approve, so we reject instead of acting. A MIX of valid+unknown
@@ -682,6 +683,13 @@ def find_in(folder: Path, ident: str) -> Path | None:
     """
     if not folder.is_dir():
         return None
+    # An 8-char base36 trdd-id is WRITTEN uppercase but LOOKED UP case-insensitively
+    # (per the TRDD id spec). Comparing case-sensitively made a lowercase `ident`
+    # report "not found" for a TRDD sitting right there on disk — a confident wrong
+    # answer, not a crash. Normalize both sides. Case-folding CANNOT merge two
+    # distinct ids (a valid id has no lowercase to fold), so the AmbiguousId guard
+    # below is fully preserved.
+    ident_norm = ident.upper()
     short_matches: list[Path] = []
     for path in sorted(folder.glob("*.md")):
         if path.name.lower() == "readme.md":
@@ -693,9 +701,10 @@ def find_in(folder: Path, ident: str) -> Path | None:
         tid = fm.get("trdd-id", "")
         if not tid:
             continue
-        if tid == ident:
+        tid_norm = tid.upper()
+        if tid_norm == ident_norm:
             return path  # exact full-id match — always unambiguous, wins immediately
-        if tid[:8] == ident:
+        if tid_norm[:8] == ident_norm:
             short_matches.append(path)
     if not short_matches:
         return None
@@ -709,7 +718,15 @@ def find_in(folder: Path, ident: str) -> Path | None:
 
 
 def cmd_archive(args: argparse.Namespace) -> int:
-    """Archive once-approved TRDD(s) from design/tasks/ → design/archived/ (terminal-DONE)."""
+    """Archive once-approved TRDD(s) from design/tasks/ → design/archived/ (terminal-DONE).
+
+    AWARENESS (``--state completed``): before archiving a code-bearing TRDD as
+    completed, confirm its ``implementation-commits:`` records the landed SHAs.
+    That backtracking field is how a bug found later is traced to the TRDD that
+    introduced it (IND ``trdd-design-tasks.md``); a "done" TRDD with no commits is
+    either untraceable or was never implemented. A docs/decision-only TRDD
+    legitimately has none. (This is documented expectation, not a hard gate.)
+    """
     root = project_root(args.root)
     state = (getattr(args, "state", None) or "cancelled").lower()
     if state not in ARCHIVE_STATES:

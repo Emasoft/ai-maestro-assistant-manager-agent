@@ -148,13 +148,13 @@ LINK     LINK     │ Route to │   │ Route to │
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
 | Sync board with GitHub | AMIA | Project ID, sync scope | Full reconciliation with task file |
-| Create design card | AMAA | Design UUID, card details, team label | Create task entry as `backlog` |
-| Create module card | AMOA | Module UUID, card details, team label | Create task entry as `backlog` |
+| Create design card | AMAA | Design UUID, card details, team label | Create task entry as `backburner` |
+| Create module card | AMOA | Module UUID, card details, team label | Create task entry as `backburner` |
 | Move card (non-specific) | AMIA | Card ID, target column, team label | Update task status |
 | Move design card | AMAA | Card ID, design context | Update task status |
 | Move module card | AMOA | Card ID, module context | Update task status |
 | Query board status | AMAMA (local) | Project ID | Read from task file for fast response |
-| Archive completed items | AMIA | Project ID, archive criteria | Remove `completed` tasks older than threshold |
+| Archive completed items | AMIA | Project ID, archive criteria | Remove `complete`/`published`/`live` tasks older than threshold |
 
 ### Kanban-to-Task Sync Procedure
 

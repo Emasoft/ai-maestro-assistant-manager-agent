@@ -87,8 +87,10 @@ before acting and pushes after each change.
   it is NEVER moved to archived. Giving up on a failed TRDD = cancel → archived.
 ```
 
-Full rules: `~/.claude/rules/trdd-approval-tiers.md`. Decide proposals fast with
-the core `ama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
+Full rules: the IND base `~/.claude/rules/trdd-design-tasks.md` (folder lifecycle) +
+the ai-maestro overlay `aimaestro-trdd-approval.md` (tier ladder + batch-approval syntax).
+Decide proposals fast with the core `amama-proposal-approvals` skill
+(`approved: 4,6` / `refused: 7,8`).
 
 ## Plugin Components
 

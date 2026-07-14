@@ -17,7 +17,7 @@ parent-skill: amama-github-routing
 
 ## Proactive Kanban Monitoring
 
-AMAMA must proactively monitor GitHub Project boards to detect changes that may require action or notification to the orchestrator and the user.
+AMAMA must proactively monitor GitHub Project boards to detect changes that may require action or notification. **Comm-graph v3 (R6 v3):** the MANAGER may NOT message a team-internal agent (ORCHESTRATOR, ARCHITECT, INTEGRATOR, MEMBER) directly — the team's **CHIEF-OF-STAFF is the sole in-team gateway** and relays to the orchestrator/specialists on your behalf. So every in-team notification below is addressed to the team's CHIEF-OF-STAFF; the user (HUMAN) remains directly reachable.
 
 ### Monitoring Schedule
 
@@ -40,10 +40,10 @@ gh project item-list <PROJECT_NUMBER> --owner Emasoft --format json | jq '
 
 | Change Type | Detection Method | Action |
 |-------------|------------------|--------|
-| Status changes | Compare `status` field against previous snapshot | Notify orchestrator of card movement |
-| New assignees | Compare `assignees` array against previous snapshot | Notify relevant specialist |
-| New comments | Check `comments` count increase | Fetch new comments, route to appropriate agent |
-| Card created | New "id" value not in previous snapshot | Route to orchestrator for triage |
+| Status changes | Compare `status` field against previous snapshot | Notify the team's CHIEF-OF-STAFF of card movement (COS relays to the orchestrator in-team) |
+| New assignees | Compare `assignees` array against previous snapshot | Notify the team's CHIEF-OF-STAFF (COS relays to the relevant specialist in-team) |
+| New comments | Check `comments` count increase | Fetch new comments, route to the team's CHIEF-OF-STAFF (COS relays to the appropriate agent) |
+| Card created | New "id" value not in previous snapshot | Route to the team's CHIEF-OF-STAFF for triage (COS relays to the orchestrator) |
 | Card archived | "id" value missing from current snapshot | Update internal tracking state |
 
 ### Monitoring Procedure
@@ -66,8 +66,8 @@ diff <(jq -S '.items' /tmp/kanban-snapshot-previous.json) \
 For each detected change:
 
 1. **Status Change Detected**
-   Send a kanban update notification to the orchestrator using the `agent-messaging` skill:
-   - **Recipient**: `orchestrator-<project>`
+   Send a kanban update notification to the team's CHIEF-OF-STAFF using the `agent-messaging` skill (the COS relays it to the orchestrator in-team — R6 v3 forbids a direct MANAGER→orchestrator edge):
+   - **Recipient**: the team's CHIEF-OF-STAFF (`cos-<team>`)
    - **Subject**: "Kanban Card Status Changed"
    - **Content**: kanban_update type with card_id, card_title, old_status, new_status, changed_at
    - **Type**: `kanban_update`
@@ -76,13 +76,13 @@ For each detected change:
    **Verify**: confirm message delivery via the skill's sent messages feature.
 
 2. **New Assignee Detected**
-   - If assignee is a known specialist agent, notify that agent
+   - If assignee is a known specialist agent, notify the team's CHIEF-OF-STAFF, which relays to that specialist in-team (R6 v3 — MANAGER may not message a specialist directly)
    - If assignee is external, log for user review
 
 3. **New Comment Detected**
    - Fetch comment content
-   - Route to appropriate agent based on card context
-   - If comment mentions user action needed, notify user
+   - Route to the team's CHIEF-OF-STAFF based on card context (COS relays to the appropriate agent in-team)
+   - If comment mentions user action needed, notify the user directly (MANAGER→HUMAN is an allowed edge)
 
 **Step 4: Update Internal State**
 ```bash
@@ -97,7 +97,7 @@ mv /tmp/kanban-snapshot-current.json /tmp/kanban-snapshot-previous.json
 - [ ] Previous snapshot exists for comparison
 - [ ] Current snapshot captured successfully
 - [ ] Changes detected and categorized
-- [ ] Orchestrator notified of relevant changes
+- [ ] Team's CHIEF-OF-STAFF notified of relevant changes (COS relays in-team; no direct MANAGER→orchestrator/specialist edge, R6 v3)
 - [ ] Internal state updated
 - [ ] Sync log updated with timestamp
 

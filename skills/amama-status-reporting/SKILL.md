@@ -37,7 +37,7 @@ Generate status reports by querying AI Maestro APIs for live agent, team, and ta
 5. Compile into report format and save to `reports/status-reporting/`
 6. Present formatted report to user
 
-Task Kanban statuses flow: `backlog -> pending -> in_progress -> review -> completed`. See task-system reference for details.
+Task Kanban statuses use the ratified 17-column vocabulary: `backburner → todo → design → dispatch → dev → testing → ai_review → human_review → complete` (+ `publish/published` or `deploy/live/live_auditing`), with exception columns `blocked · failed · superseded`. See task-system reference for details.
 
 For API query examples, see api-endpoints reference.
 
@@ -73,8 +73,8 @@ For detailed report section formats, see report-formats reference.
 | amoa-orchestrator | active | 1h 42m |
 ### Task Kanban
 | Status | Count |
-| in_progress | 2 |
-| completed | 4 |
+| dev | 2 |
+| complete | 4 |
 **Blockers**: AMIA unresponsive -- escalating
 ```
 

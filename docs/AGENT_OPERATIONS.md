@@ -72,15 +72,18 @@ MAESTRO user <-> MANAGER <-> COS <-> Members
 
 ## Task Status Reference
 
-AI Maestro uses 5 task statuses:
+AI Maestro uses the **ratified 17-column kanban vocabulary**, 1:1 with the TRDD `column:`
+field (14 lifecycle + 3 exception). Consumers align TO it, never the reverse (ai-maestro
+R25 / TRDD-YUGDER9D). GitHub `status:*` labels carry the column name verbatim:
 
-| Status | Code | Label |
-|--------|------|-------|
-| Backlog | `backlog` | `status:backlog` |
-| Pending | `pending` | `status:pending` |
-| In Progress | `in_progress` | `status:in-progress` |
-| Review | `review` | `status:review` |
-| Completed | `completed` | `status:completed` |
+```
+backburner → todo → design → dispatch → dev → testing → ai_review → human_review → complete
+  → publish → published   (tools)  |  → deploy → live → live_auditing   (services)
+exception (orthogonal): blocked · failed · superseded
+```
+
+Full column table + GitHub-Project mapping:
+`skills/amama-github-routing/references/task-system-sync.md`.
 
 ## Agent Creation (R29/R30)
 

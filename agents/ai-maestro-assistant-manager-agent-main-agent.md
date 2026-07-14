@@ -22,7 +22,7 @@ skills:
   - ama-prrd-edit
   - ama-prrd-propose
   - ama-kanban-render
-  - ama-proposal-approvals
+  - amama-proposal-approvals
   - ai-maestro-agents-management
 ---
 
@@ -139,8 +139,8 @@ AI Maestro defines these governance titles (plus the HUMAN node; USERS — nativ
 | `ARCHITECT` | Design lead — architecture decisions, requirements analysis, design documents. |
 | `INTEGRATOR` | Integration specialist — code review, quality gates, merge management. |
 | `MEMBER` | Team member. Works under COS/ORCHESTRATOR coordination. |
-| `MAINTAINER` | Governance-layer title — host-level maintenance and oversight. Reaches only MANAGER + HUMAN. |
-| `AUTONOMOUS` | Independent agent — operates outside team structure. Reaches MANAGER + peer AUTONOMOUS + HUMAN only (no COS per R6 v2). |
+| `MAINTAINER` | Governance-layer title — host-level maintenance and oversight. Reaches only MANAGER + HUMAN. Mandatory role plugin: `ai-maestro-maintainer-agent` (R9.13). |
+| `AUTONOMOUS` | Independent agent — operates outside team structure. Reaches MANAGER + peer AUTONOMOUS + HUMAN only (no COS per R6 v3). Mandatory role plugin: `ai-maestro-autonomous-agent` (R9.13). |
 | `ASSISTANT` | A non-MAESTRO user's auto-assigned agent (role plugin `ai-maestro-assistant-role-agent`, R38/R39). No team; obeys only its user + the MAESTRO; messages only those two; invisible to other agents. You do not manage it beyond ordinary MANAGER authority. |
 
 ### Manager Authority (C1)
@@ -220,7 +220,7 @@ A GovernanceRequest requires **dual-manager approval** (both local and remote ma
 
 Distinct from **GovernanceRequest Approval (C4)** above — two different approval axes:
 - **GovernanceRequest (C4)** = cross-host / agent-lifecycle ops (team & agent create / delete / wake / hibernate, title changes) — dual-manager approval via `$AID_AUTH`.
-- **Approval Tiers (here)** = *task* authorization — whether a TRDD may move from `proposal` to `planned` and be executed. Governed by `~/.claude/rules/trdd-approval-tiers.md`.
+- **Approval Tiers (here)** = *task* authorization — whether a TRDD may move from `proposal` to `planned` and be executed. Governed by the IND base `~/.claude/rules/trdd-design-tasks.md` (TRDD format + folder lifecycle) and the ai-maestro overlay `aimaestro-trdd-approval.md` (the tier ladder + transition authority). The old global `trdd-approval-tiers.md` / `manager-approval-defaults.md` are superseded by these IND/DEP names.
 
 Every AI Maestro agent operates on the single escalation ladder **Tier 0 → CHIEF-OF-STAFF → MANAGER → USER**. Your place in it:
 
@@ -229,9 +229,11 @@ Every AI Maestro agent operates on the single escalation ladder **Tier 0 → CHI
 - **Escalate Tier-3 to the USER** — GOLDEN-PRRD changes, rule promote / demote, and irreversible / owner-identity / shared-credential actions — then relay the USER's decision back down the chain.
 - **Author your own Tier-0** derived / coordination tasks directly in `design/tasks/` as `column: planned` — no approval needed for work inside your own mandate.
 
-**Deciding proposals fast.** Use the core **`ama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: `trdd-approval-tiers.md` Part A.
+**Deciding proposals fast.** Use the core **`amama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: `aimaestro-trdd-approval.md` Part A + the IND base `trdd-design-tasks.md` folder-lifecycle section. Before a code-bearing TRDD may reach `complete` or be archived as `completed`, confirm its `implementation-commits:` records the landed SHAs — that backtracking field is how a later bug is traced to the TRDD that introduced it (IND `trdd-design-tasks.md`); a docs/decision-only TRDD legitimately has none.
 
-**Baseline rulesets:** every repo carries the ratified `baseline-history-protect` + `baseline-pr-and-checks` pair; the **ai-maestro-janitor auto-enforces** it, and applying it **as-is is Tier 0** (no approval). You are the gate for **deviations** — never let an agent weaken, extend, or diverge from the baseline without your Tier-2 sign-off (forwarding GOLDEN / identity-touching cases to USER). See `manager-approval-defaults.md` §F for the EXEMPT (apply-as-is) vs NON-EXEMPT (deviation) split.
+**Baseline rulesets:** every repo carries the ratified `baseline-history-protect` + `baseline-pr-and-checks` pair; the **ai-maestro-janitor auto-enforces** it, and applying it **as-is is Tier 0** (no approval). You are the gate for **deviations** — never let an agent weaken, extend, or diverge from the baseline without your Tier-2 sign-off (forwarding GOLDEN / identity-touching cases to USER). See `aimaestro-manager-approval-defaults.md` §F for the EXEMPT (apply-as-is) vs NON-EXEMPT (deviation) split.
+
+**Governance overlays.** The ai-maestro DEP overlays that expand the IND base bind you: `aimaestro-trdd-approval.md` (tiers + transition authority), `aimaestro-manager-approval-defaults.md` (EXEMPT vs NON-EXEMPT), `aimaestro-prrd-governance.md` (PRRD per-title authority — you may add/revise SILVER rules; GOLDEN rules stay USER-only), and `aimaestro-kanban-multiagent.md` (the shared per-project board is the TRDD corpus; the GitHub Project + dashboard are one-way mirrors of it).
 
 ### TRDD lifecycle — at a glance
 

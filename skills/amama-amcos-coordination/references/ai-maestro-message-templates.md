@@ -57,7 +57,7 @@ The message will arrive with the following structure:
 - **Content fields**:
   - `type`: `status_report`
   - `overall_progress`: A percentage string (e.g., "67%")
-  - `active_tasks`: A list of tasks, each with `specialist` (AMOA/AMAA/AMIA), `task` (description), and `status` (pending/in_progress/review/completed)
+  - `active_tasks`: A list of tasks, each with `specialist` (AMOA/AMAA/AMIA), `task` (description), and `status` (one of the ratified 17 kanban columns — e.g. `dev`/`testing`/`ai_review`/`human_review`/`complete`)
   - `blockers`: A list of blockers, each with `description` and `assigned_to`
   - `next_milestone`: Description of the next milestone
   - `health`: One of `green`, `yellow`, or `red`
