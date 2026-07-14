@@ -319,7 +319,7 @@ def main() -> int:
             results["errors"].append(
                 f"Design folder already initialized at {root}. Use --force to reinitialize."
             )
-            print(json.dumps(results, indent=2))
+            print(json.dumps(results, separators=(",", ":")))
         else:
             print(f"Design folder already initialized at {root}")
             print("Use --force to reinitialize")
@@ -333,7 +333,7 @@ def main() -> int:
         results["success"] = False
         results["errors"].append(f"Failed to create folder structure: {e}")
         if args.json:
-            print(json.dumps(results, indent=2))
+            print(json.dumps(results, separators=(",", ":")))
         else:
             print(f"ERROR: {e}")
         return 1
@@ -346,7 +346,7 @@ def main() -> int:
         results["success"] = False
         results["errors"].append(f"Failed to create template files: {e}")
         if args.json:
-            print(json.dumps(results, indent=2))
+            print(json.dumps(results, separators=(",", ":")))
         else:
             print(f"ERROR: {e}")
         return 1
@@ -361,7 +361,7 @@ def main() -> int:
 
     # Output results
     if args.json:
-        print(json.dumps(results, indent=2))
+        print(json.dumps(results, separators=(",", ":")))
     else:
         print(f"Design folder initialized at: {root}")
         print(f"Platforms: {', '.join(platforms)}")

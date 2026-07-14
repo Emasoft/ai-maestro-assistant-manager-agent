@@ -33,7 +33,7 @@ Send a periodic AMCOS health check every 10 minutes during active work using the
 
 ## AI Maestro Inbox Check
 
-Check your inbox every 2 minutes for approval requests using the `agent-messaging` skill. Filter for messages with content type `approval_request`.
+Check your inbox every 2 minutes for approval requests using the `agent-messaging` skill. Query **only unread / new-since-last-poll** messages (not the whole inbox history), then filter those for content type `approval_request`.
 
 ## Responsiveness Ping (15 Minute Timeout)
 
@@ -49,7 +49,7 @@ If no response from AMCOS after 15 minutes since last message sent, send an urge
 If AMCOS fails to respond after the urgent ping (30 second timeout):
 
 1. **Verify AMCOS Session Exists**
-   Use the `ai-maestro-agents-management` skill to list agents and check if the AMCOS session is still active.
+   Use the `ai-maestro-agents-management` skill to check **only the specific AMCOS session** (`amcos-<project>-coordinator`) — query/filter by that session id rather than listing all agents.
 
 2. **Check AI Maestro Health**
    Use the `agent-messaging` skill's health check feature to verify AI Maestro is running.

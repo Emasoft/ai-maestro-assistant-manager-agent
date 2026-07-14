@@ -14,7 +14,7 @@ GovernanceRequest API workflows. Two tracks:
 - **Operational** (`amama-amcos-coordination`): Deploys, merges, tests.
 
 **Tier ladder:** these approvals sit on the canonical required-permissions ladder in
-`~/.claude/rules/trdd-approval-tiers.md` (Tier 0 agent-independent → 1 COS → 2 MANAGER →
+`~/.claude/rules/trdd-design-tasks.md` + the seeded `.claude/rules/aimaestro-trdd-approval.md` (Tier 0 agent-independent → 1 COS → 2 MANAGER →
 3 USER/MAESTRO; operationalized by the `amama-proposal-approvals` skill). A request only the
 user can grant is **Tier 3 = escalate-to-MAESTRO**.
 
@@ -29,7 +29,7 @@ user can grant is **Tier 3 = escalate-to-MAESTRO**.
 
 ## Instructions
 
-1. Poll pending (`aimaestro-governance.sh requests --status pending`)
+1. Poll pending (`aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json`); surface only count + ids, fetch a full record (`request <id>`) only when acting
 2. Parse type per references/governance-request-types.md
 3. Present to MANAGER using template
 4. Call `aimaestro-governance.sh approve`/`reject` — AID-authorized (R28). For a
@@ -70,7 +70,7 @@ See [references/examples.md](references/examples.md) for more.
 Copy this checklist and track your progress:
 
 - [ ] Verify `$AID_AUTH` present (server runs the 3-check authz, R28)
-- [ ] Poll pending GovernanceRequests (`aimaestro-governance.sh requests --status pending`)
+- [ ] Poll pending GovernanceRequests (`aimaestro-governance.sh requests --status pending > <file>`; surface only count + ids)
 - [ ] Parse type, present to MANAGER
 - [ ] Wait for decision
 - [ ] Call `aimaestro-governance.sh approve`/`reject` (AID-authorized; sudo-gated → surface to MAESTRO, R32)

@@ -38,7 +38,7 @@ When a GovernanceRequest is created:
 ## Workflow Checklist
 
 - [ ] Verify `$AID_AUTH` present (server runs the 3-check authz, R28)
-- [ ] Poll for pending GovernanceRequests via `aimaestro-governance.sh requests`
+- [ ] Poll for pending GovernanceRequests via `aimaestro-governance.sh requests` (redirect to a scratch file; surface only count + ids)
 - [ ] Parse request type
 - [ ] Present GovernanceRequest to MANAGER using appropriate template
 - [ ] Wait for MANAGER decision

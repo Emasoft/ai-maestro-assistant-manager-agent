@@ -29,10 +29,10 @@ When team creation (and its auto-created COS, R29) fails via the frozen CLI, fol
 #### Step 1: Verify AI Maestro API is Running
 
 ```
-aimaestro-agent.sh list
+aimaestro-agent.sh list >/dev/null 2>&1; echo $?
 ```
 
-(non-zero exit ⇒ server unreachable)
+(liveness only — consume just the exit code; non-zero exit ⇒ server unreachable)
 
 If AI Maestro API is down or not responding:
 - Alert user: "AI Maestro API is not responding. Please restart it." (server health is an environment issue only the user can fix)
@@ -41,10 +41,10 @@ If AI Maestro API is down or not responding:
 #### Step 2: Verify Any Pre-Required Agent is Registered
 
 ```
-aimaestro-agent.sh list
+aimaestro-agent.sh list > /tmp/amama-agents.txt
 ```
 
-(filter by `<agent-name>` client-side)
+(then `grep` the scratch file for `<agent-name>` — don't read the raw listing into context)
 
 If a pre-required agent is not registered:
 - Register the agent using `aimaestro-agent.sh create <name>` or the `ai-maestro-agents-management` skill.
@@ -321,15 +321,15 @@ When creating specialist agents (AMOA, AMAA, AMIA) fails.
 
 1. **Check AI Maestro API health**
    ```
-   aimaestro-agent.sh list
+   aimaestro-agent.sh list >/dev/null 2>&1; echo $?
    ```
-   (non-zero exit ⇒ server unreachable)
+   (liveness only — consume just the exit code; non-zero exit ⇒ server unreachable)
 
 2. **Verify agent is registered in AI Maestro**
    ```
-   aimaestro-agent.sh list
+   aimaestro-agent.sh list > /tmp/amama-agents.txt
    ```
-   (filter by `<agent-name>` client-side)
+   (then `grep` the scratch file for `<agent-name>` — don't read the raw listing into context)
 
 3. **Check team membership**
    ```

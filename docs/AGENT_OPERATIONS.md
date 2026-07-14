@@ -70,17 +70,41 @@ MAESTRO user <-> MANAGER <-> COS <-> Members
 - Use a sudo/governance password — authorize via AID + portfolio token (R32)
 - Create non-MEMBER team agents, or a team lacking its 5 base members (R30/R31)
 
-## Task Status Reference
+## Task Column Reference
 
-AI Maestro uses 5 task statuses:
+AI Maestro's board has exactly 17 columns, 1:1 with the TRDD `column:` field. Every
+`status:*` label is derived mechanically from a column name; the labels align TO the
+columns, never the reverse. Do not invent, rename, or collapse columns.
 
-| Status | Code | Label |
+**14 lifecycle columns**, in order:
+
+| Column | Code | Label |
 |--------|------|-------|
-| Backlog | `backlog` | `status:backlog` |
-| Pending | `pending` | `status:pending` |
-| In Progress | `in_progress` | `status:in-progress` |
-| Review | `review` | `status:review` |
-| Completed | `completed` | `status:completed` |
+| Backburner | `backburner` | `status:backburner` |
+| Todo | `todo` | `status:todo` |
+| Design | `design` | `status:design` |
+| Dispatch | `dispatch` | `status:dispatch` |
+| Dev | `dev` | `status:dev` |
+| Testing | `testing` | `status:testing` |
+| AI Review | `ai_review` | `status:ai_review` |
+| Human Review | `human_review` | `status:human_review` |
+| Complete | `complete` | `status:complete` |
+| Publish | `publish` | `status:publish` |
+| Published | `published` | `status:published` |
+| Deploy | `deploy` | `status:deploy` |
+| Live | `live` | `status:live` |
+| Live Auditing | `live_auditing` | `status:live_auditing` |
+
+**3 exception columns** — orthogonal to the pipeline, not a stage in it:
+
+| Column | Code | Label | Rules |
+|--------|------|-------|-------|
+| Blocked | `blocked` | `status:blocked` | Applies whenever `blocked-by` is non-empty. Record `pre-block-column` on entry; restore to it when the blocker clears |
+| Failed | `failed` | `status:failed` | NOT terminal, NOT archived — stays on the board and is retried via `dev`. Only an explicit decision to give up converts it to `cancelled` (an archival value, not a board column) |
+| Superseded | `superseded` | `status:superseded` | Replaced by other work; terminal |
+
+The path after `complete` is chosen by `release-via`: `publish` -> `published` (tools),
+or `deploy` -> `live` -> `live_auditing` (services); `none` makes `complete` terminal.
 
 ## Agent Creation (R29/R30)
 

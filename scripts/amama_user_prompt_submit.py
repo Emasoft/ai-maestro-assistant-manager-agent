@@ -2,10 +2,17 @@
 """
 amama_user_prompt_submit.py - Record user input timestamp on every UserPromptSubmit.
 
-UserPromptSubmit hook that POSTs to the AI Maestro server's user-presence
-endpoint so AMAMA's amama-presence-tracker skill can compute idle time
-across sessions. Fail-soft: never blocks prompt submission, even if the
-server is unreachable, auth is missing, or any unforeseen error occurs.
+UserPromptSubmit hook that records the user's last-input timestamp so AMAMA's
+amama-presence-tracker skill can compute idle time across sessions. Fail-soft:
+never blocks prompt submission, even if the server is unreachable, the CLI is
+absent, auth is missing, or any unforeseen error occurs.
+
+The write goes through the FROZEN CLI (`aimaestro-agent.sh session user-input`),
+never a direct call to the server's HTTP surface. R23 (Plugin<->Server Decoupling
+via the Frozen CLI Layer) is an IRON rule: that surface changes constantly, and
+the CLI is the frozen boundary that shields plugins from it. This hook carries
+only the non-server part (the cron-prompt denylist filter); the server part lives
+behind the CLI, which also owns auth and the endpoint.
 
 System-injected turns (cron-fired prompts from the ai-maestro-janitor or
 any other plugin that calls CronCreate) are NOT user input and must NOT
@@ -15,14 +22,13 @@ We parse the JSON payload from stdin and short-circuit on a small
 denylist of known prefixes; without this filter the cron heartbeat would
 reset the idle clock every time it fires.
 
-Endpoint contract (server-side):
-    POST /api/sessions/me/user-input
-    Authorization: Bearer $AID_AUTH
-    Body: empty
-    Response 200: { "recorded_at_epoch": <int> }
-    Errors 401/403: ignored - fail-soft
+Frozen-CLI contract (the plugin's only supported interface):
+    aimaestro-agent.sh session user-input
+    Auth: the CLI resolves it from $AID_AUTH itself - the plugin never
+          assembles a bearer header or an endpoint URL.
+    Any non-zero exit / missing CLI: ignored - fail-soft.
 
-Dependencies: Python 3.8+ stdlib only (urllib.request — cross-platform, no curl).
+Dependencies: Python 3.8+ stdlib only.
 
 Usage (as Claude Code hook):
     Receives JSON via stdin from UserPromptSubmit hook event.
@@ -36,9 +42,9 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
+import subprocess
 import sys
-import urllib.error
-import urllib.request
 
 # Prompts that look like user input on the UserPromptSubmit channel but
 # are actually fired by CronCreate-driven plugins. Adding a new entry here
@@ -86,37 +92,40 @@ def _entry() -> None:
         # Cron heartbeat or other system-fired turn - not user input.
         return
 
-    api_base = os.environ.get("AIMAESTRO_API", "http://localhost:23000")
-    aid_auth = os.environ.get("AID_AUTH", "")
-
-    if not aid_auth:
+    if not os.environ.get("AID_AUTH", ""):
         # No AID auth means this Claude Code session isn't AI Maestro-managed.
-        # Silently skip - nothing to record.
+        # Silently skip - nothing to record. (The CLI would resolve the bearer
+        # itself, but spawning a process only to have it 401 is pure waste.)
         return
 
-    # The endpoint path is a fixed server-side contract (NOT user-controlled);
-    # it is held in its own constant so the request target is assembled only
-    # from the operator-configured api_base plus this literal path.
-    # DECOUPLE-BLOCKED ai-maestro#36 (hook-split): per the frozen-CLI invariant
-    # (R22) a plugin must never call /api/ directly. This direct POST must be
-    # replaced by a frozen CLI (an agent-session.sh user-input verb) once that
-    # verb is exposed/deployed; the plugin then carries only the non-api part
-    # (the prompt-denylist filter) and shells out to the CLI for the api-part.
-    path = "/api/sessions/me/user-input"
-    target = f"{api_base.rstrip('/')}{path}"
-    # urllib (stdlib) instead of curl: cross-platform (curl is not shipped on
-    # Windows) and no shell/subprocess. The empty-bytes body yields
-    # Content-Length: 0; the bearer header authenticates the session to the
-    # local AI Maestro server. 2-second timeout: presence is best-effort and
-    # must never block the user.
-    request = urllib.request.Request(target, data=b"", method="POST")
-    request.add_header("Authorization", f"Bearer {aid_auth}")
+    # Write through the FROZEN CLI, never a direct server call (R23, IRON).
+    # WHY the indirection matters and must not be "simplified" back into a POST:
+    # the server's HTTP surface changes constantly; the CLI is the frozen
+    # boundary. This plugin previously hand-rolled the presence POST against a
+    # hardcoded endpoint path with its own bearer header, coupling it to a route
+    # it does not own. The CLI also resolves auth itself, so no credential and
+    # no endpoint URL is assembled here — which is why this file must stay free
+    # of any endpoint literal (test_hook_never_calls_the_api_directly pins that).
+    cli = shutil.which("aimaestro-agent.sh")
+    if cli is None:
+        # Not an AI Maestro host (or the CLI isn't installed/on PATH). Presence
+        # is best-effort - degrade silently rather than block the user.
+        return
+
     try:
-        with urllib.request.urlopen(request, timeout=2) as response:
-            response.read()  # drain so the connection closes cleanly
-    except (urllib.error.URLError, OSError, ValueError):
-        # Any failure (HTTP error, transport failure, timeout) is non-fatal -
-        # presence tracking degrades gracefully.
+        # capture_output: a UserPromptSubmit hook's stdout is INJECTED into the
+        # prompt context, so this must never leak the CLI's output into the
+        # user's turn. check=False + the broad except: presence is best-effort
+        # and a failed write must never block prompt submission. 2s timeout for
+        # the same reason - the user must not wait on a presence ping.
+        subprocess.run(
+            [cli, "session", "user-input"],
+            capture_output=True,
+            timeout=2,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        # Missing binary, spawn failure, or timeout - all non-fatal.
         pass
 
     # Always exit 0 - never block prompt submission on a presence-write failure.

@@ -28,7 +28,7 @@ gh issue create --title "Fix login timeout" --label "bug,team:backend"
 gh issue edit 42 --add-label "team:frontend"
 
 # Query issues for a specific team
-gh issue list --label "team:backend"
+gh issue list --label "team:backend" --json number,title,labels
 ```
 
 ## Team Boundary Enforcement Decision

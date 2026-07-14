@@ -10,16 +10,19 @@ GovernanceRequests that remain pending for too long are automatically rejected t
 
 ## Expiry Check Schedule
 
-Check GovernanceRequest timestamps every hour to identify expired requests. List
-pending requests via the CLI, then filter client-side on `requested_at`:
+Check GovernanceRequest timestamps every hour to identify expired requests. Redirect the
+pending listing to a scratch file, then filter client-side on `requested_at` and surface
+only the count + the ids that ARE expired — not the full listing:
 
 ```
-aimaestro-governance.sh requests --status pending
+aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json
+# from the file, keep only entries whose requested_at is >24h old; report "<N> expired, ids:[…]"
 ```
 
-<!-- DECOUPLE-BLOCKED ai-maestro#36: server-side olderThan=24h filter — no CLI flag confirmed; list with `requests --status pending` and apply the 24h age cutoff client-side. -->
+The 24h age cutoff is applied **client-side**: the CLI has no server-side `olderThan`
+filter, so list with `requests --status pending` and filter the result by `requested_at`.
 
-See the `team-governance` skill for full API details.
+See the `team-governance` skill for full CLI details.
 
 ## Expiry Workflow Steps
 

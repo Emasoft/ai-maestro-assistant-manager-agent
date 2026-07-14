@@ -264,7 +264,7 @@ AMAMA maintains accurate records of all activities for traceability and audit pu
 ### 5. Update Frequency
 - Update logs immediately after events, not in batches
 - Stale logs create confusion and risk data loss
-- Use atomic write operations (Write tool, not Edit)
+- Append via the atomic-append script (`scripts/amama_append_log.py`, O_APPEND) — never the Write tool, which re-emits the whole log on every append (O(n²) over these ever-growing logs)
 
 ### 6. File Locations
 All record-keeping files live under `docs_dev/`:
@@ -283,14 +283,16 @@ docs_dev/
 
 ## Tools for Record-Keeping
 
-### Write Tool
-Use the Write tool (not Edit) to append entries to logs. This ensures atomic operations and prevents corruption from concurrent access.
+### Appending entries (atomic-append script)
+Append with `python3 scripts/amama_append_log.py <log-path> --stdin --id <id>` (pipe the one new entry on stdin; a positional `<entry>` arg also works). It uses `O_APPEND` — atomic and concurrency-safe — and prints only `wrote <id> to <path>`, so an append never loads the prior log into context. Do **not** use the Write tool to append: it requires re-emitting the file's entire content each time, an O(n²) cost over these append-only, ever-growing logs.
 
 ### Read Tool
-Read logs before making decisions:
-- Check project registry before creating new projects
-- Review approval log before auto-approving similar requests
-- Check active sessions before launching new orchestrator
+Read logs before making decisions. These logs are append-only and grow without
+bound, so **scope each read to the specific question** rather than loading the
+whole file:
+- **Is project X already registered?** — `grep -i "X" docs_dev/projects/project-registry.md` (redirect to a temp file, then read that) instead of reading the full registry.
+- **Was operation Y already approved/denied?** — `grep -A 12 "Y" docs_dev/approvals/approval-log.md` instead of the whole approval log.
+- **Which orchestrator sessions are current?** — `tail -n 40 docs_dev/sessions/active-orchestrator-sessions.md` (or grep for the specific session name) instead of the whole session log.
 
 ---
 
@@ -301,11 +303,11 @@ Read logs before making decisions:
 - All context is lost on session end
 - Record-keeping files are the ONLY persistent state
 
-**Recovery on restart**:
-1. Read `active-orchestrator-sessions.md` to discover running orchestrator instances
-2. Read `project-registry.md` to understand project structure
-3. Read `approval-log.md` to understand past decisions
-4. Read `user-interactions.md` to understand conversation history
+**Recovery on restart** (these logs are append-only and unbounded — read the **recent tail** of each, e.g. `tail -n 50 <file>`, not the whole file; grep for a specific name/ID when you need one exact record):
+1. `active-orchestrator-sessions.md` — discover running orchestrator instances (recent entries hold current state)
+2. `project-registry.md` — understand project structure (the summary table at the top is the index)
+3. `approval-log.md` — understand recent decisions (grep by request ID for a specific one)
+4. `user-interactions.md` — understand recent conversation history (tail the last few interactions)
 
 **Without these files, AMAMA is blind to prior work.**
 

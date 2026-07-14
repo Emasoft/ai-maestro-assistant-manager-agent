@@ -43,27 +43,28 @@ resolve AID auth internally; AMAMA supplies no governance/sudo password (R28/R32
 | Step | Actor | Action |
 |------|-------|--------|
 | 15 | Members | Work on assigned tasks |
-| 16 | COS | Move tasks: `pending` -> `in_progress` |
+| 16 | COS | Move tasks: `dispatch` -> `dev` |
 | 17 | Members | Complete work, notify COS |
 | 18 | COS | Approve PR creation |
-| 19 | Members | Create PRs |
+| 19 | Members | Create PRs; task moves `dev` -> `testing` as the gates run |
 
 ### Phase 5: Review
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 20 | COS | Request review from integrator-skilled member |
+| 20 | COS | Request review from integrator-skilled member; task moves `testing` -> `ai_review` once all gates PASS |
 | 21 | Member | Review PR, merge or reject |
-| 22 | COS | Handle failures: reassign, move back to `in_progress` |
+| 22 | COS | Handle failures: move to `failed`, reassign, then back to `dev` for the retry (a `failed` task is never archived) |
 
 ### Phase 6: Completion
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 23 | COS | Move task to `review` then `completed` |
-| 24 | COS | For big tasks: escalate review to manager before completing |
-| 25 | COS | Report completion to manager |
-| 26 | COS | Assign next task to available member |
+| 23 | COS | Move task `ai_review` -> `complete` |
+| 24 | COS | For big tasks: escalate `ai_review` -> `human_review` (manager surfaces it to the user) before `complete` |
+| 25 | COS | Release per `release-via`: `publish` -> `published` (tools), or `deploy` -> `live` -> `live_auditing` (services) |
+| 26 | COS | Report completion to manager |
+| 27 | COS | Assign next task to available member |
 
 ## Governance Touchpoints
 
@@ -77,20 +78,49 @@ resolve AID auth internally; AMAMA supplies no governance/sudo password (R28/R32
 | Design approval | Yes (user via MANAGER) |
 | Big task human review | Yes (user via MANAGER) |
 
-## Task Statuses
+## Task Columns (the ratified 17)
 
-| # | Status | Code | Description |
+The board has exactly 17 columns, 1:1 with the TRDD `column:` field. This vocabulary is
+canonical — the GitHub Project's Status options and the `status:*` labels align TO it,
+never the reverse. Do not invent, rename, or collapse columns.
+
+**14 lifecycle columns**, in order:
+
+| # | Column | Code | Description |
 |---|--------|------|-------------|
-| 1 | Backlog | `backlog` | Entry point, not yet prioritized |
-| 2 | Pending | `pending` | Prioritized, ready to start |
-| 3 | In Progress | `in_progress` | Active work |
-| 4 | Review | `review` | Under review (AI or human) |
-| 5 | Completed | `completed` | Done |
+| 1 | Backburner | `backburner` | Entry point — captured, not yet prioritized |
+| 2 | Todo | `todo` | Prioritized, ready to be picked up |
+| 3 | Design | `design` | Being decomposed and specced |
+| 4 | Dispatch | `dispatch` | Design done, awaiting assignment to a member |
+| 5 | Dev | `dev` | Active implementation work |
+| 6 | Testing | `testing` | Gates running (lint, types, unit/e2e, CI) |
+| 7 | AI Review | `ai_review` | AI reviewer inspects the work |
+| 8 | Human Review | `human_review` | Escalated to the user (via the MANAGER) |
+| 9 | Complete | `complete` | Done and verified; not yet released |
+| 10 | Publish | `publish` | Release pipeline running (tools) |
+| 11 | Published | `published` | Released to its registry/marketplace (terminal) |
+| 12 | Deploy | `deploy` | Deployment pipeline running (services) |
+| 13 | Live | `live` | Running in production |
+| 14 | Live Auditing | `live_auditing` | Post-deploy soak / audit window |
+
+**3 exception columns** — orthogonal to the pipeline, not a stage in it:
+
+| # | Column | Code | Rules |
+|---|--------|------|-------|
+| 15 | Blocked | `blocked` | Applies whenever `blocked-by` is non-empty. Record `pre-block-column` on entry; restore to it when the blocker clears |
+| 16 | Failed | `failed` | **NOT terminal, NOT archived** — stays on the board and is retried via `dev`. Only an explicit decision to give up converts it to `cancelled` (an archival value, not a board column) |
+| 17 | Superseded | `superseded` | Replaced by other work; terminal, leaves the board on the next archival pass |
 
 ## Task Routing
 
-- **Small**: `in_progress` -> `review` -> `completed`
-- **Big**: `in_progress` -> `review` (escalate to manager) -> `completed`
+- **Standard**: `dev` -> `testing` -> `ai_review` -> `complete`
+- **Escalated (big tasks)**: `dev` -> `testing` -> `ai_review` -> `human_review` (via the
+  manager) -> `complete`
+- **Gate failure**: `testing` -> `failed` -> `dev` (retry) — never archived as failed
+- **After `complete`, the path is chosen by `release-via`**, never freely:
+  - `publish` (tools): `complete` -> `publish` -> `published`
+  - `deploy` (services): `complete` -> `deploy` -> `live` -> `live_auditing`
+  - `none`: `complete` is terminal
 
 ## Communication
 

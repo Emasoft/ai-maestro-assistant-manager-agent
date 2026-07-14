@@ -59,7 +59,7 @@ LINK     LINK     │ Route to │   │ Route to │
 | Create issue FROM design | AMAA | Design UUID, section reference | Inherit from design team |
 | Link existing issue to design | AMAA | Issue number, design UUID | Verify team match |
 | Update issue labels/status | AMIA | Issue number, changes | Verify team ownership |
-| Close issue with verification | AMIA | Issue number, verification results | Sync `completed` to task file |
+| Close issue with verification | AMIA | Issue number, verification results | Sync `complete` to task file (then the `release-via` path, if any) |
 | Create module task issue | AMOA | Module UUID, task details | Inherit from module team |
 | Track implementation progress | AMOA | Issue number, module UUID | Sync status to task file |
 
@@ -90,7 +90,7 @@ LINK     LINK     │ Route to │   │ Route to │
                 ▼
     ┌────────────────────────────────┐
     │ On merge: sync linked issues   │
-    │ to `review` or `completed`     │
+    │ to `ai_review` or `complete`   │
     └────────────────────────────────┘
 ```
 
@@ -100,12 +100,12 @@ LINK     LINK     │ Route to │   │ Route to │
 
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
-| Create PR | AMIA | Branch, description, linked issues, team label | Linked issues to `review` |
-| Review PR | AMIA | PR number, review criteria | None |
-| Request changes | AMIA | PR number, requested changes | Linked issues back to `in_progress` |
+| Create PR | AMIA | Branch, description, linked issues, team label | Linked issues to `testing` |
+| Review PR | AMIA | PR number, review criteria | Linked issues to `ai_review` (or `human_review` when escalated) |
+| Request changes | AMIA | PR number, requested changes | Linked issues back to `dev` |
 | Approve PR | AMIA | PR number, approval notes | None |
-| Merge PR | AMIA | PR number, merge strategy | Linked issues to `completed` |
-| Close PR without merge | AMIA | PR number, reason | Linked issues back to `in_progress` |
+| Merge PR | AMIA | PR number, merge strategy | Linked issues to `complete` |
+| Close PR without merge | AMIA | PR number, reason | Linked issues back to `dev` |
 
 ## Kanban/Projects Operations Decision Tree
 
@@ -148,13 +148,13 @@ LINK     LINK     │ Route to │   │ Route to │
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
 | Sync board with GitHub | AMIA | Project ID, sync scope | Full reconciliation with task file |
-| Create design card | AMAA | Design UUID, card details, team label | Create task entry as `backlog` |
-| Create module card | AMOA | Module UUID, card details, team label | Create task entry as `backlog` |
-| Move card (non-specific) | AMIA | Card ID, target column, team label | Update task status |
-| Move design card | AMAA | Card ID, design context | Update task status |
-| Move module card | AMOA | Card ID, module context | Update task status |
+| Create design card | AMAA | Design UUID, card details, team label | Create task entry as `backburner` |
+| Create module card | AMOA | Module UUID, card details, team label | Create task entry as `backburner` |
+| Move card (non-specific) | AMIA | Card ID, target column, team label | Update task column |
+| Move design card | AMAA | Card ID, design context | Update task column |
+| Move module card | AMOA | Card ID, module context | Update task column |
 | Query board status | AMAMA (local) | Project ID | Read from task file for fast response |
-| Archive completed items | AMIA | Project ID, archive criteria | Remove `completed` tasks older than threshold |
+| Archive terminal items | AMIA | Project ID, archive criteria | Remove `published` / `live` / `superseded` tasks older than threshold. NEVER archive `failed` — it stays on the board and is retried |
 
 ### Kanban-to-Task Sync Procedure
 
@@ -162,13 +162,15 @@ When a Kanban card moves:
 
 1. Identify the GitHub issue linked to the card
 2. Determine the team from the issue's `team:{teamId}` label
-3. Map the target Kanban column to an AI Maestro status
+3. Map the target Kanban column to one of the ratified 17 AI Maestro columns
 4. Update `~/.aimaestro/teams/tasks-{teamId}.json`:
-   - Set `status` to the new AI Maestro status
-   - Append to `statusHistory`
+   - Set `column` to the new AI Maestro column
+   - When moving to `blocked`, first stash the current column into `preBlockColumn`; when
+     unblocking, restore from it (never guess the column to return to)
+   - Append to `columnHistory`
    - Update `updatedAt` timestamp
 5. If the task does not exist in the file, create it
-6. Validate the status transition is legal (see Status Model in [task-system-sync.md](task-system-sync.md))
+6. Validate the column transition is legal (see the Task Column Model in [task-system-sync.md](task-system-sync.md))
 
 ## Release Operations Decision Tree
 
@@ -191,8 +193,10 @@ When a Kanban card moves:
                 ▼
     ┌────────────────────────────┐
     │ On release: sync all       │
-    │ included issues to         │
-    │ `completed` in task files  │
+    │ included issues along their│
+    │ `release-via` path —       │
+    │ `published` (tools) or     │
+    │ `live` (services)          │
     └────────────────────────────┘
 ```
 
@@ -200,8 +204,8 @@ When a Kanban card moves:
 
 | Operation | Route To | Handoff Content | Task Sync |
 |-----------|----------|-----------------|-----------|
-| Create release | AMIA | Version, changelog, assets | Mark included issues `completed` |
+| Create release | AMIA | Version, changelog, assets | Move included issues `complete` -> `publish` (tools) or `complete` -> `deploy` (services), per `release-via` |
 | Draft release notes | AMIA | Version, commit range | None |
 | Tag version | AMIA | Tag name, commit SHA | None |
-| Publish release | AMIA | Release ID, publish settings | Mark included issues `completed` |
+| Publish release | AMIA | Release ID, publish settings | Mark included issues `published` (tools) or `live` (services), per `release-via` |
 | Update release | AMIA | Release ID, changes | None |

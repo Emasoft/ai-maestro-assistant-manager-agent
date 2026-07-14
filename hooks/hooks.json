@@ -17,7 +17,7 @@
     "UserPromptSubmit": [
       {
         "_id": "amama-record-user-input",
-        "_description": "DECOUPLE-BLOCKED ai-maestro#36 (hook-split pending): this hook's api-part — POST to /api/sessions/me/user-input on every prompt — must move to a frozen CLI once the session user-input verb is exposed/deployed; until then the hook posts directly. It feeds the AI Maestro user-presence API so amama-presence-tracker can compute idle time. Fail-soft: never blocks prompt submission.",
+        "_description": "Records the user's last-input timestamp on every prompt through the FROZEN CLI (`aimaestro-agent.sh session user-input`) — never a direct HTTP call to the server (R23). The CLI resolves auth itself from $AID_AUTH. This feeds AI Maestro's user-presence data so amama-presence-tracker can compute idle time. Fail-soft: never blocks prompt submission.",
         "hooks": [
           {
             "type": "command",

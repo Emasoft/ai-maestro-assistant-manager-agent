@@ -25,6 +25,10 @@ action via the UI.
 aimaestro-governance.sh requests --status pending
 ```
 
+To keep the poll cheap, redirect the listing to a scratch file
+(`aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json`) and surface
+only the count + request ids; fetch a full record with `request <id>` only when acting on one.
+
 See the `team-governance` skill for full API details.
 
 ## Get a Specific Request

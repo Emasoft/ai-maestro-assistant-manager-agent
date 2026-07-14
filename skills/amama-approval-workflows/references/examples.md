@@ -9,10 +9,10 @@
 ## Example 1: Approving a Team Membership Request
 
 ```
-# 1. Poll for pending requests
-aimaestro-governance.sh requests --status pending
+# 1. Poll for pending requests (redirect to a scratch file; surface only count + ids)
+aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json
 
-# Response includes:
+# The file now holds the pending list, e.g.:
 # {
 #   "id": "gov-abc123",
 #   "type": "add-to-team",

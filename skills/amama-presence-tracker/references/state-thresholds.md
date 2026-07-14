@@ -8,7 +8,7 @@
 - [Server-clock anchored idle computation](#server-clock-anchored-idle-computation)
 - [Crisis cross-reference](#crisis-cross-reference)
 
-The single source of truth for availability-state boundaries used by both amama-presence-tracker and the upcoming `/amama-set-availability` slash command (phase 2). The idle clock is computed from the AI Maestro server's user-presence endpoint (`GET /api/users/me/presence`) — there is no host-local file involved. <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed -->
+The single source of truth for availability-state boundaries used by both amama-presence-tracker and the upcoming `/amama-set-availability` slash command (phase 2). The idle clock is computed from the user-presence data read through the frozen CLI (`aimaestro-agent.sh presence`) — there is no host-local file involved.
 
 ## State table
 
@@ -18,14 +18,14 @@ The single source of truth for availability-state boundaries used by both amama-
 | `monitoring` | `30min ≤ ... < 4h` | `/amama-set-availability monitoring [duration]` | Batch low-priority items. Escalate medium and above. Auto-approve **REVERSIBLE only**. |
 | `away` | `4h ≤ ... < 24h` | `/amama-set-availability away [duration]` | Auto-approve **REVERSIBLE + COMPENSABLE**. Defer ONE-WAY-DOOR. Out-of-band ping for CRITICAL (phase 6). |
 | `dnd` | `... ≥ 24h` (implied) | `/amama-set-availability dnd [duration]` | Auto-approve **REVERSIBLE only**. Defer COMPENSABLE and ONE-WAY-DOOR. Out-of-band ping for SEV-0 only (phase 6). |
-| `unknown` | API unreachable, response malformed, auth-failed, or `last_user_input_epoch: null` | `/amama-set-availability unknown` (rarely useful) | **Refuse all autonomous action.** Escalate every approval to user. |
+| `unknown` | presence CLI errored / server unreachable, response malformed, auth-failed, or `last_user_input_epoch: null` | `/amama-set-availability unknown` (rarely useful) | **Refuse all autonomous action.** Escalate every approval to user. |
 | `unknown-after-compaction` | First call after detected compaction restart, until next presence-tracker invocation | n/a | Same as `unknown`. |
 
 ## Override TTL semantics
 
 The explicit-override TTL wins over the auto-clock. If the user runs `/amama-set-availability dnd 8h` and then types a clarifying message at hour 2, AMAMA stays in `dnd` until the 8h window expires. The user message IS processed normally — only the state machine does NOT snap back to `active`. This prevents the "user replies once but is otherwise away" failure mode.
 
-When the override expires, the next `get_state()` call falls through to the auto-clock branch and re-classifies based on the current API response.
+When the override expires, the next `get_state()` call falls through to the auto-clock branch and re-classifies based on the current `aimaestro-agent.sh presence` response.
 
 ## Override file format (phase 2)
 
@@ -42,7 +42,7 @@ notes: explicit user override via /amama-set-availability
 
 ## Server-clock anchored idle computation
 
-The `GET /api/users/me/presence` response always carries BOTH `last_user_input_epoch` and `server_now_epoch`. <!-- DECOUPLE-BLOCKED ai-maestro#36: presence verb not yet deployed --> AMAMA computes:
+The JSON printed by `aimaestro-agent.sh presence` always carries BOTH `last_user_input_epoch` and `server_now_epoch`. AMAMA computes:
 
 ```
 age_seconds = max(0, response.server_now_epoch - response.last_user_input_epoch)

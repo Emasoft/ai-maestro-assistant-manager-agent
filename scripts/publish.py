@@ -940,13 +940,25 @@ def ensure_cliff_gitignore(root: Path) -> None:
 
 
 def run(cmd: list[str], cwd: Path, *, check: bool = True) -> subprocess.CompletedProcess[str]:
-    """Run a command, print it, stream output, and fail fast on error."""
+    """Run a command (echoing it), fail fast on error, and stay QUIET on success.
+
+    Output is always CAPTURED, but the captured stdout/stderr is echoed only when
+    the command FAILS (returncode != 0). On success each caller prints its own
+    concise "ok <step>" line, so re-streaming the full output of all ~20 wrapped
+    pytest/lint/CPV commands would only flood the log (token economy). The FAILURE
+    path is unchanged — full stdout + stderr + the FAILED banner — so a failing
+    command still surfaces everything (fail-fast; no error is ever hidden), and
+    callers that read ``result.stdout`` are unaffected since output is still captured.
+    """
     print(f"  $ {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=600)
-    if result.stdout.strip():
-        print(result.stdout.strip())
-    if result.stderr.strip():
-        print(result.stderr.strip(), file=sys.stderr)
+    # Echo the wrapped command's captured output ONLY on failure (see docstring):
+    # streaming it on every success is exactly the verbosity this suppresses.
+    if result.returncode != 0:
+        if result.stdout.strip():
+            print(result.stdout.strip())
+        if result.stderr.strip():
+            print(result.stderr.strip(), file=sys.stderr)
     if check and result.returncode != 0:
         print(f"\n{RED}✗ FAILED (exit {result.returncode}): {' '.join(cmd)}{NC}", file=sys.stderr)
         sys.exit(result.returncode)
@@ -991,6 +1003,26 @@ def get_current_version(plugin_root: Path) -> str | None:
         data = json.loads(plugin_json.read_text(encoding="utf-8"))
         v = data.get("version")
         return v if isinstance(v, str) else None
+    except Exception:
+        return None
+
+
+def get_plugin_name(plugin_root: Path) -> str | None:
+    """Read the plugin's name from .claude-plugin/plugin.json.
+
+    Needed for the `{name}--v{version}` dependency-resolution tag: Claude Code
+    filters a dependency's tags by that exact name PREFIX, so the name must come
+    from the manifest, not from the repo/directory name (they can differ — and
+    detect_project() deliberately falls back to the dir name for non-plugin
+    project kinds, which would produce the WRONG tag prefix here).
+    """
+    plugin_json = plugin_root / ".claude-plugin" / "plugin.json"
+    if not plugin_json.exists():
+        return None
+    try:
+        data = json.loads(plugin_json.read_text(encoding="utf-8"))
+        name = data.get("name")
+        return name if isinstance(name, str) and name else None
     except Exception:
         return None
 
@@ -1500,15 +1532,44 @@ Examples:
     run(["git", "tag", "-a", f"v{new_version}", "-m", final_notes], cwd=git_root)
     print(f"{GREEN}ok Tagged v{new_version} (annotated, body = release notes){NC}")
 
-    # ── Step 13: Push commit + tag to origin ──
+    # ── Step 12b: Create the DEPENDENCY-RESOLUTION tag {name}--v{version} ──
+    # A plugin that declares `"dependencies": [{"name": "<this-plugin>",
+    # "version": "^2.x"}]` is resolved by Claude Code listing THIS repo's tags,
+    # filtering to those starting with `<plugin-name>--v`, and taking the
+    # highest one satisfying the range
+    # (https://code.claude.com/docs/en/plugin-dependencies.md, since CC 2.1.110).
+    # The plain `v{version}` tag does NOT match that filter, so without this tag
+    # every constrained dependent fails to install with "no git tag satisfying
+    # <range>" while the repo is visibly full of tags — a silent, total outage
+    # for downstream plugins (it took the whole AI Maestro fleet down for a day,
+    # ai-maestro TRDD-JT3U4ZVM). Derive the name from the manifest and hard-fail
+    # if it is absent: a release published without this tag is unresolvable, so
+    # a missing `name` must stop the pipeline, never silently skip the tag.
+    # We do NOT call `claude plugin tag <tag>`: that CLI's positional arg is a
+    # PATH, not a tag name, so the call silently creates nothing.
+    plugin_name = get_plugin_name(plugin_root)
+    if not plugin_name:
+        print(
+            f"{RED}✗ Cannot derive the dependency-resolution tag: "
+            f"no `name` in .claude-plugin/plugin.json.{NC}"
+        )
+        raise SystemExit(1)
+    dep_tag = f"{plugin_name}--v{new_version}"
+    run(["git", "tag", "-a", dep_tag, "-m", f"Release {dep_tag}"], cwd=git_root)
+    print(f"{GREEN}ok Tagged {dep_tag} (dependency resolution){NC}")
+
+    # ── Step 13: Push commit + BOTH tags to origin, ATOMICALLY ──
     # The pre-push hook verifies its caller via PROCESS ANCESTRY: it walks
     # the PID tree and looks for a `python.*scripts/publish.py` ancestor.
     # Because this process IS scripts/publish.py, the hook will find it and
     # allow the push. No env var needed — process trees can't be spoofed.
-    print(f"\n{BLUE}=== Step 13: Push commit + tag to origin/{default_branch} ==={NC}")
-    run(["git", "push", "origin", "HEAD"], cwd=git_root)
-    run(["git", "push", "origin", f"v{new_version}"], cwd=git_root)
-    print(f"\n{GREEN}ok Published v{new_version} ({info.name}){NC}")
+    # `--atomic` puts HEAD + v{version} + {name}--v{version} in ONE transaction:
+    # either all land or none do. A release that landed with only `v{version}`
+    # would be published-but-unresolvable for every dependent — exactly the
+    # half-published state this atomic push exists to prevent.
+    print(f"\n{BLUE}=== Step 13: Push commit + tags to origin/{default_branch} (atomic) ==={NC}")
+    run(["git", "push", "--atomic", "origin", "HEAD", f"v{new_version}", dep_tag], cwd=git_root)
+    print(f"\n{GREEN}ok Published v{new_version} + {dep_tag} ({info.name}){NC}")
 
     # ── Step 14: Create GitHub release with release notes (MANDATORY) ──
     # Every push MUST create a corresponding GitHub release so Claude Code's

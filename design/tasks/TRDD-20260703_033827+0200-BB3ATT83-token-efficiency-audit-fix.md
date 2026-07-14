@@ -1,9 +1,9 @@
 ---
 trdd-id: BB3ATT83
 title: Token-efficiency audit + fix of the AMAMA plugin (context-inflation / cache waste)
-column: dev
+column: complete
 created: 2026-07-03T03:38:27+0200
-updated: 2026-07-03T03:38:27+0200
+updated: 2026-07-03T04:20:45+0200
 current-owner: amama
 assignee: amama
 priority: 3
@@ -38,10 +38,9 @@ lean-ctx/distill/tldr; each such line/skill = an error." Whole-codebase audit (N
   discard-stdout, redirect-to-file, delegate-to-script, scoped-read) → the
   shipped-plugin portability tension is MOOT; do NOT hardcode ctx_*/distill/tldr.
 
-**NOT DONE — 0 fixes applied.** The 4 fixer agents were spawned but ALL died instantly
-on the **5-hour session cap** ("session limit · resets 5:20am Europe/Rome"), 0-6 tool
-uses each. Working tree verified **CLEAN** (`git status --porcelain` empty) — no
-half-applied edits.
+**DONE — 25 fix-items applied to the working tree, 0 forced skips** (M1 7 + M2 4 + M3 7 + P 5 + K9 wiring 2), across 24 changed files + 2 new (`scripts/amama_append_log.py`, `tests/test_amama_append_log.py`). Validated: full Python suite **113/113** + new append-log **4/4** pass; `publish.py --help` OK; `run()` failure path preserved verbatim; append-script smoke-tested (`--stdin --id`). **NOT committed/pushed/published** (USER ran `--fix`, did not ask to ship). H4 (`amama-respond-to-amcos`) deferred to its own TRDD. CPV run post-fix: structural **VALID** (477 pass, 0 C/M/m/NIT) + both new files clean ⇒ **zero regression**; `git diff HEAD` confirms the security-gate findings (2 MAJOR + 1 MINOR + 1 NIT) are all PRE-EXISTING (untouched files/lines), flagged to USER as a separate out-of-scope item. Incidental: `publish.py:191` `gitignore_filter` Pyright warning is pre-existing/benign (runtime import, in committed HEAD) — out of scope.
+
+✗ **SUPERSEDED — do NOT carry forward:** the earlier claim that the 4 fixer agents "died on the 5-hour session cap (resets 5:20am)" was STALE — at ~03:50 Rome the agents spawned and completed normally; the cap had already cleared (or never applied to sub-agent spawns). The "NEXT ACTION after the 5:20am reset" list below is HISTORICAL — already executed.
 
 **NEXT ACTION (after the session-cap reset, ~5:20am Rome 2026-07-03):**
 1. Re-spawn the 4 fixer lanes from `reports/token-review/FIX-SPEC.md` (P=opus+run tests,

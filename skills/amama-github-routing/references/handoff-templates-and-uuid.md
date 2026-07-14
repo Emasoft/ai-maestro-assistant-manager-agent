@@ -5,6 +5,7 @@
 - [For AMIA (Integrator) GitHub Handoffs](#for-amia-integrator-github-handoffs)
 - [For AMAA (Architect) Design-GitHub Handoffs](#for-amaa-architect-design-github-handoffs)
 - [For AMOA (Orchestrator) Module-GitHub Handoffs](#for-amoa-orchestrator-module-github-handoffs)
+- [The 17-Column Vocabulary (for every `Task Sync Required` block above)](#the-17-column-vocabulary-for-every-task-sync-required-block-above)
 - [UUID Tracking Across GitHub Operations](#uuid-tracking-across-github-operations)
 
 ## For AMIA (Integrator) GitHub Handoffs
@@ -26,7 +27,7 @@
 - Verification criteria
 
 ### Task Sync Required
-- AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
+- AI Maestro task column to set: [one of the ratified 17 columns — see task-system-sync.md]
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 
@@ -49,7 +50,7 @@
 - GitHub item updated with design reference
 
 ### Task Sync Required
-- AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
+- AI Maestro task column to set: [one of the ratified 17 columns — see task-system-sync.md]
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
 
@@ -72,9 +73,24 @@
 - Acceptance criteria
 
 ### Task Sync Required
-- AI Maestro task status to set: [backlog|pending|in_progress|review|completed]
+- AI Maestro task column to set: [one of the ratified 17 columns — see task-system-sync.md]
 - Task file: ~/.aimaestro/teams/tasks-{teamId}.json
 ```
+
+## The 17-Column Vocabulary (for every `Task Sync Required` block above)
+
+Every handoff's `Task Sync Required` column MUST be one of the ratified 17 — never a
+value invented at the handoff site:
+
+- **Lifecycle (14, in order)**: `backburner`, `todo`, `design`, `dispatch`, `dev`,
+  `testing`, `ai_review`, `human_review`, `complete`, `publish`, `published`, `deploy`,
+  `live`, `live_auditing`
+- **Exception (3, orthogonal)**: `blocked`, `failed`, `superseded`
+
+The path after `complete` is chosen by `release-via`: `publish` -> `published` (tools),
+or `deploy` -> `live` -> `live_auditing` (services). See
+[task-system-sync.md](task-system-sync.md) for the transition table and the
+`blocked` / `failed` rules.
 
 ## UUID Tracking Across GitHub Operations
 
@@ -111,7 +127,7 @@ TEAM: backend
 
 AMAMA can find GitHub items by UUID using:
 ```bash
-gh issue list --search "AMAMA-LINK: design-uuid=abc123"
-gh pr list --search "Design UUID: abc123"
-gh issue list --label "team:backend" --search "AMAMA-LINK: module-uuid=def456"
+gh issue list --search "AMAMA-LINK: design-uuid=abc123" --json number,title,url
+gh pr list --search "Design UUID: abc123" --json number,title,url
+gh issue list --label "team:backend" --search "AMAMA-LINK: module-uuid=def456" --json number,title,url
 ```

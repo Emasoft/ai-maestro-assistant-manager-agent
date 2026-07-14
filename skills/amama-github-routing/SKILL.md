@@ -28,7 +28,7 @@ Routes GitHub operations to specialists via `team:{teamId}` labels, syncing to `
 4. Consult the decision tree for the operation type
 5. Prepare handoff with required fields and team label
 6. Route via AI Maestro to the target agent (all routing goes through COS)
-7. Sync status to `tasks-{teamId}.json`
+7. Sync the task's column to `tasks-{teamId}.json` (one of the ratified 17 — see task-system-sync.md)
 8. Track handoff status and verify completion
 
 Default: AMIA. Route to AMAA/AMOA only with design/module context. PRs/releases always AMIA.
@@ -45,7 +45,7 @@ Copy this checklist and track your progress:
 ```
 [ROUTED] GitHub {operation_type} -> {target_agent}
 Team: {team_label} | Handoff: {status}
-Task Sync: {sync_status} -> {new_task_status}
+Task Sync: {sync_status} -> {new_task_column}
 Reference: {tracking_id}
 ```
 
@@ -76,11 +76,13 @@ See routing-examples.md for more.
   - Team Label Application
   - Team Boundary Enforcement Decision
 - [task-system-sync.md](references/task-system-sync.md)
-  - Task Status Model
+  - Task Column Model (the ratified 17 columns)
+  - Exception Columns
+  - Release Path Selection
   - Task File Format
   - Sync Operations
   - Bidirectional Sync Rules
-  - Status Mapping: GitHub Kanban Columns to AI Maestro Statuses
+  - Column Mapping: GitHub Project Status Options to AI Maestro Columns
 - [decision-trees-and-routing.md](references/decision-trees-and-routing.md)
   - Issue Operations Decision Tree
   - Pull Request Operations Decision Tree
@@ -90,12 +92,15 @@ See routing-examples.md for more.
   - For AMIA (Integrator) GitHub Handoffs
   - For AMAA (Architect) Design-GitHub Handoffs
   - For AMOA (Orchestrator) Module-GitHub Handoffs
+  - The 17-Column Vocabulary (for every `Task Sync Required` block above)
   - UUID Tracking Across GitHub Operations
 - [routing-examples.md](references/routing-examples.md)
   - Example 1: Routing a Bug Report Issue to AMIA with Team Label
   - Example 2: Kanban Card Move with Task Sync
   - Example 3: Routing a Design-Linked Card to AMAA
   - Example 4: Cross-Team Operation Blocked
+  - Example 5: Task Blocked by a Dependency, Then Unblocked
+  - Example 6: A Failed Task Is Retried, Not Archived
 - [proactive-kanban-monitoring.md](references/proactive-kanban-monitoring.md)
   - Proactive Kanban Monitoring
   - Monitoring Schedule

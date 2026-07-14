@@ -20,8 +20,9 @@ GovernanceRequest is approved on that AID basis, not on an agent-supplied passwo
   operation, that is a transition residual (R32) — AMAMA surfaces the operation
   to the MAESTRO to action via the UI rather than supplying a password itself.
 
-Setting the password is a USER/UI action with no agent CLI verb:
-<!-- DECOUPLE-BLOCKED ai-maestro#36: set-governance-password — USER/UI-only (R32); no agent verb. aimaestro-governance.sh exposes requests/request/approve/reject/transfer only. -->
+Setting the password is a USER/UI action with no agent CLI verb — by design (R32).
+`aimaestro-governance.sh` exposes `requests`, `request`, `approve`, `reject`, and
+`transfer` only; there is deliberately no set-governance-password verb for agents.
 
 ## Security Rules
 

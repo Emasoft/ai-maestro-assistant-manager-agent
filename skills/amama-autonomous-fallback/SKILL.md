@@ -14,7 +14,7 @@ Decides what to do with an inbound approval request when the user is `monitoring
 The `escalate-to-user` verdict targets the **currently-active MAESTRO / DELEGATE** (R36/R37) — AMAMA obeys only that user; every other native/foreign user is subordinate. Per-role authority (R28-derived title, never self-asserted): COS gets the full matrix; AUTONOMOUS is one notch stricter (C → defer); MAINTAINER is restricted to the issue-triage subset.
 
 **Tier ladder:** the matrix verdicts map onto the canonical required-permissions ladder in
-`~/.claude/rules/trdd-approval-tiers.md` — `approve-autonomously` stays within MANAGER
+`~/.claude/rules/trdd-design-tasks.md` + the seeded `.claude/rules/aimaestro-trdd-approval.md` — `approve-autonomously` stays within MANAGER
 authority (Tier ≤ 2), while **`escalate-to-user` = Tier 3** (USER/MAESTRO).
 
 ## Prerequisites

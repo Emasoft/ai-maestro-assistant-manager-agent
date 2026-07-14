@@ -35,6 +35,9 @@ operational_approvals:
 
 ## Proactive Monitoring
 
-- Poll `aimaestro-governance.sh requests --status pending` every 60 seconds during active sessions
+- Poll every 60 seconds during active sessions, but keep the poll cheap — redirect the full
+  listing to a scratch file (`aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json`)
+  and surface only a count + the request ids (`<N> pending, ids:[…]`), never the raw payloads.
+  Fetch a full record (`aimaestro-governance.sh request <id>`) only when about to act on one.
 - Present pending requests to user with context and recommended action
 - Auto-escalate requests older than 10 minutes to urgent priority

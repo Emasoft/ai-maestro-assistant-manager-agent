@@ -4,7 +4,8 @@ AMAMA Proposal Approvals
 
 Batch-review the TRDD proposals in ``design/proposals/`` and act on them
 with the fast user/MANAGER syntax described in
-``~/.claude/rules/trdd-approval-tiers.md`` Part A (Batch approval syntax).
+the seeded ``.claude/rules/aimaestro-trdd-approval.md`` Part A (Batch approval
+syntax), which overlays the base ``~/.claude/rules/trdd-design-tasks.md``.
 
 Two subcommands:
 
@@ -437,7 +438,7 @@ def build_plan(manifest: dict, approved: list[int], refused: list[int]) -> dict:
         # yet the complement `known - refuse_set` would still fire and
         # MASS-APPROVE the entire backlog off a phantom subtrahend (a stale or
         # typo'd number like `--refused 99` silently approving everything). The
-        # `refused:` verb's contract (trdd-approval-tiers.md Part A) is
+        # `refused:` verb's contract (aimaestro-trdd-approval.md Part A) is
         # "refuse the named few, approve the rest" — it presumes the named few
         # are real. With zero real targets there is no defensible "rest" to
         # approve, so we reject instead of acting. A MIX of valid+unknown
@@ -526,8 +527,42 @@ def decide(
 # --------------------------------------------------------------------------- #
 # Rendering
 # --------------------------------------------------------------------------- #
-def render_table(items: list[Proposal]) -> str:
-    """Succinct numbered listing the user scans at a glance."""
+# Cap the INLINE listing (terminal + --json) to this many rows. A large queue
+# otherwise prints one line per item with no bound, and that full dump then rides
+# forward through every downstream agent turn (token blowup). When the list is
+# longer, only the first LIST_CAP rows are shown inline and the COMPLETE listing
+# is archived to a report; the manifest (number→id map) is always written FULL by
+# the caller, so capping the DISPLAY never breaks number resolution.
+LIST_CAP = 20
+
+
+def write_listing_report(root: Path, items: list[Proposal], kind: str) -> Path:
+    """Archive the COMPLETE listing under the gitignored reports/ tree.
+
+    Same report infrastructure as ``write_decision_report`` (``manifest_dir`` +
+    ``ts_now``). The terminal / JSON listings are capped to ``LIST_CAP`` rows for
+    token economy; this file holds EVERY row so nothing is hidden.
+    """
+    mdir = manifest_dir(root)
+    mdir.mkdir(parents=True, exist_ok=True)
+    report = mdir / f"{ts_now()}-{kind}-listing.md"
+    lines = [f"# {kind} — full listing ({len(items)}) — {iso_now()}", ""]
+    for p in items:
+        d = asdict(p)
+        tag = d.get("column") or d.get("tier") or ""
+        lines.append(f"- #{d.get('n', '')} `{d.get('short', '')}` {tag}  {d.get('title', '')}".rstrip())
+    report.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return report
+
+
+def render_table(items: list[Proposal], more_report: Path | None = None) -> str:
+    """Succinct numbered listing the user scans at a glance.
+
+    ``items`` is the FULL pending list (the footer count stays truthful). When
+    ``more_report`` is set the list exceeded ``LIST_CAP``: only the first
+    ``LIST_CAP`` rows are shown inline, followed by a ``+M more`` pointer to the
+    archived full listing.
+    """
     if not items:
         return "No pending proposals in design/proposals/."
     title_w = max(len(p.title) for p in items)
@@ -535,9 +570,12 @@ def render_table(items: list[Proposal]) -> str:
     head = f"{'#':>3}  {'id':<8}  {'tier':<4}  title"
     rule = f"{'─' * 3}  {'─' * 8}  {'─' * 4}  {'─' * min(title_w, 72)}"
     rows = [head, rule]
-    for p in items:
+    shown = items[:LIST_CAP] if more_report is not None else items
+    for p in shown:
         title = p.title if len(p.title) <= title_w else p.title[: title_w - 1] + "…"
         rows.append(f"{p.n:>3}  {p.short:<8}  {p.tier:<4}  {title}")
+    if more_report is not None and len(items) > len(shown):
+        rows.append(f"… +{len(items) - len(shown)} more — full list in {more_report}")
     rows.append("")
     rows.append(f"{len(items)} pending. Reply: `approved: N,N` or `refused: N,N`.")
     return "\n".join(rows)
@@ -597,8 +635,15 @@ def render_outcome(outcome: dict) -> str:
 # CLI
 # --------------------------------------------------------------------------- #
 def render_open(items: list[Proposal], pending: int, archived: int,
-                unparsed: list[str] | None = None) -> str:
-    """The OPEN-work picture for one project (the exact open-TRDD list + zone counts)."""
+                unparsed: list[str] | None = None, more_report: Path | None = None) -> str:
+    """The OPEN-work picture for one project (the exact open-TRDD list + zone counts).
+
+    ``items`` stays the FULL open list so the header counts and the 🔴 blocked / ⚠
+    failed sections remain accurate. When ``more_report`` is set the list exceeded
+    ``LIST_CAP``: only the first ``LIST_CAP`` main rows are shown inline (the
+    exceptional blocked/failed sections are always shown in full), with a ``+M
+    more`` pointer to the archived full listing.
+    """
     unparsed = unparsed or []
     blocked = [p for p in items if p.column == "blocked"]
     failed = [p for p in items if p.column == "failed"]
@@ -612,9 +657,12 @@ def render_open(items: list[Proposal], pending: int, archived: int,
     rows = [head, ""]
     if items:
         col_w = max(len(p.column) for p in items)
-        for p in items:
+        shown = items[:LIST_CAP] if more_report is not None else items
+        for p in shown:
             flag = "  ⚠ retry" if p.column == "failed" else ("  🔴" if p.column == "blocked" else "")
             rows.append(f"  {p.short}  {p.column:<{col_w}}  {p.title}{flag}")
+        if more_report is not None and len(items) > len(shown):
+            rows.append(f"  … +{len(items) - len(shown)} more open TRDDs — full list in {more_report}")
     if blocked:
         rows.append("")
         rows.append(f"🔴 BLOCKED ({len(blocked)}) — blockers:")
@@ -632,11 +680,18 @@ def render_open(items: list[Proposal], pending: int, archived: int,
 def cmd_list(args: argparse.Namespace) -> int:
     root = project_root(args.root)
     items = list_pending(root)
-    write_manifest(root, items)
+    write_manifest(root, items)  # FULL — the number→id map must list every proposal
+    # Cap the INLINE listing; archive the complete list to a report when over cap.
+    report = write_listing_report(root, items, "pending-proposals") if len(items) > LIST_CAP else None
     if args.json:
-        print(json.dumps({"root": str(root), "items": [asdict(p) for p in items]}, indent=2))
+        shown = items[:LIST_CAP] if report else items
+        payload: dict[str, object] = {"root": str(root), "items": [asdict(p) for p in shown], "total": len(items)}
+        if report:
+            payload["truncated"] = True
+            payload["report"] = str(report)
+        print(json.dumps(payload, separators=(",", ":")))
     else:
-        print(render_table(items))
+        print(render_table(items, more_report=report))
     return 0
 
 
@@ -648,16 +703,24 @@ def cmd_open(args: argparse.Namespace) -> int:
     pending = len(list_pending(root))
     adir = archived_dir(root)
     archived = len(list(adir.glob("*.md"))) if adir.is_dir() else 0
+    # Cap the INLINE listing; archive the complete list to a report when over cap.
+    report = write_listing_report(root, items, "open-trdds") if len(items) > LIST_CAP else None
     if args.json:
-        print(json.dumps({
+        shown = items[:LIST_CAP] if report else items
+        payload: dict[str, object] = {
             "root": str(root),
-            "open": [asdict(p) for p in items],
+            "open": [asdict(p) for p in shown],
+            "open_total": len(items),
             "open_unparsed": unparsed,
             "pending_proposals": pending,
             "archived": archived,
-        }, indent=2))
+        }
+        if report:
+            payload["truncated"] = True
+            payload["report"] = str(report)
+        print(json.dumps(payload, separators=(",", ":")))
     else:
-        print(render_open(items, pending, archived, unparsed))
+        print(render_open(items, pending, archived, unparsed, more_report=report))
     return 0
 
 
@@ -679,9 +742,18 @@ def find_in(folder: Path, ident: str) -> Path | None:
     accepted only when it resolves to exactly one TRDD; if the short id matches
     two distinct TRDDs, raise ``AmbiguousId`` rather than silently picking the
     first sorted file (which would mis-route the action onto the wrong TRDD).
+
+    Matching is CASE-INSENSITIVE. The spec says an id is always WRITTEN uppercase
+    but LOOKED UP case-insensitively, and a case-sensitive compare fails in the
+    worst possible way: a lowercase id reports "not found" for a TRDD that is
+    sitting right there on disk, so the caller concludes it does not exist. Ids
+    are base36 (A-Z0-9), so upper-casing both sides cannot merge two distinct
+    ids — the AmbiguousId guard below still catches every genuine short-id
+    collision.
     """
     if not folder.is_dir():
         return None
+    ident_norm = ident.upper()
     short_matches: list[Path] = []
     for path in sorted(folder.glob("*.md")):
         if path.name.lower() == "readme.md":
@@ -693,9 +765,10 @@ def find_in(folder: Path, ident: str) -> Path | None:
         tid = fm.get("trdd-id", "")
         if not tid:
             continue
-        if tid == ident:
+        tid_norm = tid.upper()
+        if tid_norm == ident_norm:
             return path  # exact full-id match — always unambiguous, wins immediately
-        if tid[:8] == ident:
+        if tid_norm[:8] == ident_norm:
             short_matches.append(path)
     if not short_matches:
         return None
@@ -810,7 +883,7 @@ def cmd_decide(args: argparse.Namespace) -> int:
         payload = dict(outcome)
         if report:
             payload["report"] = str(report)
-        print(json.dumps(payload, indent=2))
+        print(json.dumps(payload, separators=(",", ":")))
     else:
         print(render_outcome(outcome))
         if report:

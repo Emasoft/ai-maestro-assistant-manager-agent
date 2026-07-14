@@ -11,9 +11,9 @@
 | Type | Frequency | Content | Primary Data Source |
 |------|-----------|---------|---------------------|
 | Quick Status | On demand | Current state summary | `aimaestro-agent.sh list` |
-| Progress Report | Daily/Weekly | Work completed, in progress, blocked | team tasks (`/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36) + GitHub |
+| Progress Report | Daily/Weekly | Work completed, in progress, blocked | `aimaestro-teams.sh tasks <teamId>` + GitHub |
 | Handoff Summary | On transition | What was handed to whom | `aimaestro-agent.sh list` + handoff files |
-| Blocker Report | As needed | What's blocking progress | team tasks (`/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36) (pending/in_progress) |
+| Blocker Report | As needed | What's blocking progress | `aimaestro-teams.sh tasks <teamId>` (pending/in_progress) |
 
 **Note**: Blockers are reported to the user IMMEDIATELY when received, not held for the next scheduled status report.
 
@@ -31,13 +31,13 @@
 ### Quick Status Format
 - Agent sessions: online/offline counts (from `aimaestro-agent.sh list`)
 - Session liveness: active/inactive (from `aimaestro-agent.sh list` — proxies agent health; no dedicated agent-health command exists)
-- Current active tasks (from team tasks where status = `in_progress`; `/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36)
+- Current active tasks (from `aimaestro-teams.sh tasks <teamId>` where status = `in_progress`)
 - Next milestone
 - Blockers (if any)
 
 ### Progress Report Format
 - Period covered
-- **Kanban Summary** (from team tasks; `/api/teams/{id}/tasks` — CLI verb pending ai-maestro#36):
+- **Kanban Summary** (from `aimaestro-teams.sh tasks <teamId>`):
   - Tasks in `backlog`: count and titles
   - Tasks `pending`: count and titles
   - Tasks `in_progress`: count, titles, assignees
@@ -46,7 +46,7 @@
 - **Agent Status** (from `aimaestro-agent.sh list`):
   - Active sessions with uptime
   - Stale / inactive sessions (if any — these proxy "unresponsive" agents)
-- **GitHub Status**: Issues closed, PRs merged (from `gh` CLI)
+- **GitHub Status**: Issues closed, PRs merged (from `gh` CLI — `gh issue list --json number,title,state`, `gh pr list --json number,title,state`)
 - Risks identified
 
 ## Full Examples

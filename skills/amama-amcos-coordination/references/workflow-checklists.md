@@ -10,15 +10,17 @@
 
 Use these checklists to ensure complete execution of each workflow. Check off items as you complete them.
 
+> **Health-ping caching:** the mandatory COS health-ping steps below may be SKIPPED if the same COS's liveness was already confirmed recently (e.g. within the last ~5 minutes) earlier in the same workflow — re-ping only when that window has lapsed or a prior message to it failed.
+
 ## Checklist: Creating New Team
 
 When a new project team is needed (you create it yourself — R29, no user approval):
 
 - [ ] **Parse the request** for project name, purpose, and requirements
 - [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
-- [ ] **Verify team name available** (no existing team with that name via `aimaestro-teams.sh list`)
+- [ ] **Verify team name available** (redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the name — a match ⇒ name already taken; don't read the raw listing into context)
 - [ ] **Create the team yourself** via `aimaestro-teams.sh create --name N --type closed [...]` (R29) — the server auto-creates the COS
-- [ ] **Verify team created** via `aimaestro-teams.sh list`, and `chiefOfStaff` set via `aimaestro-teams.sh show <team-id>`
+- [ ] **Verify team created** (redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the team name/id), and `chiefOfStaff` set via `aimaestro-teams.sh show <team-id>`
 - [ ] **Wake the COS** via `aimaestro-agent.sh wake <cos-id>` and grant its mandate (see "Checklist: Granting the COS Mandate")
 - [ ] **Send health check ping** to the COS using the `agent-messaging` skill (mandatory)
 - [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
@@ -100,7 +102,7 @@ When user gives a work request:
 - [ ] **Identify target AMCOS** (which project?)
 - [ ] **Verify AMCOS exists and is alive**
   - Check active sessions log
-  - Send health ping (mandatory every time)
+  - Send health ping (mandatory; may skip if the COS's liveness was confirmed within the last ~5 min this workflow)
   - If no team/COS exists for this project, create the team yourself via `aimaestro-teams.sh create` (R29) — the server auto-creates the COS
 - [ ] **Format work request** for AMCOS
 - [ ] **Send request** to AMCOS using the `agent-messaging` skill:

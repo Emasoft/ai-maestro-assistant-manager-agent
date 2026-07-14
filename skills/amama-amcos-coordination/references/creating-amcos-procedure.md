@@ -49,10 +49,10 @@ Additional optional fields may include:
 ### Verify Registration
 
 ```
-aimaestro-agent.sh list
+aimaestro-agent.sh list > /tmp/amama-agents.txt
 ```
 
-Filter for the specific agent by name.
+`grep` the scratch file for the specific agent by name — don't read the raw listing into context.
 
 ---
 
@@ -91,7 +91,7 @@ No `--password` is supplied by you — team creation is AID-authorized (R29). Th
 After you create the team, verify it exists and its COS is set:
 
 ```
-aimaestro-teams.sh list
+aimaestro-teams.sh list > /tmp/amama-teams.txt   # then grep the file for the team name (surfaces its teamId)
 aimaestro-teams.sh show <team-id>
 ```
 
@@ -111,7 +111,7 @@ See [creating-amcos-instance.md](creating-amcos-instance.md) for COS creation de
 
 If a specific agent must exist before team membership, register it using `aimaestro-agent.sh create <name>` or the `ai-maestro-agents-management` skill.
 
-**Verify**: `aimaestro-agent.sh list` lists the agent.
+**Verify**: redirect `aimaestro-agent.sh list` to a scratch file, then `grep` it for the agent name (don't read the raw listing).
 
 ### Step 2: Create the Team (MANAGER, R29)
 
@@ -121,7 +121,7 @@ You create the team yourself — no user approval, no dashboard:
 aimaestro-teams.sh create --name project-alpha-team --description "Development team for project alpha" --type closed
 ```
 
-**Verify**: `aimaestro-teams.sh list` lists the team. Note the returned `teamId`. The server auto-creates the team's COS.
+**Verify**: redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the team name — the matching line carries the `teamId`. The server auto-creates the team's COS.
 
 ### Step 3: Wake the COS and Grant Its Mandate (R30)
 
@@ -219,8 +219,8 @@ The COS is completing the team's 5 base members and will coordinate specialist a
 
 A successful team setup with COS meets ALL of the following:
 
-- [ ] Any pre-required agent registered (`aimaestro-agent.sh list` lists it)
-- [ ] You created the team via `aimaestro-teams.sh create` (R29) — team ID available via `aimaestro-teams.sh list`
+- [ ] Any pre-required agent registered (redirect `aimaestro-agent.sh list` to a scratch file, then `grep` it for the name)
+- [ ] You created the team via `aimaestro-teams.sh create` (R29) — team ID available by grepping a redirected `aimaestro-teams.sh list` scratch file for the team name
 - [ ] Team stored in `~/.aimaestro/teams/registry.json`
 - [ ] Server auto-created the COS — `aimaestro-teams.sh show <teamId>` confirms `chiefOfStaff` set
 - [ ] COS woken and granted its team-creation mandate (R30)
@@ -235,8 +235,8 @@ A successful team setup with COS meets ALL of the following:
 **Cause**: AI Maestro service may be down or agent name collision
 
 **Solution**:
-1. Check AI Maestro connectivity: `aimaestro-agent.sh list` (non-zero exit ⇒ server unreachable)
-2. Check for name collisions: `aimaestro-agent.sh list` (filter by name client-side)
+1. Check AI Maestro connectivity (liveness only): `aimaestro-agent.sh list >/dev/null 2>&1; echo $?` (non-zero exit ⇒ server unreachable)
+2. Check for name collisions: redirect `aimaestro-agent.sh list` to a scratch file, then `grep` it for the name (don't read the raw listing)
 3. If collision, choose a different agent name with a suffix
 
 ### Team Creation Fails
@@ -245,7 +245,7 @@ A successful team setup with COS meets ALL of the following:
 
 **Solution**:
 1. Verify all `agentIds` exist in the registry
-2. Check for team name collisions: `aimaestro-teams.sh list` (filter by name client-side)
+2. Check for team name collisions: redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the name (don't read the raw listing)
 3. Verify AI Maestro service is healthy
 4. Re-run `aimaestro-teams.sh create` (R29) — never fall back to a sudo/password path (R32)
 

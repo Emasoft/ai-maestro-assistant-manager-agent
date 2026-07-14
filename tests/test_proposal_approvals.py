@@ -422,5 +422,58 @@ def test_ambiguous_short_id_does_not_misroute_archive():
         assert exact is not None and "first" in exact.name
 
 
+def test_id_lookup_is_case_insensitive():
+    """A lowercase id resolves the same TRDD as its uppercase form (spec: written UPPER, looked up case-insensitively).
+
+    Regression guard (repo #24 item 8): the lookup used to compare case-SENSITIVELY,
+    which fails in the worst possible way — a lowercase id reports "not found" for a
+    TRDD sitting right there on disk, so the caller concludes it does not exist and
+    moves on. A silent wrong answer, not a loud error.
+    """
+    with temp_repo() as (root, _ids):
+        tdir = ppa.tasks_dir(root)
+        tdir.mkdir(parents=True, exist_ok=True)
+        # Ids are canonical base36 UPPERCASE (A-Z0-9).
+        (tdir / "TRDD-20260601_100000+0200-M7BZ4X1Q-case-probe.md").write_text(
+            "---\ntrdd-id: M7BZ4X1Q\n"
+            "title: Case probe\ncolumn: dev\n"
+            "created: 2026-06-01T10:00:00+0200\n"
+            "updated: 2026-06-01T10:00:00+0200\napproval-tier: 2\n"
+            "---\n\n# Case probe\n\n## Approval log\n",
+            encoding="utf-8",
+        )
+        for probe in ("M7BZ4X1Q", "m7bz4x1q", "M7bz4X1q"):
+            hit = ppa.find_in(tdir, probe)
+            assert hit is not None, f"lookup of {probe!r} must resolve the TRDD (case-insensitive)"
+            assert "case-probe" in hit.name
+        # A genuinely different id must still miss — case-folding must not widen the match.
+        assert ppa.find_in(tdir, "ZZZZZZZZ") is None
+
+
+def test_case_insensitive_lookup_still_catches_ambiguity():
+    """Case-folding must not defeat the AmbiguousId guard: a colliding short id still fails fast."""
+    with temp_repo() as (root, _ids):
+        tdir = ppa.tasks_dir(root)
+        tdir.mkdir(parents=True, exist_ok=True)
+        for suffix, slug in (("1111-2222-3333-444444444444", "first"),
+                             ("2222-3333-4444-555555555555", "second")):
+            (tdir / f"TRDD-collide-abcdef12-{slug}.md").write_text(
+                f"---\ntrdd-id: ABCDEF12-{suffix}\n"
+                f"title: Collide {slug}\ncolumn: dev\n"
+                f"created: 2026-06-01T10:00:00+0200\n"
+                f"updated: 2026-06-01T10:00:00+0200\napproval-tier: 2\n"
+                f"---\n\n# Collide {slug}\n\n## Approval log\n",
+                encoding="utf-8",
+            )
+        # The colliding short id must raise regardless of the case it is typed in.
+        for probe in ("ABCDEF12", "abcdef12"):
+            raised = False
+            try:
+                ppa.find_in(tdir, probe)
+            except ppa.AmbiguousId:
+                raised = True
+            assert raised, f"a colliding short id ({probe!r}) must still raise AmbiguousId"
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))

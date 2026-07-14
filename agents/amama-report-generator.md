@@ -1,5 +1,6 @@
 ---
 name: amama-report-generator
+# opus pinned deliberately — report accuracy/consolidation stays on opus 4.8, intentionally NOT the Sonnet-5 default (CC 2.1.197). See TRDD-3HSUEP3Y.
 model: opus
 description: Generates status reports and project summaries. Requires AI Maestro installed.
 type: local-helper
@@ -132,7 +133,7 @@ All reports MUST include a **Requirement Compliance** section tracing features t
 
 **GitHub (read-only):**
 ```bash
-gh project item-list <project-number> --format json
+gh project item-list <project-number> --format json --jq '.items[] | {id,title,status}'
 gh issue list --repo <repo> --json number,title,state,labels,milestone
 gh pr view <number> --json reviewDecision,mergeable
 ```
@@ -144,6 +145,8 @@ Request message data from the main agent (AMAMA). As a sub-agent, you MUST NOT u
 - `docs_dev/TODO.md` - Task checklists
 - `tests/logs/test_run_*.log` - Test results
 - Coverage reports, lint outputs, CI logs
+
+When reading these logs (test/coverage/lint/CI), extract only the FAIL/ERROR lines plus a pass/fail count — never load the whole log into context.
 
 ---
 

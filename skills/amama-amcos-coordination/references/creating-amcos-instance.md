@@ -31,8 +31,8 @@ You (the MANAGER) create AND delete teams on your own with NO user approval (R29
 
 ### Prerequisites
 
-1. AI Maestro reachable (`aimaestro-agent.sh list` — non-zero exit ⇒ server unreachable)
-2. A team name not already in use (`aimaestro-teams.sh list`)
+1. AI Maestro reachable (liveness only — `aimaestro-agent.sh list >/dev/null 2>&1; echo $?`; non-zero exit ⇒ server unreachable)
+2. A team name not already in use (redirect the listing to a scratch file, then `grep` it for the one name — `aimaestro-teams.sh list > /tmp/amama-teams.txt`; a match ⇒ name already taken)
 3. You are the MANAGER on this host (the frozen CLI resolves your AID auth internally)
 
 ### Creation (MANAGER, R29)
