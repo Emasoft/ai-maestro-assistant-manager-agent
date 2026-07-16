@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T18:40:00+0200
+updated: 2026-07-16T19:10:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -165,14 +165,32 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   (R9/R10/R29/R30 — own-team wake/hibernate preserved by R10.3; only runtime-steering ops are
   revocation candidates), told it to PLAN but not EXECUTE the #42 purge until R42 is legible
   (ai-maestro#72 issuecomment-4994732776). **One push frees the entire layer at once.**
-- **NEXT ACTION: WAIT for the hub to PUSH `governance-rules` — THEN for
-  `docs/SCRIPT-MANIFEST.md` + the frozen `# Usage:` line for the B3-emitting
-  `approve`/`refuse` verbs.** The push is now the FIRST gate: the manifest lives on the very
-  branch that is missing the fixes, so a manifest read today describes the 07-14 contract.
-  **Do NOT flip increment 3 against any cited sha until it resolves on the remote
-  (`gh api repos/Emasoft/ai-maestro/commits/<sha>` — test the EXIT CODE; `gh` prints its
-  error JSON to stdout, so `[ -n "$out" ]` reads a 404 as present. I wrote exactly that bug
-  while checking, and it printed ✅ for all six shas.)**
+- **✅ PUSH LANDED 2026-07-16 18:56Z (verified independently).** `governance-rules` tip moved
+  `71df9353` → **`dcbfabca`**; `docs/GOVERNANCE-RULES.md` is now **v4.5.0** and **R42–R49 all
+  have real bodies** (R42=7 heading hits … R49=7); `SCRIPT-MANIFEST.md` readable (24,835 B);
+  4/5 previously-404 shas resolve (the 5th, `20f5ba72`, resolves too — the earlier "20f5f72f"
+  was my mis-transcription). **CPV#169 CONFIRMED as the fix** (the pre-push hook WAS the blocker).
+- **🟡 STILL DEPLOY-GATED (three-state model): on-branch ✓, installed-dispatch ✗.** `main` is
+  still `a6da60bc` (07-02); `governance-rules` is ahead **1777 commits, UNMERGED**, so the
+  R42–R49 rules + the new verbs are READABLE on the branch but **not in the installed
+  `~/.local/bin` dispatch**. The capability probe still returns false on this host. So: build
+  increment 3 against the now-readable contract, but the LIVE round-trip still waits on
+  merge→deploy (task #37/#38 / launch).
+- **🔴 The push revealed TWO verified governance-security bypasses in `lib/kanban-field-authority.ts`
+  (my independent read of the pushed file) — filed `ai-maestro#74`:** (1) `previousStatus` is
+  ungated (`touchesGateField` = {status, reviewResult, publishedVersion, liveSince} only);
+  (2) `human_review→dev` / `live_auditing→dev` evade both gates (`dev` ∉ GOVERNED_TARGET_COLUMNS;
+  GATE 2 fires only on `complete`). Both = ungated Y/Z ladder transitions. **Fix-before-deploy**
+  (gate not live yet). CORE correctly holds its skill-flips until #74 lands (MANAGER ruling:
+  ai-maestro-plugin#29 issuecomment-4995787816). BYPASS-1 fix made restore-direction-independent.
+- **NEXT ACTION (increment 3, now unblocked for READ):** verify the B3-emitting `approve`/`refuse`
+  verbs + the `verify` shape against the now-readable `SCRIPT-MANIFEST.md` + R41/R42/R49 bodies on
+  `?ref=governance-rules`; confirm AMAMA's `min-approval-requirement`/decode-alias implementation
+  matches the codified R41.4 ladder. Do NOT wire the LIVE round-trip until the branch is
+  deployed to the installed dispatch (probe true). **Still verify every cited sha by EXIT CODE**
+  (`gh api …/commits/<sha> >/dev/null 2>&1`) — gh prints error JSON to stdout.
+- **USER decisions now LIVE (were push-gated):** (1) **ratify R49** — its text is now readable +
+  MANAGER-reviewed (hub#71); it's a USER-set IRON rule. (2) github-config drift fix (unchanged).
 - **MY OWN ERROR, corrected (`47be2c6`):** I cited `7862b191` in shipped code AND to six
   role-plugin threads as landed fact, having never checked it existed. The RULING stands;
   only the citation was unverifiable. The correction changes behavior, not just a comment:
