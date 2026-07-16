@@ -403,6 +403,35 @@ def test_refusal_reason_does_not_leak_onto_approvals_in_a_mixed_batch():
         assert "Sound design" not in no
 
 
+def test_a_refusal_prints_the_deliver_by_message_reminder():
+    """After recording a refusal, the CLI tells the operator to MESSAGE the proposer.
+
+    The message is the channel; this tool is the paperwork (USER, 2026-07-16).
+    Recording a refusal discharges nothing — the proposer must RECEIVE it as a
+    message or it is silence. Adopted from the ORCHESTRATOR (orch#30). An approve
+    that refuses nobody must NOT print the reminder (it would be noise that trains
+    the operator to ignore it).
+    """
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "yes2", requirement="manager", created="2026-06-01T09:00:00+0200")
+        make_proposal(root, "no2", requirement="manager", created="2026-06-01T10:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "deliver fixture")
+        _run(root, "list")
+        _, out = _run_rc(root, "decide", "--approved", "1", "--refused", "2",
+                         "--approver", "amama-manager",
+                         "--refusal-reason", "Defect X; fix it and re-propose.")
+        assert "RECORDED, NOT DELIVERED" in out
+        assert "MESSAGE each proposer" in out
+        # an approve-only run must stay quiet
+        make_proposal(root, "yes3", requirement="manager", created="2026-06-02T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "approve-only fixture")
+        _run(root, "list")
+        _, out2 = _run_rc(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        assert "RECORDED, NOT DELIVERED" not in out2
+
+
 def test_a_move_preserves_fields_this_tool_does_not_own():
     """approval-token: / routed-via: survive a decision verbatim — they are not ours to touch.
 

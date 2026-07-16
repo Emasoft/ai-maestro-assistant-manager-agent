@@ -1068,6 +1068,24 @@ def cmd_decide(args: argparse.Namespace) -> int:
             print(f"\nReport: {report}")
         if not args.dry_run and (outcome["approved"] or outcome["refused"]):
             print("\nReview `git status`, then commit the moves when ready.")
+        # The message is the channel; this tool is the paperwork. Everything above
+        # RECORDED a decision — none of it DELIVERED one. Adopted from the
+        # ORCHESTRATOR (orch#30), which found the sharper form of this: a refusal
+        # it could not deliver (no session_name) used to look communicated. This
+        # surface cannot send AMP messages, so it cannot verify delivery — the
+        # honest thing it CAN do is refuse to let a recorded refusal read as a
+        # discharged one, at the moment the operator would otherwise walk away.
+        if not args.dry_run and outcome["refused"]:
+            print(
+                "\n⚠ RECORDED, NOT DELIVERED — "
+                f"{len(outcome['refused'])} refusal(s) exist only as files.\n"
+                "  Now MESSAGE each proposer (COS for team-internal; direct for "
+                "AUTONOMOUS/MAINTAINER) with the defect,\n"
+                "  the bar, and the invitation to re-propose — then stay in the "
+                "thread for the replies.\n"
+                "  A refusal the proposer never received is silence, and silence is "
+                "what makes an agent delete its own work.",
+            )
     return 0
 
 
