@@ -100,11 +100,19 @@ APPROVAL_LADDER = ("none", "orchestrator", "chief-of-staff", "manager", "user")
 
 # The overlay once spelled the human-owner rung TWO ways: `user` in the
 # `agent.governanceTitle` enum and the §D3 floor table, but `maestro` in the
-# field's own value list. RULED (ai-maestro#65 B1, fixed hub-side in `7862b191`):
-# canonical is `user` — R41.4 (USER-set IRON), the §D3 floor table, and the
-# server's `manage-trdd` enum all say `user`; the `maestro` line was doc drift.
-# `maestro` survives as a deprecated READ-alias: accept it, normalize it, NEVER
-# write it. Dropping the alias instead would make the mandate invariant
+# field's own value list. RULED (ai-maestro#65 B1): canonical is `user` —
+# R41.4 (USER-set IRON), the §D3 floor table, and the server's `manage-trdd`
+# enum all say `user`; the `maestro` line was doc drift.
+#
+# The alias is NOT vestigial. The hub's fix for that drift is not on the remote
+# (`7862b191` is a 404; `governance-rules` last moved 2026-07-14), so the rule
+# file agents actually read STILL offers `maestro` at L297 — i.e. TRDDs can be
+# authored with it today, which is precisely why we normalize instead of reject.
+# Do not drop the alias when the rule text finally lands: the files written
+# while it was live outlive the fix.
+#
+# `maestro` is a deprecated READ-alias: accept it, normalize it, NEVER write it.
+# Dropping the alias instead would make the mandate invariant
 # `authority(mandated-by) >= authority(min-approval-requirement)` compare an
 # unrecognised token on any not-yet-migrated file and silently mis-evaluate the
 # HIGHEST-stakes rung — the one failure the ladder exists to prevent.
