@@ -13,6 +13,14 @@ Regression guard for TRDD-SVEILW09: the badge had drifted 6 minors (2.6.7 vs
 plugin.json 2.12.11) because nothing synced it — this test pins the sync so it
 cannot silently rot again.
 
+Second regression guard (TRDD-DE33HN3J, 2026-07-16): the sync above was correct
+and these tests passed, yet the badge STILL drifted a release behind — because
+``README.md`` was missing from the release commit's staged file list, so the
+rewrite was made on disk and then thrown away, leaving the tree dirty after
+every publish. Testing the sync in isolation proved the claim while the pipeline
+was inert; ``test_synced_files_are_staged_by_the_release_commit`` closes that
+gap by asserting the OTHER half of the contract.
+
 Run: python3 tests/test_publish_readme_sync.py      (exit 0 = all pass)
 """
 
@@ -28,6 +36,20 @@ sys.path.insert(0, str(_SCRIPTS))
 
 import publish  # noqa: E402  # pyright: ignore[reportMissingImports]
 from _harness import run_standalone  # noqa: E402
+
+
+def test_synced_files_are_staged_by_the_release_commit():
+    """Every file a bump rewrites is in RELEASE_STAGED_FILES — an unstaged sync is inert."""
+    staged = publish.RELEASE_STAGED_FILES
+    # README.md is the one this test exists for: _sync_readme_version() rewrote it
+    # on every publish, but it was absent here, so the change was never committed.
+    assert "README.md" in staged
+    # uv.lock has the same shape (rewritten by _sync_uv_lock).
+    assert "uv.lock" in staged
+    # the version SSOT itself must obviously land
+    assert ".claude-plugin/plugin.json" in staged
+    # the list is the single source of truth for Step 11 — no duplicates
+    assert len(staged) == len(set(staged))
 
 
 def test_sync_updates_stale_badge():
