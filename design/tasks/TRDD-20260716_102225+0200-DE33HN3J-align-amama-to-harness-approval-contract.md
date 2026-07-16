@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T11:52:00+0200
+updated: 2026-07-16T14:12:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -67,7 +67,43 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   `7862b191` instead of hedging on B1; two tests pin that `approval-token:` / `routed-via:`
   survive a decision verbatim and that their ABSENCE never gates one. Falsified both by
   injecting the YAML-round-trip refactor they guard against. 137/137, ruff clean.
-- **INCREMENT 3 IS BLOCKED — and the blocker is the hub's, not mine (ai-maestro#66 Q9).**
+- **Q8 RULED (a) — PRESERVE. My implementation is RATIFIED (hub, 2026-07-16).** The token
+  attests an EVENT ("this approval was authentically issued"); `approved:` is current
+  STATE — different questions, so no contradiction to resolve by destroying the token.
+  Keep preserving it on supersede AND on `completed`/`cancelled`; keep STRIPPING
+  `approval-judge:`/`approval-datetime:` on supersede (preserves `judge present ⟺ approved
+  ∈ {true, rejected}`; the token carries the history the stripped prose no longer does).
+  My recoverability argument is on record as the clincher: **you cannot re-mint a
+  host-signed artifact, so preserve-now/strip-later costs nothing while strip-now destroys
+  signed evidence for good.** Hub refinement: `verify` will report the CURRENT COLUMN
+  alongside the authenticity verdict, so a superseded-but-once-approved card reads
+  "authentic: yes; column: superseded" and no caller reconciles the two. No host verb
+  needed (only a future flip to (b) would need one — not happening).
+- **Q9 CONFIRMED — and it is the HUB'S to fix. DO NOT fork+PR it (hub, explicit).** "The
+  cross-project rule keeps you out of my tree; it does not make my bug yours." They
+  independently read the same files and confirmed every finding, accepted the 3-instance
+  root-cause naming, and will do the `(tier ` sweep across the write surfaces rather than
+  three one-offs. Their fix folds into the #69 package (sibling of their TRDD-RIFM4UXN):
+  `promoteTrdd`/`refuseTrdd` take `requirement: string` + emit the B3 line, decoding legacy
+  `tier?: number` through the `trdd-authz.ts` map; CLI gains `--requirement <title>` as
+  canonical with `--tier N` a decoded legacy alias; routes pass `requirement` through; plus
+  server-side validation that the claimed requirement matches the caller's real AID-title
+  ("the number/name the agent types is a claim to check, never a grant to trust").
+- **INCREMENT 3 — the wait is now DEFINED, not open-ended.** Hub confirmed my degradation
+  is the correct one (direct-file, B3-exact, `verify` honestly UNVERIFIED — "a truthful 'I
+  cannot prove this' beats a token paired with a `(tier N)` bullet that lies about the
+  vocabulary"). When the verb emits B3 they hand me the **frozen `# Usage:` line via
+  `scripts/script-manifest.json` (#56)** and I flip to the verb against a CONFIRMED
+  contract, verb-for-verb — no guessed flags. That manifest is the trigger to resume.
+- **The #69 cross-reference PAID OFF (2026-07-16).** CORE's #69 item 2 asked the hub to
+  "publish the name→number mapping … or widen to 0-4" — which would have given the RETIRED
+  vocabulary enforcement teeth in the same window Q9 asks to remove it. I posted the B1
+  ruling + Q9 evidence; **CORE retracted in full** ("my item 2 was wrong in the exact way
+  you caught"), corrected its #29 needs-list, and is now fixing core#30 against THIS ruling
+  (titles canonical, numbers decode-only, `orchestrator` un-numbered — its lack of a number
+  IS the proof the numeric scheme cannot express the ladder) instead of the 0-4 scheme.
+  Both changes now land as ONE contract.
+- **Historical (superseded by the above):**
   Read on `governance-rules` before coding against it: `lib/trdd-store.ts:359,379,400`
   builds the log bullet as `` ` (tier ${opts.tier})` `` and contains **zero**
   `min-approval-requirement` in 463 lines. The whole write path speaks tier
@@ -92,7 +128,12 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   `ai-maestro-plugin/rules/trdd-approval-tiers.md` — filed ai-maestro-plugin#30; (3) the
   hub's own store — ai-maestro#66 Q9. `7862b191` fixed the prose describing the contract
   while the code implementing it kept emitting the old form.
-- **NEXT ACTION: none of mine — every path is blocked on someone else.** The #43 round-trip
+- **NEXT ACTION: WAIT for `scripts/script-manifest.json` (#56) carrying the frozen
+  `# Usage:` line for the B3-emitting `approve`/`refuse` verbs — that is increment 3's
+  resume trigger.** Everything else of mine is settled or blocked below.
+- **OPEN ASKS: none.** Q8 ruled, Q9 confirmed + owned by the hub, B1–B5 closed. Do NOT
+  re-ask; do NOT PR the hub's store.
+- **The #43 round-trip** is separately blocked. The #43 round-trip
   (the one thing Q9 does not block) cannot run for TWO reasons, both verified 2026-07-16:
   1. **The server is DOWN.** `aimaestro-agent list` → "AI Maestro is not running at
      `http://localhost:23000`". Note the trap: `amp-kanban-list` *looks* alive (it printed
