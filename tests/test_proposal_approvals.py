@@ -35,9 +35,21 @@ def _git(root: Path, *args: str) -> None:
                    capture_output=True, text=True)
 
 
-def make_proposal(root: Path, slug: str, *, tier: str, created: str,
-                  extra_fm: str = "") -> str:
-    """Write one synthetic proposal; return its trdd-id."""
+def make_proposal(root: Path, slug: str, *, created: str, tier: str | None = None,
+                  requirement: str | None = None, extra_fm: str = "") -> str:
+    """Write one synthetic proposal; return its trdd-id.
+
+    Pass ``tier`` for a LEGACY fixture (deprecated ``approval-tier: N``) or
+    ``requirement`` for a current-contract one (``min-approval-requirement:``).
+    The overlay says a file carries exactly one of the two, so passing both is a
+    fixture bug and is rejected rather than silently written.
+    """
+    if (tier is None) == (requirement is None):
+        raise AssertionError("fixture must set exactly one of tier= / requirement=")
+    approval_line = (
+        f"approval-tier: {tier}\n" if tier is not None
+        else f"min-approval-requirement: {requirement}\n"
+    )
     tid = str(uuid.uuid4())
     short = tid[:8]
     pdir = ppa.proposals_dir(root)
@@ -53,7 +65,7 @@ def make_proposal(root: Path, slug: str, *, tier: str, created: str,
         f"updated: {created}\n"
         f"current-owner: amama\n"
         f"task-type: docs\n"
-        f"approval-tier: {tier}\n"
+        f"{approval_line}"
         f"{body_extra}"
         f"---\n\n"
         f"# Proposal {slug}\n\nBody.\n\n## Approval log\n",
@@ -106,7 +118,8 @@ def test_list_numbers_and_manifest():
         items = ppa.list_pending(root)
         assert [p.n for p in items] == [1, 2, 3, 4, 5]
         assert items[0].trdd_id == ids["p1"] and items[4].trdd_id == ids["p5"]
-        assert items[2].tier == "3"
+        # Legacy `approval-tier: 3` decodes to the `user` rung.
+        assert items[2].requirement == "user"
         ppa.write_manifest(root, items)
         man = ppa.read_manifest(root)
         assert man["items"][0]["trdd_id"] == ids["p1"]
@@ -273,6 +286,112 @@ def test_overlap_is_rejected():
         assert not list(ppa.tasks_dir(root).glob("*.md"))
 
 
+def test_requirement_read_from_canonical_field():
+    """A current-contract TRDD (min-approval-requirement:) resolves to its title."""
+    assert ppa.read_requirement({"min-approval-requirement": "manager"}) == "manager"
+    assert ppa.read_requirement({"min-approval-requirement": "chief-of-staff"}) == "chief-of-staff"
+
+
+def test_requirement_decodes_legacy_tier_when_canonical_absent():
+    """A legacy TRDD carrying only the deprecated approval-tier still resolves."""
+    assert ppa.read_requirement({"approval-tier": "0"}) == "none"
+    assert ppa.read_requirement({"approval-tier": "1"}) == "chief-of-staff"
+    assert ppa.read_requirement({"approval-tier": "2"}) == "manager"
+    assert ppa.read_requirement({"approval-tier": "3"}) == "user"
+
+
+def test_requirement_canonical_field_wins_over_legacy_tier():
+    """When both fields exist the canonical one wins; the tier is decode-only."""
+    fm = {"min-approval-requirement": "none", "approval-tier": "3"}
+    assert ppa.read_requirement(fm) == "none"
+
+
+def test_requirement_maestro_spelling_normalizes_to_user():
+    """The overlay's `maestro` spelling folds onto the `user` rung (ai-maestro#65 B1)."""
+    assert ppa.normalize_requirement("maestro") == "user"
+    assert ppa.normalize_requirement("MAESTRO") == "user"
+    assert ppa.normalize_requirement('"manager"') == "manager"
+
+
+def test_requirement_unknown_token_is_rejected_not_guessed():
+    """A token off the ladder resolves to "" rather than being passed through."""
+    assert ppa.normalize_requirement("wizard") == ""
+    assert ppa.read_requirement({}) == ""
+    assert ppa.read_requirement({"approval-tier": "9"}) == ""
+
+
+def test_approve_writes_approval_record_and_migrates_off_legacy_tier():
+    """Approving writes approved/judge/datetime + min-approval-requirement, dropping approval-tier."""
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "rec", tier="2", created="2026-06-01T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "record fixture")
+        _run(root, "list")
+        _run(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        moved = next(ppa.tasks_dir(root).glob("*rec*.md")).read_text()
+        assert "approved: true" in moved
+        assert "approval-judge: amama-manager" in moved
+        assert "approval-datetime: " in moved
+        # migrate-on-touch: the decoded title is persisted and the tier removed,
+        # so the file carries EXACTLY ONE of the two fields.
+        assert "min-approval-requirement: manager" in moved
+        assert "approval-tier:" not in moved
+        # the log bullet names the requirement, not the retired tier vocabulary
+        assert "(min-approval-requirement: manager)" in moved
+        assert "(tier " not in moved
+
+
+def test_refuse_records_rejected_with_a_judge():
+    """Refusing records approved: rejected — the greppable half of the invariant."""
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "nope", requirement="manager", created="2026-06-01T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "refuse fixture")
+        _run(root, "list")
+        _run(root, "decide", "--refused", "1", "--approver", "amama-manager")
+        moved = next(ppa.refused_dir(root).glob("*nope*.md")).read_text()
+        assert "approved: rejected" in moved
+        assert "approval-judge: amama-manager" in moved
+        assert "column: refused" in moved
+
+
+def test_supersede_records_no_judge_because_nobody_declined_it():
+    """Superseding archives approved: false and strips any judge — no decision was made."""
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "old", requirement="manager", created="2026-06-01T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "supersede fixture")
+        _run(root, "list")
+        # approve first so the file really carries a judge to be stripped
+        _run(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        approved = next(ppa.tasks_dir(root).glob("*old*.md"))
+        assert "approval-judge: amama-manager" in approved.read_text()
+        tid = ppa.parse_frontmatter(approved.read_text())["trdd-id"]
+        _run(root, "archive", "--state", "superseded", "--id", tid[:8])
+        arch = next(ppa.archived_dir(root).glob("*old*.md")).read_text()
+        assert "approved: false" in arch
+        assert "approval-judge:" not in arch
+        assert "approval-datetime:" not in arch
+
+
+def test_archive_completed_preserves_the_original_approver():
+    """Completing must NOT overwrite who approved it with whoever archived it."""
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "done", requirement="manager", created="2026-06-01T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "complete fixture")
+        _run(root, "list")
+        _run(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        approved = next(ppa.tasks_dir(root).glob("*done*.md"))
+        tid = ppa.parse_frontmatter(approved.read_text())["trdd-id"]
+        _run(root, "archive", "--state", "completed", "--id", tid[:8],
+             "--approver", "someone-else")
+        arch = next(ppa.archived_dir(root).glob("*done*.md")).read_text()
+        assert "approval-judge: amama-manager" in arch      # original judge intact
+        assert "approval-judge: someone-else" not in arch
+        assert "approved: true" in arch
+
+
 def test_parse_numbers_ranges_and_bad_tokens():
     """parse_numbers handles commas + N-M ranges and rejects garbage tokens."""
     assert ppa.parse_numbers("1,3-5,2") == [1, 2, 3, 4, 5]
@@ -327,7 +446,7 @@ def test_apply_move_rolls_back_source_on_move_failure():
         try:
             ppa.apply_move(
                 root, src, target_col="planned", dest_dir=dest_dir,
-                verb="APPROVED", approver="USER", tier="2", reason="r",
+                verb="APPROVED", approver="USER", requirement="manager", reason="r",
             )
         except FileExistsError:
             raised = True

@@ -86,6 +86,35 @@ REFUSED_COLUMN = "refused"
 # failed is retryable and stays OPEN in design/tasks/).
 ARCHIVE_STATES = ("completed", "cancelled", "superseded")
 
+# --------------------------------------------------------------------------- #
+# Approval-requirement vocabulary (ai-maestro overlay, USER-ratified 2026-07-10)
+# --------------------------------------------------------------------------- #
+# `min-approval-requirement:` names the required approver TITLE directly and
+# SUPERSEDES the deprecated `approval-tier: N` indirection. The overlay states a
+# file carries EXACTLY ONE of the two, so a reader that knows only the old field
+# renders every current-contract TRDD as "unknown" — which is why this module
+# must resolve BOTH on read while writing only the canonical field. Legacy files
+# migrate on next touch (never a mass rewrite), so the decode below is
+# read-only and deliberately has no writer.
+APPROVAL_LADDER = ("none", "orchestrator", "chief-of-staff", "manager", "user")
+
+# The overlay spells the human-owner rung TWO ways: `user` in the
+# `agent.governanceTitle` enum and in the §D3 floor table (the rung a script
+# actually computes), but `maestro` in the field's own value list. Until
+# ai-maestro#65 (B1) rules on it, accept both on READ and normalize to the
+# §D3/governanceTitle spelling — otherwise the mandate invariant
+# `authority(mandated-by) >= authority(min-approval-requirement)` would compare
+# an unrecognised token and silently mis-evaluate the HIGHEST-stakes rung.
+_REQUIREMENT_SYNONYMS = {"maestro": "user"}
+
+# Deprecated-tier decode, read-only: 0→none, 1→chief-of-staff, 2→manager, 3→user.
+# The overlay allows `1 → orchestrator` where the TRDD is dispatch-scoped, but a
+# legacy file no longer carries that distinction, so decode to the STRICTER rung:
+# over-requiring an approver is recoverable, under-requiring one is not.
+_LEGACY_TIER_DECODE = {"0": "none", "1": "chief-of-staff", "2": "manager", "3": "user"}
+
+UNKNOWN_REQUIREMENT = "—"
+
 MANIFEST_COMPONENT = "proposal-approvals"
 MANIFEST_NAME = "latest-index.json"
 
@@ -180,6 +209,25 @@ def set_frontmatter_field(text: str, field: str, value: str) -> str:
     return text[: m.start(1)] + new_fm + text[m.end(1):]
 
 
+def drop_frontmatter_field(text: str, field: str) -> str:
+    """Remove a scalar field from the frontmatter block; a no-op if absent.
+
+    Needed to migrate a legacy file OFF `approval-tier:` when we write
+    `min-approval-requirement:`. The overlay is explicit that a file carries
+    exactly ONE of the two, so setting the new field without dropping the old
+    one would leave a self-contradicting record for the next reader to
+    mis-resolve.
+    """
+    m = _FM_RE.match(text)
+    if not m:
+        raise ValueError("file has no YAML frontmatter block")
+    kept = [
+        line for line in m.group(1).split("\n")
+        if not re.match(rf"^{re.escape(field)}:(\s|$)", line)
+    ]
+    return text[: m.start(1)] + "\n".join(kept) + text[m.end(1):]
+
+
 def append_approval_log(text: str, bullet: str) -> str:
     """Append a bullet to the body's `## Approval log` section (create if absent)."""
     m = _APPROVAL_HEADER_RE.search(text)
@@ -195,6 +243,77 @@ def append_approval_log(text: str, bullet: str) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# Approval-requirement resolution
+# --------------------------------------------------------------------------- #
+def normalize_requirement(value: str) -> str:
+    """Canonicalise an approver title, or "" if it is not a ladder rung.
+
+    Tolerates the quoting/casing a hand-edited frontmatter line carries, and
+    folds the `maestro` spelling onto `user` (see _REQUIREMENT_SYNONYMS).
+    """
+    v = (value or "").strip().strip('"').strip("'").lower()
+    v = _REQUIREMENT_SYNONYMS.get(v, v)
+    return v if v in APPROVAL_LADDER else ""
+
+
+def read_requirement(fm: dict) -> str:
+    """The TITLE required to approve this TRDD, or "" when the file says nothing.
+
+    Resolution order is the whole point of this function: the canonical
+    `min-approval-requirement:` wins, and the deprecated `approval-tier:` is
+    decoded ONLY as a fallback for a legacy file that has not been touched since
+    the field changed. Reading just one of the two would blind the MANAGER to
+    every TRDD written under the other contract.
+    """
+    direct = normalize_requirement(str(fm.get("min-approval-requirement", "")))
+    if direct:
+        return direct
+    legacy = str(fm.get("approval-tier", "")).strip().strip('"').strip("'")
+    return _LEGACY_TIER_DECODE.get(legacy, "")
+
+
+# The overlay's denormalized `approved:` value, keyed by the judgment a move
+# records. It is tied to the column by invariant:
+#   approved: true     ⟺ column ∉ {proposal, refused, superseded}
+#   approved: rejected ⟺ column == refused
+#   approved: false    ⟺ column ∈ {proposal, superseded}
+# `completed`/`cancelled` are deliberately ABSENT: those archive moves must not
+# touch the record, because the TRDD was already judged on its way into
+# design/tasks/ and re-writing it there would overwrite the ORIGINAL approver
+# with whoever happened to archive it.
+_DECISION_APPROVED = {
+    "approved": "true",
+    "rejected": "rejected",
+    "superseded": "false",
+}
+
+# Only a real judgment gets a judge. A supersede is NOT a decision — nobody
+# declined the TRDD, a newer one overtook it — so it carries no judge, and any
+# judge already on the file is dropped to keep the overlay's invariant
+# `judge present ⟺ approved ∈ {true, rejected}` true.
+_JUDGED_DECISIONS = ("approved", "rejected")
+
+
+def write_approval_record(
+    text: str, decision: str, judge: str, stamp: str, requirement: str,
+) -> str:
+    """Write the overlay's approval record for ``decision`` into the frontmatter."""
+    text = set_frontmatter_field(text, "approved", _DECISION_APPROVED[decision])
+    if decision in _JUDGED_DECISIONS:
+        text = set_frontmatter_field(text, "approval-judge", judge)
+        text = set_frontmatter_field(text, "approval-datetime", stamp)
+    else:
+        text = drop_frontmatter_field(text, "approval-judge")
+        text = drop_frontmatter_field(text, "approval-datetime")
+    # Migrate-on-touch: persist the RESOLVED title and drop the deprecated tier,
+    # so the file leaves this move carrying exactly one of the two fields.
+    if requirement and requirement != UNKNOWN_REQUIREMENT:
+        text = set_frontmatter_field(text, "min-approval-requirement", requirement)
+        text = drop_frontmatter_field(text, "approval-tier")
+    return text
+
+
+# --------------------------------------------------------------------------- #
 # Proposal model + listing
 # --------------------------------------------------------------------------- #
 @dataclass
@@ -206,7 +325,7 @@ class Proposal:
     short: str
     file: str          # path relative to root, POSIX style
     title: str
-    tier: str
+    requirement: str   # min-approval-requirement title (legacy tier decoded)
     column: str
     created: str
     blocked_by: str = ""   # raw flow-style list value, e.g. "[TRDD-9a8aba94]"
@@ -229,7 +348,7 @@ def read_proposal(path: Path, root: Path) -> Proposal | None:
         short=trdd_id[:8] if trdd_id else "????????",
         file=path.relative_to(root).as_posix(),
         title=fm.get("title", "(untitled)"),
-        tier=fm.get("approval-tier", "—"),
+        requirement=read_requirement(fm) or UNKNOWN_REQUIREMENT,
         column=fm.get("column", ""),
         created=fm.get("created", ""),
         blocked_by=fm.get("blocked-by", ""),
@@ -384,14 +503,29 @@ def move_file(root: Path, src: Path, dest: Path) -> str:
 # --------------------------------------------------------------------------- #
 def apply_move(
     root: Path, src: Path, *, target_col: str, dest_dir: Path, verb: str,
-    approver: str, tier: str, reason: str,
+    approver: str, requirement: str, reason: str, decision: str | None = None,
 ) -> dict:
-    """Mutate frontmatter (column + updated) + append the log line, then move the file."""
+    """Mutate frontmatter (column + updated + approval record) + append the log
+    line, then move the file.
+
+    ``decision`` names the judgment this move records (a key of
+    ``_DECISION_APPROVED``); ``None`` moves the file without touching the
+    approval record.
+    """
     dest = dest_dir / src.name
     original = src.read_text(encoding="utf-8")
+    # ONE stamp for the whole mutation: `updated:`, `approval-datetime:` and the
+    # log bullet describe the SAME event, so re-reading the clock per field could
+    # write three timestamps that disagree.
+    stamp = iso_now()
     text = set_frontmatter_field(original, "column", target_col)
-    text = set_frontmatter_field(text, "updated", iso_now())
-    bullet = f"- {iso_now()} — {verb} by {approver} (tier {tier}). {reason}"
+    text = set_frontmatter_field(text, "updated", stamp)
+    if decision is not None:
+        text = write_approval_record(text, decision, approver, stamp, requirement)
+    bullet = (
+        f"- {stamp} — {verb} by {approver} "
+        f"(min-approval-requirement: {requirement}). {reason}"
+    )
     text = append_approval_log(text, bullet)
     # Mutate the source atomically, then move. If the move fails, RESTORE the
     # pre-mutation content so a failed decision never strands a mutated file in
@@ -499,12 +633,14 @@ def decide(
         if approve:
             rec = apply_move(
                 root, src, target_col=APPROVED_COLUMN, dest_dir=tasks_dir(root),
-                verb="APPROVED", approver=approver, tier=prop.tier, reason=reason_approve,
+                verb="APPROVED", approver=approver, requirement=prop.requirement,
+                reason=reason_approve, decision="approved",
             )
         else:
             rec = apply_move(
                 root, src, target_col=REFUSED_COLUMN, dest_dir=refused_dir(root),
-                verb="REFUSED", approver=approver, tier=prop.tier, reason=reason_refuse,
+                verb="REFUSED", approver=approver, requirement=prop.requirement,
+                reason=reason_refuse, decision="rejected",
             )
         rec.update({"n": n, "short": prop.short, "title": prop.title})
         results.append(rec)
@@ -549,7 +685,7 @@ def write_listing_report(root: Path, items: list[Proposal], kind: str) -> Path:
     lines = [f"# {kind} — full listing ({len(items)}) — {iso_now()}", ""]
     for p in items:
         d = asdict(p)
-        tag = d.get("column") or d.get("tier") or ""
+        tag = d.get("column") or d.get("requirement") or ""
         lines.append(f"- #{d.get('n', '')} `{d.get('short', '')}` {tag}  {d.get('title', '')}".rstrip())
     report.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return report
@@ -567,13 +703,16 @@ def render_table(items: list[Proposal], more_report: Path | None = None) -> str:
         return "No pending proposals in design/proposals/."
     title_w = max(len(p.title) for p in items)
     title_w = min(title_w, 72)
-    head = f"{'#':>3}  {'id':<8}  {'tier':<4}  title"
-    rule = f"{'─' * 3}  {'─' * 8}  {'─' * 4}  {'─' * min(title_w, 72)}"
+    # Width fits the longest ladder rung ("chief-of-staff"); the old 4-wide column
+    # was sized for a single tier DIGIT and would truncate every title.
+    req_w = max(len(r) for r in APPROVAL_LADDER)
+    head = f"{'#':>3}  {'id':<8}  {'approval':<{req_w}}  title"
+    rule = f"{'─' * 3}  {'─' * 8}  {'─' * req_w}  {'─' * min(title_w, 72)}"
     rows = [head, rule]
     shown = items[:LIST_CAP] if more_report is not None else items
     for p in shown:
         title = p.title if len(p.title) <= title_w else p.title[: title_w - 1] + "…"
-        rows.append(f"{p.n:>3}  {p.short:<8}  {p.tier:<4}  {title}")
+        rows.append(f"{p.n:>3}  {p.short:<8}  {p.requirement:<{req_w}}  {title}")
     if more_report is not None and len(items) > len(shown):
         rows.append(f"… +{len(items) - len(shown)} more — full list in {more_report}")
     rows.append("")
@@ -821,7 +960,7 @@ def cmd_archive(args: argparse.Namespace) -> int:
             # moves already applied). F6.
             missing.append(ident)
             continue
-        tier = fm.get("approval-tier", "—")
+        requirement = read_requirement(fm) or UNKNOWN_REQUIREMENT
         if args.dry_run:
             dest = archived_dir(root) / path.name
             results.append({
@@ -833,8 +972,13 @@ def cmd_archive(args: argparse.Namespace) -> int:
             continue
         rec = apply_move(
             root, path, target_col=state, dest_dir=archived_dir(root),
-            verb=state.upper(), approver=args.approver, tier=tier,
-            reason=args.reason or f"{state.capitalize()} via amama-proposal-approvals skill.",
+            verb=state.upper(), approver=args.approver, requirement=requirement,
+            reason=args.reason or f"{state.capitalize()} via amama-approval-workflows skill.",
+            # Only `superseded` records a judgment here (approved: false, no
+            # judge). `completed`/`cancelled` were already judged on the way into
+            # design/tasks/, so their record is left untouched — re-writing it
+            # would overwrite the original approver with whoever archived it.
+            decision="superseded" if state == "superseded" else None,
         )
         rec.update({"short": fm.get("trdd-id", "")[:8], "title": fm.get("title", "")})
         results.append(rec)
