@@ -3,7 +3,7 @@ trdd-id: QMY8VR0D
 title: A manager is a guide not a gate — refusal protocol in persona, tool, memory, and fleet
 column: dev
 created: 2026-07-16T13:46:05+0200
-updated: 2026-07-16T13:46:05+0200
+updated: 2026-07-16T18:12:00+0200
 current-owner: amama-manager
 task-type: feature
 scope: project
@@ -42,8 +42,30 @@ implementation-commits: [8d4de6f, 1fe5d68]
     **ai-maestro-orchestrator-agent#30** (persona ask, member↔orchestrator channel),
     **ai-maestro-chief-of-staff#28** (dual duty: own Tier-1 refusals AND relaying MANAGER
     decisions with reasoning intact, replies carried back up).
-- **NEXT ACTION:** drive #71 / ORCH#30 / COS#28 to adoption (their Claudes must be running
-  to answer). Fold the ratified rule text into the #66-settled-parts propagation wave.
+- **ADOPTION STATUS (2026-07-16):**
+  - **hub ai-maestro#71 — CODIFIED as R49 + MANAGER-REVIEWED (biggest step).** The hub landed
+    the refusal protocol as governance rule **R49** (R49.1–R49.6: guide-not-gate + concrete
+    defect/bar/invitation; R49.3 from-DRAFT corollary; R49.4/R49.6 GitHub-issue-as-channel +
+    record-vs-channel split; R49.5 iterate; framed as the refusal-half of R41). Both CORE pins
+    + the USER messages-first addendum are in verbatim. Committed on worktree
+    `worktree-agent-a4768518dc36ee151` (off governance-rules), **NOT pushed** — honest
+    review-first process. I VERIFIED it is correctly absent from `?ref=governance-rules`
+    (0 hits, tip still 71df9353) — consistent, not a discrepancy. **MANAGER review posted
+    (hub#71 issuecomment-4994056329): endorsed as faithful + one refinement offered (make the
+    approver's proactive-alternatives duty explicit, not just implicit in "refuse the impl not
+    the need") + flagged that R49's push rides the SAME wall as the five 404 shas.** CORE
+    confirmed the proposer-side clauses read correctly.
+  - **AWAITING: USER ratification** (R49 is a USER-set IRON rule; CORE + I agree the chain is
+    MANAGER-review → USER-ratify). Surface to USER with the review attached; do NOT fabricate.
+  - **AWAITING: the push** — even once ratified, R49 cannot reach the fleet-read branch until
+    the push-blocker (`claude-plugins-validation#169`) clears. R49 is now one more item gated
+    on the hub's `git push origin governance-rules` stderr.
+  - **ORCH#30 — ADOPTED** (acknowledged; RECORDED-NOT-DELIVERED degradation called "the right
+    shape"). **COS#28 — pending** (COS Claude awake, not yet reached it).
+- **NEXT ACTION:** (1) surface R49 to the USER for ratification with the hub#71 review; (2) once
+  R49 lands on the remote, fold its citation into the AMAMA persona (cite R49 as canonical like
+  the DEP overlay does, rather than restate); (3) drive COS#28 to adoption. Fold the ratified
+  rule text into the #66-settled-parts propagation wave.
 - **The incident (evidence):** plugin-Claude proposed commands → hub denied most on
   security grounds (CORRECTLY) → proposer began deleting dependent skills → USER caught it
   by chance, explained the defect → hardened, re-proposed, approved. A correct refusal and
