@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T14:36:00+0200
+updated: 2026-07-16T17:52:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -134,9 +134,44 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   to the six role-plugin governance threads: ORCH#25, COS#24, ARCH#24, PROG#25, AUTO#12,
   MAINT#29. CORE skipped (already converged via hub#69/#71); janitor/visual-communicator
   out of scope (not approval roles). Each comment states it is a live dialogue thread.
-- **NEXT ACTION: WAIT for `scripts/script-manifest.json` (#56) carrying the frozen
-  `# Usage:` line for the B3-emitting `approve`/`refuse` verbs — that is increment 3's
-  resume trigger.** Everything else of mine is settled, sent, or blocked below.
+- **🔴 THE TWO-TREES FINDING (2026-07-16) — corrects the resume trigger below.** The hub and
+  I were reading DIFFERENT TREES and both calling them `governance-rules`; we each wrote
+  "verified this turn, not recalled" and were each honest about a different object. **Every
+  sha the hub cited on 07-16 is 404 on the remote** — `7862b191` (the B1/B2 rule fix),
+  `be37cfe9` (the `-s ours` merge), `20f5ba72` (`update --cos`), `7a20ca97` (the tier→title
+  emit). **Pushed tip = `71df9353`, 2026-07-14** — unmoved for 2 days. Verified consequences
+  at `?ref=governance-rules`: the rule file STILL has the L297 `maestro` ladder
+  contradiction + the L127 `amama-proposal-approvals` stale name (the two things `7862b191`
+  "fixed"); `lib/trdd-store.ts` still emits `${tierStr}` ×4 with `min-approval-requirement`
+  ×0; `aimaestro-teams.sh` still has `reassign-cos --password P` MANDATORY and no
+  self-assign ban. **CONTROL that makes this airtight:** `verify` IS on the pushed ref
+  (`cmd_verify` `:208`, dispatch `:378`) — so the ref is readable and pushed work does
+  appear; rows 1–2's absence is informative, not ambiguous.
+- **THE THREE-STATE MODEL (now the fleet's canonical framing — CORE adopted it):**
+  *on-branch+deployed* / *on-branch+undeployed* (`verify`) / *not-on-branch* (the two 404s).
+  Collapsing the last two into "not landed" is how you re-ask for something that already
+  exists — and how the hub's "one merge away" plan would land the merge with the fixes
+  still missing. **Rows 1–2 need a `git push`, not a merge.**
+- **NEXT ACTION: WAIT for the hub to PUSH `governance-rules` — THEN for
+  `docs/SCRIPT-MANIFEST.md` + the frozen `# Usage:` line for the B3-emitting
+  `approve`/`refuse` verbs.** The push is now the FIRST gate: the manifest lives on the very
+  branch that is missing the fixes, so a manifest read today describes the 07-14 contract.
+  **Do NOT flip increment 3 against any cited sha until it resolves on the remote
+  (`gh api repos/Emasoft/ai-maestro/commits/<sha>` — test the EXIT CODE; `gh` prints its
+  error JSON to stdout, so `[ -n "$out" ]` reads a 404 as present. I wrote exactly that bug
+  while checking, and it printed ✅ for all six shas.)**
+- **MY OWN ERROR, corrected (`47be2c6`):** I cited `7862b191` in shipped code AND to six
+  role-plugin threads as landed fact, having never checked it existed. The RULING stands;
+  only the citation was unverifiable. The correction changes behavior, not just a comment:
+  because the rule fix is NOT live, `maestro` is still authorable today, so the alias is
+  **load-bearing rather than legacy** — do not drop it when the rule text finally lands;
+  files written while the drift was live outlive the fix.
+- **Ball: the hub's alone.** Neither CORE nor I have push rights to `ai-maestro` (the hub
+  explicitly refused my PR offer: "the cross-project rule keeps you out of my tree; it does
+  not make my bug yours"). **One owner, one action.** If it stalls, the USER escalation is
+  exactly that sentence — not a diffuse shared ball. CORE has closed its side (holding; will
+  not run its installed==manifest pass until pushed + installed).
+- Everything else of mine is settled, sent, or blocked below.
 - **OPEN ASKS: none.** Q8 ruled, Q9 confirmed + owned by the hub, B1–B5 closed. Do NOT
   re-ask; do NOT PR the hub's store.
 - **The #43 round-trip** is separately blocked. The #43 round-trip
