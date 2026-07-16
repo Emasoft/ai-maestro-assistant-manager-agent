@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T14:12:00+0200
+updated: 2026-07-16T14:36:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -128,9 +128,15 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   `ai-maestro-plugin/rules/trdd-approval-tiers.md` — filed ai-maestro-plugin#30; (3) the
   hub's own store — ai-maestro#66 Q9. `7862b191` fixed the prose describing the contract
   while the code implementing it kept emitting the old form.
+- **PROPAGATION WAVE SENT (2026-07-16 ~14:35).** The settled contract (§1 vocabulary, §2
+  record invariants + B3 line, §3 token/routed-via tolerance, §4 mechanism/build-holds/
+  capability-probe, §5 refusal protocol) posted as one canonical body + role-tailored notes
+  to the six role-plugin governance threads: ORCH#25, COS#24, ARCH#24, PROG#25, AUTO#12,
+  MAINT#29. CORE skipped (already converged via hub#69/#71); janitor/visual-communicator
+  out of scope (not approval roles). Each comment states it is a live dialogue thread.
 - **NEXT ACTION: WAIT for `scripts/script-manifest.json` (#56) carrying the frozen
   `# Usage:` line for the B3-emitting `approve`/`refuse` verbs — that is increment 3's
-  resume trigger.** Everything else of mine is settled or blocked below.
+  resume trigger.** Everything else of mine is settled, sent, or blocked below.
 - **OPEN ASKS: none.** Q8 ruled, Q9 confirmed + owned by the hub, B1–B5 closed. Do NOT
   re-ask; do NOT PR the hub's store.
 - **The #43 round-trip** is separately blocked. The #43 round-trip
