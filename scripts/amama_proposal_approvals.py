@@ -1012,12 +1012,35 @@ def cmd_decide(args: argparse.Namespace) -> int:
         return 2
     approved = parse_numbers(args.approved)
     refused = parse_numbers(args.refused)
+    # A refusal may not be silent (USER-ratified 2026-07-16). The MANAGER is a guide,
+    # not a gate: a refusal that does not name the defect leaves the proposer to guess,
+    # and the observed failure mode is that it guesses "forbidden" and DELETES the work
+    # that depended on the proposal. The old default reason ("Batch refusal via …") was
+    # exactly that silence wearing a sentence, so it is gone rather than kept as a
+    # fallback — a fallback here would just re-enable the failure. Fail fast instead.
+    if refused and not (args.refusal_reason or "").strip():
+        print(
+            "ERROR: --refused requires --refusal-reason.\n"
+            "  A refusal is a design review, not a verdict. State, in one line:\n"
+            "    1. the DEFECT — which input/path/rule, not 'insufficiently secure'\n"
+            "    2. the BAR — what would make it approvable\n"
+            "    3. the INVITATION — say 'revise and re-propose' in words\n"
+            "  If the design cannot be saved, refuse the implementation and ask for\n"
+            "  the GOAL — alternatives almost always exist. Never refuse the need.",
+            file=sys.stderr,
+        )
+        return 2
     try:
         outcome = decide(
             root, approved, refused,
             approver=args.approver,
             reason_approve=args.reason or "Batch approval via amama-proposal-approvals skill.",
-            reason_refuse=args.reason or "Batch refusal via amama-proposal-approvals skill.",
+            # NOT `args.reason`: one flag feeding both halves stamped a refusal's reason
+            # onto the approvals in a mixed batch (and vice-versa) — two different
+            # concepts, so two flags, one source of truth each.
+            # `or ""`: an approve-only batch legitimately has no refusal reason and
+            # skips the guard above, so this must not assume the flag was supplied.
+            reason_refuse=(args.refusal_reason or "").strip(),
             dry_run=args.dry_run,
         )
     except (FileNotFoundError, ValueError) as exc:
@@ -1058,7 +1081,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_dec.add_argument("--refused", help='Numbers to refuse (refused-only approves the rest)')
     p_dec.add_argument("--approver", default=os.environ.get("AMAMA_APPROVER", "USER"),
                        help="Who is deciding (default: USER)")
-    p_dec.add_argument("--reason", help="Custom one-line rationale for the log")
+    p_dec.add_argument("--reason", help="Custom one-line rationale for the APPROVAL log line")
+    p_dec.add_argument("--refusal-reason",
+                       help="REQUIRED with --refused: the DEFECT, the bar for acceptance, "
+                            "and the invitation to re-propose (a refusal may not be silent)")
     p_dec.add_argument("--dry-run", action="store_true", help="Show the plan, change nothing")
     p_dec.add_argument("--json", action="store_true")
     p_dec.set_defaults(func=cmd_decide)

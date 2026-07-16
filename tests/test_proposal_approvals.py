@@ -109,6 +109,18 @@ def _run(root: Path, *argv: str) -> None:
     assert rc in (0, 1), f"unexpected rc {rc} for {argv}"
 
 
+def _run_rc(root: Path, *argv: str) -> tuple[int, str]:
+    """Invoke the CLI and return (exit code, stdout+stderr) — for REJECTION paths.
+
+    ``_run`` asserts ``rc in (0, 1)``, so it cannot express "this invocation must be
+    rejected": a usage error (rc 2) trips its assert before the test can inspect it.
+    """
+    out, err = io.StringIO(), io.StringIO()
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        rc = ppa.main(["--root", str(root), *argv])
+    return rc, out.getvalue() + err.getvalue()
+
+
 # --------------------------------------------------------------------------- #
 # Tests
 # --------------------------------------------------------------------------- #
@@ -146,7 +158,7 @@ def test_refuse_only_complement_approves_rest():
     """refused: 2 refuses #2 AND approves every other listed proposal (complement)."""
     with temp_repo() as (root, _ids):
         _run(root, "list")
-        _run(root, "decide", "--refused", "2")
+        _run(root, "decide", "--refused", "2", "--refusal-reason", "Defect X; fix it and re-propose.")
         refused = list(ppa.refused_dir(root).glob("*.md"))
         assert len(refused) == 1 and "p2" in refused[0].name
         assert _col(root, refused[0].relative_to(root).as_posix()) == "refused"
@@ -160,7 +172,8 @@ def test_both_lists_disable_complement():
     """approved+refused together = explicit lists; unlisted stay PENDING (no complement)."""
     with temp_repo() as (root, _ids):
         _run(root, "list")
-        _run(root, "decide", "--approved", "1", "--refused", "2")
+        _run(root, "decide", "--approved", "1", "--refused", "2",
+             "--refusal-reason", "Defect X; fix it and re-propose.")
         assert len(list(ppa.tasks_dir(root).glob("*.md"))) == 1
         assert len(list(ppa.refused_dir(root).glob("*.md"))) == 1
         # 3,4,5 still pending
@@ -341,6 +354,55 @@ def test_approve_writes_approval_record_and_migrates_off_legacy_tier():
         assert "(tier " not in moved
 
 
+def test_refusing_without_a_reason_is_rejected():
+    """A silent refusal is refused by the tool — the MANAGER is a guide, not a gate.
+
+    USER-ratified 2026-07-16 after a real incident: a correct security refusal was
+    issued with no stated defect, the proposer read "no" as "forbidden", and began
+    DELETING the skills that depended on the proposal. The capability was only saved
+    because a human happened to see the exchange. A refusal that does not name the
+    defect is the mechanism of that loss, so the tool will not emit one.
+    """
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "silent", requirement="manager", created="2026-06-01T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "silent fixture")
+        _run(root, "list")
+        rc, out = _run_rc(root, "decide", "--refused", "1", "--approver", "amama-manager")
+        assert rc == 2, f"expected exit 2, got {rc}"
+        assert "--refusal-reason" in out
+        # and it TEACHES the bar rather than just erroring
+        assert "DEFECT" in out and "INVITATION" in out
+        # the proposal is untouched — a rejected command must not half-apply
+        assert next(ppa.proposals_dir(root).glob("*silent*.md")).exists()
+        assert not list(ppa.refused_dir(root).glob("*silent*.md"))
+
+
+def test_refusal_reason_does_not_leak_onto_approvals_in_a_mixed_batch():
+    """A mixed batch keeps the two reasons apart — they are different concepts.
+
+    Regression guard: `--reason` used to feed BOTH `reason_approve` and
+    `reason_refuse`, so the one string a mixed batch supplied was stamped verbatim on
+    both — an approval log line carrying the reason something ELSE was refused for.
+    """
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "yes", requirement="manager", created="2026-06-01T09:00:00+0200")
+        make_proposal(root, "no", requirement="manager", created="2026-06-01T10:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "mixed fixture")
+        _run(root, "list")
+        _run(root, "decide", "--approved", "1", "--refused", "2",
+             "--approver", "amama-manager",
+             "--reason", "Sound design, ships as specified.",
+             "--refusal-reason", "--exec takes an unsanitized string; sanitize it and re-propose.")
+        ok = next(ppa.tasks_dir(root).glob("*yes*.md")).read_text()
+        no = next(ppa.refused_dir(root).glob("*no*.md")).read_text()
+        assert "Sound design, ships as specified." in ok
+        assert "unsanitized" not in ok, "the refusal's reason leaked onto the approval"
+        assert "unsanitized" in no
+        assert "Sound design" not in no
+
+
 def test_a_move_preserves_fields_this_tool_does_not_own():
     """approval-token: / routed-via: survive a decision verbatim — they are not ours to touch.
 
@@ -396,7 +458,8 @@ def test_refuse_records_rejected_with_a_judge():
         _git(root, "add", "-A")
         _git(root, "commit", "-m", "refuse fixture")
         _run(root, "list")
-        _run(root, "decide", "--refused", "1", "--approver", "amama-manager")
+        _run(root, "decide", "--refused", "1", "--approver", "amama-manager",
+             "--refusal-reason", "Defect X; fix it and re-propose.")
         moved = next(ppa.refused_dir(root).glob("*nope*.md")).read_text()
         assert "approved: rejected" in moved
         assert "approval-judge: amama-manager" in moved
@@ -543,8 +606,12 @@ def test_refused_only_all_unknown_does_not_mass_approve():
         assert not list(ppa.tasks_dir(root).glob("*.md"))
         assert not (ppa.refused_dir(root).is_dir() and list(ppa.refused_dir(root).glob("*.md")))
         # The CLI surfaces it as a clean rc=1 error, not a silent success.
+        # --refusal-reason is supplied so this still exercises the MASS-APPROVE guard:
+        # without it the arg-check would reject first (rc=2) and the guard under test
+        # would never run — a test that passes while testing nothing.
         with contextlib.redirect_stderr(io.StringIO()):
-            rc = ppa.main(["--root", str(root), "decide", "--refused", "99"])
+            rc = ppa.main(["--root", str(root), "decide", "--refused", "99",
+                           "--refusal-reason", "Defect X; fix it and re-propose."])
         assert rc == 1
         assert not list(ppa.tasks_dir(root).glob("*.md"))
 
