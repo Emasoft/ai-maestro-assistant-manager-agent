@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T18:05:00+0200
+updated: 2026-07-16T18:40:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -152,6 +152,19 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   Collapsing the last two into "not landed" is how you re-ask for something that already
   exists — and how the hub's "one merge away" plan would land the merge with the fixes
   still missing. **Rows 1–2 need a `git push`, not a merge.**
+- **🔴 BLAST-RADIUS CORRECTION (2026-07-16, verified) — it is NOT "five shas," it is the WHOLE
+  post-R41 governance layer.** Read `docs/GOVERNANCE-RULES.md` @ `?ref=governance-rules`:
+  `version: 4.2.0`, and **R41 is the newest rule with an actual body — R42 THROUGH R49 have
+  ZERO rule text on the remote** (every "R42" there is changelog prose). The hub codified R49
+  at v4.5.0 on a worktree, so **v4.3.0 / v4.4.0 / v4.5.0 — potentially all of R42–R49 — are
+  unpushed.** This is why the whole fleet keeps citing rules that don't resolve on the readable
+  branch (COS's "R42", my briefing's "R41–R48 delta", the PROGRAMMER's dangling refs). **R42
+  (drive-vs-configure) has NO readable body — my COS briefing over-cited it as settled law; same
+  class of error as citing an unpushed sha.** Asked the hub (issuecomment on #71) to confirm R42
+  exists + quote/push it. Gave COS the interim boundary grounded in rules that ARE codified
+  (R9/R10/R29/R30 — own-team wake/hibernate preserved by R10.3; only runtime-steering ops are
+  revocation candidates), told it to PLAN but not EXECUTE the #42 purge until R42 is legible
+  (ai-maestro#72 issuecomment-4994732776). **One push frees the entire layer at once.**
 - **NEXT ACTION: WAIT for the hub to PUSH `governance-rules` — THEN for
   `docs/SCRIPT-MANIFEST.md` + the frozen `# Usage:` line for the B3-emitting
   `approve`/`refuse` verbs.** The push is now the FIRST gate: the manifest lives on the very
