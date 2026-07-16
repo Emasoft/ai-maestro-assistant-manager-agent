@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T11:34:00+0200
+updated: 2026-07-16T11:52:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -14,7 +14,7 @@ approval-judge: user
 approval-datetime: 2026-07-16T10:22:25+0200
 min-approval-requirement: user
 relevant-rules: [1]
-implementation-commits: [7edae93, 3ce3ae9, 49894b3]
+implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
 ---
 
 # Align AMAMA to the ai-maestro harness approval-record contract
@@ -63,9 +63,40 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3]
   returns false here today — which is precisely why the probe, not a version check, is the
   right gate: the launch host runs the `governance-rules` working tree directly (pm2 from
   the checkout), so the contract IS live exactly where the fleet will run.
-- **NEXT ACTION:** land the three additive increments (ratify the `maestro` alias with its
-  ruling cite; add `approval-token:` + `routed-via:` read-tolerance; add the capability
-  probe that prefers the token-minting verb), then run the #43 round-trip.
+- **DONE (`a72374b`):** increments 1–2. The `maestro → user` alias now cites R41.4 +
+  `7862b191` instead of hedging on B1; two tests pin that `approval-token:` / `routed-via:`
+  survive a decision verbatim and that their ABSENCE never gates one. Falsified both by
+  injecting the YAML-round-trip refactor they guard against. 137/137, ruff clean.
+- **INCREMENT 3 IS BLOCKED — and the blocker is the hub's, not mine (ai-maestro#66 Q9).**
+  Read on `governance-rules` before coding against it: `lib/trdd-store.ts:359,379,400`
+  builds the log bullet as `` ` (tier ${opts.tier})` `` and contains **zero**
+  `min-approval-requirement` in 463 lines. The whole write path speaks tier
+  (`approve --tier N` → `POST {tier}` → `route.ts:67` → `tierStr`). So the verb #66 Q1 tells
+  me to prefer emits **exactly the `(tier N)` bullet #65 B3 ruled against** — the A3 defect
+  I just fixed. On the launch host I cannot have both the token and a B3-exact bullet:
+  `--tier N` → `(tier 2)`; no `--tier` → `tierStr` is `''` and the clause vanishes entirely;
+  no verb → B3-exact but UNVERIFIED. **Chose UNVERIFIED** (keep the direct-file path):
+  `verify` truthfully saying "cannot prove this" beats a bullet that lies about the
+  vocabulary.
+- **The suggested probe does not decide this.** `aimaestro-trdd.sh verify` existing proves
+  the TOKEN layer, not the vocabulary — on `governance-rules` `verify` exists AND the bullet
+  is stale, so probing for `verify` returns "use the verb" and walks into `(tier N)`. Any
+  probe I eventually write must test the **write vocabulary**, not the token layer.
+- **Convergent validation (worth keeping):** `lib/trdd-authz.ts:41,70` is fully current and
+  independently landed the SAME decode I did — ladder `none|orchestrator|chief-of-staff|
+  manager|user`, `min-approval-requirement` first with `approval-tier` as legacy fallback,
+  `0→none 1→chief-of-staff 2→manager 3→user` (the stricter rung for `1`). Two
+  implementations converging from opposite ends is the strongest evidence the decode is right.
+- **The root cause, named (3 instances):** the 2026-07-10 contract landed in the RULES; the
+  surfaces that WRITE the record were never migrated. (1) AMAMA — fixed `7edae93`; (2) CORE
+  `ai-maestro-plugin/rules/trdd-approval-tiers.md` — filed ai-maestro-plugin#30; (3) the
+  hub's own store — ai-maestro#66 Q9. `7862b191` fixed the prose describing the contract
+  while the code implementing it kept emitting the old form.
+- **NEXT ACTION:** the #43 round-trip (unaffected by Q9 — `amp-kanban-*.sh`, deployed +
+  frozen under R23). Increment 3 resumes only on a Q9 ruling or a hub-side store fix.
+- **OPEN ASKS (hub):** #66 **Q8** — does `approval-token:` survive a supersede? I preserve
+  it (recoverable: I cannot re-mint a host-signed artifact, so stripping on a guess is the
+  one error with no way back). #66 **Q9** — the store fix, or authorization to fork + PR it.
 - **SUPERSEDED — do NOT carry forward:**
   - the belief that `main` has no governance layer. `main` DID receive governance-rules
     v0.28.0 on 2026-07-02 (`a6da60b`, PR #52), and `governance-rules` now **incorporates**
