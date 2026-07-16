@@ -92,8 +92,21 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   `ai-maestro-plugin/rules/trdd-approval-tiers.md` — filed ai-maestro-plugin#30; (3) the
   hub's own store — ai-maestro#66 Q9. `7862b191` fixed the prose describing the contract
   while the code implementing it kept emitting the old form.
-- **NEXT ACTION:** the #43 round-trip (unaffected by Q9 — `amp-kanban-*.sh`, deployed +
-  frozen under R23). Increment 3 resumes only on a Q9 ruling or a hub-side store fix.
+- **NEXT ACTION: none of mine — every path is blocked on someone else.** The #43 round-trip
+  (the one thing Q9 does not block) cannot run for TWO reasons, both verified 2026-07-16:
+  1. **The server is DOWN.** `aimaestro-agent list` → "AI Maestro is not running at
+     `http://localhost:23000`". Note the trap: `amp-kanban-list` *looks* alive (it printed
+     three agents), but that list comes from LOCAL config — it fails on client-side identity
+     resolution *before* any API call, so its output is NOT evidence the server is up. Do
+     not read it as a health check.
+  2. **No AMAMA agent workdir is registered.** All three registered agents are
+     `ai-maestro@emasoft.aimaestro.local` (the hub's own). The CLI's `--agent` defaults to
+     **the server's own repo**, so running `amp-kanban-create-task` without a registered
+     MANAGER workdir would write test TRDDs into the HUB's tree — forbidden (cross-project
+     rule: file an issue or fork+PR, never edit another project's tree). The round-trip
+     therefore depends on task #36 (register/wake a managed AMAMA agent) first. Q7 said the
+     server+CLI half is complete and frozen — true, and orthogonal: I still need an agent.
+  Increment 3 resumes only on a Q9 ruling or a hub-side store fix.
 - **OPEN ASKS (hub):** #66 **Q8** — does `approval-token:` survive a supersede? I preserve
   it (recoverable: I cannot re-mint a host-signed artifact, so stripping on a guess is the
   one error with no way back). #66 **Q9** — the store fix, or authorization to fork + PR it.
