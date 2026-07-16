@@ -341,6 +341,54 @@ def test_approve_writes_approval_record_and_migrates_off_legacy_tier():
         assert "(tier " not in moved
 
 
+def test_a_move_preserves_fields_this_tool_does_not_own():
+    """approval-token: / routed-via: survive a decision verbatim — they are not ours to touch.
+
+    Both are written by OTHER parties (ai-maestro#66 Q3: the host mints
+    ``approval-token:`` when approval goes through ``aimaestro-trdd.sh``;
+    ai-maestro#65 B4: ``routed-via:`` is the COS's routing stamp). AMAMA reads
+    them and MUST NOT write or destroy them. Preservation is currently true by
+    construction — the mutators edit named lines and pass everything else
+    through — but "true by construction" is exactly the claim the inert-README
+    bug (TRDD-DE33HN3J) disproved, so it gets a test: swapping the surgical
+    edits for a YAML load/dump round-trip would silently drop or reorder these
+    and this test is what would notice.
+    """
+    with temp_repo() as (root, _ids):
+        make_proposal(
+            root, "keep", requirement="manager", created="2026-06-01T09:00:00+0200",
+            extra_fm="approval-token: tok_9f3c1a2b\nrouted-via: amcos-team-alpha",
+        )
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "preserve fixture")
+        _run(root, "list")
+        _run(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        moved = next(ppa.tasks_dir(root).glob("*keep*.md")).read_text()
+        assert "approval-token: tok_9f3c1a2b" in moved
+        assert "routed-via: amcos-team-alpha" in moved
+
+
+def test_absent_token_and_routing_never_gate_a_decision():
+    """A card with no approval-token:/routed-via: still decides — absence is not a defect.
+
+    Both surfaces are UNBUILT on this host (ai-maestro#65 B4: nothing stamps
+    routed-via anywhere yet; #66 Q6: this host's aimaestro-trdd.sh has no
+    ``verify`` verb, so no token is ever minted here). Treating either absence
+    as an error would block every decision AMAMA makes today, so the tool must
+    stay indifferent to both.
+    """
+    with temp_repo() as (root, _ids):
+        make_proposal(root, "bare", requirement="manager", created="2026-06-01T09:00:00+0200")
+        _git(root, "add", "-A")
+        _git(root, "commit", "-m", "bare fixture")
+        _run(root, "list")
+        _run(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        moved = next(ppa.tasks_dir(root).glob("*bare*.md")).read_text()
+        assert "approved: true" in moved
+        assert "approval-token:" not in moved
+        assert "routed-via:" not in moved
+
+
 def test_refuse_records_rejected_with_a_judge():
     """Refusing records approved: rejected — the greppable half of the invariant."""
     with temp_repo() as (root, _ids):

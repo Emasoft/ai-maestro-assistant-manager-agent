@@ -1,10 +1,9 @@
 ---
 trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
-column: blocked
-pre-block-column: dev
+column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T10:37:00+0200
+updated: 2026-07-16T11:34:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -32,22 +31,51 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3]
   writes `approved:`, and renders a current-contract TRDD as `—`.
 - **PUBLISHED:** v2.14.0 (2026-07-16). Both tags peel to the same commit `49894b3`
   (`v2.14.0` + `ai-maestro-assistant-manager-agent--v2.14.0`); GitHub release live.
-- **NEXT ACTION:** none of mine — WAIT for the hub on ai-maestro#66, then fold the
-  answers in and propagate the settled parts to the role-plugins as ONE coordinated wave.
-- **BLOCKED ON (ai-maestro#66 — direction; #65 — rulings):** the MAESTRO warned
-  (2026-07-16) that the fork is mid-flight and much is unimplemented, so this alignment is
-  PROVISIONAL by construction. #66 asks the load-bearing question: the hub's own #59 says
-  we ship TWO contradictory TRDD-transition mechanisms — (A) the `aimaestro-trdd.sh` +
-  `$AID_AUTH` gate vs (B) direct file manipulation — that **B is right**, and that the §D4
-  watchdog the ladder depends on **does not exist** (so the tiers are decorative today).
-  **This TRDD implemented B's shape.** If B is ratified we are aligned; if the approval
-  record moves into a signed token (#27/#46/#47), the frontmatter record is transitional
-  and must be rebuilt. Do NOT harden further until #66 Q1/Q3 are answered.
-- **DO NOT BUILD YET** (pending #66 Q5): `routed-via:`, the `amp-kanban-*.sh` board
-  surface, `project-id` cross-project scoping.
-- **SUPERSEDED — do NOT carry forward:** the belief that `main` has no governance layer.
-  `main` DID receive governance-rules v0.28.0 on 2026-07-02 (`a6da60b`, PR #52). The
-  unmerged delta is 07-02→07-14 only.
+- **UNBLOCKED 2026-07-16:** the hub answered #66 (all 7 direction questions) and #65 (all
+  5 rulings). The verdict on the shipped work is **"the right shape — keep it"**. What
+  remains is additive, not a rebuild.
+
+### The hub's direction, as it binds AMAMA
+
+| Ask | Ruling | What AMAMA owes |
+|---|---|---|
+| Q1 mechanism | **B ratified** — files are the SSOT for state; `7edae93` is the right shape | keep it; **prefer the script verb for approve/refuse WHEN the host offers it** (it mints the token), else direct-file |
+| Q2 watchdog | **not ours** — the ladder's enforcer must not be a party the ladder authorizes (my argument, on record) | **zero implementation** |
+| Q3 record vs token | **(a)** — frontmatter stays the durable, greppable record; the token *authenticates* it | harden toward (a); tolerate `approval-token:` on read |
+| Q4 / B1 ladder | **`user`** canonical; `maestro` = deprecated READ-alias | my accept-both/normalize map is ratified — make it permanent |
+| B3 log line | confirmed **verbatim** | already matches |
+| B4 `routed-via:` | COS-authored; **read-only**, and nothing stamps it yet | read-tolerance only; **never gate on its presence** |
+| Q5 `amp-kanban-*.sh` | **BUILD** — 6 verbs deployed + frozen (R23), 17 columns | the #43 round-trip |
+| Q5 `project-id` | **HOLD** — `findtrdd.py` is not deployed; cross-project ids are rule prose only | nothing |
+| Q5 R43–R48 / ASSISTANT | **DO NOT build** (my #28) | nothing |
+| Q6 / B5 SSOT | `governance-rules` is canonical; `main` is stale for governance; **merge NOT soon** (USER: off the active list — launching the server comes first) | **gate new behavior on a CAPABILITY probe, not a version** |
+
+- **The token layer (new since my audit; shipped hub-side 2026-07-14, `d7531e53` /
+  TRDD-K2WJH7RF):** `aimaestro-trdd.sh approve` mints a host-signed portfolio token pinned
+  to the card id, recorded as `approval-token:`; `aimaestro-trdd.sh verify <id>` answers
+  **from the token, never from the prose** — because `approval-judge:` and the log bullet
+  are exactly what a forger rewrites. The write verbs are **correctness wrappers + the
+  minting surface, NOT an authorization boundary** (a gate you can walk around with `Edit`
+  is a suggestion with extra steps). Walking around them stays legal; the cost is that the
+  approval reports **UNVERIFIED**. `OPERATIONS_REQUIRING_TOKEN` is OFF deliberately.
+- **THIS host is PRE-token (verified, not assumed):** `~/.local/bin/aimaestro-trdd.sh` has
+  **no `verify` verb** and its `approve` still takes `--tier N`. So the capability probe
+  returns false here today — which is precisely why the probe, not a version check, is the
+  right gate: the launch host runs the `governance-rules` working tree directly (pm2 from
+  the checkout), so the contract IS live exactly where the fleet will run.
+- **NEXT ACTION:** land the three additive increments (ratify the `maestro` alias with its
+  ruling cite; add `approval-token:` + `routed-via:` read-tolerance; add the capability
+  probe that prefers the token-minting verb), then run the #43 round-trip.
+- **SUPERSEDED — do NOT carry forward:**
+  - the belief that `main` has no governance layer. `main` DID receive governance-rules
+    v0.28.0 on 2026-07-02 (`a6da60b`, PR #52), and `governance-rules` now **incorporates**
+    that tip (merge `be37cfe9`, `-s ours`, tree-verified — it was the squash of this
+    branch's own #52). The delta is one-directional; nothing on `main` is missing.
+  - "the §D4 watchdog is missing, so the tiers are decorative, so AMAMA might have to
+    build it" — Q2 closed that: it is neutral infrastructure (janitor idle-sweep or
+    server-side), decided inside the watchdog build design. Not mine either way.
+  - "`maestro` might be the top rung" — ruled `user`, and the drift was fixed hub-side in
+    `7862b191`.
 
 ## Why
 

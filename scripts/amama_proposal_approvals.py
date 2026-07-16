@@ -98,13 +98,16 @@ ARCHIVE_STATES = ("completed", "cancelled", "superseded")
 # read-only and deliberately has no writer.
 APPROVAL_LADDER = ("none", "orchestrator", "chief-of-staff", "manager", "user")
 
-# The overlay spells the human-owner rung TWO ways: `user` in the
-# `agent.governanceTitle` enum and in the §D3 floor table (the rung a script
-# actually computes), but `maestro` in the field's own value list. Until
-# ai-maestro#65 (B1) rules on it, accept both on READ and normalize to the
-# §D3/governanceTitle spelling — otherwise the mandate invariant
-# `authority(mandated-by) >= authority(min-approval-requirement)` would compare
-# an unrecognised token and silently mis-evaluate the HIGHEST-stakes rung.
+# The overlay once spelled the human-owner rung TWO ways: `user` in the
+# `agent.governanceTitle` enum and the §D3 floor table, but `maestro` in the
+# field's own value list. RULED (ai-maestro#65 B1, fixed hub-side in `7862b191`):
+# canonical is `user` — R41.4 (USER-set IRON), the §D3 floor table, and the
+# server's `manage-trdd` enum all say `user`; the `maestro` line was doc drift.
+# `maestro` survives as a deprecated READ-alias: accept it, normalize it, NEVER
+# write it. Dropping the alias instead would make the mandate invariant
+# `authority(mandated-by) >= authority(min-approval-requirement)` compare an
+# unrecognised token on any not-yet-migrated file and silently mis-evaluate the
+# HIGHEST-stakes rung — the one failure the ladder exists to prevent.
 _REQUIREMENT_SYNONYMS = {"maestro": "user"}
 
 # Deprecated-tier decode, read-only: 0→none, 1→chief-of-staff, 2→manager, 3→user.
