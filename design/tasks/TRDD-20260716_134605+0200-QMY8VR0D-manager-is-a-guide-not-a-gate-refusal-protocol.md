@@ -3,7 +3,7 @@ trdd-id: QMY8VR0D
 title: A manager is a guide not a gate — refusal protocol in persona, tool, memory, and fleet
 column: dev
 created: 2026-07-16T13:46:05+0200
-updated: 2026-07-16T18:12:00+0200
+updated: 2026-07-17T00:35:00+0200
 current-owner: amama-manager
 task-type: feature
 scope: project
@@ -42,7 +42,35 @@ implementation-commits: [8d4de6f, 1fe5d68]
     **ai-maestro-orchestrator-agent#30** (persona ask, member↔orchestrator channel),
     **ai-maestro-chief-of-staff#28** (dual duty: own Tier-1 refusals AND relaying MANAGER
     decisions with reasoning intact, replies carried back up).
-- **ADOPTION STATUS (2026-07-16):**
+- **✅ ADOPTION COMPLETE (2026-07-17) — supersedes the 07-16 status below. ONLY USER RATIFICATION REMAINS.**
+  - **hub#71 R49 — CODIFIED + PUSHED + VERIFIED.** Landed on the remote with the governance-rules
+    push (`dcbfabca`, `GOVERNANCE-RULES.md` v4.5.0). I read all six sub-clauses on `?ref=governance-rules`
+    and they are faithful to the USER mandate: R49.1 (defect+bar+invitation; a bare "no" is itself a
+    defect), **R49.2 — MY proactive-alternatives refinement LANDED verbatim** ("the approver pushes
+    toward an alternative route"; "a verdict correct on the merits but ending with the need abandoned
+    is a *failed* refusal"), R49.3 (from-DRAFT corollary — CORE's pin), **R49.4 (the MESSAGE is the
+    channel; the tool is the paperwork — the USER's messages-first mandate verbatim; GitHub-issue-as-
+    channel where no AMP thread exists)**, R49.5 (iterate; **binds MANAGER at Tier 2** — no author
+    exemption), R49.6 (defect recorded where the proposer will act on it).
+  - **ORCH#30 — SHIPPED + VERIFIED** in v1.9.5 (tag live on remote 16:22Z). Persona section +
+    `amoa_reassign_module.py --reason` guardrail. Its reciprocal improvements (the guardrail + the
+    "RECORDED, NOT DELIVERED" degradation) were folded back into AMAMA (`28d1bd7`).
+  - **COS#28 — LANDED** (`5daeca4`, 16 guards, 211 tests green; committed local, bundles with #42).
+    Approver half + **relay half** (refusals relay with defect/bar/invitation intact; counter-arguments
+    flow back UP — "both directions, or the gateway is a wall"). **COS added a duty on the MANAGER and
+    I APPROVED it: a decision reaching COS without the four elements gets BOUNCED BACK to me** rather
+    than relayed bare or with invented reasoning — R49.5 binds me, and a protocol whose enforcement
+    stops at its author is decoration. COS also **REFUSED my guardrail ask** by reading its code and
+    disproving its own claim (`amcos_approval_manager.py:1121` already has `respond --comment
+    required=True`; it never had AMAMA's content-free-default hole) and cited my own canonical lesson
+    `[^3]` back at me (route the rule to the surface where the behavior happens; tools enforce only the
+    mechanical residue). **Accepted** — its cross-surface guard (a test pinning `--comment
+    required=True`) is better than what I asked for.
+  - **FLEET LESSON (COS, worth carrying):** grep UNDER-REPORTS on a reasonless-"no" audit — the arg is
+    often not named `reason` (COS's is `--comment`). Read the surface; don't pattern-match it.
+  - **REMAINING: USER ratification of R49 only.** Do NOT fabricate it. If ratification alters the text,
+    tell COS to re-align before publish (it is unpublished, so that is safe).
+- **ADOPTION STATUS (2026-07-16) — historical, superseded by the block above:**
   - **hub ai-maestro#71 — CODIFIED as R49 + MANAGER-REVIEWED (biggest step).** The hub landed
     the refusal protocol as governance rule **R49** (R49.1–R49.6: guide-not-gate + concrete
     defect/bar/invitation; R49.3 from-DRAFT corollary; R49.4/R49.6 GitHub-issue-as-channel +
