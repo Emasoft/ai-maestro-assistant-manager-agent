@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-16T19:10:00+0200
+updated: 2026-07-17T02:50:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -183,12 +183,26 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   GATE 2 fires only on `complete`). Both = ungated Y/Z ladder transitions. **Fix-before-deploy**
   (gate not live yet). CORE correctly holds its skill-flips until #74 lands (MANAGER ruling:
   ai-maestro-plugin#29 issuecomment-4995787816). BYPASS-1 fix made restore-direction-independent.
-- **NEXT ACTION (increment 3, now unblocked for READ):** verify the B3-emitting `approve`/`refuse`
-  verbs + the `verify` shape against the now-readable `SCRIPT-MANIFEST.md` + R41/R42/R49 bodies on
-  `?ref=governance-rules`; confirm AMAMA's `min-approval-requirement`/decode-alias implementation
-  matches the codified R41.4 ladder. Do NOT wire the LIVE round-trip until the branch is
-  deployed to the installed dispatch (probe true). **Still verify every cited sha by EXIT CODE**
-  (`gh api …/commits/<sha> >/dev/null 2>&1`) — gh prints error JSON to stdout.
+- **✅ INCREMENT 3 DONE (2026-07-17, read-only verify vs the readable branch):**
+  (1) `APPROVAL_LADDER` matches R41.4 rank-for-rank (`none(0)<orchestrator(1)<chief-of-staff(2)
+  <manager(3)<user(4)`); (2) `_LEGACY_TIER_DECODE` correctly stays a SEPARATE numbering (retired
+  tiers: 1→chief-of-staff, orchestrator numberless) with the stricter-rung fail-safe the overlay
+  allows; (3) **the `maestro` doc-drift fix LANDED** — `7862b191` now RESOLVES (exit-code check),
+  and `rules/aimaestro/aimaestro-trdd-approval.md` @ governance-rules (L276, L300-310) offers only
+  `user`, documenting `maestro` as a deprecated READ-alias with semantics IDENTICAL to
+  `_REQUIREMENT_SYNONYMS` (it cites my #65 B1 ruling); stale code comment refreshed (`875cb5c`) —
+  alias stays load-bearing (drift-era files migrate on touch; fix on-branch but undeployed);
+  (4) `write_approval_record` matches overlay Part A B3 (judge/datetime/approved + migrate-on-touch
+  exactly-one-field); (5) manifest `verify <id>` shape confirmed: exit 0 verified / **2 NOT
+  verified** / 1 error; `approve` MINTS a host-signed token since `d7531e53`.
+- **NEXT ACTION (increment 4, DEPLOY-GATED — wire only when the probe flips true):** route AMAMA
+  approvals through the server's `aimaestro-trdd.sh approve` so a token is minted; wrap `verify`
+  (0/2/1). **Acceptance criterion:** a card AMAMA approves must report VERIFIED — local-frontmatter-
+  only approvals report UNVERIFIED under the deployed contract, so post-deploy the current local
+  path silently degrades from "the record" to "unverifiable prose". **Still verify every cited sha
+  by EXIT CODE** (`gh api …/commits/<sha> >/dev/null 2>&1`) — gh prints error JSON to stdout; and
+  QUOTE `?ref=` URLs — this harness zsh null-globs the unquoted `?`, silently DELETING the argument
+  (looks like "empty file, exit 0" through a pipeline).
 - **USER decisions now LIVE (were push-gated):** (1) **ratify R49** — its text is now readable +
   MANAGER-reviewed (hub#71); it's a USER-set IRON rule. (2) github-config drift fix (unchanged).
 - **MY OWN ERROR, corrected (`47be2c6`):** I cited `7862b191` in shipped code AND to six
