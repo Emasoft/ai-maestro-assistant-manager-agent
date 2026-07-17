@@ -3,7 +3,7 @@ trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
 column: dev
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-17T02:50:00+0200
+updated: 2026-07-17T03:35:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -197,7 +197,10 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   verified** / 1 error; `approve` MINTS a host-signed token since `d7531e53`.
 - **NEXT ACTION (increment 4, DEPLOY-GATED — wire only when the probe flips true):** route AMAMA
   approvals through the server's `aimaestro-trdd.sh approve` so a token is minted; wrap `verify`
-  (0/2/1). **Acceptance criterion:** a card AMAMA approves must report VERIFIED — local-frontmatter-
+  (0/2/1). ALSO absorb TRDD-4c388042's A.5 residue (same gate): once the `aimaestro-teams.sh
+  tasks` verb is deployed, drop the stale `DECOUPLE-BLOCKED #36` markers in the status-reporting
+  skill (skills-F1) + the presence markers (skills-F3) — judged from **origin/main**, never the
+  feature branch. **Acceptance criterion:** a card AMAMA approves must report VERIFIED — local-frontmatter-
   only approvals report UNVERIFIED under the deployed contract, so post-deploy the current local
   path silently degrades from "the record" to "unverifiable prose". **Still verify every cited sha
   by EXIT CODE** (`gh api …/commits/<sha> >/dev/null 2>&1`) — gh prints error JSON to stdout; and
