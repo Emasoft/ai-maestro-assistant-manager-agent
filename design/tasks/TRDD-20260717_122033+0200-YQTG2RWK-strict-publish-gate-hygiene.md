@@ -1,9 +1,9 @@
 ---
 trdd-id: YQTG2RWK
 title: AMAMA strict-publish-gate hygiene — clear the NIT blocker + flagged warnings
-column: dev
+column: complete
 created: 2026-07-17T12:20:33+0200
-updated: 2026-07-17T12:20:33+0200
+updated: 2026-07-17T12:27:03+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -22,6 +22,7 @@ test-requirements: [publish.py --patch --dry-run passes strict gate]
 review-requirements: []
 impacts: []
 external-refs: []
+implementation-commits: [5639d9a]
 ---
 
 # TRDD-YQTG2RWK — AMAMA strict-publish-gate hygiene
@@ -57,12 +58,14 @@ hygiene; the two judgment items are deferred (documented below), not swept.
   worth SELECTIVE adoption — that is board **#22** (MANAGER-directed pipeline upgrade),
   its own TRDD, higher blast-radius (`.github/`). Not swept here.
 
-**NEXT ACTION:** apply the 3 fixes → re-run `--dry-run` (expect NIT=0, 3 fewer
-WARNINGs) → CHANGELOG → commit. Publish stays USER-gated (21 commits already ahead).
+**✅ DONE (2026-07-17, commit `5639d9a`):** the 3 fixes landed; `uv run python
+scripts/publish.py --patch --dry-run` now PASSES green (exit 0, **NIT=0**) through
+Steps 1–10, stopping at the dry-run boundary before bump/commit/push. Tests 140/140.
+Publish stays USER-gated (22 commits now ahead of origin). Deferred items unchanged.
 
-**ACCEPTANCE:** `uv run python scripts/publish.py --patch --dry-run` reaches the
-strict gate with NIT=0 (the `remote-validation` by-design WARNINGs may remain — they
-are advisory selectors, not blockers).
+**ACCEPTANCE — MET:** `publish.py --patch --dry-run` reached the strict gate with
+NIT=0; the `remote-validation` by-design WARNINGs remain (advisory selectors, not
+blockers) as expected.
 
 ## Notes and lessons learned
 
