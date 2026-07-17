@@ -104,12 +104,15 @@ APPROVAL_LADDER = ("none", "orchestrator", "chief-of-staff", "manager", "user")
 # R41.4 (USER-set IRON), the §D3 floor table, and the server's `manage-trdd`
 # enum all say `user`; the `maestro` line was doc drift.
 #
-# The alias is NOT vestigial. The hub's fix for that drift is not on the remote
-# (`7862b191` is a 404; `governance-rules` last moved 2026-07-14), so the rule
-# file agents actually read STILL offers `maestro` at L297 — i.e. TRDDs can be
-# authored with it today, which is precisely why we normalize instead of reject.
-# Do not drop the alias when the rule text finally lands: the files written
-# while it was live outlive the fix.
+# The alias is NOT vestigial. The hub's drift fix DID land on the remote with the
+# 2026-07-16 push (`7862b191` resolves; the overlay at rules/aimaestro/
+# aimaestro-trdd-approval.md @ governance-rules now offers only `user` and
+# documents `maestro` as a deprecated READ-alias — verified 2026-07-17, semantics
+# identical to this module). Keep the alias anyway, for two reasons that outlive
+# the fix: (1) TRDDs authored during the drift window still carry `maestro` and
+# migrate only on next touch; (2) the fix is on-branch but NOT deployed — `main`
+# and the seeded per-project rule copies agents actually read may still offer
+# `maestro` until the branch merges and re-seeds. Normalize, never reject.
 #
 # `maestro` is a deprecated READ-alias: accept it, normalize it, NEVER write it.
 # Dropping the alias instead would make the mandate invariant
