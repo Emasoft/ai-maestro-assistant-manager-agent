@@ -12,7 +12,7 @@ Requires **[AI Maestro](https://github.com/Emasoft/ai-maestro) >= 0.26.0** for i
 
 ## Communication Hierarchy
 
-```
+```text
 USER <-> AMAMA (manager) <-> AMCOS (chief-of-staff) <-> Specialist Agents (member)
                                                     <-> AMAA  (architect skills)
                                                     <-> AMOA  (orchestrator skills)
@@ -194,6 +194,23 @@ claude --agent ai-maestro-assistant-manager-agent-main-agent
 claude --plugin-dir /path/to/ai-maestro-assistant-manager-agent
 ```
 
+## Usage
+
+Once installed, the MANAGER agent is your single point of contact with the fleet:
+you talk to it in natural language, and it owns governance, task routing (the
+3-pillars TRDD / PRRD / kanban system), and the two-track approval flow on your
+behalf. Start a session with it as shown in [Installation](#installation), then:
+
+- Ask it anything about the project — it plans, routes to specialist agents, and
+  reports back, surfacing only the decisions that need your sign-off.
+- Check where work stands with `/amama-planning-status` and
+  `/amama-orchestration-status`.
+- Sign off on work with `/amama-approve-plan` (approve a plan for orchestration)
+  and `/amama-respond-to-amcos` (approve / deny / defer a chief-of-staff request).
+
+The full command, skill, and hook inventory is under
+[Plugin Components](#plugin-components).
+
 ## Validation
 
 Validation runs against the canonical CPV pipeline fetched from GitHub —
@@ -233,7 +250,7 @@ remotely against CPV from GitHub (see [Validation](#validation) above).
 
 ## Project Structure
 
-```
+```text
 ai-maestro-assistant-manager-agent/
 ├── .claude-plugin/
 │   └── plugin.json                    # Plugin manifest

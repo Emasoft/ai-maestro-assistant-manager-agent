@@ -3,7 +3,7 @@ trdd-id: QMY8VR0D
 title: A manager is a guide not a gate — refusal protocol in persona, tool, memory, and fleet
 column: dev
 created: 2026-07-16T13:46:05+0200
-updated: 2026-07-17T00:35:00+0200
+updated: 2026-07-17T12:20:33+0200
 current-owner: amama-manager
 task-type: feature
 scope: project
@@ -74,8 +74,8 @@ implementation-commits: [8d4de6f, 1fe5d68]
   - **hub ai-maestro#71 — CODIFIED as R49 + MANAGER-REVIEWED (biggest step).** The hub landed
     the refusal protocol as governance rule **R49** (R49.1–R49.6: guide-not-gate + concrete
     defect/bar/invitation; R49.3 from-DRAFT corollary; R49.4/R49.6 GitHub-issue-as-channel +
-    record-vs-channel split; R49.5 iterate; framed as the refusal-half of R41). Both CORE pins
-    + the USER messages-first addendum are in verbatim. Committed on worktree
+    record-vs-channel split; R49.5 iterate; framed as the refusal-half of R41). Both CORE pins +
+    the USER messages-first addendum are in verbatim. Committed on worktree
     `worktree-agent-a4768518dc36ee151` (off governance-rules), **NOT pushed** — honest
     review-first process. I VERIFIED it is correctly absent from `?ref=governance-rules`
     (0 hits, tip still 71df9353) — consistent, not a discrepancy. **MANAGER review posted
