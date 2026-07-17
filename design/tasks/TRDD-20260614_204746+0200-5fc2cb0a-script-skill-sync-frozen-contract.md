@@ -1,9 +1,9 @@
 ---
 trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
-column: planned
+column: complete
 created: 2026-06-14T20:47:46+0200
-updated: 2026-06-16T20:14:31+0200
+updated: 2026-07-17T03:20:00+0200
 current-owner: amama
 assignee: amama
 priority: 1

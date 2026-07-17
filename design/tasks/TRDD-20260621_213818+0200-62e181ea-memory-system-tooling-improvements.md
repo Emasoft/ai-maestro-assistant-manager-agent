@@ -1,9 +1,9 @@
 ---
 trdd-id: 62e181ea-20b1-4614-ad9f-0893117b4857
 title: Memory-system tooling improvements — is-due CLI, marker due-gating, gate↔model tier, frontmatter placement
-column: planned
+column: complete
 created: 2026-06-21T21:38:18+0200
-updated: 2026-07-02T06:15:00+0200
+updated: 2026-07-17T03:20:00+0200
 current-owner: amama
 assignee: amama
 priority: 3

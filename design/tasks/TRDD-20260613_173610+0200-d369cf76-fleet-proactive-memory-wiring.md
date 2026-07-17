@@ -1,9 +1,9 @@
 ---
 trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
-column: planned
+column: published
 created: 2026-06-13T17:36:10+0200
-updated: 2026-06-15T21:27:51+0200
+updated: 2026-07-17T03:20:00+0200
 current-owner: amama
 assignee: amama
 priority: 2

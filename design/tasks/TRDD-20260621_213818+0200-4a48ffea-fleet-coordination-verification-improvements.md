@@ -1,9 +1,9 @@
 ---
 trdd-id: 4a48ffea-7c49-4cde-8831-b2997ff8bf7a
 title: Fleet coordination + verification improvements — cache staleness, idle-agent wake, coverage audit, marker friction
-column: planned
+column: complete
 created: 2026-06-21T21:38:18+0200
-updated: 2026-07-02T06:15:00+0200
+updated: 2026-07-17T03:20:00+0200
 current-owner: amama
 assignee: amama
 priority: 3
