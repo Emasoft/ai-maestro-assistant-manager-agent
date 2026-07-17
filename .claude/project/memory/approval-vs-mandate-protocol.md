@@ -2,14 +2,16 @@
 name: approval-vs-mandate-protocol
 description: "difference between an APPROVAL and a MANDATE / does this task need sign-off and from whom / who must sign a TRDD before I execute it / is a MANAGER or COS order binding / can an agent refuse a mandate / which authority signs which TRDD category (none / CHIEF-OF-STAFF / MANAGER / MAESTRO) / a golden-rule change needs whose approval / how does an agent verify a signature before executing"
 ocd: 2026-06-21
-lmd: 2026-06-21
+lmd: 2026-07-17
 metadata:
   node_type: memory
   type: reference
-  tier: aspect
+  tier: component
 ---
 
 # APPROVAL vs MANDATE — the two AI-Maestro authorization protocols
+
+^approval-vs-mandate-overview [keywords: difference between an approval and a mandate, the two AI-Maestro authorization protocols, both signed verifiable and binding, initiator and direction of authority, type: reference, ocd: 2026-06-21, lmd: 2026-06-21]
 
 Codified 2026-06-21 at the MAESTRO's direction, complementing the existing
 approval-tier framework. Every governed action travels one of two paths. **Both
@@ -17,6 +19,8 @@ are SIGNED, agent-VERIFIABLE, and BINDING** — they differ only in the INITIATO
 and the DIRECTION of authority.
 
 ## APPROVAL protocol (bottom-up — the agent asks)
+
+^approval-protocol [keywords: APPROVAL protocol bottom-up the agent asks, does this task need sign-off and from whom, agent authors a TRDD proposal routes to COS MANAGER MAESTRO who signs, until signed the agent must not execute, declined proposal goes to design/refused, type: reference, ocd: 2026-06-21, lmd: 2026-06-21]
 
 - **Initiator:** any agent (including the MANAGER, when it needs MAESTRO sign-off).
 - **Artifact:** a TRDD **proposal** (`design/proposals/`, `column: proposal`) OR a
@@ -32,6 +36,8 @@ and the DIRECTION of authority.
 
 ## MANDATE protocol (top-down — the authority orders)
 
+^mandate-protocol [keywords: MANDATE protocol top-down the authority orders, is a MANAGER or COS order binding, can an agent refuse a mandate, a verified in-scope mandate cannot be refused, agent verifies signature then is bound to execute, type: reference, ocd: 2026-06-21, lmd: 2026-06-21]
+
 - **Initiator:** the MANAGER or a CHIEF-OF-STAFF (the governance authority for that
   scope).
 - **Artifact:** a TRDD authored/assigned by the authority (e.g. dispatched to an
@@ -44,6 +50,8 @@ and the DIRECTION of authority.
   drop, ignore, or unilaterally override it.
 
 ## The symmetry (and the one difference)
+
+^approval-mandate-symmetry [keywords: approval vs mandate symmetry comparison the one difference, both verify signature then execute both binding, approval gates own initiative mandate delivers authority initiative, an authority can only mandate within its own tier, type: reference, ocd: 2026-06-21, lmd: 2026-06-21]
 
 | | APPROVAL | MANDATE |
 |---|---|---|
@@ -60,6 +68,8 @@ that is MAESTRO-only; see the criteria table).
 
 ## Verification — "the agent can verify"
 
+^signature-verification [keywords: how does an agent verify a signature before executing, never act on an unverified or forged signature, today the signature is the git-tracked Approval log line, cryptographically verifiable signature depends on the per-agent identity layer AID, verify before executing always, type: reference, ocd: 2026-06-21, lmd: 2026-06-21]
+
 Neither protocol lets an agent act on an UNVERIFIED or FORGED signature. Today the
 signature is the dated, git-tracked `## Approval log` line in the TRDD
 (`who / when / tier / rationale`) — auditable + greppable
@@ -70,6 +80,8 @@ Until that lands, the audit-log line + the shared-identity self-identification
 (PRRD G1.1) are the verification surface. **Verify before executing — always.**
 
 ## Approval-requirements criteria — which authority must sign which category
+
+^approval-tier-floor [keywords: which authority must sign which TRDD category none CHIEF-OF-STAFF MANAGER MAESTRO, a golden-rule change needs whose approval, the highest-trigger objective tier-floor default none, tier 0 self-approved own-scope derived NPT EHT, tier 2 MANAGER silver-rule cross-team release baseline-deviation, tier 3 MAESTRO golden-rule shared credentials irreversible, type: reference, ocd: 2026-06-21, lmd: 2026-06-21]
 
 The required authority is the **highest** trigger a TRDD hits (default = none;
 escalate only on a trigger). This is the objective tier-floor — see
@@ -98,4 +110,17 @@ user-only; the MANAGER may only file a proposal and wait). See
 
 ## Notes and lessons learned
 
-(none yet)
+[^1]: [id:ATOM-DUPE-IS-NEWER, status:valid, keywords:"superseded_dupe_pending_deletion two_copies_of_a_memory_note which_scope_wins delete_the_duplicate_copy diverged_copies", ocd:2026-07-17, lmd:2026-07-17]
+  DO NOT delete a memory page called a "superseded dupe" on the strength of that
+  label, BECAUSE the copy in the WRONG scope can be the NEWER and RICHER one — this
+  page's USER-scope twin was 3 days newer and carried 6 `^anchor` recall blocks the
+  canonical PROJECT copy never had (~2 KB), so deleting it would have destroyed the
+  recall surface and kept the thinner file. DO diff the copies first and MERGE
+  (port what only the doomed copy has), then treat the source as redundant.
+
+[^2]: [id:ATOM-TIER-ASPECT-VS-COMPONENT, status:valid, keywords:"wikimem tier aspect or component which_tier_for_this_page governed_by_vs_applies_to", ocd:2026-07-17, lmd:2026-07-17]
+  DO NOT tag a page `tier: aspect` because its subject sounds like a general rule,
+  BECAUSE the tier is decided by the page's LINK DIRECTION, not its topic: an aspect
+  RADIATES an `## Applies to` list down; a component RECEIVES and carries `## Governed
+  by` up. This page has `## Governed by` and no `## Applies to` — it is a component,
+  and `aspect` was wrong. DO read the page's own link sections to classify it.
