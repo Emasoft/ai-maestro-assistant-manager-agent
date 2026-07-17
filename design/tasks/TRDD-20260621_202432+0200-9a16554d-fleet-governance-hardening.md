@@ -3,7 +3,7 @@ trdd-id: 9a16554d-1e1e-4e37-bc9a-5624fb19e556
 title: Fleet governance hardening — codify APPROVAL/MANDATE + audit role plugins for violations
 column: dev
 created: 2026-06-21T20:24:32+0200
-updated: 2026-06-21T21:30:00+0200
+updated: 2026-07-17T04:05:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -91,14 +91,31 @@ project scoped, so they are git tracked."
     templates, memory-recall in skills) against each LIVE tree. Sequencing
     #47-first is correct.
 
-**NEXT ACTION (external-gated):** when ai-maestro#47 lands the protocols in
-GOVERNANCE-RULES.md, run the fleet propagation wave (per-plugin issues, R26-R40
-pattern) carrying APPROVAL/MANDATE + golden/silver + the A/B re-check to all 10
-plugins. IN-CONTROL: await MAESTRO review + the dupe-cleanup permission below.
+**✅ #47's CONTENT LANDED (verified 2026-07-17):** the protocols are codified as
+**R41. APPROVAL vs MANDATE** in `GOVERNANCE-RULES.md` v4.5.0 @ `?ref=governance-rules`
+(L1443), bodied and readable — even though the *issue* ai-maestro#47 is still OPEN.
+Issue-state ≠ content-state; judge from the rule BODY on the readable ref, never
+from the tracker. So the propagation wave's precondition is MET.
 
-**OPEN HOUSEKEEPING:** the 2 USER-scope wikimem copies (janitor plugin-data dir)
-created before the MAESTRO's "project scoped" correction are superseded dupes
-pending RULE-0 deletion permission.
+**NEXT ACTION (USER-gated, not blocker-gated):** the fleet propagation wave
+(per-plugin issues, R26-R40 pattern) carrying APPROVAL/MANDATE + golden/silver +
+the A/B re-check to all 10 plugins now awaits **MAESTRO review only** — it is a
+Tier-2 fleet-wide action, so it does not fire unprompted. Cite R41 as canonical
+rather than restating it.
+
+**✅ HOUSEKEEPING RESOLVED — by MERGE, not deletion (`4094cd8`).** The two
+USER-scope wikimem copies were recorded above as "superseded dupes pending RULE-0
+deletion permission". **That framing was WRONG and is retracted.** Diffing them
+before proposing any delete (RULE 0) showed the copies in the *wrong scope* were
+the **newer, richer** ones: 3-4 days ahead and carrying **14 `^anchor` recall
+blocks (~4.7 KB)** the canonical PROJECT copies never had. Deleting them would have
+destroyed the symptom-indexed recall surface and kept the thinner files. All 14
+anchors are now ported into the PROJECT copies and the merge is verified lossless
+(nothing remains only in the USER copies but a stale `lmd:` and an empty
+placeholder). The USER-scope originals are UNTOUCHED and stay that way absent an
+explicit USER decision — nothing about them is pending on the USER's desk, because
+their content is now safe in the canonical scope. See the `[^1]` lesson atom
+`ATOM-DUPE-IS-NEWER` on `.claude/project/memory/approval-vs-mandate-protocol.md`.
 
 ## Governance rubric (what the audit checks each plugin against)
 
