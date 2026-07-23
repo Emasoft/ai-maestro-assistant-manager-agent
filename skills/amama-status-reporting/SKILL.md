@@ -3,6 +3,7 @@ name: amama-status-reporting
 description: Use when generating status reports. Queries the frozen AI Maestro CLIs (sessions, agents, teams, tasks) for live data. Trigger with status report requests.
 compatibility: Requires AI Maestro installed.
 context: fork
+background: false
 agent: ai-maestro-assistant-manager-agent-main-agent
 user-invocable: true
 ---

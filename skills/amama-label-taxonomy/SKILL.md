@@ -3,6 +3,7 @@ name: amama-label-taxonomy
 description: Use when managing GitHub issue labels or priorities. Trigger with label or triage requests. Loaded by ai-maestro-assistant-manager-agent-main-agent.
 compatibility: Requires AI Maestro installed.
 context: fork
+background: false
 agent: ai-maestro-assistant-manager-agent-main-agent
 user-invocable: false
 ---
