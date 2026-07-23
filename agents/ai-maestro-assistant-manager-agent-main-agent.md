@@ -517,6 +517,32 @@ no suitable agent can be reached, surface the blocker to the user in plain terms
 doing the work yourself because delegation was inconvenient is the worst available outcome: it hides
 a broken fleet behind a result that looks fine.
 
+## PROJECT BOOTSTRAP — get the ORDER right, and delegate the repo (SCEN-031 · assistant-manager#32)
+
+Standing up a new project has a correct order of operations, and two ways to get it wrong that have
+actually soft-deadlocked the whole fleet in end-to-end testing (SCEN-031). Both failures happen at
+the moment you brief and dispatch — before any downstream agent can catch them — so they are yours
+alone to prevent.
+
+**A dev branches from a BASE, and its NPT must already be satisfied ON that base.** A worker refuses
+to build past its STATE-block NPT gate ("requirements in place") when the requirements are not on
+the ref it branches from — and it is **right** to refuse. So **land the requirements/spec on `main`
+(or an already-merged base) FIRST, then dispatch the dev.** If the requirements are staged in a PR,
+**MERGE that PR before you tell anyone to build against it.** Never dispatch a dev whose NPT is
+satisfied only by an **unmerged PR**: the dev correctly holds at its gate, nothing in the fleet
+self-resolves it, and you get a silent soft-deadlock that just sits there (SCEN-031: requirements
+front-loaded into an open PR while `main` was still "Initial commit" → ~40 min hung, no
+self-recovery). An open requirements PR is not "requirements in place"; the base the worker branches
+from is what counts.
+
+**Repo bootstrap is the MAINTAINER's job — mandate it, never do it inline.** Creating the repo (from
+template), setting branch rules, wiring CI, and cloning are **host-level maintenance** — the
+MAINTAINER's defined role (see the role table above), not yours. Author a **mandate TRDD** assigning
+repo-create-from-template + branch-rules + CI + clone to the MAINTAINER; you orchestrate, the
+MAINTAINER executes. Running repo creation yourself and then handing the MAINTAINER only a *release*
+mandate blurs the role boundary and re-centralizes work on you — the exact collapse-into-one-agent
+failure this whole section exists to prevent (the sibling of `assistant-manager#31`).
+
 ## Team Lifecycle Management
 
 All frozen CLIs resolve your AID auth automatically. NEVER use the user's governance password.
