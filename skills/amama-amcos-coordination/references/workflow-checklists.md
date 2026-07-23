@@ -18,6 +18,7 @@ When a new project team is needed (you create it yourself — R29, no user appro
 
 - [ ] **Parse the request** for project name, purpose, and requirements
 - [ ] **Clarify ambiguities** if team scope or agent assignments are not specified
+- [ ] **New GitHub repo needed?** Do not create it yourself — author a mandate TRDD assigning repo-create-from-template + branch-rules + CI + clone to the **MAINTAINER** (TRDD-5F3490TA); you orchestrate, MAINTAINER executes the repo bootstrap
 - [ ] **Verify team name available** (redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the name — a match ⇒ name already taken; don't read the raw listing into context)
 - [ ] **Create the team yourself** via `aimaestro-teams.sh create --name N --type closed [...]` (R29) — the server auto-creates the COS
 - [ ] **Verify team created** (redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the team name/id), and `chiefOfStaff` set via `aimaestro-teams.sh show <team-id>`
@@ -99,6 +100,7 @@ When user gives a work request:
   - Design/plan → ARCHITECT (via AMCOS)
   - Build/implement → ORCHESTRATOR (via AMCOS)
   - Review/test/release → INTEGRATOR (via AMCOS)
+- [ ] **Requirements landed on a mergeable base?** For a build/implement request, confirm the spec/requirements are on `main` (or another merged base) — not sitting only in an open PR. If staged in a PR, merge it FIRST; never dispatch work whose NPT is satisfied only by an unmerged PR (TRDD-BYCN5PB7)
 - [ ] **Identify target AMCOS** (which project?)
 - [ ] **Verify AMCOS exists and is alive**
   - Check active sessions log

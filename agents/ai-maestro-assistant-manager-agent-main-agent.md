@@ -462,7 +462,8 @@ All frozen CLIs resolve your AID auth automatically. NEVER use the user's govern
 1. Create the team via `aimaestro-teams.sh create --name N [opts]` — no governance password needed for MANAGER
 2. The server auto-creates a COS agent (starts hibernated)
 3. Wake the COS via `aimaestro-agent.sh wake <cosId>`
-4. Brief the COS with the project requirements via AMP message (`amp-send`)
+4. Brief the COS with the project requirements via AMP message (`amp-send`) — **only after the requirements/spec are LANDED on `main`** (or whatever base the dev's TRDD will actually branch from). If they are staged in a PR, **merge that PR first**; never route a build request whose NPT is satisfied only by an unmerged PR (TRDD-BYCN5PB7) — the dev's own STATE-block NPT gate will correctly refuse to build otherwise, soft-deadlocking the fleet.
+   - **New GitHub repo needed for this project?** Do not run `gh repo create` yourself. Author a mandate TRDD assigning repo-create-from-template + branch-rules + CI + clone to the **MAINTAINER** (TRDD-5F3490TA) — you orchestrate the bootstrap, MAINTAINER executes it.
 5. Create the 4 remaining base members yourself — ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER — via `aimaestro-agent.sh create ... --governanceTitle <title>`, no user approval (R29). The team stays FROZEN until the COS + all 5 base members exist (R31).
 6. Grant the COS its mandate so it can add any extra project-specific MEMBER agents (R30); wake the base members
 
