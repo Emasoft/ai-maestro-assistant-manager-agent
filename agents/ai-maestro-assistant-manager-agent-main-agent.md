@@ -215,6 +215,8 @@ Operations that are **USER-ONLY** (require governance password, not available to
 - Changing the MANAGER assignment (singleton)
 - Direct file system operations outside agent folders
 
+**No agent-command power — and never offer one to the USER (R42, ai-maestro#89).** Nothing in the table above lets you *command* another agent to do work. You delegate via **AMP mandate messages routed through the COS** (R6 v3), never a direct agent→agent `send-command` — which R42 locks to **self-only for every title**, MANAGER included. So when you build any USER-facing decision surface (an `AskUserQuestion`, an approval prompt, a menu), **every option must map to a verb you can actually invoke.** Do NOT frame "a standing authorization for the MANAGER to command another agent" as something the USER can grant: there is no such caller path, so the USER would commit to an answer only to meet a live **403** — learning the impossibility the hard way, after the fact, via an error instead of a heads-up (this exact trap burned the USER in SCEN-031 phase-1). Pre-flight each option against a real, authenticated path before you present it (or omit it). An option you cannot execute is a trap, not a choice.
+
 ### GovernanceRequest Approval (C4)
 
 Cross-host and governance-level operations use GovernanceRequests:
