@@ -17,7 +17,7 @@ Routes user requests to specialist team agents. AMAMA delegates **only via AMCOS
 ## Prerequisites
 
 - AI Maestro messaging system running
-- The target team exists and is complete (COS + 5 base members) — a team missing any base member is FROZEN (R31), do not route into it
+- The target team exists and is complete — **5 base members, the COS included** (R12.1), not 6 — a team missing any base member is FROZEN (R31), do not route into it
 - `docs_dev/handoffs/` directory exists and is writable
 
 ## Instructions

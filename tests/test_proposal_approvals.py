@@ -418,9 +418,10 @@ def test_a_refusal_prints_the_deliver_by_message_reminder():
         _git(root, "add", "-A")
         _git(root, "commit", "-m", "deliver fixture")
         _run(root, "list")
-        _, out = _run_rc(root, "decide", "--approved", "1", "--refused", "2",
-                         "--approver", "amama-manager",
-                         "--refusal-reason", "Defect X; fix it and re-propose.")
+        rc, out = _run_rc(root, "decide", "--approved", "1", "--refused", "2",
+                          "--approver", "amama-manager",
+                          "--refusal-reason", "Defect X; fix it and re-propose.")
+        assert rc == 0, f"the refusing run must succeed, got rc {rc}: {out}"
         assert "RECORDED, NOT DELIVERED" in out
         assert "MESSAGE each proposer" in out
         # an approve-only run must stay quiet
@@ -428,7 +429,11 @@ def test_a_refusal_prints_the_deliver_by_message_reminder():
         _git(root, "add", "-A")
         _git(root, "commit", "-m", "approve-only fixture")
         _run(root, "list")
-        _, out2 = _run_rc(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        rc2, out2 = _run_rc(root, "decide", "--approved", "1", "--approver", "amama-manager")
+        # rc2 is asserted BEFORE the absence check: a NEGATIVE assertion on output is
+        # satisfied by any failure that prints nothing, so without this the test would
+        # pass vacuously if the approve-only path ever started erroring out.
+        assert rc2 == 0, f"the approve-only run must succeed, got rc {rc2}: {out2}"
         assert "RECORDED, NOT DELIVERED" not in out2
 
 

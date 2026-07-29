@@ -536,6 +536,16 @@ def apply_move(
     text = set_frontmatter_field(text, "updated", stamp)
     if decision is not None:
         text = write_approval_record(text, decision, approver, stamp, requirement)
+    # FLATTEN the reason to a single line. The `## Approval log` is a BULLET LIST —
+    # one decision, one line — and every consumer (`grep "REFUSED by"`, findtrdd,
+    # a human skimming) relies on that. A raw newline inside `reason` would spill
+    # the rest of the sentence onto a non-bullet line, and a line that happens to
+    # start with `## ` would inject a false section boundary that `_NEXT_H2_RE`
+    # later reads as the END of the log, so subsequent decisions get appended into
+    # the wrong region. This is a live risk, not a theoretical one: the CLI's own
+    # `--refusal-reason` error text asks the approver for THREE elements (defect,
+    # bar, invitation), which invites a pasted multi-line answer.
+    reason = " ".join((reason or "").split())
     bullet = (
         f"- {stamp} — {verb} by {approver} "
         f"(min-approval-requirement: {requirement}). {reason}"
@@ -616,6 +626,18 @@ def decide(
     """Execute (or preview) the resolved plan against the current pending set."""
     manifest = read_manifest(root)
     plan = build_plan(manifest, approved, refused)
+    # "A refusal may not be silent" is enforced HERE, not only in `cmd_decide`.
+    # `decide()` is a public entry point the tests and any programmatic caller reach
+    # directly, and an invariant guarded on one of two doors is not guarded at all —
+    # the other door would still write the reasonless `REFUSED by …` bullet the CLI
+    # check exists to prevent. Checked against `plan["refuse"]` (what will ACTUALLY
+    # be refused) rather than the raw `refused` argument, so a dual-list batch whose
+    # refused numbers all fall outside the listing refuses nothing and needs nothing.
+    if plan["refuse"] and not (reason_refuse or "").strip():
+        raise ValueError(
+            "a refusal must state its reason — the DEFECT, the bar for acceptance, "
+            "and the invitation to re-propose. Refusing to record a silent refusal."
+        )
     items_by_n = plan["items_by_n"]
 
     # Current pending files keyed by stable trdd-id (robust to filename).
@@ -1071,24 +1093,32 @@ def cmd_decide(args: argparse.Namespace) -> int:
             print(f"\nReport: {report}")
         if not args.dry_run and (outcome["approved"] or outcome["refused"]):
             print("\nReview `git status`, then commit the moves when ready.")
-        # The message is the channel; this tool is the paperwork. Everything above
-        # RECORDED a decision — none of it DELIVERED one. Adopted from the
-        # ORCHESTRATOR (orch#30), which found the sharper form of this: a refusal
-        # it could not deliver (no session_name) used to look communicated. This
-        # surface cannot send AMP messages, so it cannot verify delivery — the
-        # honest thing it CAN do is refuse to let a recorded refusal read as a
-        # discharged one, at the moment the operator would otherwise walk away.
-        if not args.dry_run and outcome["refused"]:
-            print(
-                "\n⚠ RECORDED, NOT DELIVERED — "
-                f"{len(outcome['refused'])} refusal(s) exist only as files.\n"
-                "  Now MESSAGE each proposer (COS for team-internal; direct for "
-                "AUTONOMOUS/MAINTAINER) with the defect,\n"
-                "  the bar, and the invitation to re-propose — then stay in the "
-                "thread for the replies.\n"
-                "  A refusal the proposer never received is silence, and silence is "
-                "what makes an agent delete its own work.",
-            )
+    # The message is the channel; this tool is the paperwork. Everything above
+    # RECORDED a decision — none of it DELIVERED one. Adopted from the
+    # ORCHESTRATOR (orch#30), which found the sharper form of this: a refusal
+    # it could not deliver (no session_name) used to look communicated. This
+    # surface cannot send AMP messages, so it cannot verify delivery — the
+    # honest thing it CAN do is refuse to let a recorded refusal read as a
+    # discharged one, at the moment the operator would otherwise walk away.
+    #
+    # OUTSIDE the `else:` and on STDERR, deliberately. Inside the human-only branch
+    # a caller had only to add `--json` to make the whole safeguard vanish — and
+    # `--json` is exactly what an AGENT driving this CLI passes, i.e. the reminder
+    # would be missing from the one caller most likely to file-and-forget. stderr
+    # keeps stdout a clean parseable JSON document while still putting the reminder
+    # in front of a human on a terminal.
+    if not args.dry_run and outcome["refused"]:
+        print(
+            "\n⚠ RECORDED, NOT DELIVERED — "
+            f"{len(outcome['refused'])} refusal(s) exist only as files.\n"
+            "  Now MESSAGE each proposer (COS for team-internal; direct for "
+            "AUTONOMOUS/MAINTAINER) with the defect,\n"
+            "  the bar, and the invitation to re-propose — then stay in the "
+            "thread for the replies.\n"
+            "  A refusal the proposer never received is silence, and silence is "
+            "what makes an agent delete its own work.",
+            file=sys.stderr,
+        )
     return 0
 
 

@@ -89,7 +89,9 @@ before acting and pushes after each change.
 
 Full rules: the base `~/.claude/rules/trdd-design-tasks.md` plus the seeded DEP
 overlay `.claude/rules/aimaestro-trdd-approval.md`. Decide proposals fast with
-the core `ama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`).
+the core `ama-proposal-approvals` skill (`approved: 4,6` / `refused: 7,8`). A
+refusal must state its reason — the defect, the bar for acceptance, and the
+invitation to re-propose; the tool rejects a reasonless refusal.
 
 ## Plugin Components
 

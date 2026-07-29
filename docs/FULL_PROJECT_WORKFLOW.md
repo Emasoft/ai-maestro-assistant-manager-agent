@@ -9,15 +9,23 @@ are cited inline. The persona is the authoritative source.
 
 | Step | Actor | Action | CLI |
 |------|-------|--------|-----|
-| 1 | MANAGER | Create GitHub repo + team (incl. auto-created COS), NO user approval | `aimaestro-teams.sh create --name N [--type T]` |
-| 2 | MANAGER | Create the 4 remaining base members (ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER), NO user approval | `aimaestro-agent.sh create … --governanceTitle <title>` |
-| 3 | MANAGER | Wake the COS | `aimaestro-agent.sh wake <cos-id>` |
-| 4 | MANAGER | Grant the COS its mandate | mandate via AMP |
+| 1 | MANAGER | Create the team (incl. auto-created COS), NO user approval | `aimaestro-teams.sh create --name N [--type T]` |
+| 2 | MANAGER | Wake the COS | `aimaestro-agent.sh wake <cos-id>` |
+| 3 | MANAGER | Grant the COS its team-creation mandate — BEFORE step 4, or the COS may not create agents at all (R30) | mandate via AMP |
+| 4 | COS | Create the other 4 basic members (ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER) under that mandate | `aimaestro-agent.sh create … --governanceTitle <title>` |
 | 5 | COS | Add project-specific extra MEMBER-titled agents (under the mandate, R30) | `aimaestro-teams.sh add-agent <teamId> <agent>` |
 
-The team stays FROZEN until the COS + all 5 base members exist (R31). The base
-roster needs NO GovernanceRequest — it is a MANAGER action (R29). All CLIs
-resolve AID auth internally; AMAMA supplies no governance/sudo password (R28/R32).
+The team stays FROZEN until all 5 base members exist — **the base is 5 INCLUDING
+the COS** (R12.1), i.e. the COS plus the 4 above, not 6 agents. Completing the
+base is the **COS's** duty under its mandate, not the MANAGER's (R29.1 as
+corrected by the USER 2026-07-14, with R12.2 / R31.1). The base roster needs NO
+GovernanceRequest. All CLIs resolve AID auth internally; AMAMA supplies no
+governance/sudo password (R28/R32).
+
+**Repo creation is NOT in this phase.** Creating the GitHub repo from template,
+setting branch rules, wiring CI, and cloning are host-level maintenance — the
+**MAINTAINER's** job, assigned by a mandate TRDD. The MANAGER orchestrates it; it
+never runs repo bootstrap inline (`assistant-manager#32`).
 
 ### Phase 2: Design
 

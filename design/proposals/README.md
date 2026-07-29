@@ -56,13 +56,19 @@ Use the core **`ama-proposal-approvals`** skill:
      proposal stays PENDING** (omission never refuses).
    - `refused: 48,7,8,5` — refuse exactly those **and approve every
      other** proposal in the listing (bulk path for when approvals
-     outnumber refusals).
+     outnumber refusals). **A refusal must state its reason**: the
+     defect, the bar for acceptance, and the invitation to re-propose.
+     The tool rejects a reasonless refusal (`--refusal-reason` is
+     required whenever `--refused` is passed) — a silent "no" is what
+     makes an agent tear out the work that depended on the proposal.
    - Both lines together — explicit dual lists; the rest stay PENDING.
 
 On approval the skill sets `column: planned`, logs the decision in the
 TRDD's `## Approval log`, and `git mv`s it into `design/tasks/`. On
-refusal it sets `column: refused`, logs the reason, and `git mv`s it
-into `refused/`.
+refusal it sets `column: refused`, logs the reason you supplied, and
+`git mv`s it into `refused/`. Recording a refusal does **not** deliver
+it — message the proposer with the same defect/bar/invitation and stay
+in the thread for the reply.
 
 ## Who may approve
 

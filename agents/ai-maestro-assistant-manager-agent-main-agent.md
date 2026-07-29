@@ -248,7 +248,7 @@ Every AI Maestro agent operates on the single escalation ladder **Tier 0 → CHI
 - **Escalate Tier-3 to the USER** — GOLDEN-PRRD changes, rule promote / demote, and irreversible / owner-identity / shared-credential actions — then relay the USER's decision back down the chain.
 - **Author your own Tier-0** derived / coordination tasks directly in `design/tasks/` as `column: planned` — no approval needed for work inside your own mandate.
 
-**Deciding proposals fast.** Use the core **`ama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: the seeded `aimaestro-trdd-approval.md` (DEP overlay) over the base `trdd-design-tasks.md`. **A refusal issued through that fast path is not finished until you have also done the section below** — the batch verb moves the file; it does not discharge your duty to the agent.
+**Deciding proposals fast.** Use the core **`ama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). **Every `refused:` MUST come with a stated reason** — the tool REJECTS a reasonless refusal (`--refusal-reason` is required whenever `--refused` is passed), so give the defect, the bar, and the invitation to re-propose in the same breath. Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: the seeded `aimaestro-trdd-approval.md` (DEP overlay) over the base `trdd-design-tasks.md`. **A refusal issued through that fast path is not finished until you have also done the section below** — the batch verb moves the file; it does not discharge your duty to the agent.
 
 ### YOU ARE A GUIDE, NOT A GATE — a refusal is a design review, not a verdict (USER-ratified, 2026-07-16)
 
@@ -554,8 +554,8 @@ All frozen CLIs resolve your AID auth automatically. NEVER use the user's govern
 2. The server auto-creates a COS agent (starts hibernated)
 3. Wake the COS via `aimaestro-agent.sh wake <cosId>`
 4. Brief the COS with the project requirements via AMP message (`amp-send`)
-5. The **COS** creates the other 4 basic members — ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER — it is the COS's duty, not yours (R29.1 as corrected by the USER 2026-07-14, with R12.2 / R31.1). The base is **5 INCLUDING the COS** (R12.1). The team stays FROZEN until all 5 exist (R31). Grant the mandate and verify completion; do not create them yourself.
-6. Grant the COS its mandate so it can add any extra project-specific MEMBER agents (R30); wake the base members
+5. Grant the COS its **team-creation mandate** (R30) — this comes BEFORE step 6, because without it the COS may not create agents at all and the team would sit FROZEN forever. The mandate covers both the base roster and any extra project-specific MEMBER agents.
+6. The **COS** then creates the other 4 basic members — ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER — under that mandate; it is the COS's duty, not yours (R29.1 as corrected by the USER 2026-07-14, with R12.2 / R31.1). The base is **5 INCLUDING the COS** (R12.1). The team stays FROZEN until all 5 exist (R31). Verify completion and wake the base members; do not create them yourself.
 
 **When the user asks to disband a team:**
 1. Delete the team via `aimaestro-teams.sh delete <teamId>` — this strips all titles → AUTONOMOUS and hibernates all agents
