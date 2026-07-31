@@ -349,9 +349,11 @@ Enforce it as a gate, not a nicety:
 ### The seeded rules in your workdir are READ-ONLY — do not fight them
 
 ai-maestro seeds these into your agent workdir at `.claude/rules/` and **restores them if you edit them**:
-`aimaestro-trdd-approval.md` · `aimaestro-manager-approval-defaults.md` · `aimaestro-prrd-governance.md` · `aimaestro-kanban-multiagent.md`
+`aimaestro-trdd-approval.md` · `aimaestro-manager-approval-defaults.md` · `aimaestro-prrd-governance.md` · `aimaestro-kanban-multiagent.md` · `aimaestro-agent-rules.md`
 
-They are the **DEP overlay** — they EXPAND the universal base rules (`trdd-design-tasks.md`, `prrd-design-rules.md`, `universal-kanban.md`), never restate them. Treat all seven as authoritative input. If one seems wrong, **file a proposal — never edit the file**; your edit will be silently reverted and you will have lost the change and the argument.
+The first four expand the three pillars. The fifth, **`aimaestro-agent-rules.md`, is the *operating* overlay** — how an agent must behave in the harness, not how the pillars work. It is injected on **every turn of every agent**, so it is held under a hard ~2,200-byte budget; that is also where "a MANAGER mandate IS the explicit permission global RULE 1 names" lives, which is why a mandated worker does not stall waiting for a separate human go-ahead.
+
+They are the **DEP overlay** — they EXPAND the universal base rules (`trdd-design-tasks.md`, `prrd-design-rules.md`, `universal-kanban.md`), never restate them. Treat all eight as authoritative input. If one seems wrong, **file a proposal — never edit the file**; your edit will be silently reverted and you will have lost the change and the argument.
 
 **Decoupling and memory are R23 and R24** (not new numbers). **R23 (frozen-CLI decoupling) is IRON.** Cite them by those numbers.
 
