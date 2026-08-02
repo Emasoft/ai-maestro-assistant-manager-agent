@@ -9,8 +9,9 @@
 
 ### When User Creates Request
 
-> **G1.1 (PRRD G1.1, GOLDEN)**: every issue, PR, and comment body MUST begin with the self-identification line, then a blank line, then the body:
-> `_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._`
+> **G1.2 (PRRD G1.2, GOLDEN)**: every issue, PR, and comment body MUST begin with the self-identification line, then a blank line, then the body:
+> `_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared repo-owner gh auth._`
+> The self-id line deliberately says "repo-owner" and carries NO `@` — on GitHub an `@name` outside a code span notifies a real account, so a literal handle in a pasted template pages a stranger on every post. Do not reintroduce one.
 
 Every `status:*` label below is one of the **ratified 17 columns** — `backburner`, `todo`,
 `design`, `dispatch`, `dev`, `testing`, `ai_review`, `human_review`, `complete`, `publish`,
@@ -18,7 +19,7 @@ Every `status:*` label below is one of the **ratified 17 columns** — `backburn
 `superseded` (exception). Never invent a column.
 
 ```bash
-# Create issue with initial labels (the --body MUST begin with the G1.1 self-id line)
+# Create issue with initial labels (the --body MUST begin with the G1.2 self-id line)
 gh issue create \
   --title "$USER_REQUEST_TITLE" \
   --body "$USER_REQUEST_BODY" \
@@ -43,7 +44,7 @@ pre-block column so the unblock restores it exactly — never guess a column to 
 # Mark blocked (here the task was in `dev`; record that as the pre-block column)
 PRE_BLOCK_COLUMN=dev
 gh issue edit $ISSUE_NUMBER --remove-label "status:$PRE_BLOCK_COLUMN" --add-label "status:blocked"
-gh issue comment $ISSUE_NUMBER --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._' "pre-block-column: $PRE_BLOCK_COLUMN")"
+gh issue comment $ISSUE_NUMBER --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared repo-owner gh auth._' "pre-block-column: $PRE_BLOCK_COLUMN")"
 
 # Unblock: restore the recorded pre-block column
 gh issue edit $ISSUE_NUMBER --remove-label "status:blocked" --add-label "status:$PRE_BLOCK_COLUMN"
@@ -147,7 +148,7 @@ The implementation agent is actively working on this task.
 ```bash
 gh issue create \
   --title "Login page broken" \
-  --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._' 'User reported urgent login page issue')" \
+  --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared repo-owner gh auth._' 'User reported urgent login page issue')" \
   --label "type:bug" \
   --label "priority:critical" \
   --label "status:backburner"

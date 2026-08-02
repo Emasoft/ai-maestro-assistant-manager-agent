@@ -597,10 +597,10 @@ PR, PR comment, PR review, discussion, release note), **begin the body
 with a one-line self-identification**:
 
 ```
-_Posted by the Claude developing the **MANAGER (assistant-manager)** plugin (via the shared @owner gh auth)._
+_Posted by the Claude developing the **MANAGER (assistant-manager)** plugin (via the shared repo-owner gh auth)._
 ```
 
-This is golden rule `G1.1` in this project's PRRD
+This is golden rule `G1.2` in this project's PRRD
 (`design/requirements/PRRD.md`) and ecosystem governance rule R22. It
 is GOLDEN — you (MANAGER) cannot weaken it; only the USER can. Commit
 messages you author SHOULD carry an

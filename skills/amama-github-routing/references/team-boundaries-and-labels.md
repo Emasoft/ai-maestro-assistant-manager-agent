@@ -18,7 +18,8 @@ All GitHub issues must be tagged with a team label to enforce team boundaries. T
 
 When creating or routing an issue:
 
-> **G1.1 (PRRD G1.1, GOLDEN)**: any issue/PR/comment `--body` you write MUST begin with the self-identification line (`_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._`), then a blank line, then the body. The label-only commands below omit `--body` purely to demonstrate label syntax.
+> **G1.2 (PRRD G1.2, GOLDEN)**: any issue/PR/comment `--body` you write MUST begin with the self-identification line (`_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared repo-owner gh auth._`), then a blank line, then the body. The label-only commands below omit `--body` purely to demonstrate label syntax.
+> The self-id line deliberately says "repo-owner" and carries NO `@` — on GitHub an `@name` outside a code span notifies a real account, so a literal handle in a pasted template pages a stranger on every post. Do not reintroduce one.
 
 ```bash
 # Add team label on issue creation

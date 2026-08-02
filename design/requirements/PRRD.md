@@ -27,7 +27,7 @@ spec: `~/.claude/rules/prrd-design-rules.md`.
 
 ## 🥇 GOLDEN — set by the USER (immutable to MANAGER)
 
-- **G1.1** — Every agent that writes to GitHub (issue, issue comment, PR, PR comment, PR review, discussion, release note) MUST begin the body with a one-line self-identification of which agent/role/plugin authored it, because all AI Maestro agents share the single human-owner GitHub identity (the owner's gh CLI auth). Recommended leading line: _Posted by the Claude developing **<plugin-or-role>** (via the shared @owner gh auth)._ Commit messages SHOULD carry an `Agent: <role>` trailer.
+- **G1.2** — Every agent that writes to GitHub (issue, issue comment, PR, PR comment, PR review, discussion, release note) MUST begin the body with a one-line self-identification of which agent/role/plugin authored it, because all AI Maestro agents share the single human-owner GitHub identity (the owner's gh CLI auth). Recommended leading line: _Posted by the Claude developing **<plugin-or-role>** (via the shared repo-owner gh auth)._ Commit messages SHOULD carry an `Agent: <role>` trailer. The self-id line deliberately says "repo-owner" and carries NO `@` — on GitHub an `@name` outside a code span notifies a real account, so a literal handle in a pasted template pages a stranger on every post. Do not reintroduce one.
 
 ## 🥈 SILVER — MANAGER-mutable (agents propose via COS)
 
@@ -37,6 +37,6 @@ spec: `~/.claude/rules/prrd-design-rules.md`.
 - **S5.1** — The TRDD `column:` pipeline in `design/tasks/` is the authoritative task lifecycle. Any GitHub-Projects board or the AI Maestro server kanban is a visual projection of it, never the source of truth.
 - **S6.1** — Session memory uses the janitor's three-scope markdown-notes system (LOCAL `~/.claude/projects/<slug>/memory/`, PROJECT `<git-root>/memory/`, USER `~/.claude/memory/`), recall via memgrep-or-grep-fallback. The legacy `activeContext`/`progress`/`patterns` hook-bank is retired (TRDD-8707e849).
 - **S7.1** — This repo is solo-operated: `project-id: autonomous`, PRRD mutations via `prrd-edit.py --user` (the human owner is the manager). When the fleet goes live and a team takes ownership, re-scope `project-id:` to the registered AI Maestro project id and activate the approval chain — a Tier-2 transition the MANAGER coordinates.
-- **S8.1** — Every GitHub post (issue, comment, PR, review, discussion, release note) leads with the line "This is the Claude responsible for the ai-maestro-assistant-manager-agent project." — the concrete instance of `PRRD G1.1` for this repo.
+- **S8.1** — Every GitHub post (issue, comment, PR, review, discussion, release note) leads with the line "This is the Claude responsible for the ai-maestro-assistant-manager-agent project." — the concrete instance of `PRRD G1.2` for this repo.
 - **S9.1** — The MANAGER cannot self-approve its OWN releases: the `complete → publish` / `complete → deploy` transitions and any release/deploy of this plugin require USER approval. Routine mechanical column transitions remain exempt per `manager-approval-defaults.md`.
 - **S10.1** — The standard GitHub baseline rulesets (`baseline-history-protect` + `baseline-pr-and-checks`) apply to this repo as-is; any deviation (extra rule, loosened check, new bypass actor, disabled ruleset) is a Tier-2 change requiring MANAGER approval.

@@ -46,11 +46,12 @@ See label-tables reference for full label tables and approval authority.
 
 **Key commands**:
 
-> **G1.1 (PRRD G1.1, GOLDEN)**: every issue, PR, and comment body MUST begin with the self-identification line, then a blank line, then the body:
-> `_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._`
+> **G1.2 (PRRD G1.2, GOLDEN)**: every issue, PR, and comment body MUST begin with the self-identification line, then a blank line, then the body:
+> `_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared repo-owner gh auth._`
+> The self-id line deliberately says "repo-owner" and carries NO `@` — on GitHub an `@name` outside a code span notifies a real account, so a literal handle in a pasted template pages a stranger on every post. Do not reintroduce one.
 
 ```bash
-# Create issue (the --body MUST begin with the G1.1 self-id line)
+# Create issue (the --body MUST begin with the G1.2 self-id line)
 gh issue create --title "$TITLE" --body "$BODY" \
   --label "status:backburner" --label "priority:$PRI" --label "type:$TYPE"
 # Change priority
@@ -104,7 +105,7 @@ Copy this checklist and track your progress:
 
 ```bash
 gh issue create --title "Login page broken" \
-  --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared @owner gh auth._' 'User reported urgent login page issue')" \
+  --body "$(printf '%s\n\n%s\n' '_Posted by the Claude developing **ai-maestro-assistant-manager-agent** (the MANAGER), via the shared repo-owner gh auth._' 'User reported urgent login page issue')" \
   --label "type:bug" --label "priority:critical" --label "status:backburner"
 ```
 
