@@ -8,6 +8,8 @@ agent: ai-maestro-assistant-manager-agent-main-agent
 
 # Autonomous-Fallback Skill
 
+> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+
 ## Overview
 
 Decides what to do with an inbound approval request when the user is `monitoring`, `away`, or `dnd`. Consults the 25-row reversibility matrix and the per-state authority table, applies the per-role authority overrides, and enforces the R6 v3 routing constraint (team-bound messages route via COS only). Phase 1 of TRDD-bfcedff0. The hard-floor list (always-escalate ops) is inherited from amama-amcos-coordination.

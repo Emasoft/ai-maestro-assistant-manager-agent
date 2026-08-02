@@ -10,6 +10,8 @@ user-invocable: false
 
 # GitHub Operation Routing Skill
 
+> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+
 ## Overview
 
 Routes GitHub operations to specialists via `team:{teamId}` labels, syncing to `tasks-{teamId}.json`. AMIA (Integrator, default), AMAA (Architect, design), AMOA (Orchestrator, modules).

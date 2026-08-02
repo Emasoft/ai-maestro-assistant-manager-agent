@@ -10,6 +10,8 @@ user-invocable: false
 
 # User Communication Skill
 
+> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+
 ## Overview
 
 Standardized patterns for user communication: clarification, options, approval, completion, blockers, and status updates.

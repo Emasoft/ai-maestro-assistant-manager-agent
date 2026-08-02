@@ -10,6 +10,8 @@ user-invocable: false
 
 # Role Routing Skill
 
+> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+
 ## Overview
 
 Routes user requests to specialist team agents. AMAMA delegates **only via AMCOS** — the team's CHIEF-OF-STAFF is the sole entry point into a team (R6 v3); AMAMA never messages a team-internal agent directly. AMAMA responds to the MAESTRO directly (status, approvals, clarifications) — it obeys ONLY the currently-active MAESTRO / DELEGATE (R36/R37) — and talks to its AMCOS directly. Each team agent holds a governance title bound to its AID (R28): the 5 base titles are CHIEF-OF-STAFF / ARCHITECT / ORCHESTRATOR / INTEGRATOR / MEMBER; extra agents are MEMBER-titled (R30). See [governance-and-specializations](references/governance-and-specializations.md) for the full title model and team-creation authority (R29/R31).

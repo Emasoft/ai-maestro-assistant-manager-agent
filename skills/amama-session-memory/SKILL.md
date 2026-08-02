@@ -10,6 +10,8 @@ user-invocable: false
 
 # AMAMA Session Memory Skill
 
+> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+
 ## Overview
 
 Maintains user relationship continuity across sessions. Uses CozoDB (primary) with file-based fallback for preferences, decisions, pending items, and availability states.

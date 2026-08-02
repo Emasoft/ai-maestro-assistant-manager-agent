@@ -8,6 +8,8 @@ agent: ai-maestro-assistant-manager-agent-main-agent
 
 # Presence Tracker Skill
 
+> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+
 ## Overview
 
 Computes the user's availability state from a clock-anchored signal read through the frozen AI Maestro CLI (`aimaestro-agent.sh presence`). State is one of: `active`, `monitoring`, `away`, `dnd`, `unknown`, `unknown-after-compaction`. The server records `last_user_input_epoch` on every UserPromptSubmit (via the AMAMA hook plus any other AI Maestro-managed Claude Code session that ships an equivalent hook).
