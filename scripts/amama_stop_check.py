@@ -120,15 +120,19 @@ def build_blocking_response(issues: dict[str, Any]) -> dict[str, Any]:
 
     reason = "Cannot exit: " + ", ".join(reason_parts)
 
+    # Stop's ONLY blocking mechanism is the top-level `decision`/`reason` pair.
+    # `permissionDecision`/`permissionDecisionReason` are PreToolUse-exclusive and
+    # were emitted here for a Stop event, making the payload schema-invalid. That
+    # was survivable only while a schema-invalid exit-2 hook silently failed to
+    # block; CC 2.1.218 fixed exit 2 to block as documented, so an invalid payload
+    # is now a live correctness problem rather than a dormant one. Stop accepts
+    # exactly `hookEventName` and `additionalContext` here — nothing else.
     return {
         "decision": "block",
         "reason": reason,
         "hookSpecificOutput": {
             "hookEventName": "Stop",
-            "permissionDecision": "deny",
-            "permissionDecisionReason": "Incomplete coordination work",
         },
-        "details": issues,
     }
 
 
@@ -195,17 +199,28 @@ def main() -> int:
             report_dir.mkdir(parents=True, exist_ok=True)
             ts = datetime.now().astimezone().strftime("%Y%m%d_%H%M%S%z")
             report_path = report_dir / f"stop_check_{ts}.md"
-            report_path.write_text(json.dumps(response, indent=2), encoding="utf-8")
-            # Minimal stdout: counts only, no lists, no indentation
+            # The report FILE may carry the full detail — it is not the wire
+            # payload, so extra keys cost nothing there.
+            report_path.write_text(
+                json.dumps({**response, "details": issues}, indent=2), encoding="utf-8"
+            )
+            # Minimal stdout: counts only, no lists, no indentation. The report
+            # path rides in `additionalContext` — the documented Stop channel for
+            # feedback to Claude — rather than an undocumented top-level `report`
+            # key, so the payload stays inside the schema that now decides whether
+            # this hook blocks at all.
             minimal = {
                 "decision": response["decision"],
                 "reason": response["reason"],
-                "hookSpecificOutput": response["hookSpecificOutput"],
-                "report": str(report_path),
+                "hookSpecificOutput": {
+                    **response["hookSpecificOutput"],
+                    "additionalContext": f"Full stop-check detail: {report_path}",
+                },
             }
             print(json.dumps(minimal, separators=(",", ":")))
         except OSError:
-            # Fallback: output full response if report write fails
+            # Fallback: the report write failed, so stdout is the only carrier.
+            # Still schema-valid — `reason` already names the counts.
             print(json.dumps(response, indent=2))
         return 2  # Block exit
 
