@@ -9,6 +9,16 @@ allowed-tools: ["Read", "Write", "Bash"]
 
 Respond to pending Chief of Staff (AMCOS) approval requests with a decision.
 
+> **Never call the ai-maestro server API directly.** No skill, agent, command, hook, MCP config, bundled script, or setting may issue a request to `/api/…`, nor instruct an agent to (R23.1). Every server interaction goes through the frozen CLI layer installed with ai-maestro — `~/.local/bin/aimaestro-*.sh`, `amp-*.sh`, `aid-*.sh` (R23.2).
+>
+> Two independent reasons, and either alone invites a workaround:
+> 1. **The CLI runs the pipeline, governance and audit gates that a raw route bypasses.** A direct call is *unaudited even when it works* — it succeeds and leaves no trace in the ledgers the fleet is governed by.
+> 2. **Server routes are renameable; the CLI interface is frozen** (R23.4). Route-coupled code breaks silently on a server release, and the breakage surfaces as an agent that has quietly stopped working.
+>
+> There is **no element-level exception — not even for the core `ai-maestro-plugin`** (R23.5). The boundary is the script layer, not any particular plugin.
+
+This command carries the clause and its three siblings do not, on purpose. They pin `allowed-tools` to a single script (`Bash(python3 …amama_<x>.py:*)`), which confines them structurally — a stronger guarantee than prose. This one holds **unrestricted `Bash`** on an inter-agent approval flow, so it is the one surface here that both *could* issue a raw route and has a plausible reason to reach for one. Pasting the block into the confined three would make the rule furniture: present everywhere, read nowhere.
+
 ## Usage
 
 ```

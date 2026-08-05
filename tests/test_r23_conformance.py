@@ -20,12 +20,19 @@ Run: python3 tests/test_r23_conformance.py      (exit 0 = all pass)
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parent.parent
 _CANONICAL = _ROOT / "design" / "specs" / "r23-frozen-cli-canonical.md"
 _SKILLS = _ROOT / "skills"
+_COMMANDS = _ROOT / "commands"
+
+# A command whose `allowed-tools` pins Bash to one script — Bash(python3 …x.py:*) —
+# is confined STRUCTURALLY and cannot issue a raw route; a bare "Bash" entry can.
+# Matching the closing quote is what separates them: `"Bash"` vs `"Bash(`.
+_UNRESTRICTED_BASH = re.compile(r'allowed-tools:[^\n]*"Bash"')
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -85,6 +92,34 @@ def test_superseded_two_cli_wording_is_gone():
     """The narrower pre-#107 two-CLI wording appears in no skill (guards merge resurrection)."""
     offenders = [p.parent.name for p in _skill_files() if _SUPERSEDED_FRAGMENT in p.read_text(encoding="utf-8")]
     assert not offenders, f"superseded two-CLI R23 wording still present in: {offenders}"
+
+
+def test_server_capable_commands_carry_the_clause():
+    """Commands holding unrestricted Bash carry the clause; script-confined ones are exempt."""
+    commands = sorted(_COMMANDS.glob("*.md"))
+    # Non-vacuity: an empty glob would make both halves below pass trivially.
+    assert commands, f"no commands found under {_COMMANDS} — glob is wrong"
+    block = _canonical_block()
+    unrestricted = [p for p in commands if _UNRESTRICTED_BASH.search(p.read_text(encoding="utf-8"))]
+    # The rule binds commands as well as skills (R23.1 names them), but demanding
+    # the block in a surface that cannot reach the server is how a rule becomes
+    # furniture — pasted everywhere, read nowhere (ai-maestro#107). So coverage is
+    # required exactly where the capability exists.
+    assert unrestricted, "expected >=1 command with unrestricted Bash — detector may have rotted"
+    missing = [p.name for p in unrestricted if block not in p.read_text(encoding="utf-8")]
+    assert not missing, f"commands with unrestricted Bash lack the canonical R23 clause: {missing}"
+
+
+def test_hooks_that_reach_the_server_state_the_prohibition():
+    """Every hook whose description names a frozen CLI also cites R23 (a hook loads no skill)."""
+    hooks = _ROOT / "hooks" / "hooks.json"
+    assert hooks.is_file(), f"hooks.json missing: {hooks}"
+    text = hooks.read_text(encoding="utf-8")
+    # A hook runs with NO skill loaded, so "no skill instructed it" is structurally
+    # true there rather than an oversight — the prohibition has to live on the hook.
+    for desc in re.findall(r'"_description":\s*"((?:[^"\\]|\\.)*)"', text):
+        if re.search(r"\bamp-\w+|aimaestro-[\w.]+\.sh|aid-\w+", desc):
+            assert "R23" in desc, f"hook description names a frozen CLI but omits R23: {desc[:70]}…"
 
 
 if __name__ == "__main__":

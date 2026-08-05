@@ -29,7 +29,7 @@
     "Stop": [
       {
         "_id": "amama-stop-check",
-        "_description": "Blocks exit until all coordination work is complete",
+        "_description": "Blocks exit until all coordination work is complete. Reads the inbox through the FROZEN CLI (`amp-inbox`) and GitHub through `gh` — never a direct HTTP call to the ai-maestro server (R23), which binds hooks exactly as it binds skills. A hook runs with NO skill loaded, so 'no skill instructed it' is structurally true here rather than an oversight, which is why the prohibition is restated on the hook itself.",
         "hooks": [
           {
             "type": "command",
