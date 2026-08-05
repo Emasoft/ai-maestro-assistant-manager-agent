@@ -13,7 +13,7 @@
 | Quick Status | On demand | Current state summary | `aimaestro-agent.sh list` |
 | Progress Report | Daily/Weekly | Work completed, in progress, blocked | `aimaestro-teams.sh tasks <teamId>` + GitHub |
 | Handoff Summary | On transition | What was handed to whom | `aimaestro-agent.sh list` + handoff files |
-| Blocker Report | As needed | What's blocking progress | `aimaestro-teams.sh tasks <teamId>` (pending/in_progress) |
+| Blocker Report | As needed | What's blocking progress | `aimaestro-teams.sh tasks <teamId>` (`blocked`, plus stalled `dev`) |
 
 **Note**: Blockers are reported to the user IMMEDIATELY when received, not held for the next scheduled status report.
 
@@ -31,18 +31,21 @@
 ### Quick Status Format
 - Agent sessions: online/offline counts (from `aimaestro-agent.sh list`)
 - Session liveness: active/inactive (from `aimaestro-agent.sh list` — proxies agent health; no dedicated agent-health command exists)
-- Current active tasks (from `aimaestro-teams.sh tasks <teamId>` where status = `in_progress`)
+- Current active tasks (from `aimaestro-teams.sh tasks <teamId>` where status is a WORK column — `dev`, `testing`, `ai_review`)
 - Next milestone
 - Blockers (if any)
 
 ### Progress Report Format
 - Period covered
 - **Kanban Summary** (from `aimaestro-teams.sh tasks <teamId>`):
-  - Tasks in `backlog`: count and titles
-  - Tasks `pending`: count and titles
-  - Tasks `in_progress`: count, titles, assignees
-  - Tasks in `review`: count and titles
-  - Tasks `completed` (this period): count, titles, completion dates
+  - Tasks in `backburner` / `todo`: count and titles
+  - Tasks in `design` / `dispatch`: count and titles
+  - Tasks in `dev` / `testing`: count, titles, assignees
+  - Tasks in `ai_review` / `human_review`: count and titles
+  - Tasks reaching `complete` (or `published` / `live`) this period: count, titles, dates
+  - Tasks in the exception columns `blocked` / `failed`: count, titles, and for each
+    `blocked` card the `blocked-by:` it names — a `blocked` card with an empty
+    `blocked-by:` is stalled, not parked, and belongs in the blocker report
 - **Agent Status** (from `aimaestro-agent.sh list`):
   - Active sessions with uptime
   - Stale / inactive sessions (if any — these proxy "unresponsive" agents)
@@ -68,11 +71,11 @@ Session status proxies agent health: `active` with recent heartbeat = alive, `in
 ### Task Kanban
 | Status | Count | Tasks |
 |--------|-------|-------|
-| backlog | 3 | Session mgmt, Logging, Metrics |
-| pending | 1 | Auth middleware |
-| in_progress | 2 | Login endpoint, User model |
-| review | 1 | DB schema |
-| completed | 4 | Setup, Config, Router, Models |
+| todo | 3 | Session mgmt, Logging, Metrics |
+| dispatch | 1 | Auth middleware |
+| dev | 2 | Login endpoint, User model |
+| ai_review | 1 | DB schema |
+| complete | 4 | Setup, Config, Router, Models |
 
 **Blockers**: AMIA integrator agent unresponsive — escalating to AMCOS
 ```
@@ -86,19 +89,19 @@ Session status proxies agent health: `active` with recent heartbeat = alive, `in
 2025-01-27 to 2025-01-30
 
 ### Task Kanban Summary (from AI Maestro)
-**Completed this period:**
-- DB schema design (AMAA, completed 2025-01-28)
-- Login endpoint implementation (AMOA, completed 2025-01-29)
-- Code review for login (AMIA, completed 2025-01-30)
+**Reached `complete` this period:**
+- DB schema design (AMAA, complete 2025-01-28)
+- Login endpoint implementation (AMOA, complete 2025-01-29)
+- Code review for login (AMIA, complete 2025-01-30)
 
-**In Progress:**
+**In `dev`:**
 - Logout endpoint (AMOA, started 2025-01-30)
 - Session management design (AMAA, started 2025-01-29)
 
-**Pending:**
-- Password reset endpoint (blocked by email service config)
+**`blocked`:**
+- Password reset endpoint (`blocked-by:` email service config)
 
-**Backlog:**
+**`backburner`:**
 - OAuth2 integration
 - Rate limiting
 
