@@ -2,6 +2,15 @@
 """
 AMAMA Proposal Approvals
 
+NOT the core ``ama-proposal-approvals`` skill. The stems collide; the
+capabilities do not. That skill is core's fleet-wide approval surface; this
+script is AMAMA's LOCAL batch reviewer over this repo's ``design/proposals/``.
+Deliberately NOT renamed (assistant-manager#29 N1): the name is cited from a
+dozen files including terminal TRDDs whose bodies are frozen, so a rename would
+either strand those citations or require editing frozen audit records — a worse
+outcome than a stem collision. Disambiguated here instead, on the surface anyone
+opening the file actually reads.
+
 Batch-review the TRDD proposals in ``design/proposals/`` and act on them
 with the fast user/MANAGER syntax described in
 the seeded ``.claude/rules/aimaestro-trdd-approval.md`` Part A (Batch approval
