@@ -56,9 +56,9 @@ inference, issue #113) before the push — guardrail recorded in commit a5ed941.
 exit codes: 1-4 (CRITICAL/MAJOR/MINOR/NIT) all block under --strict, so even a lone NIT fails
 the gate — always dry-run before a real publish.
 
-**✅ UPDATE 2026-06-24 (evening) — orchestrator @main FIXED by its Claude; new red diagnosed
+**✅ UPDATE 2026-06-24 (evening) — orchestrator `@main` FIXED by its Claude; new red diagnosed
 and the #44 tally re-verified.**
-- **orchestrator: @main re-pin LANDED** — its Claude re-pinned CPV `@main`→`@v2.147.1` in BOTH
+- **orchestrator: `@main` re-pin LANDED** — its Claude re-pinned CPV `@main`→`@v2.147.1` in BOTH
   ci.yml+release.yml; **v1.9.3 PUBLISHED**, CPV gate green. The remaining CI-on-main red is a
   **DIFFERENT** job: Mega-Linter `COPYPASTE_JSCPD` = **9.86% dup > 5% threshold** (whole-repo
   scan of the split error-handling skill references). Diagnosed on **orch#22**: its

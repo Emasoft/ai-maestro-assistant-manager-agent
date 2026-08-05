@@ -41,7 +41,7 @@ external-refs: ["github.com/Emasoft/ai-maestro-chief-of-staff/issues/24", "githu
 
 **UNIFORM DRIFT (the fleet-wide gap — per-plugin detail is in each issue + report):**
 1. All operate the 3 pillars via LOCAL skills (`amia-*`/`amoa-*`/…) instead of the core `ama-*` granular skills — the redundancy the standard forbids ([[f5883dcc]] A1/A4).
-2. The G1.1 self-id line is ABSENT from GitHub-writing templates fleet-wide (impersonation risk under the shared @Emasoft identity).
+2. The G1.1 self-id line is ABSENT from GitHub-writing templates fleet-wide (impersonation risk under the shared `@Emasoft` identity).
 3. Sub-agents lack their own proactive-3-pillars block (sub-agents inherit nothing).
 4. Approval-tier self-classification lives only in main agents, not the executing sub-agents.
 (AMAMA = the exemplar, already wired → excluded from the audit set.)
