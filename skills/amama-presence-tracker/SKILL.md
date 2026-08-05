@@ -8,7 +8,13 @@ agent: ai-maestro-assistant-manager-agent-main-agent
 
 # Presence Tracker Skill
 
-> **Never call the AI Maestro server's HTTP surface directly (R23)** — the frozen CLIs (`aimaestro-agent.sh` / `aimaestro-teams.sh`) are the only sanctioned interface and they resolve auth themselves. This holds even for routes that look read-only, and it holds in hooks and scripts, not just in skills.
+> **Never call the ai-maestro server API directly.** No skill, agent, command, hook, MCP config, bundled script, or setting may issue a request to `/api/…`, nor instruct an agent to (R23.1). Every server interaction goes through the frozen CLI layer installed with ai-maestro — `~/.local/bin/aimaestro-*.sh`, `amp-*.sh`, `aid-*.sh` (R23.2).
+>
+> Two independent reasons, and either alone invites a workaround:
+> 1. **The CLI runs the pipeline, governance and audit gates that a raw route bypasses.** A direct call is *unaudited even when it works* — it succeeds and leaves no trace in the ledgers the fleet is governed by.
+> 2. **Server routes are renameable; the CLI interface is frozen** (R23.4). Route-coupled code breaks silently on a server release, and the breakage surfaces as an agent that has quietly stopped working.
+>
+> There is **no element-level exception — not even for the core `ai-maestro-plugin`** (R23.5). The boundary is the script layer, not any particular plugin.
 
 ## Overview
 
