@@ -120,11 +120,22 @@ def test_block_stop_on_unread_messages():
         payload = json.loads(out)
         assert payload["decision"] == "block"
         assert "5 unread message(s)" in payload["reason"]
-        assert payload["hookSpecificOutput"]["permissionDecision"] == "deny"
-        # the real block path writes a detailed report under reports/stop-check/
-        report = Path(payload["report"])
+        hso = payload["hookSpecificOutput"]
+        assert hso["hookEventName"] == "Stop"
+        # Stop's ONLY blocking mechanism is the top-level decision/reason pair.
+        # `permissionDecision`/`permissionDecisionReason` are PreToolUse-exclusive,
+        # and a top-level `report` key is undocumented — all three were emitted here
+        # until c4d2554. Assert them ABSENT: an invalid payload was survivable only
+        # while a schema-invalid exit-2 silently failed to block, and CC 2.1.218
+        # made exit 2 block as documented, so the invalid shape is now load-bearing.
+        for forbidden in ("permissionDecision", "permissionDecisionReason"):
+            assert forbidden not in hso, f"{forbidden} is PreToolUse-only, invalid in a Stop payload"
+        assert "report" not in payload, "report path belongs in additionalContext, not a top-level key"
+        # The report path rides in additionalContext — the documented Stop channel.
+        report = Path(hso["additionalContext"].split("Full stop-check detail: ", 1)[1])
         assert report.exists() and report.parent == project / "reports" / "stop-check"
         saved = json.loads(report.read_text(encoding="utf-8"))
+        # Detail lives in the FILE, never on the wire — the payload stays minimal.
         assert saved["details"]["unread_messages"] == 5
 
 
