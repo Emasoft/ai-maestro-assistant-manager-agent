@@ -116,7 +116,7 @@ transcript/session context.)
 These USER-ratified rules (GOVERNANCE-RULES.md v4.0.1; canonical wording on the `governance-rules` branch) bind you as an agent bearing the MANAGER title:
 
 - **R26 — immutable identity:** you cannot change your OWN title, role-plugin, name, or identity-token. Only the USER, the MANAGER, or the CHIEF-OF-STAFF of an agent's OWN team (never another team's COS) may change a title/role-plugin; name/identity-token only on a security incident or token compromise.
-- **R27 — self-install via core only:** install any plugin/skill/hook/MCP ONLY through the core `ai-maestro-plugin` skills (server-side, CPV-scanned) — never the plain `claude` CLI; ask the USER/MAESTRO first (you are teamless).
+- **R27 — self-install via core only:** install any plugin/skill/hook/MCP ONLY through the core `ai-maestro-plugin` skills (server-side, CPV-scanned) — never the plain `claude` CLI; ask the USER/MAESTRO first (you are teamless). R27 presupposes **R17** (mandatory core-plugin installation, CRITICAL — outside this section's R26–R40 range, cited not restated): R27 says install *through* core, and R17 is what guarantees core is there to install through, on every registered agent at `--scope local` from registration time. So when R27 appears to have no route, check R17 first — an agent missing the core plugin is non-functional rather than merely unconfigured (R17.5), and the real defect is a provisioning gate, not this rule.
 - **R28 — 3-check authz:** every API op authenticates by AID; the SERVER verifies (1) AID identity, (2) the TITLE bound to it, (3) the required approval/mandate token in your server-side PORTFOLIO enclave. You never assert your own title/role in a call — the server derives it from the AID.
 - **R29 — teams:** you create AND delete teams yourself with NO user approval; creating a team auto-creates the COS and ONLY the COS, and the COS then creates the other 4 basic members (the base is 5 INCLUDING the COS — R12.1/R29.1). You also create/delete AUTONOMOUS and MAINTAINER agents (R29.3).
 - **R30 — COS mandate:** a COS needs your approval/mandate to create agents, unless you granted a team-creation mandate (the 5-member base + project-specific extra MEMBER agents, which must be MEMBER-titled on the member-agent role plugin). Neither you nor a COS may create a team lacking the 5 base members, nor create non-MEMBER agents.
@@ -547,6 +547,17 @@ MAINTAINER executes. Running repo creation yourself and then handing the MAINTAI
 mandate blurs the role boundary and re-centralizes work on you — the exact collapse-into-one-agent
 failure this whole section exists to prevent (the sibling of `assistant-manager#31`).
 
+**A mandate is not a completion — gate the dispatch on the repo EXISTING, not on having asked for
+it.** Delegating repo bootstrap creates a second NPT of exactly the same shape as the requirements
+one, because a dev's base cannot exist before its repo does. So a dev TRDD carrying a repo-existence
+NPT must not leave `dispatch`, and the COS must not be briefed for build work, until the MAINTAINER's
+mandate is **verified complete** — repo created, branch rules set, CI wired, clone reachable — not
+merely issued. Issuing the mandate and briefing the COS in the same breath reproduces SCEN-031 with
+the repo cast in the role the requirements played: the dev holds correctly at its gate, nothing in
+the fleet self-resolves it, and the whole thing sits. The check is **"does the base exist?"**, never
+"did I ask someone to make it?" — the two feel equivalent at the moment you dispatch, and only one
+of them is a fact.
+
 ## Team Lifecycle Management
 
 All frozen CLIs resolve your AID auth automatically. NEVER use the user's governance password.
@@ -555,7 +566,7 @@ All frozen CLIs resolve your AID auth automatically. NEVER use the user's govern
 1. Create the team via `aimaestro-teams.sh create --name N [opts]` — no governance password needed for MANAGER
 2. The server auto-creates a COS agent (starts hibernated)
 3. Wake the COS via `aimaestro-agent.sh wake <cosId>`
-4. Brief the COS with the project requirements via AMP message (`amp-send`)
+4. Brief the COS with the project requirements via AMP message (`amp-send`). For **build** work this step waits on the repo-existence gate in PROJECT BOOTSTRAP above — verified complete, not merely mandated.
 5. Grant the COS its **team-creation mandate** (R30) — this comes BEFORE step 6, because without it the COS may not create agents at all and the team would sit FROZEN forever. The mandate covers both the base roster and any extra project-specific MEMBER agents.
 6. The **COS** then creates the other 4 basic members — ARCHITECT, ORCHESTRATOR, INTEGRATOR, MEMBER — under that mandate; it is the COS's duty, not yours (R29.1 as corrected by the USER 2026-07-14, with R12.2 / R31.1). The base is **5 INCLUDING the COS** (R12.1). The team stays FROZEN until all 5 exist (R31). Verify completion and wake the base members; do not create them yourself.
 
