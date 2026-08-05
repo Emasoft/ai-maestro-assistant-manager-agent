@@ -1,9 +1,9 @@
 ---
 trdd-id: QMY8VR0D
 title: A manager is a guide not a gate — refusal protocol in persona, tool, memory, and fleet
-column: dev
+column: complete
 created: 2026-07-16T13:46:05+0200
-updated: 2026-07-17T12:20:33+0200
+updated: 2026-08-05T16:07:47+0200
 current-owner: amama-manager
 task-type: feature
 scope: project

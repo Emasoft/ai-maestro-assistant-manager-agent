@@ -1,9 +1,9 @@
 ---
 trdd-id: 8793afa6-7d59-4cef-8252-3b3d60637b48
 title: TRDD approval tiers, proposal→planned lifecycle, and baseline-ruleset governance across all role plugins
-column: dev
+column: todo
 created: 2026-06-04T22:44:42+0200
-updated: 2026-06-04T22:44:42+0200
+updated: 2026-08-05T16:07:47+0200
 current-owner: amama
 assignee: amama
 priority: 2

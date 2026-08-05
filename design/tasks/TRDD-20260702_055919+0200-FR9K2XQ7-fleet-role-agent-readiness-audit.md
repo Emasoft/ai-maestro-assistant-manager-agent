@@ -1,9 +1,9 @@
 ---
 trdd-id: FR9K2XQ7
 title: Fleet role-agent governance + 3-pillars readiness audit — 7 issues filed
-column: dev
+column: complete
 created: 2026-07-02T05:59:19+0200
-updated: 2026-07-02T06:08:00+0200
+updated: 2026-08-05T16:07:47+0200
 current-owner: amama
 assignee: amama
 priority: 1

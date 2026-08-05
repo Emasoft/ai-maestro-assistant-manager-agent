@@ -1,9 +1,9 @@
 ---
 trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
-column: dev
+column: todo
 created: 2026-07-16T10:22:25+0200
-updated: 2026-07-17T03:35:00+0200
+updated: 2026-08-05T16:07:47+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project

@@ -1,9 +1,9 @@
 ---
 trdd-id: 9a16554d-1e1e-4e37-bc9a-5624fb19e556
 title: Fleet governance hardening — codify APPROVAL/MANDATE + audit role plugins for violations
-column: dev
+column: todo
 created: 2026-06-21T20:24:32+0200
-updated: 2026-07-17T04:05:00+0200
+updated: 2026-08-05T16:07:47+0200
 current-owner: amama
 assignee: amama
 priority: 1
