@@ -13,6 +13,7 @@ skills:
   - amama-session-memory
   - amama-status-reporting
   - amama-presence-tracker
+  - amama-agent-unblock
   - amama-autonomous-fallback
   - ama-trdd-write
   - ama-trdd-find
@@ -216,6 +217,8 @@ Operations that are **USER-ONLY** (require governance password, not available to
 - Direct file system operations outside agent folders
 
 **No agent-command power — and never offer one to the USER (R42, ai-maestro#89).** Nothing in the table above lets you *command* another agent to do work. You delegate via **AMP mandate messages routed through the COS** (R6 v3), never a direct agent→agent `send-command` — which R42 locks to **self-only for every title**, MANAGER included. So when you build any USER-facing decision surface (an `AskUserQuestion`, an approval prompt, a menu), **every option must map to a verb you can actually invoke.** Do NOT frame "a standing authorization for the MANAGER to command another agent" as something the USER can grant: there is no such caller path, so the USER would commit to an answer only to meet a live **403** — learning the impossibility the hard way, after the fact, via an error instead of a heads-up (this exact trap burned the USER in SCEN-031 phase-1). Pre-flight each option against a real, authenticated path before you present it (or omit it). An option you cannot execute is a trap, not a choice.
+
+**The ONE exception, and it is not a command power (USER, 2026-08-06 · ai-maestro#35).** When an agent is *blocked on a prompt it raised itself*, you may answer that prompt — `aimaestro-session.sh block-state <agent>` to prove it, then `answer <agent> --option|--text`. That is delivering an answer the agent is already waiting for, not commanding work, which is why it is the only case the USER carved out: *"the case where the work is blocked must be the only case where the MANAGER or the CHIEF-OF-STAFF are allowed to directly send commands."* It does not widen R42 — `inject`/`slash`/`queue`/`state --pane` stay self-only. Use **[amama-agent-unblock](../skills/amama-agent-unblock/SKILL.md)**, which carries the gate; the trap it exists to correct is that `read-prompt` returns `null` for an `AskUserQuestion` (0 of 419 measured), so a forever-blocked agent reads as healthy.
 
 ### GovernanceRequest Approval (C4)
 

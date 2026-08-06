@@ -1,9 +1,9 @@
 ---
 trdd-id: U17K7AX6
 title: Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
-column: backburner
+column: testing
 created: 2026-08-06T12:44:39+0200
-updated: 2026-08-06T12:44:39+0200
+updated: 2026-08-06T15:12:00+0200
 current-owner: amama-session
 task-type: feature
 approval-tier: 0
@@ -12,15 +12,23 @@ external-refs: [hub-directive-2026-08-06]
 
 # Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
 
-## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-06
+## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-06 (2nd)
 
-- **INTAKE ONLY.** Filed from a USER directive given to the ai-maestro HUB Claude on
-  2026-08-06 (relayed to this session the same day). The hub owns the cross-repo design;
-  implementation direction for THIS plugin arrives via hub propagation (issue / AMP).
-- **NEXT ACTION:** wait for the hub's coordination. Do NOT start construction — new
-  construction needs a USER/hub GO (`ATOM-QZK7-LW8Z`).
-- Recorded here so the board reflects the expected incoming work instead of it living
-  only in one session's head.
+- **SPEC LANDED, SKILL BUILT.** The hub's spec arrived the same day as
+  [issue #35](https://github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35);
+  the USER said go. Built `skills/amama-agent-unblock/SKILL.md` carrying the §4
+  procedure + the §5 blocked-only rule, wired into the persona (frontmatter skills
+  list + the "No agent-command power" section's ONE exception) and the README.
+- **VERIFIED FIRST-HAND, not from the issue text:** `aimaestro-session.sh block-state`
+  exists in the deployed `~/.local/bin` copy (control-tested against a bogus verb, which
+  returns `unknown command`), and its own `help` carries the R42/R42.8 limits table +
+  the 0/419 rationale. R23 conformance 5/5 with the new skill included.
+- **SUPERSEDED — do NOT carry forward:** the first STATE block's "wait for the hub,
+  do not start construction". The GO arrived.
+- **NEXT ACTION:** answer #35 item ③ (probe-shape feedback) — the aggregated probe
+  `TRDD-LT5N2JA4` is the hub's to build, and they asked for gaps BEFORE they build it.
+  Item ② (correct skills treating `read-prompt` as sufficient) was a **no-op, verified**:
+  `read-prompt` appears nowhere in this repo outside the new skill.
 
 ## What the USER asked for (verbatim intent, condensed)
 

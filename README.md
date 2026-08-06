@@ -125,6 +125,7 @@ invitation to re-propose; the tool rejects a reasonless refusal.
 | `amama-session-memory` | 5 | CozoDB-backed session memory, preferences, handoff tracking |
 | `amama-autonomous-fallback` | 2 | Approve-autonomously / defer / escalate when a peer approval arrives and the user is unavailable |
 | `amama-presence-tracker` | 1 | Compute the user's availability state (active/monitoring/away/dnd) for autonomous-fallback gating |
+| `amama-agent-unblock` | 0 | Detect whether a silent agent is BLOCKED and why (`block-state`, reads the terminal), and answer its pending question — the one permitted cross-agent command |
 
 ### Hooks
 
@@ -274,6 +275,7 @@ ai-maestro-assistant-manager-agent/
 │   ├── message_templates.md           # Generic message templates
 │   └── thresholds.py                  # Governance thresholds
 ├── skills/
+│   ├── amama-agent-unblock/           # Detect a blocked agent + answer its prompt (the only cross-agent command)
 │   ├── amama-amcos-coordination/      # AMCOS coordination skill + 16 reference docs
 │   ├── amama-approval-workflows/      # Governance approval workflows + 11 reference docs
 │   ├── amama-autonomous-fallback/     # Approve/defer/escalate when user unavailable + 2 reference docs
