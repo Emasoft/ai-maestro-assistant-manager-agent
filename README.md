@@ -1,6 +1,6 @@
 # AI Maestro Assistant Manager Agent (AMAMA)
 
-**Version**: 2.14.1
+**Version**: 2.14.2
 
 Part of the [AI Maestro](https://github.com/Emasoft/ai-maestro) ecosystem. See also: [AI Maestro Plugins Marketplace](https://github.com/Emasoft/ai-maestro-plugins).
 
