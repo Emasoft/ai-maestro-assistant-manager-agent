@@ -453,14 +453,18 @@ def test_a_move_preserves_fields_this_tool_does_not_own():
     with temp_repo() as (root, _ids):
         make_proposal(
             root, "keep", requirement="manager", created="2026-06-01T09:00:00+0200",
-            extra_fm="approval-token: tok_9f3c1a2b\nrouted-via: amcos-team-alpha",
+            # The token value is deliberately low-entropy ("fixture", not hex):
+            # a hex-looking fake (tok_9f3c1a2b) tripped gitleaks generic-api-key
+            # in CI (run 31095102460) — the field NAME is what the test is
+            # about, so the value must not look like a secret.
+            extra_fm="approval-token: tok-fixture-not-a-secret\nrouted-via: amcos-team-alpha",
         )
         _git(root, "add", "-A")
         _git(root, "commit", "-m", "preserve fixture")
         _run(root, "list")
         _run(root, "decide", "--approved", "1", "--approver", "amama-manager")
         moved = next(ppa.tasks_dir(root).glob("*keep*.md")).read_text()
-        assert "approval-token: tok_9f3c1a2b" in moved
+        assert "approval-token: tok-fixture-not-a-secret" in moved
         assert "routed-via: amcos-team-alpha" in moved
 
 

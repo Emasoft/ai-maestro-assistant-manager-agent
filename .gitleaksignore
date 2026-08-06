@@ -1,0 +1,8 @@
+# Historical false positives — a FAKE test-fixture token (`tok_9f3c1a2b`) in
+# tests/test_proposal_approvals.py matched gitleaks' generic-api-key rule when
+# the backlog was first pushed (CI run 31095102460). The value was fixture data
+# for "approval-token:/routed-via: survive a decision verbatim" and never a
+# real credential. HEAD was fixed to a low-entropy placeholder
+# (tok-fixture-not-a-secret); these fingerprints cover the immutable history.
+a72374b0dd375f735be0802b6c19b42a95543036:tests/test_proposal_approvals.py:generic-api-key:360
+a72374b0dd375f735be0802b6c19b42a95543036:tests/test_proposal_approvals.py:generic-api-key:367
