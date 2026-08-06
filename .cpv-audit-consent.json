@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "consents": [
+    {
+      "file": "agents/ai-maestro-assistant-manager-agent-main-agent.md",
+      "ruleId": "A2A_CROSS_AGENT_INJECT",
+      "lineSha256": "f1952f20bb0df52ea3649041c63d98f107a42e6affe55f1e16bda639fd95c279",
+      "reason": "R42 carve-out prose: names the ONE server-enforced exception (answer a prompt the agent itself raised) and restates that inject/slash/queue stay self-only"
+    }
+  ]
+}

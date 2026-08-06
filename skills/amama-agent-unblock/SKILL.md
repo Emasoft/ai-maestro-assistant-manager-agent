@@ -15,7 +15,7 @@ agent: ai-maestro-assistant-manager-agent-main-agent
 > 2. **Server routes are renameable; the CLI interface is frozen** (R23.4). Route-coupled code breaks silently on a server release, and the breakage surfaces as an agent that has quietly stopped working.
 >
 > There is **no element-level exception — not even for the core `ai-maestro-plugin`** (R23.5). The boundary is the script layer, not any particular plugin.
-
+>
 > **RULE 1 — this is the ONLY case where you may send a command to another agent.** The USER, verbatim: *"the case where the work is blocked must be the only case where the MANAGER or the CHIEF-OF-STAFF are allowed to directly send commands, otherwise all directives must go via normal AMP messages agent-to-agent"*. Everything else — mandates, priorities, questions, corrections — is an **AMP message** (R6 v3, through the COS). R42 locks `inject`, `slash`, `queue` and `state --pane` to **self-only for every title, MANAGER included**. If you catch yourself wanting to inject a directive, the answer is an AMP message, every time.
 
 ## Overview
