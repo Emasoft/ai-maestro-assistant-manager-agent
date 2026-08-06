@@ -21,7 +21,7 @@ Generate status reports by querying the frozen AI Maestro CLIs for live agent, t
 > 2. **Server routes are renameable; the CLI interface is frozen** (R23.4). Route-coupled code breaks silently on a server release, and the breakage surfaces as an agent that has quietly stopped working.
 >
 > There is **no element-level exception — not even for the core `ai-maestro-plugin`** (R23.5). The boundary is the script layer, not any particular plugin.
-
+>
 > **RULE 1 — status ≠ work order:** a status/progress request is informational ONLY.
 > Generating or presenting a report NEVER authorizes starting, resuming, or approving
 > project work — even when the report surfaces pending or blocked items. Wait for an

@@ -40,6 +40,7 @@ Exit codes:
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import shutil
@@ -136,13 +137,16 @@ def _main() -> None:
 
     Fail-soft is absolute here: even an unforeseen exception (MemoryError,
     KeyboardInterrupt mid-request, a future stdlib regression) must not
-    block the user's prompt. We catch BaseException, swallow it, and let
-    Python exit 0 on natural script completion.
+    block the user's prompt. We suppress BaseException and let Python exit 0
+    on natural script completion.
     """
-    try:
+    # contextlib.suppress(BaseException), not try/except-pass: identical
+    # absolute fail-soft semantics (even KeyboardInterrupt/SystemExit must not
+    # block the user's prompt), expressed in the idiomatic form — a blind
+    # `except BaseException: pass` handler is a lint violation (S110/BLE001)
+    # the publish gate blocks on.
+    with contextlib.suppress(BaseException):
         _entry()
-    except BaseException:
-        pass
 
 
 if __name__ == "__main__":

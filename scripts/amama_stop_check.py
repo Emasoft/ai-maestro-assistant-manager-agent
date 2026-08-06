@@ -41,9 +41,11 @@ def check_ai_maestro_inbox() -> tuple[int, list[str]]:
     this agent (resolved from the agent's own config) as a bare integer, exit 0.
     """
     try:
+        # check=False explicitly (PLW1510): the returncode is inspected by
+        # hand below — a non-zero exit means "no count available", not an error.
         result = subprocess.run(
             ["amp-inbox", "--count"],
-            capture_output=True, text=True, timeout=5,
+            capture_output=True, text=True, timeout=5, check=False,
         )
         if result.returncode == 0 and result.stdout.strip():
             count = int(result.stdout.strip())
@@ -83,6 +85,9 @@ def check_github_issues() -> tuple[int, list[str]]:
             capture_output=True,
             text=True,
             timeout=10,
+            # check=False explicitly (PLW1510): returncode is inspected by
+            # hand below — a failed `gh` query degrades to "no issues found".
+            check=False,
         )
         if result.returncode == 0 and result.stdout.strip():
             issues = json.loads(result.stdout)
