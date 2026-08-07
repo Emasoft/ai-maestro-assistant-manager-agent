@@ -99,8 +99,14 @@ def check_github_issues() -> tuple[int, list[str]]:
         subprocess.TimeoutExpired,
         json.JSONDecodeError,
         subprocess.SubprocessError,
-        FileNotFoundError,
+        OSError,
     ):
+        # OSError, not just FileNotFoundError: `gh` present-but-not-executable,
+        # a file with no shebang (ENOEXEC), or a failed fork under fd exhaustion
+        # raise PermissionError/OSError, which are NOT SubprocessError. Letting
+        # one escape crashes the Stop hook OPEN — the session then exits with
+        # open assigned issues, the one outcome this hook exists to prevent.
+        # FileNotFoundError is a subclass of OSError, so it stays covered.
         pass
 
     return len(open_issues), open_issues
@@ -224,9 +230,23 @@ def main() -> int:
             }
             print(json.dumps(minimal, separators=(",", ":")))
         except OSError:
-            # Fallback: the report write failed, so stdout is the only carrier.
-            # Still schema-valid — `reason` already names the counts.
-            print(json.dumps(response, indent=2))
+            # Fallback: the report write failed, so stdout is the ONLY carrier —
+            # which is exactly why the detail has to ride here. Emitting the bare
+            # `response` would block the session with a count and no issue list,
+            # and every retry would reproduce the same opaque block. The detail
+            # goes in `additionalContext` (the documented Stop feedback channel),
+            # not a top-level `details` key, so the payload stays schema-valid.
+            print(json.dumps({
+                "decision": response["decision"],
+                "reason": response["reason"],
+                "hookSpecificOutput": {
+                    **response["hookSpecificOutput"],
+                    "additionalContext": (
+                        "Report write failed; full detail inline: "
+                        + json.dumps(issues, separators=(",", ":"))
+                    ),
+                },
+            }, separators=(",", ":")))
         return 2  # Block exit
 
     # No issues - allow exit

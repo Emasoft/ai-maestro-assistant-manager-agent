@@ -30,9 +30,16 @@ _SKILLS = _ROOT / "skills"
 _COMMANDS = _ROOT / "commands"
 
 # A command whose `allowed-tools` pins Bash to one script — Bash(python3 …x.py:*) —
-# is confined STRUCTURALLY and cannot issue a raw route; a bare "Bash" entry can.
-# Matching the closing quote is what separates them: `"Bash"` vs `"Bash(`.
-_UNRESTRICTED_BASH = re.compile(r'allowed-tools:[^\n]*"Bash"')
+# is confined STRUCTURALLY and cannot issue a raw route; a bare Bash entry can.
+# What separates them is the character AFTER the word: `(` means script-confined,
+# anything else means unrestricted. Matching only the double-quoted flow spelling
+# (`"Bash"`) read every other valid YAML form — `[Bash]`, `'Bash'`, a block
+# sequence item — as confined, so a command holding unrestricted Bash would be
+# exempted from carrying the clause AND the test would still pass, making the
+# coverage gap invisible. Quote-agnostic, with boundaries on both sides.
+_UNRESTRICTED_BASH = re.compile(
+    r"""allowed-tools:[^\n]*(?<![\w(])(?P<q>["']?)Bash(?P=q)(?![\w(])"""
+)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -117,9 +124,16 @@ def test_hooks_that_reach_the_server_state_the_prohibition():
     text = hooks.read_text(encoding="utf-8")
     # A hook runs with NO skill loaded, so "no skill instructed it" is structurally
     # true there rather than an oversight — the prohibition has to live on the hook.
-    for desc in re.findall(r'"_description":\s*"((?:[^"\\]|\\.)*)"', text):
-        if re.search(r"\bamp-\w+|aimaestro-[\w.]+\.sh|aid-\w+", desc):
-            assert "R23" in desc, f"hook description names a frozen CLI but omits R23: {desc[:70]}…"
+    descriptions = re.findall(r'"_description":\s*"((?:[^"\\]|\\.)*)"', text)
+    server_capable = [d for d in descriptions if re.search(r"\bamp-\w+|aimaestro-[\w.]+\.sh|aid-\w+", d)]
+    # Non-vacuity, the guard its three sibling tests carry and this one lacked:
+    # a `for` over an empty findall passes silently, so a renamed key, a
+    # restructured hooks.json, or a reworded description would turn this test
+    # green permanently while checking nothing.
+    assert descriptions, "no _description values found in hooks.json — the regex has rotted"
+    assert server_capable, "no hook description names a frozen CLI — detector may have rotted"
+    for desc in server_capable:
+        assert "R23" in desc, f"hook description names a frozen CLI but omits R23: {desc[:70]}…"
 
 
 if __name__ == "__main__":

@@ -554,7 +554,11 @@ def apply_move(
     # the wrong region. This is a live risk, not a theoretical one: the CLI's own
     # `--refusal-reason` error text asks the approver for THREE elements (defect,
     # bar, invitation), which invites a pasted multi-line answer.
+    # `approver` shares the bullet and the same CLI-supplied provenance, so it
+    # needs the identical treatment — flattening only `reason` left the same
+    # corruption reachable through the other interpolated field.
     reason = " ".join((reason or "").split())
+    approver = " ".join((approver or "").split())
     bullet = (
         f"- {stamp} — {verb} by {approver} "
         f"(min-approval-requirement: {requirement}). {reason}"
@@ -1060,7 +1064,13 @@ def cmd_decide(args: argparse.Namespace) -> int:
     # that depended on the proposal. The old default reason ("Batch refusal via …") was
     # exactly that silence wearing a sentence, so it is gone rather than kept as a
     # fallback — a fallback here would just re-enable the failure. Fail fast instead.
-    if refused and not (args.refusal_reason or "").strip():
+    # ...but NOT on --dry-run. A dry run writes nothing, so there is no silent
+    # refusal to prevent — and the Usage block advertises
+    # `decide --refused "7,8" [--dry-run]` as the way to preview which files a
+    # batch would touch. Gating the preview on a reason forces the approver to
+    # invent a placeholder BEFORE seeing the plan, and that placeholder is then
+    # one flag away from being written into a real `## Approval log` bullet.
+    if refused and not args.dry_run and not (args.refusal_reason or "").strip():
         print(
             "ERROR: --refused requires --refusal-reason.\n"
             "  A refusal is a design review, not a verdict. State, in one line:\n"

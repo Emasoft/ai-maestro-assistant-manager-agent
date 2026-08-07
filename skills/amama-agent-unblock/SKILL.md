@@ -20,7 +20,9 @@ agent: ai-maestro-assistant-manager-agent-main-agent
 
 ## Overview
 
-An agent stopped responding. This skill decides which of two very different things is true — it is **blocked** (waiting on a prompt only you can answer) or it is **not** (idle, rate-limited, erroring, or simply working) — and answers the prompt in the first case only.
+An agent stopped responding. This skill decides which of two very different things is true — it is **waiting on a prompt only you can answer** (`reason` is `ask_user` or `permission`), or it is **not** — and answers the prompt in the first case only.
+
+Note the distinction the `reason` enum draws and this skill turns on: `blocked` is not the same as *answerable*. A `rate_limited` or `api_error` agent can report `blocked=true` — it is genuinely stopped — but it has **asked nothing**, so there is no prompt to answer and injecting into it is plain injection. Read `reason`, never `blocked` alone.
 
 Why it exists: the whole premise of AI Maestro is teams working autonomously without human supervision. An agent blocked on an `AskUserQuestion` waits **forever** — nothing times it out, and it generates no events while it waits, so it does not look broken to anything that watches for events.
 
