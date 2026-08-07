@@ -9,7 +9,7 @@ updated: 2026-08-07T12:03:28+0200
 current-owner: amama-session
 task-type: feature
 approval-tier: 0
-external-refs: [hub-directive-2026-08-06]
+external-refs: [hub-directive-2026-08-06, "github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35", "github.com/Emasoft/ai-maestro/issues/130"]
 ---
 
 # Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
