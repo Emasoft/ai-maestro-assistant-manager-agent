@@ -1,9 +1,10 @@
 ---
 trdd-id: 495a928e-34d3-41d9-9c25-28345935cac0
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMIA integrator persona
-column: proposal
+column: completed
+completed-evidence: Emasoft/ai-maestro-integrator-agent#11 CLOSED stateReason=COMPLETED (verified 2026-08-07)
 created: 2026-06-04T23:06:46+0200
-updated: 2026-06-13T11:55:27+0200
+updated: 2026-08-07T12:03:28+0200
 current-owner: amama
 task-type: docs
 approval-tier: 2

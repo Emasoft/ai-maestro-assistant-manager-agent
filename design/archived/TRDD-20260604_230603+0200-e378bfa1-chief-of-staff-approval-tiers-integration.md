@@ -1,9 +1,10 @@
 ---
 trdd-id: e378bfa1-5f61-4da9-917f-a77416f393ee
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMCOS chief-of-staff persona
-column: proposal
+column: completed
+completed-evidence: Emasoft/ai-maestro-chief-of-staff#15 CLOSED stateReason=COMPLETED (verified 2026-08-07)
 created: 2026-06-04T23:06:03+0200
-updated: 2026-06-13T11:55:27+0200
+updated: 2026-08-07T12:03:28+0200
 current-owner: amama
 task-type: docs
 approval-tier: 2

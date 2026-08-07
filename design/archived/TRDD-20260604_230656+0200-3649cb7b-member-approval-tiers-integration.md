@@ -1,9 +1,10 @@
 ---
 trdd-id: 3649cb7b-ee33-458e-a559-3d52fcca58a0
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMPA programmer (MEMBER) persona
-column: proposal
+column: completed
+completed-evidence: Emasoft/ai-maestro-programmer-agent#11 CLOSED stateReason=COMPLETED (verified 2026-08-07)
 created: 2026-06-04T23:06:56+0200
-updated: 2026-06-13T11:55:27+0200
+updated: 2026-08-07T12:03:28+0200
 current-owner: amama
 task-type: docs
 approval-tier: 2

@@ -1,9 +1,10 @@
 ---
 trdd-id: b77a560f-68de-4ced-989e-5d6c01b62736
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AUTONOMOUS persona
-column: proposal
+column: completed
+completed-evidence: Emasoft/ai-maestro-autonomous-agent#4 CLOSED stateReason=COMPLETED (verified 2026-08-07)
 created: 2026-06-04T23:06:42+0200
-updated: 2026-06-13T11:55:27+0200
+updated: 2026-08-07T12:03:28+0200
 current-owner: amama
 task-type: docs
 approval-tier: 2
