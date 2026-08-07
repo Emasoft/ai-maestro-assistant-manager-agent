@@ -3,7 +3,7 @@ trdd-id: Y6V1TOGN
 title: Align AMAMA to Claude Code 2.1.208-2.1.224 and decide the native cross-session messaging question
 column: dev
 created: 2026-08-07T18:28:40+0200
-updated: 2026-08-07T20:42:21+0200
+updated: 2026-08-07T20:48:13+0200
 current-owner: amama-session
 task-type: infra
 approval-tier: 0
@@ -108,30 +108,84 @@ may influence another. I read its edge; I did not choose a policy.**
 should be amended now that the platform ships a second transport beneath it, and
 whether R42.1's "queued input" clause reaches auto-delivered native messages.
 
-## Governance-doc fork — reported by the COS, NOT independently verified
+## Governance-doc fork — MEASURED FIRST-HAND (supersedes the earlier unverified note)
 
-The COS reports the hub's `governance-rules` doc has forked: a local copy with
-**240 unpushed commits** at v5.3.2 containing R42.8 (7 occurrences), against a
-published tip at v5.2.0 containing none.
+`docs/GOVERNANCE-RULES.md`, read directly off each ref via the contents API:
 
-**Verified here:** published tip `2ca29e43`, committed 2026-08-05T12:25:55Z — static
-for two days. **NOT verified:** either occurrence count or either version number.
-Three tree queries did not surface the R42-bearing document on that branch and this
-machine holds no `ai-maestro` clone. Recorded as a report I could not check — the
-same standing I asked the COS to give my ruling.
+| ref | version | `R42` count | `R42.8` |
+|---|---|---|---|
+| **`main`** (default branch) | **4.0.2** | **0** | 0 |
+| `governance-rules` (tip `2ca29e43`, 2026-08-05) | 5.2.0 | 14 | 0 |
+| COS's local, 240 unpushed — NOT checkable here | 5.3.2 | 20 | 7 |
 
-**Why it is actionable anyway:** the implication does not depend on the numbers.
-**An unpushed rule cannot bind** — a rule on one disk is a draft carrying a rule's
-number. That *strengthens* the R42.8 correction shipped in `2a3378c` (procedure
-kept, citation demoted): if the local text does grant unblock authority, procedure
-still survives and authority still waits for publication. It also explains why AMOA
-"caught a non-existent R42.8" while I posted an "R42.8 correction" — both right,
-different artifacts.
+**The headline is not R42.8 — it is that `main` has NO R42 at all.** An agent that
+does the obviously-correct thing and reads the default branch finds no AMP-only
+rule whatsoever. Note also that **even the published SSOT branch has zero R42.8**,
+so the `2a3378c` demotion was right against BOTH readable refs.
 
-**The hazard to surface to the hub:** with the newest text unpushed, an agent
-verifying against the canonical source gets the OLDER answer and is correct to,
-which inverts what verification is for. The hub's tree — surface on `ai-maestro#125`,
-do not touch.
+### Bindingness — the earlier formulation was too crude
+
+"An unpushed rule cannot bind" does not cover the state R42 is actually in:
+published to a non-default branch. The refined rule:
+
+> **What makes a rule bind is not that it was pushed. It is that its authority is
+> discoverable from where a conscientious agent would look.**
+
+1. **One disk, unpushed** → draft. Cannot bind. (R42.8; `ai-maestro#125` open.)
+2. **Pushed to an undesignated branch** → cannot bind; nobody knows to look.
+3. **Pushed to a DESIGNATED SSOT** → binds, if the designation is discoverable.
+4. **On the default branch** → binds.
+
+R42.3 is state 3. "Canonical" is a **designation**, not a property the default
+branch owns by being default: `main` is a git convention, SSOT is a governance
+decision.
+
+**CORRECTION (COS, verified here): the state-3 proviso is UNMET.** I claimed the
+designation was discoverable because I carry it in THIS repo's standing traps —
+but that is a note in my own tree, discoverable to me, not to the fleet. I answered
+a question about a SHARED property using my own local state as the sample. Fourth
+instance of today's error class.
+
+Measured on `CLAUDE.md@main` (1855 lines, every match printed, no `head`):
+- `:579` — "`docs/GOVERNANCE-RULES.md` — **Full** governance rules (… the full
+  **R1-R20** set)"
+- `:1714` — "Team governance rules **R1-R20** (semver v3.7.0+)"
+- `:1716` — the ONLY mention of the branch, framing `governance-rules` as a fork
+  `main` syncs FROM, addressed to *plugins fetching raw markdown*.
+
+So the default branch does not present a document with a gap where R42 should be —
+**it labels it "Full" and states a range that ends at R20.** An agent that reads
+`main`, finds no R42 and concludes it does not exist is not being careless; it is
+being **correctly informed by a wrong index**.
+
+### Consequence for enforcement — MANAGER's lane, and it is now urgent
+
+R42.3 **binds the agents who know it**, and **cannot fairly be enforced against an
+agent that checked the canonical location and was told the document was complete.**
+That is the difference between a rule and a trap. Any sanction, refusal or
+correction grounded in R42 against such an agent is unsound while `:579`/`:1714`
+stand. Today's ruling is unaffected — it binds ME, and I know the rule — but the
+fleet currently holds a rule it cannot uniformly enforce, which makes the one-line
+fix urgent rather than cosmetic.
+
+**The defect to fix (surface, do not touch — hub's tree):** state 3 requires the
+designation to be discoverable, and `main`'s 4.0.2 gives no pointer — it reads as a
+complete governance document that simply has no AMP rule. **A stale canonical
+location is worse than an empty one**: an empty one 404s and prompts a search, a
+stale one answers confidently. Ask is NOT to re-litigate R42 — it is **one header
+line on `main`'s copy** ("partial; canonical text at ref `governance-rules`") or a
+merge.
+
+### My own negative finding was the unreliable one
+
+The earlier "three tree queries did not surface the document" was FALSE and
+self-inflicted. Re-run against a captured tree (3068 entries, doc at line 1332):
+all three filters MATCHED it — at positions 89, 22 and 74 — and my own `head -20`
+/ `head -20` / `head` discarded it every time, one by **two lines**. I then
+reported a fact about my pipe as a fact about the repository. Lesson recorded as
+`ATOM-EWPM-VQ25` on the debugging-methodology page: **a self-chosen `head` never
+looks truncated — it looks like the answer**; an absence claim needs `wc -l` plus a
+positive control before it leaves the session.
 
 **Disclosure recorded in the ruling:** I reached this position independently ~4h
 earlier for this plugin, before the routing note — corroboration or bias, but not
