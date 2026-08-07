@@ -1,6 +1,9 @@
 ---
 name: amama-report-generator
-# opus pinned deliberately — report accuracy/consolidation stays on opus 4.8, intentionally NOT the Sonnet-5 default (CC 2.1.197). See TRDD-3HSUEP3Y.
+# opus pinned deliberately — report accuracy/consolidation stays on the Opus family,
+# intentionally NOT the Sonnet default. See TRDD-3HSUEP3Y. `opus` is a FAMILY alias:
+# since CC 2.1.219 it resolves to Claude Opus 5 (1M context), not the 4.8 this line
+# used to name. Keep it an alias, not a version pin.
 model: opus
 description: Generates status reports and project summaries. Requires AI Maestro installed.
 type: local-helper
