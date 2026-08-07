@@ -3,6 +3,7 @@ name: amama-agent-unblock
 description: Use when an agent has gone quiet, stopped answering AMP messages, or looks stuck — determine whether it is BLOCKED and why, and answer its pending question. Trigger on "agent not responding", "stalled agent", "is it blocked or idle", before escalating a silent agent to the user.
 context: fork
 background: false
+user-invocable: false
 agent: ai-maestro-assistant-manager-agent-main-agent
 ---
 

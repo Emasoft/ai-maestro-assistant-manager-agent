@@ -55,20 +55,28 @@ def _field(fm: str, field: str) -> str | None:
     return m.group("v") if m else None
 
 
-def test_every_skill_declares_context_and_background_explicitly():
-    """Each skills/*/SKILL.md sets `context:` AND `background:` — no reliance on a harness default."""
+# Every key here is one the HARNESS would otherwise choose for us. That is the
+# whole selection rule: an undeclared key is not "left at a sensible default",
+# it is a decision made by software we do not control, whose change produces no
+# diff, no error and no failing test in this repo.
+_MUST_DECLARE = ("context", "background", "user-invocable")
+
+
+def test_every_skill_declares_the_harness_owned_keys_explicitly():
+    """Each skills/*/SKILL.md sets context, background AND user-invocable — no reliance on a harness default."""
     skills = _skill_files()
     # Non-vacuity: an empty glob would make the loop below trivially pass.
     assert len(skills) >= 10, f"expected >=10 skills, found {len(skills)} — glob is wrong"
-    missing = []
+    missing = {}
     for p in skills:
         fm = _frontmatter(p)
-        if _field(fm, "context") is None or _field(fm, "background") is None:
-            missing.append(p.parent.name)
+        absent = [k for k in _MUST_DECLARE if _field(fm, k) is None]
+        if absent:
+            missing[p.parent.name] = absent
     assert not missing, (
-        "SKILL.md relying on a harness default for context/background: "
-        f"{missing} — 2.1.218 flipped the `fork` default to background; only an "
-        "explicit value survives the next such change"
+        f"SKILL.md relying on a harness default: {missing} — 2.1.218 flipped the "
+        "`fork` default to background, which is the proof that these defaults "
+        "move; only an explicit value survives the next such change"
     )
 
 
