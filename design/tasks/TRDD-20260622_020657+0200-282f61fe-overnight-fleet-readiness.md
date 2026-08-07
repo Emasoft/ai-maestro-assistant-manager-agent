@@ -2,10 +2,10 @@
 trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: blocked
-blocked-by: [ai-maestro#37, ai-maestro#47, ai-maestro#42, ai-maestro#49, deployed aimaestro-teams.sh lacks the tasks and presence verbs]
+blocked-by: [ai-maestro#47]
 pre-block-column: dev
 created: 2026-06-22T02:06:57+0200
-updated: 2026-08-05T16:07:47+0200
+updated: 2026-08-07T12:03:28+0200
 current-owner: amama
 assignee: amama
 priority: 0

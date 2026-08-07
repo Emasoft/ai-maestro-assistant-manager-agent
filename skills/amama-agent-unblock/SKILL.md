@@ -73,7 +73,7 @@ The regex is evaluated **server-side**, so only matching lines cross the boundar
 |---|---|---|
 | `ask_user` | an `AskUserQuestion` it raised | **YES** — answer it |
 | `permission` | a permission prompt | **YES** — answer it |
-| `rate_limited` | the API window | **NO** — it clears itself |
+| `rate_limited` | the API window | **NO** — it clears itself. If the exhausted window is MODEL-scoped (the account still has 5h/7d headroom), the cheap remedy is the agent switching its OWN model via the curated `model-opus` / `model-sonnet` slash keys — you cannot do that for it (slash is self-only), so ask by AMP |
 | `api_error` | a transport/API failure | **NO** — it asked nothing; injecting is plain injection |
 | `idle` | nothing — it wants work | **NO** — work arrives by **AMP message** |
 | `active` | nothing — it is working | **NO** |

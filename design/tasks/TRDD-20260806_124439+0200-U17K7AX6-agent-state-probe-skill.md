@@ -1,9 +1,11 @@
 ---
 trdd-id: U17K7AX6
 title: Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
-column: testing
+column: blocked
+pre-block-column: testing
+blocked-by: [ai-maestro TRDD-LT5N2JA4 — the aggregated probe that carries lastError + the janitor/agentlenspro feeds]
 created: 2026-08-06T12:44:39+0200
-updated: 2026-08-06T15:12:00+0200
+updated: 2026-08-07T12:03:28+0200
 current-owner: amama-session
 task-type: feature
 approval-tier: 0
@@ -25,10 +27,16 @@ external-refs: [hub-directive-2026-08-06]
   the 0/419 rationale. R23 conformance 5/5 with the new skill included.
 - **SUPERSEDED — do NOT carry forward:** the first STATE block's "wait for the hub,
   do not start construction". The GO arrived.
-- **NEXT ACTION:** answer #35 item ③ (probe-shape feedback) — the aggregated probe
-  `TRDD-LT5N2JA4` is the hub's to build, and they asked for gaps BEFORE they build it.
-  Item ② (correct skills treating `read-prompt` as sufficient) was a **no-op, verified**:
-  `read-prompt` appears nowhere in this repo outside the new skill.
+- **SHIPPED in v2.15.0**, CI+Release+Notify all green. #35 items ① and ② closed;
+  item ③ (probe-shape feedback) answered on #35 and escalated to the hub repo.
+  Item ② was a **no-op, verified**: `read-prompt` appeared nowhere in this repo.
+- **NOW `blocked`, not `testing`** — and the distinction is the point: the SKILL half is
+  delivered, but this card's acceptance criterion "all three named sources harvested"
+  (janitor global-report fields, agentlenspro, statusline-hook data) is the hub's
+  aggregated probe `TRDD-LT5N2JA4`, which does not exist yet. Calling the card complete
+  because the visible half shipped would retire an unmet criterion silently.
+- **NEXT ACTION:** none of mine — wait for the hub's probe. When it lands, verify it
+  carries `lastError` (classified) + `blockedSince`, then finish and close.
 
 ## What the USER asked for (verbatim intent, condensed)
 
