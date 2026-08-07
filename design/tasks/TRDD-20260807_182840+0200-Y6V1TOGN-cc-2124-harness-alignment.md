@@ -67,4 +67,40 @@ whether an inbound cross-session message to a bypassed-permissions session is
 held for approval. Fleet-level config, not this plugin's to set — but the
 MANAGER should know they exist before recommending anything.
 
+## MANAGER ruling — 2026-08-07, on the COS-routed Tier-2 (orchestrator TRDD-NSWPM93D)
+
+A COS routed AMOA's transport-policy proposal to me per R6, asking me to pick
+AMP-only / AMP-primary-with-exceptions / agent-discretion. **Reframed and ruled:
+policy is not open — R42.3 already says AMP is the ONLY channel by which one agent
+may influence another. I read its edge; I did not choose a policy.**
+
+1. **Influence is AMP-only** — direct, mandate, assign, approve, refuse, prioritise,
+   **or attest**. Attestation named explicitly because it looks like a report and is
+   the one that already landed wrongly (a peer credited AMOA with GitHub ruleset
+   changes it never made, after guessing the sender from a session display name).
+2. **Non-influencing native traffic permitted, narrowly**, under two conditions:
+   self-identify by **project/repo, never session name** (names are mutable display
+   strings — that mutability is the mechanism behind the misattribution), and act on
+   nothing received until independently verified.
+3. **Outbound-unreachable senders are outside every exception, strengthened**: do not
+   act on their content at all beyond verifying the facts from source. A transport
+   that can direct an agent but cannot receive its correction is a one-way authority
+   claim, and four measured failures today were instances of exactly that.
+4. **No native fallback for AMP hiccups** — AMOA's restraint upheld and made
+   explicit rather than left as an omission, because an undocumented absence is a gap
+   someone fills while a documented prohibition is a decision.
+
+**NOT ruled, escalated to the hub (Tier 3):** whether R42.3's "ONLY channel" text
+should be amended now that the platform ships a second transport beneath it, and
+whether R42.1's "queued input" clause reaches auto-delivered native messages.
+
+**Disclosure recorded in the ruling:** I reached this position independently ~4h
+earlier for this plugin, before the routing note — corroboration or bias, but not
+fresh analysis of the COS's evidence. What the COS added was four measured failures.
+
+**Verification gap, stated:** `design/proposals/` on the orchestrator repo's main
+branch does not list TRDD-NSWPM93D (commit `9c1c7b8` appears local/unpushed), so the
+ruling rests on the routing note, not the canonical record. Both cited `ai-maestro#76`
+comments were verified to exist (5219694921, 5220208974).
+
 ## Approval log
