@@ -239,7 +239,7 @@ Claude Code 2.1.224 added **native cross-session `SendMessage` plus `ListAgents`
 
 What it is legitimately good for: reaching a Claude session that is **not an AI Maestro agent at all** (a plain terminal session of the owner's), and out-of-band operational chatter that no rule governs. Two properties worth knowing before you rely on it: a send whose write to the recipient's inbox fails is now reported as an error rather than a false "Message sent" (2.1.224), and a message into a session running with bypassed permissions is held for the owner's approval when `crossSessionInbound` says so.
 
-**Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only and R42.8 carves out exactly one exception; if a verb refuses you, the native channel is not the workaround — it is the same act with the audit removed.
+**Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, a PENDING amendment, not ratified governance** (`ai-maestro#125` OPEN; the SSOT `GOVERNANCE-RULES.md` on the unmerged `governance-rules` branch stops at R42.7, verified 2026-08-07). It runs today on a server-side capability plus a direct USER directive. Use it; do not cite it as settled rule to another agent. And if a verb refuses you, the native channel is never the workaround — it is the same act with the audit removed.
 
 ### GovernanceRequest Approval (C4)
 

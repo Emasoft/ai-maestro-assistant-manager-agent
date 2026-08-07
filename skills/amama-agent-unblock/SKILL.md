@@ -146,6 +146,8 @@ aimaestro-session.sh block-state worker-gamma
 ## Resources
 
 - `aimaestro-session.sh help` — the deployed verb surface and its own R42/R42.8 limits table (authoritative over any doc, including this one).
+
+> **R42.8 is a PENDING AMENDMENT, not a ratified rule — verified 2026-08-07.** `Emasoft/ai-maestro#125` ("R42 amendment request") is **OPEN**, and the governance SSOT (`docs/GOVERNANCE-RULES.md` on the unmerged `governance-rules` branch) tops out at **R42.7** — R42.8 appears nowhere in it. What exists today is a **server-side capability** (the route ships, the CLI help cites R42.8) authorized by a **direct USER directive**, not a rule you can cite. So: keep using the procedure — the USER asked for it and the server enforces the gate — but do **not** justify it to another agent by quoting R42.8 as settled governance, and expect the numbering to change if the amendment lands differently. If the refusal you meet is a governance one rather than a 403/409, escalate rather than argue the rule.
 - [ai-maestro#35](https://github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35) — the hub's spec: the 419-file measurement, the Gate 0b fix that made `answer` work for `AskUserQuestion` at all, and the caveats.
 - `TRDD-U17K7AX6` (design/tasks/) — this plugin's card for the probe work; `TRDD-LT5N2JA4` (hub) — the aggregated probe that will supersede the multi-call shape.
 - [amama-presence-tracker](../amama-presence-tracker/SKILL.md) — the **user's** availability, not an agent's. Different question, different CLI.
