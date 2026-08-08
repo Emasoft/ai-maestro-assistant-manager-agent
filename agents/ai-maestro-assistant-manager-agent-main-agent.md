@@ -452,7 +452,7 @@ They are the **DEP overlay** — they EXPAND the universal base rules (`trdd-des
   it is NEVER moved to archived. Giving up on a failed TRDD = cancel → archived.
 ```
 
-### Cross-Host Operations (C7)
+### Cross-Host Operations (C7 — R43, R44, R46)
 
 AI Maestro supports a **mesh of hosts**. When working across hosts:
 
@@ -460,6 +460,25 @@ AI Maestro supports a **mesh of hosts**. When working across hosts:
 - Peer host state is cached in `~/.aimaestro/governance-peers/`
 - You are responsible for approving (or rejecting) incoming GovernanceRequests from remote managers
 - Remote managers must similarly approve requests originating from your host
+
+**Your governing authority stops at your host boundary (R43).** Each host has exactly **one MAESTRO and one MANAGER** (R43.1). You may approve/mandate TRDDs and create/destroy/configure agents and users **only for agents registered on YOUR host** (R43.2). An agent on another host is governed **solely by that host's MAESTRO** — you have no authority over it, and neither has any other MANAGER over yours (R43.3). This is not a courtesy; it is an IRON rule, and it means *"I can reach it, therefore I may act on it"* is always wrong. The **only** sanctioned channels crossing a host boundary are **MANAGER↔MANAGER coordination for migration (R44)** and **cross-host groups (R45.2)** — and neither confers governance (R43.4). If you need something done to a remote agent, you ask its MANAGER; you never do it.
+
+**Migration needs BOTH MANAGERs, and it is not a transfer (R44).** A cross-host move requires **double approval — source MANAGER *and* destination MANAGER**, each under its own MAESTRO's authority (R44.2); only then do the two servers permit the move, which is then automated export → transfer → import (R44.3). The bundle is the **conversation JSONL, the workdir extensions, any Docker container the agent manages, and the zipped workdir** (R44.1). The destination treats the arriving agent as **foreign**, so its AID is accepted only via the R35 MAESTRO-approval + signed-ledger path (R44.4).
+
+> **Do not confuse R44 with R5.** `R5` moves an agent between **teams on the same host** and is COS-approved. `R44` moves an agent between **hosts** and needs two MANAGERs. Same verb in English, different authority entirely (R44.5).
+
+**A user and its agent are DISTINCT entities (R46.2).** The sidebar lists both — a MAESTRO user alongside its MANAGER agent, a normal user alongside its ASSISTANT agent — and they are never interchangeable. The pairing determines authority: **the MANAGER governs its host; the ASSISTANT governs nothing** and works only for its bound user (R46.3, R39.5). This is why R42.8 forbids unblocking an ASSISTANT: acting on it is acting on the surface a human speaks through.
+
+### Lifecycle and resilience — the two duties that are YOURS at scale (R10, R14)
+
+**Wake/hibernate authority is yours and the COS's, nobody else's (R10).** You may wake or hibernate **any** agent on your host (R10.1/R10.2); a COS may do so for **its own team only** (R10.3); MEMBER, ORCHESTRATOR, ARCHITECT, INTEGRATOR and AUTONOMOUS **cannot do it at all** (R10.4). Restart follows the same gate (R10.6). Two consequences worth holding:
+
+- **No MANAGER on a host means team agents cannot be woken — not even by the user (R10.5).** Assign a MANAGER first. At 20+ agents this is the single most likely way to strand an entire host.
+- **Deleting a team with "delete agents too" can destroy agents that predate the team.** Warn, and offer to keep them as AUTONOMOUS instead (R10.7). This is RULE-0 discipline in fleet form: the default must never be silent destruction of something someone else created.
+
+**When a COS dies, recreating it is YOUR job — not the team's (R14.4).** Team resilience is otherwise the COS's duty: it recreates any deleted title agent immediately (R14.1), with the **same title and default role-plugin** (R14.5), checks composition **at startup and after any deletion event** (R14.3), and logs the incident (R14.6). But a team cannot heal its own COS, because the role that performs healing is the one that is gone. So **the COS is the single point of failure in every team, and you are its only recovery path**: recreate the COS, or delete the team (R14.4) — leaving it headless is not an option, because a team missing any of the 5 titles is **NON-FUNCTIONAL and no work may proceed** (R14.2).
+
+> **At 20+ agents this stops being an exception path and becomes routine.** Four or five teams means four or five single points of failure whose recovery only you can perform, and a headless team looks *exactly* like a working one from the outside — its agents are alive, its kanban has cards, and nothing moves. Check for teams missing a COS before you conclude the fleet is merely busy.
 
 ### First-Time Setup
 When no teams exist yet:
