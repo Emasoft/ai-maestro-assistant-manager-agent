@@ -54,6 +54,19 @@ _MANAGER_CORE = {
     "R49",  # the refusal protocol — an approver is a guide, not a gate
 }
 
+# Rules that govern how the ai-maestro SERVER and UI must be BUILT, not how the
+# MANAGER must behave. Their absence from this plugin is a decision, not a gap.
+# Recorded so a coverage scan reads the decision instead of re-deriving it every
+# time -- and so that adding a rule here is a deliberate, reviewable act.
+_PLATFORM_ONLY = {
+    "R7",   # UI robustness
+    "R8",   # data integrity
+    "R21",  # what an all-in-one function is
+    "R47",  # VPN-unique user names / remote registration
+    "R50",  # one operation, one AIO function
+    "R51",  # all-or-nothing: an AIO function is a transaction
+}
+
 _SEARCH_DIRS = ("agents", "skills", "docs", "tests")
 _SUFFIXES = {".md", ".py", ".json"}
 # A citation is `Rnn` or `Rnn.n` on a word boundary. The trailing (?![0-9])
@@ -121,6 +134,55 @@ def test_manager_core_rules_are_cited_by_number():
         "behaviour is not enough — an uncited rule cannot be traced to its "
         "authority by a reader, or distinguished from an absent one by a scan. "
         "R49 sat encoded-but-uncited for exactly this reason."
+    )
+
+
+def test_every_ratified_rule_is_either_cited_or_explicitly_out_of_scope():
+    """Every rule in the catalog is cited here or classified platform-only — no silent gaps."""
+    cited = set(_cited())
+    unaccounted = sorted(
+        SNAPSHOT - cited - _PLATFORM_ONLY, key=lambda r: int(r[1:])
+    )
+    assert not unaccounted, (
+        f"rules neither cited nor classified: {unaccounted}. Every ratified rule "
+        "must be a decision: cite it where it binds the MANAGER, or add it to "
+        "_PLATFORM_ONLY with the reason. This is what makes an upstream rule "
+        "addition fail loudly here instead of sitting unnoticed as a coverage gap."
+    )
+
+
+    # NOTE: an earlier version of this file asserted that no _PLATFORM_ONLY rule
+    # is cited anywhere. That invariant was FALSE and the test caught it on its
+    # first run: the persona names those rules precisely in order to exclude
+    # them, and naming a rule to say it does not apply is the honest act, not a
+    # contradiction. The real invariant is the one below -- prose and code must
+    # agree on the SAME set, so neither can drift into a private opinion.
+
+
+_EXCLUSION_MARKER = "Rules that deliberately do NOT bind this plugin"
+_PERSONA = _ROOT / "agents" / "ai-maestro-assistant-manager-agent-main-agent.md"
+
+
+def test_platform_only_set_matches_the_documented_exclusion():
+    """_PLATFORM_ONLY equals the rule set the persona's exclusion paragraph names."""
+    text = _PERSONA.read_text(encoding="utf-8")
+    start = text.find(_EXCLUSION_MARKER)
+    assert start != -1, (
+        f"{_PERSONA.name} no longer contains the exclusion paragraph "
+        f"({_EXCLUSION_MARKER!r}). A reader who cannot find the reasoning will "
+        "re-derive the 'gap' and re-litigate it — which is the cost this "
+        "paragraph exists to prevent."
+    )
+    # The paragraph is one blockquote; stop at the blank line that ends it.
+    end = text.find("\n\n", start)
+    para = text[start : end if end != -1 else len(text)]
+    documented = {f"R{m.group(1)}" for m in _CITE.finditer(para)}
+    assert documented == _PLATFORM_ONLY, (
+        f"persona documents {sorted(documented, key=lambda r: int(r[1:]))} as "
+        f"out-of-scope but _PLATFORM_ONLY holds "
+        f"{sorted(_PLATFORM_ONLY, key=lambda r: int(r[1:]))}. Update both "
+        "together: the test set decides what the coverage check tolerates, and "
+        "the paragraph is the only place a human learns WHY."
     )
 
 
