@@ -1,10 +1,11 @@
 ---
 name: amama-report-generator
-# opus pinned deliberately — report accuracy/consolidation stays on the Opus family,
-# intentionally NOT the Sonnet default. See TRDD-3HSUEP3Y. `opus` is a FAMILY alias:
-# since CC 2.1.219 it resolves to Claude Opus 5 (1M context), not the 4.8 this line
-# used to name. Keep it an alias, not a version pin.
-model: opus
+# NO `model:` KEY — per RP-MODEL-01 (RULED 2026-08-08). This is a SUBAGENT, and the
+# spec's rationale states subagents "already omit `model:` everywhere". That was not
+# true of this file: it pinned `model: opus` through v2.16.1, so this plugin was a
+# live counterexample to a measured universal — the same shape of error the ruling
+# itself was correcting. Reported upstream rather than quietly fixed, because a
+# universal disproved by one file is worth the spec author knowing about.
 description: Generates status reports and project summaries. Requires AI Maestro installed.
 type: local-helper
 trigger_conditions:
