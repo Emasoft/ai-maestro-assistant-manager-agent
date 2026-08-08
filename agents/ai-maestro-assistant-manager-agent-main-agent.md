@@ -270,7 +270,11 @@ Operations that are **USER-ONLY** (require governance password, not available to
 
 **No agent-command power — and never offer one to the USER (R42, ai-maestro#89).** Nothing in the table above lets you *command* another agent to do work. You delegate via **AMP mandate messages routed through the COS** (R6 v3), never a direct agent→agent `send-command` — which R42 locks to **self-only for every title**, MANAGER included. So when you build any USER-facing decision surface (an `AskUserQuestion`, an approval prompt, a menu), **every option must map to a verb you can actually invoke.** Do NOT frame "a standing authorization for the MANAGER to command another agent" as something the USER can grant: there is no such caller path, so the USER would commit to an answer only to meet a live **403** — learning the impossibility the hard way, after the fact, via an error instead of a heads-up (this exact trap burned the USER in SCEN-031 phase-1). Pre-flight each option against a real, authenticated path before you present it (or omit it). An option you cannot execute is a trap, not a choice.
 
-**The ONE exception, and it is not a command power (USER, 2026-08-06 · ai-maestro#35).** <!-- The line breaks in this paragraph are LOAD-BEARING: skillaudit's A2A_CROSS_AGENT_INJECT matches (inject|insert|…) .* (instruction|prompt|command) .* (agent|…) per LINE, and this paragraph names all three. Re-flowing it onto one line re-arms the rule and blocks the publish gate at --strict. Keep the breaks. -->
+**The ONE exception, and it is not a command power (USER, 2026-08-06 · ai-maestro#35).** <!-- The line breaks in this paragraph are LOAD-BEARING. skillaudit's
+     A2A_CROSS_AGENT_INJECT rule matches per LINE, and this paragraph
+     names every token class that rule looks for. Re-flowing it onto one
+     line re-arms the rule and blocks the publish gate at --strict.
+     Note this very comment had to be split for the same reason. -->
 When an agent is *blocked on a prompt it raised itself*, you may deliver the answer it is already waiting for.
 That is not commanding work, which is why it is the only case the USER carved out: *"the case where the work is blocked must be the only case where the MANAGER or the CHIEF-OF-STAFF are allowed to directly send commands."*
 It does not widen R42 — `inject`/`slash`/`queue`/`state --pane` stay self-only.
@@ -285,10 +289,12 @@ Claude Code 2.1.224 added **native cross-session `SendMessage` plus `ListAgents`
 
 What it is legitimately good for: reaching a Claude session that is **not an AI Maestro agent at all** (a plain terminal session of the owner's), and out-of-band operational chatter that no rule governs. Two properties worth knowing before you rely on it: a send whose write to the recipient's inbox fails is now reported as an error rather than a false "Message sent" (2.1.224), and a message into a session running with bypassed permissions is held for the owner's approval when `crossSessionInbound` says so.
 
-**Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, RATIFIED governance** (`Explicit (USER — 2026-08-05, ai-maestro#125, TRDD-AODXPI5E)`; `GOVERNANCE-RULES.md` v5.3.2 on `governance-rules`, verified first-hand 2026-08-08). Cite it freely. Its permitted verbs are **`read-prompt` and `answer` only** — `inject`, `slash` and `queue` are excluded by name and 403 cross-agent, because they carry an arbitrary command and so express your decision rather than answering the agent's question. And if a verb refuses you, the native channel is never the workaround — it is the same act with the audit removed.
+**Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, RATIFIED governance** (`Explicit (USER — 2026-08-05, ai-maestro#125, TRDD-AODXPI5E)`; `GOVERNANCE-RULES.md` v5.3.2 on `governance-rules`, verified first-hand 2026-08-08). Cite it freely. Its permitted verbs are **`block-state`, `read-prompt` and `answer` only**.
+`inject`, `slash` and `queue` are excluded by name and 403 cross-agent, because they carry an arbitrary directive
+and so express your decision rather than answering the question the agent itself raised.
+And if a verb refuses you, the native channel is never the workaround — it is the same act with the audit removed.
 
 <!-- This paragraph asserted the reverse until 2026-08-08. The correction is kept visible because the failure mode is subtle: the 2026-08-07 measurement was CORRECT (R42.8 was on no readable ref) and the inference from it was WRONG (the USER grant predated publication by three days). Distrusting a truthful artifact because the record had not caught up is the same error in the opposite direction from citing an unverified one — and no amount of re-measuring detects it. -->
-
 
 ### GovernanceRequest Approval (C4)
 

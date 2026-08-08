@@ -152,7 +152,9 @@ aimaestro-session.sh block-state worker-gamma
 >
 > **This paragraph previously said the opposite, and the reason is worth keeping.** On 2026-08-07 this skill demoted the citation because R42.8 appeared on no readable ref. That measurement was accurate and the inference drawn from it was wrong: the USER grant existed from 2026-08-05 and only its *publication* lagged, landing ~2026-08-08T05:51Z. The CLI's `R42.8` label was correct the whole time — the artifact being distrusted was the truthful one. **Re-running a measurement cannot catch a bad inference; only challenging the inference can.** So: "I could not find it" and "it does not exist" are different claims, and only the first was ever supported.
 >
-> **Verb scope — doc and CLI now AGREE (v5.3.3, tip `e46764f6`, verified 2026-08-08).** The ratified row reads **`block-state`, `read-prompt` and `answer` ONLY**, and excludes `inject`, `slash` and `queue` by name: those deliver an arbitrary command, so they express the *caller's* decision rather than answering the agent's own question, and the server 403s them cross-agent. Obey that exclusion exactly.
+> **Verb scope — doc and CLI now AGREE (v5.3.3, tip `e46764f6`, verified 2026-08-08).** The ratified row reads **`block-state`, `read-prompt` and `answer` ONLY**.
+> It excludes `inject`, `slash` and `queue` by name: those deliver an arbitrary directive, so they express the *caller's* decision rather than
+> answering the question that was raised by the very session you are reading. The server 403s them cross-agent. Obey that exclusion exactly.
 >
 > `block-state` was **absent from the row until this plugin reported it** — the server had always granted it (`lib/sudo-guard.ts` routes it through the same `unblock-prompt` action), so the text, not the implementation, was wrong. Corrected upstream in 5.3.3. Recorded because the lesson generalises: **a rule and its enforcement can disagree, and the one that is wrong is not always the code.** Cross-check the deployed surface against the text; report the gap rather than silently picking a side.
 >
