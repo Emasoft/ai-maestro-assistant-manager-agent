@@ -8,6 +8,12 @@ description: "Assistant Manager main agent - user's right hand, sole interlocuto
 # a hard version pin would strand this agent on a retired model, and an org-restricted
 # alias steps down to the newest allowed model in the family (2.1.222) rather than
 # silently dropping to the parent's model.
+# STATUS 2026-08-08: keep this pin. `RP-MODEL-01` in ai-maestro's role-plugins-spec
+# was CORRECTED today — the old "every role-plugin pins opus" universal is FALSE by
+# measurement (opus x4, no key x2, inherit x1, sonnet x1 across the shipped fleet),
+# and the pin POLICY is deferred to TRDD-TYB3Q1NJ. The guidance is to omit `model:`
+# on NEW main-agents only; this is an existing one and the reasoning above is the
+# input that fed the correction. Do NOT drop the pin until TRDD-TYB3Q1NJ rules.
 model: opus
 skills:
   - amama-user-communication
