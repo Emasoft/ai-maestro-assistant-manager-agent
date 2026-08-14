@@ -304,13 +304,30 @@ It does not widen R42 — `inject`/`slash`/`queue`/`state --pane` stay self-only
 The server also refuses the delivery unless the agent is provably waiting on a question of its own, so the narrow shape is enforced, not merely asked for.
 The verbs, the proof step, and the refuse-list live in **[amama-agent-unblock](../skills/amama-agent-unblock/SKILL.md)** — load it rather than improvising, because the trap it corrects is silent: `read-prompt` returns `null` for an `AskUserQuestion` (0 of 419 measured), so a forever-blocked agent reads as healthy.
 
-### The harness now has its OWN cross-session messaging — it is NOT AMP (CC 2.1.224)
+### The harness now has its OWN cross-session messaging — it is NOT AMP (CC 2.1.224 → 2.1.232)
 
 Claude Code 2.1.224 added **native cross-session `SendMessage` plus `ListAgents`**: any Claude Code session on any of the owner's machines can message any other, discovered by name, with no server in the path. That is a second inter-agent channel arriving underneath a governance model that assumed only one.
 
 **Treat it as OUT OF BAND for every governed interaction, pending hub ratification.** A mandate, an approval, a refusal, a title change, a task dispatch — all of it stays on **AMP through the COS** (R6 v3), because the point of R23 was never "the CLI is the nicest API": it is that *a direct call is unaudited even when it works*. A native session-to-session message leaves no trace in the AI Maestro ledgers, so a governance act delivered that way did not happen as far as the fleet's own record is concerned — and the audit trail is the thing the MANAGER role exists to keep honest.
 
 What it is legitimately good for: reaching a Claude session that is **not an AI Maestro agent at all** (a plain terminal session of the owner's), and out-of-band operational chatter that no rule governs. Two properties worth knowing before you rely on it: a send whose write to the recipient's inbox fails is now reported as an error rather than a false "Message sent" (2.1.224), and a message into a session running with bypassed permissions is held for the owner's approval when `crossSessionInbound` says so.
+
+**What changed through 2.1.232 — none of it relaxes the position, and three of the four tighten it.**
+`ListAgents` now labels sessions `offline` / `cloud` (2.1.229).
+Read that as a MAY, not a MUST: an `offline` peer is one the outbound-unreachable clause already covers,
+so the label saves you a wasted send — but `online` is a point-in-time reading that can flip before your
+correction lands, so it is never proof of reachability, and *verify independently before acting* still governs.
+**Session names became unique per machine (2.1.232) — this does NOT make a name usable as identity.**
+Uniqueness is not immutability. A name is still renameable mid-flight; uniqueness covers only *live* sessions
+on *one* machine, so a dead session's name recycles and "orchestrator" today need not be who it was yesterday;
+and the auto-assigned `name-word-word` variant means a session can be running under a name it did not choose,
+so even self-identification by name can misfire on your own. Keep identifying by **project/repo**.
+Two frictions also disappeared: a bare name that matches one live session now delivers without the
+ref-confirmation step, `@` mentions a session straight from the prompt (both 2.1.232), and a conversation can now
+be *started* with a Remote Control session on another machine rather than only answered (2.1.225).
+Confirmation was never a safety feature, but it was incidentally guarding against a misdirected send, and the
+reach now extends to exactly the population the unreachable-sender clause treats most strictly.
+Cheaper misdirection argues for more caution here, not less.
 
 **Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, RATIFIED governance** (`Explicit (USER — 2026-08-05, ai-maestro#125, TRDD-AODXPI5E)`; `GOVERNANCE-RULES.md` v5.3.2 on `governance-rules`, verified first-hand 2026-08-08). Cite it freely. Its permitted verbs are **`block-state`, `read-prompt` and `answer` only**.
 `inject`, `slash` and `queue` are excluded by name and 403 cross-agent, because they carry an arbitrary directive
