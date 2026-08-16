@@ -67,3 +67,20 @@ passes everything through unfiltered, nullifying its purpose.
 
 Full tier tables in references/cos-delegation-authority.md (bundled in
 the prrd-trdd-kanban universal skill).
+
+## Approval log
+
+- 2026-08-16T16:46:00+0200 — AUDITED, stays `complete`. Verified against the COS repo's
+  tree, not this card's prose. Three of four deliverables are real:
+  `agents/ai-maestro-chief-of-staff-main-agent.md:208,220,236` and
+  `skills/amcos-prrd-trdd-kanban/SKILL.md:15,46` carry the COS-AUTONOMOUS/COS-ESCALATE
+  two-tier filter, and `skills/amama-presence-tracker/SKILL.md:38` (this repo) carries the
+  janitor-breadcrumb fallback.
+  **CORRECTION — one line above is FALSE:** the STATE block's `STATUS: COMPLETE` claims it
+  shipped `references/cos-delegation-authority.md`. No such file exists in either repo
+  (`find . -iname "cos-delegation-authority*"` → only this TRDD). The tier tables were
+  folded into `skills/amcos-prrd-trdd-kanban/SKILL.md` instead of a separate reference
+  file. The work shipped; the artifact name in the prose did not. Do not go looking for
+  that file, and do not read its absence as unfinished work.
+  Also stale: "All commits local-only pending push" — the deliverables are in the COS repo's
+  tracked tree.
