@@ -1,9 +1,11 @@
 ---
 trdd-id: Y6V1TOGN
 title: Align AMAMA to Claude Code 2.1.208-2.1.224 and decide the native cross-session messaging question
-column: dev
+column: blocked
+pre-block-column: dev
+blocked-by: [ai-maestro#143 — R42.3's "ONLY channel" clause is USER-tier; only the USER may correct it]
 created: 2026-08-07T18:28:40+0200
-updated: 2026-08-07T20:48:13+0200
+updated: 2026-08-16T16:33:00+0200
 current-owner: amama-session
 task-type: infra
 approval-tier: 0

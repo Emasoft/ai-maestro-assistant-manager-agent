@@ -3,7 +3,7 @@ trdd-id: 28FA16B9
 title: Absorb the multi-agent coordination methodology sections 3 5 8 and 10
 column: complete
 created: 2026-08-08T12:53:41+0200
-updated: 2026-08-08T12:53:41+0200
+updated: 2026-08-16T16:31:00+0200
 current-owner: amama-session
 task-type: docs
 approval-tier: 0
@@ -52,3 +52,12 @@ therefore not adopted on authority — it is adopted on a measured result.
 - [x] Existing conformance tests still green
 - [x] Folded into the release already queued rather than cutting a dedicated one
 - [x] Closed upstream with tag + tip sha + timestamps
+
+## Approval log
+
+- 2026-08-16T16:31:00+0200 — ARCHIVED (terminal-true, verified against the persona file
+  rather than this card's prose): `agents/ai-maestro-assistant-manager-agent-main-agent.md`
+  carries `### §3 — the work-order shape` (:576), `### §5 — refusal (already binding here
+  as R49)` (:586) and the R49 section (:372). Card was sitting at `column: complete` inside
+  `design/tasks/`, inflating this repo's open-work count — moved to `design/archived/`.
+  No content change.

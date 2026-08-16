@@ -3,7 +3,7 @@ trdd-id: C0E6EFDB
 title: Adopt RP-MODEL-01 and RP-SKILL-MENU-01 from role-plugins-spec 1.1.0
 column: complete
 created: 2026-08-08T12:34:11+0200
-updated: 2026-08-08T12:34:11+0200
+updated: 2026-08-16T16:31:00+0200
 current-owner: amama-session
 task-type: infra
 approval-tier: 0
@@ -57,3 +57,12 @@ a clean sync over nothing.
 - [x] Skill menu present with exactly the shipped skills (11)
 - [x] Conformance test added and green
 - [x] Published, and the release reported upstream with tag + tip sha
+
+## Approval log
+
+- 2026-08-16T16:31:00+0200 — ARCHIVED (terminal-true, verified against the tree rather
+  than this card's prose): `grep -rn "^model:" agents/*.md` returns nothing;
+  `tests/test_skill_menu_matches_shipped.py` exists; `find skills -maxdepth 1 -mindepth 1
+  -type d | wc -l` = 11, matching the 11-row menu. Card was sitting at `column: complete`
+  inside `design/tasks/`, inflating this repo's open-work count — moved to
+  `design/archived/`. No content change.
