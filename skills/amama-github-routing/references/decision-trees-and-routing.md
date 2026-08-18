@@ -94,7 +94,11 @@ LINK     LINK     │ Route to │   │ Route to │
     └────────────────────────────────┘
 ```
 
-**Note**: All PR operations go to AMIA. AMIA may consult with AMAA for design validation or AMOA for implementation verification. PR merges trigger task status sync for linked issues.
+**Note**: PR-operation routing is CONTEXT-DEPENDENT (hub ruling 2026-08-19, per `rules/aimaestro/aimaestro-kanban-multiagent.md` editor-authority list):
+- **TEAM project** — all PR operations go through the team flow: COS relays to AMIA (integrator/reviewer). AMIA may consult AMAA for design validation or AMOA for implementation verification. The Part B2 transition table governs (`testing → ai_review` by the test runner; `ai_review` verdicts by the AI reviewer/integrator; escalation via MANAGER).
+- **NO-TEAM project** (maintainer-supervised repo) — the MAINTAINER (or the AUTONOMOUS agent, or the MANAGER directly) works the board and does the review-column jobs, via its `maintainer-pr-review` / `maintainer-pr-triage` / `maintainer-approval-gate` / `maintainer-prrd-trdd-kanban` skills.
+
+PR merges trigger task status sync for linked issues. The matrix below shows the TEAM-project routes; substitute MAINTAINER for AMIA on no-team repos.
 
 ### PR Routing Matrix
 

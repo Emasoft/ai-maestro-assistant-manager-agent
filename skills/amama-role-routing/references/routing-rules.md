@@ -53,7 +53,8 @@
 
 2. **Code review requested**
    - User says: "Review...", "Check the PR...", "Evaluate changes..."
-   - Action: Create handoff with PR details, send to AMCOS for AMIA delegation
+   - Action (TEAM project): Create handoff with PR details, send to AMCOS for AMIA delegation
+   - Action (NO-TEAM / maintainer-supervised repo): route to the MAINTAINER directly — its `maintainer-pr-review` / `maintainer-pr-triage` skills do the review-column jobs there (editor-authority list, `aimaestro-kanban-multiagent.md`)
 
 3. **Quality gates needed**
    - User says: "Test...", "Validate...", "Run quality checks..."

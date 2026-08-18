@@ -92,7 +92,7 @@ it RETURNS the limit text as the result string, so a try/catch misses it; a fan-
 launched into a hot throttle thrashes (≈951k tokens for ZERO output —
 [[no-multiagent-workflow-during-rate-limit]]).
 
-**Status:** this is Claude-Code/Workflow HARNESS behavior (Anthropic), NOT an
+**Constraint (historical, non-status):** this is Claude-Code/Workflow HARNESS behavior (Anthropic), NOT an
 AI-Maestro repo — so it is NOT Method-1-fileable on our repos. Captured here as a
 standing OPERATING CONSTRAINT: detect the RL-string in `agent()` returns + back off;
 never fan out into a throttle; probe recovery with one serial agent first. (The
