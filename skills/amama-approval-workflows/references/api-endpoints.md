@@ -67,14 +67,16 @@ See the `team-governance` skill for full API details.
 ## Submit a Transfer Request
 
 ```
-aimaestro-governance.sh transfer --agent <agent-uuid> --from-team <source-team-uuid> --to-team <destination-team-uuid> [--note <transfer-justification>]
+aimaestro-governance.sh transfer create --agent <agent-uuid> --from-team <source-team-uuid> --to-team <destination-team-uuid> [--note <transfer-justification>]
 ```
 
 **Response**: Creates a GovernanceRequest of type `transfer-agent` with status `pending`. Returns the request ID.
 
 **Who can approve transfers**:
-- MANAGER — AID-authorized (R28), via `aimaestro-governance.sh approve`
-- COS of the destination team — via its portfolio mandate token (R28/R30)
+- MANAGER — via `aimaestro-governance.sh transfer resolve <transferId> --action approve|reject [--reject-reason TEXT]`
+- COS of the destination team — same `transfer resolve` route, authorized by its portfolio mandate token (R28/R30)
+
+List pending transfers first: `aimaestro-governance.sh transfer list [--team ID] [--agent ID] [--status S]`.
 
 See the `team-governance` skill for full API details.
 
@@ -84,7 +86,7 @@ Transfer requests have special routing rules because they involve two teams.
 
 ### Transfer Workflow
 
-1. **Request submitted** via `aimaestro-governance.sh transfer …`
+1. **Request submitted** via `aimaestro-governance.sh transfer create …`
 2. A GovernanceRequest of type `transfer-agent` is created with status `pending`
 3. **Notifications sent** to:
    - MANAGER (AMAMA) for governance approval
