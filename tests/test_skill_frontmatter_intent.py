@@ -61,9 +61,19 @@ def _field(fm: str, field: str) -> str | None:
 # diff, no error and no failing test in this repo.
 _MUST_DECLARE = ("context", "background", "user-invocable")
 
+# CPV's schema admits exactly ONE explicit `context` value — `fork`. A skill that
+# must load INLINE (its content has to land in the deciding context, e.g. the
+# governance self-audit checklist) therefore CANNOT declare the key: any non-fork
+# spelling is a CPV CRITICAL and blocks publish. For those skills the intent is
+# pinned the same way RP-MODEL-01 pins `model:` — the key is OMITTED and a
+# mandatory frontmatter comment records the omission as deliberate. `background:`
+# is a fork-only knob, so it is omitted together with `context`;
+# `user-invocable` stays mandatory for every skill.
+_INLINE_OMISSION = re.compile(r"^#\s*context:\s*omitted-on-purpose\b.*\bINLINE\b", re.MULTILINE)
+
 
 def test_every_skill_declares_the_harness_owned_keys_explicitly():
-    """Each skills/*/SKILL.md sets context, background AND user-invocable — no reliance on a harness default."""
+    """Each skills/*/SKILL.md sets context, background AND user-invocable — or documents the inline omission."""
     skills = _skill_files()
     # Non-vacuity: an empty glob would make the loop below trivially pass.
     assert len(skills) >= 10, f"expected >=10 skills, found {len(skills)} — glob is wrong"
@@ -71,6 +81,9 @@ def test_every_skill_declares_the_harness_owned_keys_explicitly():
     for p in skills:
         fm = _frontmatter(p)
         absent = [k for k in _MUST_DECLARE if _field(fm, k) is None]
+        if absent == ["context", "background"] and _INLINE_OMISSION.search(fm):
+            # Deliberate inline skill: both fork-shaped keys omitted, WHY on record.
+            continue
         if absent:
             missing[p.parent.name] = absent
     assert not missing, (

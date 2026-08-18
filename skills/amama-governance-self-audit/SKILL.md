@@ -1,12 +1,13 @@
 ---
 name: amama-governance-self-audit
 description: Use BEFORE any governed act to answer "am I allowed to do this?" - walk the 12-question MANAGER self-audit before approving, refusing, dispatching, creating or deleting a team, publishing, deploying, or touching a ruleset. Trigger with "am I allowed", "self-audit", "before approving", "can I self-approve".
-# context: inline (NOT fork) — deliberate: the checklist's citations must land in
-# the DECIDING context; a forked walk returns a summary and re-creates the #107
-# defect (surface not present at decision time). No `agent:` key — it has effect
-# only under `context: fork`.
-context: inline
-background: false
+# context: omitted-on-purpose (INLINE, not fork) — the checklist's citations must
+# land in the DECIDING context; a forked walk returns a summary and re-creates the
+# #107 defect (surface not present at decision time). CPV's schema admits only
+# `fork` as an explicit value, so inline is expressed by OMITTING the key (the
+# RP-MODEL-01 shape); `background:` is omitted with it (fork-only knob), and
+# tests/test_skill_frontmatter_intent.py pins this omission as deliberate. No
+# `agent:` key — it has effect only under `context: fork`.
 user-invocable: false
 ---
 
