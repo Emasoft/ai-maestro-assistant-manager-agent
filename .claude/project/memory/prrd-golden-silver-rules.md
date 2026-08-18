@@ -113,6 +113,8 @@ control the MANAGER must not be able to weaken.
 - See also [[approval-vs-mandate-protocol]] (golden→MAESTRO, silver→MANAGER tiers),
   `trdd-approval-tiers-permissions` and `assistant-role-plugin-and-15-principles`
   (machine-LOCAL-scope pages, not linkable from this git-tracked page).
+- See also [[governance-ssot-is-the-governance-rules-branch]] — which ref of the fleet's
+  GOVERNANCE-RULES.md is authoritative (the `governance-rules` branch, not main).
 - See also [[claude-plugin-dependencies]] — it carries the **other direction of the same
   defect**: there, a citation pins a version that later moves and dangles; here, the text
   moves while the version does not. One root cause (the version is an unchecked claim about

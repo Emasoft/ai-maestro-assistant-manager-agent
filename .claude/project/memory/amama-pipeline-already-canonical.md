@@ -2,7 +2,7 @@
 name: amama-pipeline-already-canonical
 description: "should I upgrade AMAMA's CI/publish pipeline to the CPV canon / RC-PIPELINE-DRIFT WARNINGs on publish --dry-run / is cpv-upgrade-plugin --force-templates safe here / is the pipeline missing SBOM / provenance / SHA-pinning / SHA256SUMS / what is task #22 for AMAMA"
 ocd: 2026-07-17
-lmd: 2026-07-17
+lmd: 2026-08-18
 publish-globally: false
 metadata:
   node_type: memory
@@ -12,7 +12,7 @@ metadata:
 
 # AMAMA's pipeline is ALREADY at full canonical hardening — do NOT force-migrate
 
-Verified 2026-07-17 (reading the actual `.github/workflows/*.yml` lines, not a grep):
+Verified 2026-07-17 (reading the actual `.github/workflows/*.yml` lines, not a grep). [^1]
 
 - **ci.yml**: every `uses:` SHA-pinned ✓ + actionlint ✓ + commitlint ✓ + macOS matrix ✓ + per-job `timeout-minutes` ✓.
 - **release.yml**: SHA-pinned ✓ + **SBOM** (`anchore/sbom-action`, SPDX) ✓ + **build-provenance** (`actions/attest-build-provenance`, OIDC `id-token: write`) ✓ + **per-asset SHA256SUMS** ✓ — all landed under **issue #121**.
