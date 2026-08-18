@@ -1,9 +1,9 @@
 ---
 trdd-id: 9a16554d-1e1e-4e37-bc9a-5624fb19e556
 title: Fleet governance hardening — codify APPROVAL/MANDATE + audit role plugins for violations
-column: todo
+column: complete
 created: 2026-06-21T20:24:32+0200
-updated: 2026-08-05T16:07:47+0200
+updated: 2026-08-18T20:35:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -97,11 +97,14 @@ project scoped, so they are git tracked."
 Issue-state ≠ content-state; judge from the rule BODY on the readable ref, never
 from the tracker. So the propagation wave's precondition is MET.
 
-**NEXT ACTION (USER-gated, not blocker-gated):** the fleet propagation wave
-(per-plugin issues, R26-R40 pattern) carrying APPROVAL/MANDATE + golden/silver +
-the A/B re-check to all 10 plugins now awaits **MAESTRO review only** — it is a
-Tier-2 fleet-wide action, so it does not fire unprompted. Cite R41 as canonical
-rather than restating it.
+**✅ PROPAGATION WAVE FIRED 2026-08-18 (hub GO under recorded USER delegation,
+hub record TRDD-BRRJK57P) — CARD COMPLETE.** 10 per-plugin issues posted, R41
+cited as canonical (never restated), G1.1 self-ID on each, zero bare handles:
+orchestrator#34, architect#27, integrator#25, programmer#29, chief-of-staff#30,
+autonomous#19 (folds their #12), maintainer#41 (folds #18), core ai-maestro-plugin#63
+(folds #14), amvcp#10 (folds #7), AMAMA#37 (verified-compliant ledger, closed).
+All deliverables of this card are now done; per-plugin follow-through happens on
+each repo's own pipeline.
 
 **✅ HOUSEKEEPING RESOLVED — by MERGE, not deletion (`4094cd8`).** The two
 USER-scope wikimem copies were recorded above as "superseded dupes pending RULE-0
