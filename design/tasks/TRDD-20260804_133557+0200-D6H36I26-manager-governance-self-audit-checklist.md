@@ -1,9 +1,9 @@
 ---
 trdd-id: D6H36I26
 title: Build a MANAGER governance self-audit checklist as a decision-time surface
-column: todo
+column: complete
 created: 2026-08-04T13:35:57+0200
-updated: 2026-08-04T13:35:57+0200
+updated: 2026-08-18T20:05:00+0200
 current-owner: amama
 assignee: amama
 priority: 3
@@ -23,14 +23,26 @@ external-refs: ["https://github.com/Emasoft/ai-maestro/issues/107"]
 
 # TRDD-D6H36I26 — MANAGER governance self-audit checklist
 
-## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-08-04T13:35
+## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative) — 2026-08-18T20:05
 
-**QUEUED, NOT STARTED.** Filed so the outcome of `ai-maestro#107` does not evaporate when that
-thread closes. Not begun because the USER's standing instruction was the Claude Code changelog
-alignment (done, `TRDD-KBXCQ6GG`); this is new scope and wants an explicit go.
-
-**NEXT ACTION when picked up:** draft the question list, transport question first, then decide
-where it lives (its own skill vs. a section of an existing one).
+**✅ DONE (hub PHASE-2 GO, 2026-08-18; fable-advisor design verdict followed).**
+Shipped `skills/amama-governance-self-audit/SKILL.md` — 12 MANAGER-shaped
+questions (transport R23 first; tier; authorship/no-self-approval R41; mandate-vs-
+proposal; team lifecycle R29/R12.1; COS-only dispatch R6; command power R42/R42.8;
+PRRD golden/silver; release gate §Y; baseline deviation §F; auth R32/R28/R26;
+record R15.6) + R49 refusal-form note. Each question cites, never restates.
+Wiring: persona skills-list entry, menu row (11→12, RP-SKILL-MENU-01), and a
+decision-time pointer in the persona intro ("walk the checklist before any
+governed act; one NO ⇒ escalate one tier"). `context: inline` deliberately (a
+forked walk would re-create the #107 defect — citations must land in the deciding
+context); explicit `background`/`user-invocable` per the frontmatter-intent test;
+canonical R23 block copied verbatim per `design/specs/r23-frozen-cli-canonical.md`.
+No `references/` dir — a per-question decision-rules file would restate the cited
+rules (the S8.1→S8.2 drift trap); the AUTONOMOUS layout was borrowed only for the
+enumerated-list shape. Verified: ALL repo test scripts pass (incl.
+test_r23_conformance, test_skill_frontmatter_intent, test_skill_menu_matches_shipped,
+test_governance_citations). ai_review = fable-advisor verdict + self-recheck;
+human_review escalated to the hub per the 2026-08-18 dispatch.
 
 ## The gap
 
