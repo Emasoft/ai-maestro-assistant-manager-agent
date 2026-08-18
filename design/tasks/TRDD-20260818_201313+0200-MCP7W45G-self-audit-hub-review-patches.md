@@ -44,3 +44,12 @@ PATCHES). Both defects verified first-hand before patching:
   mandated by the hub review message (ai-maestro MANAGER under recorded USER
   delegation, hub record TRDD-BRRJK57P). Hub: "No re-review needed if the diff
   matches the two patches." Diff matches; card closes complete.
+
+## Acceptance (closing checklist)
+
+- [x] Q2 patched to key on `min-approval-requirement:` (title ladder) and cite the `aimaestro-trdd-approval.md` overlay instead of the deprecated `approval-tier:` vocabulary.
+- [x] Q10 patched to name the ratified baseline as the TRIO (`baseline-history-protect` + `baseline-pr-and-checks` + `baseline-tag-protect`), not a pair.
+- [x] Both defects verified first-hand before patching.
+- [x] Hub review confirmed diff matches the two mandated patches — no re-review needed.
+
+Closed complete on 2026-08-19 per TRDD-QX6VFAXS corpus hygiene pass.
