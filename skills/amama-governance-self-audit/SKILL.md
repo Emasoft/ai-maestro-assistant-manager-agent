@@ -41,9 +41,9 @@ is its emanation and loses a conflict (authority inversion, v4.8.0).
 2. **Tier** — does this card's `min-approval-requirement:` name MY title
    (`manager`), or a higher one (`user`) that must go up? When unsure, escalate
    one title. (`approval-tier: N` is deprecated, decode-only on legacy cards —
-   never write it.) → the `aimaestro-trdd-approval` overlay
-   (`rules/aimaestro/aimaestro-trdd-approval.md`), §"min-approval-requirement
-   supersedes approval-tier".
+   never write it.) → the `aimaestro-trdd-approval` overlay (installed under
+   rules/aimaestro/ of the hub repo Emasoft/ai-maestro, not shipped in this
+   plugin), §"min-approval-requirement supersedes approval-tier".
 3. **Authorship** — did I author or mandate this card myself? An author cannot be
    its approver; route it to the tier above. → R41.
 4. **Mandate vs proposal** — is this card born approved (a MANDATE from above) or
@@ -66,8 +66,9 @@ is its emanation and loses a conflict (authority inversion, v4.8.0).
 10. **Baseline deviation** — does this touch a GitHub ruleset beyond re-applying
     the ratified `baseline-*` TRIO as-is (history-protect, pr-and-checks,
     tag-protect)? Any deviation needs `manager` approval at minimum, and some are
-    USER-only. → `aimaestro-manager-approval-defaults.md` §F (the TRIO);
-    `design/specs/baseline-github-rulesets-spec.md` in the hub repo.
+    USER-only. → the `aimaestro-manager-approval-defaults` overlay §F (the
+    TRIO) and the baseline-github-rulesets spec, both in the hub repo
+    Emasoft/ai-maestro (not shipped in this plugin).
 11. **Auth** — am I authorizing with my AID + portfolio token, never a
     sudo/governance password, and not touching my own title/role/identity?
     → R32, R28, R26.
