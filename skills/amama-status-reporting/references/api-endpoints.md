@@ -33,6 +33,22 @@ aimaestro-teams.sh tasks $TEAM_ID | jq '[.tasks[] | {id, title, status, assignee
 
 See the `team-governance` skill for full CLI details.
 
+## TRDD-Corpus Queries (per-project, offline)
+
+For the project-level TRDD board (the 3-pillars SSOT, distinct from the server team
+kanban) use the pillar tools from the project root — no server round-trip:
+
+```
+trddgrep                # the board (per-column card list)
+trddgrep next           # workable cards ranked by what finishing them frees
+trddgrep roots          # root blockers — the critical path for a blocker report
+trddgrep why <id8>      # one card's transitive blocker chain
+prrdgrep <pattern>      # PRRD rules · specgrep <pattern> for normative specs
+```
+
+Exit trichotomy: 0 clean · 1 findings · 2 could-not-run (empty corpus = 2; check
+`trddgrep env`). Never `trddgrep validate || …`.
+
 ## Task Query for Reports
 
 When generating status reports, query tasks by status to build Kanban summaries. `aimaestro-teams.sh tasks` prints JSON on stdout, so pipe it straight into `jq`.

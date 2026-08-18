@@ -6,7 +6,7 @@ created: 2026-08-19T00:07:37+0200
 updated: 2026-08-19T00:07:37+0200
 current-owner: amama-session
 task-type: audit
-approval-tier: 0
+min-approval-requirement: none
 relevant-rules: [23, 28]
 ---
 

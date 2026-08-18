@@ -19,6 +19,14 @@ parent-skill: amama-github-routing
 
 AMAMA must proactively monitor GitHub Project boards to detect changes that may require action or notification to the team's CHIEF-OF-STAFF and the user.
 
+> **The TRDD corpus is the SSOT; the GitHub board is its mirror.** Before acting on
+> board drift, query the corpus with `trddgrep` (offline, on PATH): bare = the board,
+> `next` = workable cards ranked by what finishing them frees, `roots` = every root
+> blocker (the critical path), `why <id8>` = a card's transitive blocker chain,
+> `show <id8>` = the card + STATE block. Exit codes: 0 clean · 1 findings · 2
+> could-not-run (run `trddgrep env` when the answers look wrong). Server-side team
+> tasks stay `aimaestro-teams.sh tasks <teamId>`.
+
 > **Routing invariant (comm-graph v3, R6 v3) — read before every notification below.**
 > The CHIEF-OF-STAFF is the **SOLE entry point into a team**. As MANAGER you may
 > message HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, and MAINTAINER —

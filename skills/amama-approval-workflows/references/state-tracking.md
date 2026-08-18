@@ -4,7 +4,7 @@
 - [State File Schema](#state-file-schema)
 - [Proactive Monitoring](#proactive-monitoring)
 
-All GovernanceRequests are tracked both server-side (the frozen `aimaestro-governance.sh` CLI authorizes via AID + portfolio token, R28 — no password) and in the local state file for redundancy.
+All GovernanceRequests are tracked both server-side (read via the frozen `aimaestro-governance.sh requests` CLI, AID-authorized; approve/reject are password-gated MAESTRO actions, R32) and in the local state file for redundancy.
 
 ## State File Schema
 

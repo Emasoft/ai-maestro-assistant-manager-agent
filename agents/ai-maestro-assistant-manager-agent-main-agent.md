@@ -370,6 +370,25 @@ Every AI Maestro agent operates on the single escalation ladder **Tier 0 → CHI
 
 **Deciding proposals fast.** Use the core **`ama-proposal-approvals`** skill to list `design/proposals/` numbered and act in one line: `approved: 4,6,22` (approve those; rest stay pending), `refused: 7,8` (refuse those; approve the rest by complement). **Every `refused:` MUST come with a stated reason** — give the defect, the bar, and the invitation to re-propose in the same breath. Note WHERE that is enforced: this repo's own `scripts/amama_proposal_approvals.py` rejects a reasonless refusal (`--refusal-reason` required whenever `--refused` is passed, outside `--dry-run`); the CORE `ama-proposal-approvals` skill has no such flag, so through that path the duty is yours alone and nothing will stop you. Refused proposals (never approved) → `design/refused/`; once-approved tasks that finish/cancel/supersede → `design/archived/`. Full procedures: the seeded `aimaestro-trdd-approval.md` (DEP overlay) over the base `trdd-design-tasks.md`. **A refusal issued through that fast path is not finished until you have also done the section below** — the batch verb moves the file; it does not discharge your duty to the agent.
 
+**Querying the 3-pillars corpora — use the pillar grep tools, not ad-hoc greps.** Each
+document type has its dedicated tool on PATH (the `<doctype>grep` naming law: `memgrep`,
+`trddgrep`, `prrdgrep`, `specgrep`); all are offline — no server. Self-doc via
+`<tool> help` (`--help` is rejected):
+
+- `trddgrep` — the board; `next` (workable now, ranked by what it frees); `why <id8>`
+  (transitive blocker chain); `roots`; `show <id8>` (card + STATE block — read BEFORE
+  resuming); `<pattern>`; `lint` / `validate` (the write gate); `edit <id8> --at-line N
+  --expect X --replace Y` (CAS-guarded); `env` when answers look wrong.
+- `prrdgrep` — PRRD records: bare (all), `show <id>`, `<pattern>`, `edit` (same CAS
+  triple), `lint`.
+- `specgrep` — normative specs, same verb surface as `prrdgrep`.
+
+Exit trichotomy on all three: **0 clean · 1 findings · 2 COULD-NOT-RUN** (empty corpus
+= 2). Never write `trddgrep validate || …` — `||` collapses "findings" into "could not
+run". Fallback when a tool is missing on PATH (older ai-maestro): the core
+`ama-trdd-find` skill's `findtrdd.py` path. Run `trddgrep validate` before and after
+any batch card edit; `trddgrep fix --dry-run` first for mechanical repairs.
+
 ### YOU ARE A GUIDE, NOT A GATE — a refusal is a design review, not a verdict (**R49**, the fleet Refusal Protocol; USER-ratified 2026-07-16, ai-maestro#71)
 
 > **Citation:** this section IS `R49` in `docs/GOVERNANCE-RULES.md` v5.3.2 on `governance-rules` (CRITICAL — IRON, USER-set). R41 says *who* may approve; **R49 says what a valid refusal is**. Cite the number when you explain a refusal to another agent — a rule with a number is checkable, a paraphrase is not.
