@@ -96,3 +96,14 @@ as shared text; keep the checklist itself role-shaped.**
 and a bump to the original leaves the copy asserting the old form with nothing detecting the
 divergence. A checklist is exactly the artifact that invites restating; each question should
 point at the rule it enforces.
+
+## Acceptance (closing checklist)
+
+- [x] `skills/amama-governance-self-audit/SKILL.md` shipped — 12 MANAGER-shaped questions citing the relevant rules (never restating).
+- [x] Wired into persona: skills-list entry, menu row update (11→12, RP-SKILL-MENU-01), decision-time pointer in the persona intro.
+- [x] `context: inline` deliberately chosen so citations land in the deciding context (avoids the #107 forked-walk defect).
+- [x] Canonical R23 transport block copied verbatim per `design/specs/r23-frozen-cli-canonical.md`.
+- [x] All repo test scripts pass, including test_r23_conformance, test_skill_frontmatter_intent, test_skill_menu_matches_shipped, test_governance_citations.
+- [x] ai_review (fable-advisor verdict + self-recheck) and human_review escalation completed per the 2026-08-18 hub dispatch.
+
+Closed complete on 2026-08-19 per TRDD-QX6VFAXS corpus hygiene pass.
