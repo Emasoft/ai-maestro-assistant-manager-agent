@@ -38,9 +38,12 @@ is its emanation and loses a conflict (authority inversion, v4.8.0).
    frozen CLIs (`aimaestro-*.sh`, `amp-*.sh`, `aid-*.sh`), including any hook or
    bundled script it triggers — never `/api/…`? A hook runs with no skill loaded,
    so check the hook's own code path too. → R23.1–R23.5.
-2. **Tier** — am I the right approver for this card's `approval-tier:`, or is it
-   Tier 3 (USER/MAESTRO-only) and must go up? When unsure, escalate one tier.
-   → `~/.claude/rules/trdd-approval-tiers.md` Part B; the aimaestro-trdd-approval overlay.
+2. **Tier** — does this card's `min-approval-requirement:` name MY title
+   (`manager`), or a higher one (`user`) that must go up? When unsure, escalate
+   one title. (`approval-tier: N` is deprecated, decode-only on legacy cards —
+   never write it.) → the `aimaestro-trdd-approval` overlay
+   (`rules/aimaestro/aimaestro-trdd-approval.md`), §"min-approval-requirement
+   supersedes approval-tier".
 3. **Authorship** — did I author or mandate this card myself? An author cannot be
    its approver; route it to the tier above. → R41.
 4. **Mandate vs proposal** — is this card born approved (a MANDATE from above) or
@@ -61,8 +64,10 @@ is its emanation and loses a conflict (authority inversion, v4.8.0).
    (`complete → publish|deploy`, `publish → published`, `deploy → live`)? Those
    are non-exempt: approval required, never silent. → `manager-approval-defaults.md` §Y.
 10. **Baseline deviation** — does this touch a GitHub ruleset beyond re-applying
-    the ratified `baseline-*` pair as-is? Any deviation is Tier 2+, and some are
-    USER-only. → `manager-approval-defaults.md` §F; `trdd-approval-tiers.md` Part C.
+    the ratified `baseline-*` TRIO as-is (history-protect, pr-and-checks,
+    tag-protect)? Any deviation needs `manager` approval at minimum, and some are
+    USER-only. → `aimaestro-manager-approval-defaults.md` §F (the TRIO);
+    `design/specs/baseline-github-rulesets-spec.md` in the hub repo.
 11. **Auth** — am I authorizing with my AID + portfolio token, never a
     sudo/governance password, and not touching my own title/role/identity?
     → R32, R28, R26.
