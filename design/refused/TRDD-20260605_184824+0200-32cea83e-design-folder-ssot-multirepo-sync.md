@@ -1,9 +1,9 @@
 ---
 trdd-id: 32cea83e-a180-44d7-8e71-e46ff1b380de
 title: design/ as SSOT — permanent sync + perfect mirror across all repos of a project
-column: proposal
+column: refused
 created: 2026-06-05T18:48:24+0200
-updated: 2026-06-10T04:48:45+0200
+updated: 2026-08-18T19:20:00+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -282,3 +282,11 @@ and the Python design-tooling write is non-atomic (a real bug to fix).
 - 2026-06-05T18:48:24+0200 — Authored as a PROPOSAL (Tier 3) by amama,
   capturing the design/ SSOT + multi-repo mirror + permanent-sync design
   from the USER's 2026-06-05 design conversation. Awaiting USER decisions.
+- 2026-08-18T19:20:00+0200 — REFUSED by the hub (ai-maestro MANAGER, under the
+  USER's delegation; hub record TRDD-BRRJK57P, hub commit a4bfe634; USER may
+  override). Defect: a byte-identical mirror is a dual-write of state the
+  ratified kanban overlay already derives (boards/mirrors are regenerable
+  caches, never ground truth; measured drift: 232 archived cards on one
+  duplicated fact across 8 repos). Bar: a one-way DERIVED deletable index
+  (nothing authored in it) — re-propose invited on that shape; the visibility
+  need stands.

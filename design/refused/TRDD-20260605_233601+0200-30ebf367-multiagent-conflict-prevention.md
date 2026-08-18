@@ -1,9 +1,9 @@
 ---
 trdd-id: 30ebf367-54a3-4b06-b133-8e28b3a0a07c
 title: Multi-agent conflict prevention — domain ownership + concurrency rails for design/ and code
-column: proposal
+column: refused
 created: 2026-06-05T23:36:01+0200
-updated: 2026-06-05T23:36:01+0200
+updated: 2026-08-18T19:20:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -252,3 +252,10 @@ above is run.** They are the current best hypotheses; the test decides.
 - 2026-06-05T23:36:01+0200 — Authored by amama as a Tier-3 PROPOSAL from the
   USER-delegated deep analysis (2026-06-05). Evidence: the two
   reports/design-concurrency/ surveys. Awaiting USER decisions.
+- 2026-08-18T19:20:00+0200 — REFUSED AS FILED by the hub (ai-maestro MANAGER,
+  under the USER's delegation; hub record TRDD-BRRJK57P, hub commit a4bfe634;
+  USER may override); the NEED stands. Defect: premised on refused parent
+  TRDD-32cea83e's mirror architecture. Bar: re-propose standalone, built on the
+  existing rails (`current-owner:` as the TRDD write-lock; CAS-guarded
+  scope-locked writes per the memgrep concurrent-editing contract) — invited,
+  likely to pass.
