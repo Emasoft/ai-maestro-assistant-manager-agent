@@ -1,5 +1,5 @@
 ---
-trdd-id: 30ebf367-54a3-4b06-b133-8e28b3a0a07c
+trdd-id: 30EBF367
 title: Multi-agent conflict prevention — domain ownership + concurrency rails for design/ and code
 column: refused
 created: 2026-06-05T23:36:01+0200

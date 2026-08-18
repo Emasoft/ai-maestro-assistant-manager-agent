@@ -1,5 +1,5 @@
 ---
-trdd-id: 0f491ba0-9fa0-49f4-933b-b938d7a7d4d9
+trdd-id: 0F491BA0
 title: AMAMA test-coverage gaps — close the HIGH-value function/branch gaps (bucket E)
 column: complete
 created: 2026-06-21T23:57:16+0200

@@ -1,5 +1,5 @@
 ---
-trdd-id: 3649cb7b-ee33-458e-a559-3d52fcca58a0
+trdd-id: 3649CB7B
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMPA programmer (MEMBER) persona
 column: completed
 completed-evidence: Emasoft/ai-maestro-programmer-agent#11 CLOSED stateReason=COMPLETED (verified 2026-08-07)

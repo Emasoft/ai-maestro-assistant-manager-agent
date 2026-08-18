@@ -1,5 +1,5 @@
 ---
-trdd-id: 495a928e-34d3-41d9-9c25-28345935cac0
+trdd-id: 495A928E
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMIA integrator persona
 column: completed
 completed-evidence: Emasoft/ai-maestro-integrator-agent#11 CLOSED stateReason=COMPLETED (verified 2026-08-07)

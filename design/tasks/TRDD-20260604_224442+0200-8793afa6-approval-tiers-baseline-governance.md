@@ -1,5 +1,5 @@
 ---
-trdd-id: 8793afa6-7d59-4cef-8252-3b3d60637b48
+trdd-id: 8793AFA6
 title: TRDD approval tiers, proposal→planned lifecycle, and baseline-ruleset governance across all role plugins
 column: complete
 created: 2026-06-04T22:44:42+0200

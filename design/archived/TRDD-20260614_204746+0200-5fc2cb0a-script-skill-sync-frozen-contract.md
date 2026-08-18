@@ -1,5 +1,5 @@
 ---
-trdd-id: 5fc2cb0a-6e89-4193-ab10-4ac5f6aa0514
+trdd-id: 5FC2CB0A
 title: Script↔skill sync diagnosis + the FROZEN skill-facing script-interface invariant (MANAGER ↔ ai-maestro)
 column: complete
 created: 2026-06-14T20:47:46+0200

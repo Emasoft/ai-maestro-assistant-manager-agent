@@ -1,5 +1,5 @@
 ---
-trdd-id: 4a48ffea-7c49-4cde-8831-b2997ff8bf7a
+trdd-id: 4A48FFEA
 title: Fleet coordination + verification improvements — cache staleness, idle-agent wake, coverage audit, marker friction
 column: complete
 created: 2026-06-21T21:38:18+0200

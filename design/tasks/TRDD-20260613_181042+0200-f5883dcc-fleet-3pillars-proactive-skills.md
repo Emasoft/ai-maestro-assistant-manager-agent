@@ -1,5 +1,5 @@
 ---
-trdd-id: f5883dcc-3ee0-4335-85cb-c2aa12fe9b9e
+trdd-id: F5883DCC
 title: Fleet 3-pillars as proactive ama-* skills in the core plugin + governance-aware wiring + fool-proof rule injection
 column: planned
 created: 2026-06-13T18:10:42+0200

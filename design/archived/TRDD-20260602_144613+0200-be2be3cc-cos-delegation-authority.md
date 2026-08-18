@@ -1,5 +1,5 @@
 ---
-trdd-id: be2be3cc-3947-454f-8c93-7d368363f53c
+trdd-id: BE2BE3CC
 title: COS delegation authority — which decisions COS handles vs escalates to MANAGER
 column: complete
 created: 2026-06-02T14:46:13+0200

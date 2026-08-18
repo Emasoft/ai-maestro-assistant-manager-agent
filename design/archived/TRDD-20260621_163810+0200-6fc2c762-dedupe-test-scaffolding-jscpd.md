@@ -1,5 +1,5 @@
 ---
-trdd-id: 6fc2c762-6c80-4adb-9241-209834425ecb
+trdd-id: 6FC2C762
 title: Dedupe test scaffolding to clear the Mega-Linter jscpd CI gate
 column: complete
 created: 2026-06-21T16:38:10+0200

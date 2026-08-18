@@ -1,5 +1,5 @@
 ---
-trdd-id: 9b5ec4a3-e5a1-46c2-8af4-78a902ce8c43
+trdd-id: 9B5EC4A3
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the MAINTAINER persona
 column: completed
 completed-evidence: Emasoft/ai-maestro-maintainer-agent#8 CLOSED stateReason=COMPLETED (verified 2026-08-07)

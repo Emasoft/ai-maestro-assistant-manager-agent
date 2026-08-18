@@ -1,5 +1,5 @@
 ---
-trdd-id: 62e181ea-20b1-4614-ad9f-0893117b4857
+trdd-id: 62E181EA
 title: Memory-system tooling improvements — is-due CLI, marker due-gating, gate↔model tier, frontmatter placement
 column: complete
 created: 2026-06-21T21:38:18+0200

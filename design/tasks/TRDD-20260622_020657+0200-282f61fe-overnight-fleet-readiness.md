@@ -1,5 +1,5 @@
 ---
-trdd-id: 282f61fe-c49b-4a35-8a85-4b9dbaeed15a
+trdd-id: 282F61FE
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
 column: blocked
 blocked-by: [ai-maestro#47]

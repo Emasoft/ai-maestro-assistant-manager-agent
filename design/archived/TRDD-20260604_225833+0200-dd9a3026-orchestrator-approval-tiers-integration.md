@@ -1,5 +1,5 @@
 ---
-trdd-id: dd9a3026-0b11-451e-a4b1-94b733a43c16
+trdd-id: DD9A3026
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMOA orchestrator persona
 column: completed
 completed-evidence: Emasoft/ai-maestro-orchestrator-agent#11 CLOSED stateReason=COMPLETED (verified 2026-08-07)

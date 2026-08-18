@@ -1,5 +1,5 @@
 ---
-trdd-id: d369cf76-4192-4137-b4d1-86cd8b345b99
+trdd-id: D369CF76
 title: Fleet-wide — wire every plugin's agents (main AND sub) to proactively use the memory system
 column: published
 created: 2026-06-13T17:36:10+0200

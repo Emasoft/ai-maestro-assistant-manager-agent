@@ -1,5 +1,5 @@
 ---
-trdd-id: 37439c12-e72e-45a7-8620-b636a22582d5
+trdd-id: 37439C12
 title: Integrate the approval-tiers + proposal-lifecycle + baseline-governance rule into the AMAA architect persona
 column: completed
 completed-evidence: Emasoft/ai-maestro-architect-agent#12 CLOSED stateReason=COMPLETED (verified 2026-08-07)

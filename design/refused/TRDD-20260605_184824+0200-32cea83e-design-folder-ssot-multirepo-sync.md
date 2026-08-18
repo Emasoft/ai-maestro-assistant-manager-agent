@@ -1,5 +1,5 @@
 ---
-trdd-id: 32cea83e-a180-44d7-8e71-e46ff1b380de
+trdd-id: 32CEA83E
 title: design/ as SSOT — permanent sync + perfect mirror across all repos of a project
 column: refused
 created: 2026-06-05T18:48:24+0200

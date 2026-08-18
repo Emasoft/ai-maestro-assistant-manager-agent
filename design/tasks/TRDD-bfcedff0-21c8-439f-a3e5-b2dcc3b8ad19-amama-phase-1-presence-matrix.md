@@ -1,5 +1,5 @@
 ---
-trdd-id: bfcedff0-21c8-439f-a3e5-b2dcc3b8ad19
+trdd-id: BFCEDFF0
 title: AMAMA Phase 1 — Presence-read + Reversibility Matrix (v3-hardening pass 1)
 column: backburner
 created: 2026-05-05T00:00:00+0200

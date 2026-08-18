@@ -1,5 +1,5 @@
 ---
-trdd-id: a96d744d-11f6-48e8-971e-09985564dcb7
+trdd-id: A96D744D
 title: Close AMAMA script test-coverage gap — real no-mock tests for the 11 untested scripts
 column: complete
 created: 2026-06-20T23:29:31+0200

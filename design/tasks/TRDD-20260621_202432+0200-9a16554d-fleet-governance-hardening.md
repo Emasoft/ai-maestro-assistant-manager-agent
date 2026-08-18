@@ -1,5 +1,5 @@
 ---
-trdd-id: 9a16554d-1e1e-4e37-bc9a-5624fb19e556
+trdd-id: 9A16554D
 title: Fleet governance hardening — codify APPROVAL/MANDATE + audit role plugins for violations
 column: complete
 created: 2026-06-21T20:24:32+0200
