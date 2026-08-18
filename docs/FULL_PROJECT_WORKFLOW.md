@@ -60,17 +60,17 @@ never runs repo bootstrap inline (`assistant-manager#32`).
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 20 | COS | Request review from integrator-skilled member; task moves `testing` -> `ai_review` once all gates PASS |
-| 21 | Member | Review PR, merge or reject |
-| 22 | COS | Handle failures: move to `failed`, reassign, then back to `dev` for the retry (a `failed` task is never archived) |
+| 20 | COS | Request review from integrator-skilled member; the TEST RUNNER moves `testing` -> `ai_review` once all gates PASS (Part B2) |
+| 21 | Member (reviewer) | Review PR, merge or reject |
+| 22 | COS | Handle failures: reassign and route back to `dev` for the retry. Marking a card `failed` (permanent abandon) is a MANAGER/USER decision, never COS (Part B2); a `failed` task is never archived |
 
 ### Phase 6: Completion
 
 | Step | Actor | Action |
 |------|-------|--------|
-| 23 | COS | Move task `ai_review` -> `complete` |
-| 24 | COS | For big tasks: escalate `ai_review` -> `human_review` (manager surfaces it to the user) before `complete` |
-| 25 | COS | Release per `release-via`: `publish` -> `published` (tools), or `deploy` -> `live` -> `live_auditing` (services) |
+| 23 | Reviewer | Move task `ai_review` -> `complete` (Part B2: the reviewer owns this transition, not COS) |
+| 24 | AI reviewer | For big tasks: escalate `ai_review` -> `human_review` (relayed to the USER via MANAGER per R6) before `complete` |
+| 25 | INTEGRATOR | Release per `release-via`: `complete` -> `publish|deploy` needs MANAGER approval (non-exempt, §Y); then RELEASER/DEPLOYER subagents run `publish` -> `published` or `deploy` -> `live` -> `live_auditing` |
 | 26 | COS | Report completion to manager |
 | 27 | COS | Assign next task to available member |
 
