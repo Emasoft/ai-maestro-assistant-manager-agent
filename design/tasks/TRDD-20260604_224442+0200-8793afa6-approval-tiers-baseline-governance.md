@@ -181,3 +181,14 @@ significant edit to a non-git global file).
   `design/tasks/` per USER directive (a user-directed task is approved
   by definition — Tier 3 author is the USER). Phase 1 implemented;
   Phase 2 gated on USER confirmation of the Part B classification.
+
+## Acceptance (closing checklist)
+
+- [x] Canonical rule `~/.claude/rules/trdd-approval-tiers.md` authored (Part A folder lifecycle, Part B 4-tier classification, Part C baseline governance).
+- [x] Part B classification confirmed by USER ("yes") 2026-06-04.
+- [x] 7 detailed, self-contained TRDDs drafted and posted as GitHub issues on the 7 receiving role-plugin repos (orchestrator#11, chief-of-staff#15, architect#12, integrator#11, programmer#11, autonomous#4, maintainer#8).
+- [x] MANAGER's own main-agent file updated locally with the `### Task Approval Tiers` section.
+- [x] Local MANAGER changes shipped in release v2.17.2 via publish.py (push authorization recorded, TRDD-BRRJK57P).
+- [x] Optional Part A fold into `trdd-design-tasks.md` explicitly superseded by the aimaestro-trdd-approval overlay.
+
+Closed complete on 2026-08-19 per TRDD-QX6VFAXS corpus hygiene pass.
