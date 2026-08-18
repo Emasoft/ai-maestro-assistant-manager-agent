@@ -3,6 +3,7 @@ name: governance-ssot-is-the-governance-rules-branch
 description: "which ref of GOVERNANCE-RULES.md is authoritative / is main still stale or did the branch get merged / main said the rules end at R20 but they run to R52 / I checked the default branch and found no R42 / a rule I cited turned out unpublished / doc and CLI disagree about a permitted verb / is R42.8 ratified"
 ocd: 2026-08-08
 lmd: 2026-08-11
+publish-globally: false
 metadata:
   node_type: memory
   type: project

@@ -3,6 +3,7 @@ name: architecture
 description: "how does the ai-maestro-assistant-manager-agent (AMAMA, the MANAGER role plugin) work — overview, the main parts, where the key pieces live"
 ocd: 2026-06-14
 lmd: 2026-06-14
+publish-globally: false
 metadata:
   node_type: memory
   type: project

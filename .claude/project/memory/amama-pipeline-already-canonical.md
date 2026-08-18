@@ -3,6 +3,7 @@ name: amama-pipeline-already-canonical
 description: "should I upgrade AMAMA's CI/publish pipeline to the CPV canon / RC-PIPELINE-DRIFT WARNINGs on publish --dry-run / is cpv-upgrade-plugin --force-templates safe here / is the pipeline missing SBOM / provenance / SHA-pinning / SHA256SUMS / what is task #22 for AMAMA"
 ocd: 2026-07-17
 lmd: 2026-07-17
+publish-globally: false
 metadata:
   node_type: memory
   type: reference
