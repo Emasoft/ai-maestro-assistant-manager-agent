@@ -100,12 +100,13 @@ it is the audit trail.
 
 ## Baseline golden rule G1.1
 
-^baseline-g1-1 [desc:"Baseline golden rule G1.1: every agent writing to GitHub begins with a self-identification line, because it is an anti-impersonation control the MANAGER must not weaken.", keywords: baseline_golden_rule_G1.1_GitHub_authorship_self-identification every_agent_writing_to_GitHub_begins_with_a_one-line_self-identification shared_owner_identity_anti-impersonation_control_golden_so_MANAGER_cannot_weaken_it, type: reference, ocd: 2026-06-21, lmd: 2026-06-25]
+^baseline-g1-1 [desc:"Baseline golden rule G1.1: every agent writing to GitHub begins with a self-identification line, because it is an authorship-integrity control the MANAGER must not weaken.", keywords: baseline_golden_rule_G1.1_GitHub_authorship_self-identification every_agent_writing_to_GitHub_begins_with_a_one-line_self-identification shared_owner_identity_authorship_integrity_control_golden_so_MANAGER_cannot_weaken_it, type: reference, ocd: 2026-06-21, lmd: 2026-08-18]
 Every AI-Maestro PRRD SHOULD carry, as `G1.1`, the GitHub authorship
 self-identification rule: every agent that writes to GitHub begins the body with a
 one-line self-identification of which agent authored it (shared owner identity).
-It is GOLDEN (user-set, immutable to MANAGER) because it is an anti-impersonation
-control the MANAGER must not be able to weaken.
+It is GOLDEN (user-set, immutable to MANAGER) because it is an authorship-integrity
+control — it stops any agent's GitHub post passing as another author's — that the
+MANAGER must not be able to weaken.
 
 ## Governed by / see also
 
