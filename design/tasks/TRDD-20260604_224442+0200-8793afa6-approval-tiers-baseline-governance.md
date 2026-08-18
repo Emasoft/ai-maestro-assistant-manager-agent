@@ -1,9 +1,9 @@
 ---
 trdd-id: 8793afa6-7d59-4cef-8252-3b3d60637b48
 title: TRDD approval tiers, proposal→planned lifecycle, and baseline-ruleset governance across all role plugins
-column: todo
+column: complete
 created: 2026-06-04T22:44:42+0200
-updated: 2026-08-05T16:07:47+0200
+updated: 2026-08-18T20:55:00+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -69,12 +69,13 @@ external-refs: []
     `### Task Approval Tiers` section after `### GovernanceRequest
     Approval (C4)`, disambiguating the two approval axes.
 
-**NEXT ACTION:** none required of MANAGER — each receiving plugin
-implements its issue on its OWN pipeline (cross-project; out of MANAGER's
-hands now). Optional follow-up: fold Part A into trdd-design-tasks.md.
-Local MANAGER changes (the global rule is in ~/.claude/rules/ which is
-not git; the design/proposals/, this TRDD, and the persona edit are
-UNCOMMITTED in the MANAGER repo) — pending USER push authorization.
+**✅ CARD COMPLETE 2026-08-18.** Each receiving plugin implements its issue on
+its OWN pipeline (cross-project; out of MANAGER's hands). The last pending item —
+push authorization for the local MANAGER changes — was delivered by the hub's
+publish GO (recorded USER delegation, TRDD-BRRJK57P): everything shipped in
+release v2.17.2 via publish.py. The optional fold of Part A into
+trdd-design-tasks.md is superseded by the aimaestro-trdd-approval overlay
+(min-approval-requirement title ladder), which now governs.
 
 **Load-bearing facts / gotchas:**
 - `~/.claude/` is **NOT** a git repo → only ADDITIVE new rule files
