@@ -153,3 +153,14 @@ their content is now safe in the canonical scope. See the `[^1]` lesson atom
 ## Notes and lessons learned
 
 (none yet)
+
+## Acceptance (closing checklist)
+
+- [x] Two governance wikimems written (Phase 1): `approval-vs-mandate-protocol.md`, `prrd-golden-silver-rules.md`, in AMAMA PROJECT scope, git-tracked.
+- [x] Governance audit of all 5 locally-cached plugins completed and verified against live working trees; reports under `reports/governance-audit/`.
+- [x] ai-maestro#47 landed as R41 (APPROVAL vs MANDATE) in GOVERNANCE-RULES.md v4.5.0.
+- [x] Propagation wave fired 2026-08-18 (hub GO, TRDD-BRRJK57P): 10 per-plugin issues posted citing R41, all with G1.1 self-ID, zero bare handles.
+- [x] AMAMA finding A fixed and verified (G1.1 self-id note added to 3 gh-post skill files, commit `225b251`).
+- [x] USER-scope vs PROJECT-scope wikimem duplication resolved by lossless merge (`4094cd8`), not deletion — 14 recall anchors ported into the canonical PROJECT copies.
+
+Closed complete on 2026-08-19 per TRDD-QX6VFAXS corpus hygiene pass.
