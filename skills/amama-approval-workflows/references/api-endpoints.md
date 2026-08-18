@@ -39,26 +39,29 @@ aimaestro-governance.sh request <id>
 
 See the `team-governance` skill for full API details.
 
-## Approve a Request (MANAGER only)
+## Approve a Request (password-gated — MAESTRO actions it)
 
 ```
-aimaestro-governance.sh approve <id> [--approver <MANAGER-UUID>]
+aimaestro-governance.sh approve <id> --password <P> [--approver <MANAGER-UUID>]
 ```
 
-AID-authorized (R28) — no password. A cross-host approval is sudo-gated (USER/UI,
-R32): surface it to the MAESTRO rather than supplying a password yourself.
+`--password` is REQUIRED by the CLI and is USER authority — it never passes through a
+model (R32). The MANAGER records its verdict and surfaces the request to the MAESTRO to
+action via the UI or a logged-in CLI session. For **TRDD** approvals (the MANAGER's own
+R28 path) use `aimaestro-trdd.sh approve <trdd-id> --approver W --rationale R` instead —
+AID-authorized, no password, mints the portfolio token `aimaestro-trdd.sh verify` checks.
 
 **Response on success**: Status transitions to `local-approved` or `dual-approved` (if remote already approved).
 
 See the `team-governance` skill for full API details.
 
-## Reject a Request (MANAGER only)
+## Reject a Request (password-gated — MAESTRO actions it)
 
 ```
-aimaestro-governance.sh reject <id> [--rejector <MANAGER-UUID>] [--reason <rejection-reason>]
+aimaestro-governance.sh reject <id> --password <P> [--rejector <MANAGER-UUID>] [--reason <rejection-reason>]
 ```
 
-AID-authorized (R28) — no password.
+Password-gated like approve (R32). TRDD refusals use `aimaestro-trdd.sh refuse <trdd-id> --reason R` — AID-authorized, `--reason` required.
 
 **Response on success**: Status transitions to `rejected`. The operation is permanently blocked.
 

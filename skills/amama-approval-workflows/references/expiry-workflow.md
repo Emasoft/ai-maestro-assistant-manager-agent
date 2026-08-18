@@ -36,10 +36,13 @@ Every hour, query for GovernanceRequests where:
 
 For each expired GovernanceRequest:
 
-1. **Reject via CLI** (AID-authorized, R28 — no password)
+1. **Mark expired and surface to the MAESTRO** — `aimaestro-governance.sh reject` is
+   password-gated (USER authority, R32), so an agent cannot auto-reject. Record the
+   expiry verdict locally and notify the MAESTRO to action it:
    ```
-   aimaestro-governance.sh reject <id> --reason "EXPIRED: Request pending for more than 24 hours without dual-approval"
+   aimaestro-governance.sh reject <id> --password <P> --reason "EXPIRED: Request pending for more than 24 hours without dual-approval"
    ```
+   (run by the MAESTRO via UI or their logged-in CLI session — never by an agent)
 
 2. **Update local state file**
    ```yaml

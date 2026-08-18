@@ -39,13 +39,14 @@ user can grant is **Tier 3 = escalate-to-MAESTRO**.
 
 ## Instructions
 
-1. Poll pending (`aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json`); surface only count + ids, fetch a full record (`request <id>`) only when acting
+1. Poll pending (`aimaestro-governance.sh requests --status pending > /tmp/amama-pending.json`); surface only count + ids; the full record is already in that JSON — filter it with `jq '.[] | select(.id == "<id>")'` (there is no per-id fetch verb)
 2. Parse type per references/governance-request-types.md
 3. Present to MANAGER using template
-4. Call `aimaestro-governance.sh approve`/`reject` — AID-authorized (R28). For a
-   cross-host / sudo-gated request, surface it to the MAESTRO to action via the UI
-   (R32); do NOT supply a password yourself
-5. Verify transition per references/state-machine.md
+4. Route by request kind:
+   - **TRDD approvals** (proposal → planned, refusals): `aimaestro-trdd.sh approve <trdd-id> --approver <who> --rationale <r>` / `aimaestro-trdd.sh refuse <trdd-id> --reason <r>` — AID-authorized (R28); approving mints the portfolio token that `aimaestro-trdd.sh verify` checks.
+   - **GovernanceRequests** (team / agent lifecycle, COS, titles): `aimaestro-governance.sh approve|reject` is **password-gated by design** — the governance password is USER authority and never passes through a model (R32). Record your verdict, then surface the request to the MAESTRO to action via the UI or their logged-in CLI session; do NOT supply a password yourself.
+   - **Team transfers**: `aimaestro-governance.sh transfer resolve <transferId> --action approve|reject` (MANAGER or destination-COS authority).
+5. Verify transition per references/state-machine.md (TRDDs: `aimaestro-trdd.sh verify <id>`)
 6. Update state per references/state-tracking.md
 7. Notify requesting agent
 
@@ -53,8 +54,8 @@ user can grant is **Tier 3 = escalate-to-MAESTRO**.
 
 | Outcome | Action |
 |---------|--------|
-| Approve | Call approve, update, notify |
-| Reject | Call reject, update, notify |
+| Approve | TRDD: `aimaestro-trdd.sh approve`; GovernanceRequest: verdict + surface to MAESTRO; update, notify |
+| Reject | TRDD: `aimaestro-trdd.sh refuse --reason`; GovernanceRequest: verdict + surface to MAESTRO; update, notify |
 | Info needed | Query, re-present |
 | Timeout 24h | Auto-reject per expiry-workflow |
 | Rate limit | Queue, wait, retry |
@@ -71,7 +72,9 @@ user can grant is **Tier 3 = escalate-to-MAESTRO**.
 
 ## Examples
 
-**Input:** `aimaestro-governance.sh approve <id> [--approver <MANAGER-UUID>]` (AID-authorized, R28)
+**Input (TRDD approval):** `aimaestro-trdd.sh approve <trdd-id> --approver MANAGER --rationale "<r>"` (AID-authorized, R28)
+
+**Input (GovernanceRequest, actioned by the MAESTRO):** `aimaestro-governance.sh approve <id> --password <P> [--approver <MANAGER-UUID>]` — password = USER authority; never supplied by an agent (R32)
 
 **Output:** `{"status":"approved","updatedAt":"2026-03-08T10:00:00Z","approvedBy":"MANAGER"}`
 
@@ -83,7 +86,7 @@ Copy this checklist and track your progress:
 - [ ] Poll pending GovernanceRequests (`aimaestro-governance.sh requests --status pending > <file>`; surface only count + ids)
 - [ ] Parse type, present to MANAGER
 - [ ] Wait for decision
-- [ ] Call `aimaestro-governance.sh approve`/`reject` (AID-authorized; sudo-gated → surface to MAESTRO, R32)
+- [ ] Execute the verdict: TRDD → `aimaestro-trdd.sh approve|refuse` (AID-authorized, R28); GovernanceRequest → surface to MAESTRO (password-gated, R32); transfer → `aimaestro-governance.sh transfer resolve`
 - [ ] Verify state transition
 - [ ] Update state file, notify agent
 

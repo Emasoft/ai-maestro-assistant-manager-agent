@@ -42,7 +42,7 @@ When a GovernanceRequest is created:
 - [ ] Parse request type
 - [ ] Present GovernanceRequest to MANAGER using appropriate template
 - [ ] Wait for MANAGER decision
-- [ ] Call `aimaestro-governance.sh approve`/`reject` (AID-authorized; sudo-gated → surface to MAESTRO, R32)
+- [ ] Execute the verdict: TRDD → `aimaestro-trdd.sh approve|refuse` (AID-authorized, R28); GovernanceRequest → surface to MAESTRO (password-gated, R32); transfer → `aimaestro-governance.sh transfer resolve`
 - [ ] Verify state transition completed
 - [ ] Update local approval state tracking file
 - [ ] Notify requesting agent of the outcome
