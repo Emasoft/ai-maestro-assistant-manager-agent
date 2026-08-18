@@ -14,13 +14,10 @@ relevant-rules: [23, 28]
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-19
 
-- Audit pass 1 DONE: decoupling checker clean on shipped tree; frontmatter/hooks/plugin.json valid.
-- D1 stale `governance.sh transfer` syntax in amama-approval-workflows/references/api-endpoints.md — IN PROGRESS.
-- D2 zero trddgrep/prrdgrep/specgrep adoption — pending (pattern: core plugin ama-trdd-find).
-- D3 dependency `ai-maestro-plugin ^2.6.0` stale vs core 3.1.25 — awaiting hub confirm of ^3.1.0.
-- Q1 review-column ownership (USER: maintainer; Part B2: integrator) — RULING PENDING at hub (msg 9b4cb094).
-- Q2 governance approve/reject hard-require --password vs skills' "AID-authorized, no password" — RULING PENDING at hub.
-- NEXT ACTION: apply D1 edit; then D2 skill edits; hold D3/Q1/Q2 on hub reply.
+- DONE: D1 (transfer create/list/resolve, commit 06c...), Q2 reroute (trdd.sh approve|refuse; governance approve/reject = MAESTRO password-gated; transfer resolve for transfers), D3 dep bump ^3.1.0, D2 pillar tools (main agent + kanban monitoring + status reporting), Q1 context-dependent review routing (team→AMIA via COS; no-team→MAINTAINER), corpus hygiene (trddgrep fix; 4 complete cards checklisted+archived; 4A48FFEA body-state claim defanged). Tests 158/158 green. validate errors 25→16.
+- PENDING hub reply (msg 333e4cdd): Q3 external-blocker grammar for blocked-by (6 GRAPH-UNKNOWN-BLOCKER) + policy on 10 legacy archived TERMINAL-WITHOUT-CHECKLIST.
+- PENDING: version bump + publish via canonical pipeline once remaining errors resolved; repo is AHEAD of origin (push not yet authorized this session).
+- NEXT ACTION: on hub Q3 reply, fix the 6 blocked-by fields per the sanctioned grammar, then re-run trddgrep validate.
 
 ## Findings
 
