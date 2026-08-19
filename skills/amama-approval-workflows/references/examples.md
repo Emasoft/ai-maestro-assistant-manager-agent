@@ -45,8 +45,8 @@ See the `team-governance` skill for full API details.
 ## Example 2: Handling a Transfer Request
 
 ```
-# 1. Transfer request arrives
-aimaestro-governance.sh request gov-def456
+# 1. Transfer request arrives — fetch it from the filtered list (there is no per-id fetch verb)
+aimaestro-governance.sh requests --type transfer-agent | jq '.[] | select(.id == "gov-def456")'
 
 # {
 #   "id": "gov-def456",
