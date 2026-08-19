@@ -3,13 +3,13 @@ trdd-id: U17K7AX6
 title: Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
 column: blocked
 pre-block-column: testing
-blocked-by: [ai-maestro TRDD-LT5N2JA4 — the aggregated probe that carries lastError + the janitor/agentlenspro feeds]
+blocked-by: [LT5N2JA4]
 created: 2026-08-06T12:44:39+0200
-updated: 2026-08-07T12:03:28+0200
+updated: 2026-08-19T00:55:00+0200
 current-owner: amama-session
 task-type: feature
 approval-tier: 0
-external-refs: [hub-directive-2026-08-06, "github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35", "github.com/Emasoft/ai-maestro/issues/130"]
+external-refs: ["ai-maestro:TRDD-LT5N2JA4", hub-directive-2026-08-06, "github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35", "github.com/Emasoft/ai-maestro/issues/130"]
 ---
 
 # Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
@@ -65,3 +65,7 @@ into a single per-agent state view (state enum + metadata + last error message).
 - [ ] Documented unblock playbook per state (idle vs blocked vs permission prompt vs api error).
 
 ## Approval log
+
+## Blocker note (2026-08-19, TRDD-QX6VFAXS hygiene)
+
+`blocked-by: LT5N2JA4` is a CROSS-PROJECT blocker — hub TRDD `ai-maestro:TRDD-LT5N2JA4` (the aggregated probe carrying lastError + the janitor/agentlenspro feeds). Local trddgrep flags it GRAPH-UNKNOWN-BLOCKER because the scoped citation form is not yet parsed — sanctioned residual per hub Q3 ruling; parser gap filed hub-side.

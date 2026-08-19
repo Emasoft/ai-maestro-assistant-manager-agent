@@ -1,11 +1,12 @@
 ---
 trdd-id: 282F61FE
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
-column: blocked
-blocked-by: [ai-maestro#47]
-pre-block-column: dev
+column: backburner
+blocked-by: []
+review-after: 2026-09-15
+external-refs: ["github.com/Emasoft/ai-maestro/issues/47"]
 created: 2026-06-22T02:06:57+0200
-updated: 2026-08-07T12:03:28+0200
+updated: 2026-08-19T00:55:00+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -261,3 +262,7 @@ Loop via the janitor heartbeat; each turn advance the worklist top-down. Make
 AMAMA changes as local commits, batch-publish via the strict gate. Post one crisp,
 current, actionable MANAGER comment per fleet issue so the owning Claude executes
 on wake. Record progress in this STATE block + memory; never stop while items remain.
+
+## Wait state (2026-08-19, TRDD-QX6VFAXS hygiene)
+
+External (non-TRDD) blocker: hub issue ai-maestro#47. Per hub Q3 ruling: external issues live in `external-refs:`/body, not `blocked-by:`; pure wait parked with `review-after: 2026-09-15`. Resume in `dev` when #47 lands.

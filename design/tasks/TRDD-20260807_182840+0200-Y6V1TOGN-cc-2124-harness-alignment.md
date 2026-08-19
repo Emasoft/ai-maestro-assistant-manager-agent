@@ -1,16 +1,15 @@
 ---
 trdd-id: Y6V1TOGN
 title: Align AMAMA to Claude Code 2.1.208-2.1.224 and decide the native cross-session messaging question
-column: blocked
-pre-block-column: dev
-blocked-by: [ai-maestro#143 — R42.3's "ONLY channel" clause is USER-tier; only the USER may correct it]
+column: human_review
+blocked-by: []
 created: 2026-08-07T18:28:40+0200
-updated: 2026-08-16T16:33:00+0200
+updated: 2026-08-19T00:55:00+0200
 current-owner: amama-session
 task-type: infra
 approval-tier: 0
 relevant-rules: []
-external-refs: ["https://code.claude.com/docs/en/release-notes"]
+external-refs: ["github.com/Emasoft/ai-maestro/issues/143", "https://code.claude.com/docs/en/release-notes"]
 ---
 
 # Align AMAMA to Claude Code 2.1.208 → 2.1.224
@@ -199,3 +198,7 @@ ruling rests on the routing note, not the canonical record. Both cited `ai-maest
 comments were verified to exist (5219694921, 5220208974).
 
 ## Approval log
+
+## Wait state (2026-08-19, TRDD-QX6VFAXS hygiene)
+
+Awaiting a USER-tier hub decision: ai-maestro#143 — R42.3's "ONLY channel" clause is USER-tier; only the USER may correct it. Per hub Q3 ruling a USER-decision wait is `human_review` (blocked-by holds TRDD ids only). Resume in `dev` on the ruling.
