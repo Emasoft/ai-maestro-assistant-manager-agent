@@ -70,7 +70,7 @@ never runs repo bootstrap inline (`assistant-manager#32`).
 |------|-------|--------|
 | 23 | Reviewer | Move task `ai_review` -> `complete` (Part B2: the reviewer owns this transition, not COS) |
 | 24 | AI reviewer | For big tasks: escalate `ai_review` -> `human_review` (relayed to the USER via MANAGER per R6) before `complete` |
-| 25 | INTEGRATOR | Release per `release-via`: `complete` -> `publish|deploy` needs MANAGER approval (non-exempt, §Y); then RELEASER/DEPLOYER subagents run `publish` -> `published` or `deploy` -> `live` -> `live_auditing` |
+| 25 | INTEGRATOR | Release per `release-via`: `complete` -> `publish\|deploy` needs MANAGER approval (non-exempt, §Y); then RELEASER/DEPLOYER subagents run `publish` -> `published` or `deploy` -> `live` -> `live_auditing` |
 | 26 | COS | Report completion to manager |
 | 27 | COS | Assign next task to available member |
 

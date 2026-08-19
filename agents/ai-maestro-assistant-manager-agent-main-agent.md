@@ -286,7 +286,7 @@ As MANAGER, your AID session secret grants you these privileges via the frozen C
 | **Hibernate any agent** | `aimaestro-agent.sh hibernate <id>` | Any agent on this host |
 | **Assign / transfer governance titles** | `aimaestro-governance.sh request …` → MAESTRO actions `approve` (password-gated, R32); team transfers via `transfer create`→`transfer resolve`; COS via `aimaestro-teams.sh reassign-cos <teamId> <agentUUID>` | No standalone `assign-title` verb (ai-maestro#49) — title-granting flows through the auditable request→approve path; `aimaestro-agent.sh update` has **no** title field (only task/model/args/tags). TITLE is a MAESTRO-sudo-only locked field (R39.4). |
 | **Delete agents** | `aimaestro-agent.sh delete <id>` | Step-by-step, one at a time |
-| **Approve GovernanceRequests** | verdict + surface to MAESTRO | `aimaestro-governance.sh approve|reject` is password-gated (USER authority, R32) — an agent never supplies it. Team transfers: `aimaestro-governance.sh transfer resolve <id> --action approve|reject` (MANAGER/COS, no password). TRDD approvals: `aimaestro-trdd.sh approve|refuse` (AID-authorized, R28). |
+| **Approve GovernanceRequests** | verdict + surface to MAESTRO | `aimaestro-governance.sh approve\|reject` is password-gated (USER authority, R32) — an agent never supplies it. Team transfers: `aimaestro-governance.sh transfer resolve <id> --action approve\|reject` (MANAGER/COS, no password). TRDD approvals: `aimaestro-trdd.sh approve\|refuse` (AID-authorized, R28). |
 
 Operations that are **USER-ONLY** (require governance password, not available to agents):
 - Setting the governance password

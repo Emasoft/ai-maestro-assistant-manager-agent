@@ -27,6 +27,8 @@ AMAMA must proactively monitor GitHub Project boards to detect changes that may 
 > could-not-run (run `trddgrep env` when the answers look wrong). Server-side team
 > tasks stay `aimaestro-teams.sh tasks <teamId>`.
 
+And before notifying anyone, re-read the routing invariant:
+
 > **Routing invariant (comm-graph v3, R6 v3) — read before every notification below.**
 > The CHIEF-OF-STAFF is the **SOLE entry point into a team**. As MANAGER you may
 > message HUMAN, peer MANAGERs, CHIEF-OF-STAFF, AUTONOMOUS, and MAINTAINER —

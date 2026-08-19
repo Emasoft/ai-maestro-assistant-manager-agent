@@ -23,8 +23,8 @@ title in a call; the server derives it from the AID (R28).
 | Create team (incl. COS + 5 base members, R29) | `aimaestro-teams.sh create --name N [--type T]` | MANAGER action, NO user approval; server auto-creates the COS |
 | Delete team (R29) | `aimaestro-teams.sh delete <teamId> [--delete-agents]` | MANAGER action, NO user approval; the deployed CLI's `--password` is a USER/UI residual AMAMA never supplies (R32) |
 | Grant COS mandate (R30) | `aimaestro-agent.sh wake <cos-id>` then mandate via AMP | Wake the auto-created COS and authorize it to build the base + extras |
-| Approve/Reject GovernanceRequest | verdict + surface to MAESTRO | `governance.sh approve|reject` are password-gated (USER authority, R32) — agents never call them. |
-| Resolve team transfer | `aimaestro-governance.sh transfer resolve <id> --action approve|reject` | MANAGER/destination-COS authority; no password |
+| Approve/Reject GovernanceRequest | verdict + surface to MAESTRO | `governance.sh approve\|reject` are password-gated (USER authority, R32) — agents never call them. |
+| Resolve team transfer | `aimaestro-governance.sh transfer resolve <id> --action approve\|reject` | MANAGER/destination-COS authority; no password |
 | Approve/Refuse TRDD | `aimaestro-trdd.sh approve <id> --approver W --rationale R` / `refuse <id> --reason R` | AID-authorized (R28); mints the portfolio token `verify` checks |
 | Send message | `amp-send …` | AI Maestro messaging |
 | Check inbox | `amp-inbox` | Priority: urgent > high > normal |
