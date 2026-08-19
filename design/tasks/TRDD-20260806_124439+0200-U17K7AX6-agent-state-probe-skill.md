@@ -3,7 +3,7 @@ trdd-id: U17K7AX6
 title: Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
 column: blocked
 pre-block-column: testing
-blocked-by: [LT5N2JA4]
+blocked-by: [ai-maestro:TRDD-LT5N2JA4]
 created: 2026-08-06T12:44:39+0200
 updated: 2026-08-19T00:55:00+0200
 current-owner: amama-session
@@ -68,4 +68,4 @@ into a single per-agent state view (state enum + metadata + last error message).
 
 ## Blocker note (2026-08-19, TRDD-QX6VFAXS hygiene)
 
-`blocked-by: LT5N2JA4` is a CROSS-PROJECT blocker — hub TRDD `ai-maestro:TRDD-LT5N2JA4` (the aggregated probe carrying lastError + the janitor/agentlenspro feeds). Local trddgrep flags it GRAPH-UNKNOWN-BLOCKER because the scoped citation form is not yet parsed — sanctioned residual per hub Q3 ruling; parser gap filed hub-side.
+`blocked-by: LT5N2JA4` is a CROSS-PROJECT blocker — hub TRDD `ai-maestro:TRDD-LT5N2JA4` (the aggregated probe carrying lastError + the janitor/agentlenspro feeds). Scoped citation parsing shipped hub-side (TRDD-PTFPGSLV, c242d4ca): trddgrep now accepts this spelling and lints WARN GRAPH-CROSS-PROJECT-BLOCKER instead of ERROR.
