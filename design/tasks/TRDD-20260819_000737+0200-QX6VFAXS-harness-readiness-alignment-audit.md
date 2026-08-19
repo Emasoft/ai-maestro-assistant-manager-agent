@@ -1,9 +1,9 @@
 ---
 trdd-id: QX6VFAXS
 title: Harness-readiness alignment audit — pillar-tool adoption, stale CLI syntax, review-column routing
-column: dev
+column: complete
 created: 2026-08-19T00:07:37+0200
-updated: 2026-08-19T00:07:37+0200
+updated: 2026-08-19T01:25:00+0200
 current-owner: amama-session
 task-type: audit
 min-approval-requirement: none
@@ -12,12 +12,9 @@ relevant-rules: [23, 28]
 
 # Harness-readiness alignment audit (USER goal 2026-08-19)
 
-## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-19
+## ⏵ STATE — CLOSED 2026-08-19
 
-- DONE: D1 (transfer create/list/resolve, commit 06c...), Q2 reroute (trdd.sh approve|refuse; governance approve/reject = MAESTRO password-gated; transfer resolve for transfers), D3 dep bump ^3.1.0, D2 pillar tools (main agent + kanban monitoring + status reporting), Q1 context-dependent review routing (team→AMIA via COS; no-team→MAINTAINER), corpus hygiene (trddgrep fix; 4 complete cards checklisted+archived; 4A48FFEA body-state claim defanged). Tests 158/158 green. validate errors 25→16.
-- PENDING hub reply (msg 333e4cdd): Q3 external-blocker grammar for blocked-by (6 GRAPH-UNKNOWN-BLOCKER) + policy on 10 legacy archived TERMINAL-WITHOUT-CHECKLIST.
-- PENDING: version bump + publish via canonical pipeline once remaining errors resolved; repo is AHEAD of origin (push not yet authorized this session).
-- NEXT ACTION: on hub Q3 reply, fix the 6 blocked-by fields per the sanctioned grammar, then re-run trddgrep validate.
+All findings fixed or ruled; v2.18.0 released via publish.py (all gates green, pushed, GitHub release). Residuals are hub-side: TRDD-PTFPGSLV (trddgrep scoped-blocker parsing + grandfather boundary). Nothing to resume.
 
 ## Findings
 
@@ -31,8 +28,10 @@ relevant-rules: [23, 28]
 
 ## Acceptance
 
-- [ ] D1 fixed and consistent across skill + references
-- [ ] D2: pillar tools referenced wherever board/PRRD/spec queries occur, with fallback per core pattern
-- [ ] D3 bumped after hub confirm
-- [ ] Q1/Q2 resolved per hub ruling and routing/docs updated
-- [ ] plugin validates + tests green; version bumped via publish pipeline
+- [x] D1 fixed and consistent across skill + references (transfer create/list/resolve)
+- [x] D2: pillar tools referenced at board/PRRD/spec query sites, with fallback per core pattern
+- [x] D3 bumped to ^3.1.0 after hub confirm
+- [x] Q1/Q2/Q3 resolved per hub rulings; routing/docs/corpus updated (validate 25 -> 11, all sanctioned residuals pending hub TRDD-PTFPGSLV)
+- [x] plugin validates (CPV strict clean) + tests 158/158 green; v2.18.0 released via publish.py
+
+Closed complete on 2026-08-19.
