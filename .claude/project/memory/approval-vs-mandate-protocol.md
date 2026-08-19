@@ -2,7 +2,7 @@
 name: approval-vs-mandate-protocol
 description: "difference between an APPROVAL and a MANDATE / does this task need sign-off and from whom / who must sign a TRDD before I execute it / is a MANAGER or COS order binding / can an agent refuse a mandate / which authority signs which TRDD category (none / CHIEF-OF-STAFF / MANAGER / MAESTRO) / a golden-rule change needs whose approval / how does an agent verify a signature before executing"
 ocd: 2026-06-21
-lmd: 2026-08-18
+lmd: 2026-08-19
 publish-globally: true
 metadata:
   node_type: memory
@@ -111,6 +111,11 @@ user-only; the MANAGER may only file a proposal and wait). See
   machine-LOCAL-scope page).
 - See also [[verify-cross-repo-cited-sha-before-building-sha-verification-check]] —
   another agent says a commit/verb SHIPPED or is 'live on the branch' but I can't see it.
+
+
+^ATOM-OV0I-V512 [desc: "MANAGER approval paths: trdd.sh approve/refuse (AID); governance.sh approve/reject = password-gated MAESTRO-only; transfers via transfer resolve", keywords: governance_approve_password_gated manager_cannot_approve_governance_request trddsh_approve_refuse transfer_resolve blocked-by_ids_only human_review_user_wait approval_call_fails_at_runtime, type: project, ocd: 2026-08-19, lmd: 2026-08-19]
+
+Approval execution paths (hub ruling 2026-08-19, AMAMA v2.18.0): aimaestro-governance.sh approve|reject HARD-REQUIRE --password (USER authority, never passes through a model, R32) — the MANAGER never calls them; it records a verdict and surfaces the GovernanceRequest to the MAESTRO. The MANAGER's R28 path is aimaestro-trdd.sh approve <id> --approver W --rationale R / refuse <id> --reason R (AID-authorized, mints the portfolio token verify checks). Team transfers: aimaestro-governance.sh transfer resolve <id> --action approve|reject (no password). blocked-by: holds TRDD ids ONLY — USER-decision waits go to human_review; pure external waits to review-after + external-refs.
 
 ## Notes and lessons learned
 
