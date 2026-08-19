@@ -26,6 +26,13 @@ AMAMA must proactively monitor GitHub Project boards to detect changes that may 
 > `show <id8>` = the card + STATE block. Exit codes: 0 clean · 1 findings · 2
 > could-not-run (run `trddgrep env` when the answers look wrong). Server-side team
 > tasks stay `aimaestro-teams.sh tasks <teamId>`.
+>
+> **Fleet-wide board view** (the MANAGER's "all TRDDs across all registered agents"
+> question): `aimaestro-trdd.sh search --all-agents [--column C] [--grep K]` — one
+> JSON array, one row per registered agent (`{"agent","agentId","result"}`; a
+> failing agent yields an in-row `"error"` instead of aborting the sweep). All
+> single-agent search filters compose; `--agent` and `--all-agents` are mutually
+> exclusive. (Hub TRDD-CYUCN7Y0.)
 
 And before notifying anyone, re-read the routing invariant:
 
