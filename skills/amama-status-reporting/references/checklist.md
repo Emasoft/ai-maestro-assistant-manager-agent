@@ -13,6 +13,7 @@ Copy this checklist and track your progress:
 - [ ] Run `aimaestro-agent.sh list | jq '[.agents[] | {name, status, lastHeartbeat}]'` for registered agents (filter output further client-side by `status`)
 - [ ] Run `aimaestro-teams.sh show <teamId> | jq '{name, members, status}'` for team status
 - [ ] Run `aimaestro-teams.sh tasks <teamId> | jq '[.tasks[] | {id, title, status, assignee}]'` for team task Kanban data
+- [ ] From the project root, run `trddgrep` (the TRDD-corpus board) and, for a blocker report, `trddgrep roots` + `trddgrep why <id8>` — the corpus is the SSOT the server board mirrors (exit 2 = could-not-run, check `trddgrep env`; never `trddgrep … || …`)
 - [ ] Verify GitHub CLI is installed and authenticated
 - [ ] Query GitHub for issue and PR status (`gh issue list --json number,title,state`; `gh pr list --json number,title,state`)
 - [ ] Read session memory files for context (only the section relevant to the report type, not whole logs)

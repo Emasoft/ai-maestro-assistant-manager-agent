@@ -99,7 +99,10 @@ For blockers with deadlines within 24 hours, prefix with:
 
 ### 2.3 Cascade blocker notification
 
-When multiple tasks are blocked by the same issue:
+When multiple tasks are blocked by the same issue. Derive the facts from the corpus,
+not from memory: `trddgrep roots` lists every root blocker (the critical path),
+`trddgrep why <id8>` gives one card's transitive chain down to the root cause, and
+`trddgrep unblocks <id8>` gives the "Tasks Affected" count for the template below.
 
 ```
 ## Cascade Blocker Alert

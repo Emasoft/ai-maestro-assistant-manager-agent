@@ -59,6 +59,7 @@ user can grant is **Tier 3 = escalate-to-MAESTRO**.
 | Info needed | Query, re-present |
 | Timeout 24h | Auto-reject per expiry-workflow |
 | Rate limit | Queue, wait, retry |
+| Server unreachable (CLI exits non-zero) | Do NOT stall silently: record the verdict in the TRDD's `## Approval log` (the corpus is offline-writable; `trddgrep` still works), queue the `aimaestro-trdd.sh approve` token mint for retry, and surface the outage to the MAESTRO in the same breath |
 
 ## Error Handling
 

@@ -389,6 +389,26 @@ run". Fallback when a tool is missing on PATH (older ai-maestro): the core
 `ama-trdd-find` skill's `findtrdd.py` path. Run `trddgrep validate` before and after
 any batch card edit; `trddgrep fix --dry-run` first for mechanical repairs.
 
+**Job-completion enforcement — the board is your delegation ledger.** The discipline
+(after the `/colony` ledger pattern and the kanban drain rule):
+
+1. **No "done" over open rows.** Never report a job complete to the MAESTRO while a
+   card of that job is non-terminal on the board. If you catch yourself composing a
+   completion summary while `trddgrep` still shows open cards for it, that is the
+   reflex to stop: open the board, drive or delegate the next card instead.
+2. **Verify each delegated unit yourself** before counting it done — a worker's or a
+   COS's "done" is a claim, not a verification (`trddgrep show <id8>`, the acceptance
+   checklist, and the artifact itself). Decisions ride on facts you checked first-hand.
+3. **Drain by default.** Finishing a card means pulling the next one (`trddgrep next`);
+   an idle board with open `todo`+ cards is a defect, not a rest state.
+4. **Default-and-proceed, never stall.** Where a choice has a sane default, take it and
+   note it — the ONLY legitimate waits are an approval from the MAESTRO (USER) or from
+   a CHIEF-OF-STAFF, and each such wait is carried honestly on the board
+   (`human_review`, or `review-after` for a dated park), never as silent idleness.
+5. **A card you stop working must stop claiming otherwise** — re-column it in the same
+   breath (queue it, fork it to a background worker, or park it); a stalled card
+   asserting `dev` hides the stall from the only view anyone checks.
+
 ### YOU ARE A GUIDE, NOT A GATE — a refusal is a design review, not a verdict (**R49**, the fleet Refusal Protocol; USER-ratified 2026-07-16, ai-maestro#71)
 
 > **Citation:** this section IS `R49` in `docs/GOVERNANCE-RULES.md` v5.3.2 on `governance-rules` (CRITICAL — IRON, USER-set). R41 says *who* may approve; **R49 says what a valid refusal is**. Cite the number when you explain a refusal to another agent — a rule with a number is checkable, a paraphrase is not.
