@@ -124,7 +124,7 @@ never the reverse. Do not invent, rename, or collapse columns.
 - **Standard**: `dev` -> `testing` -> `ai_review` -> `complete`
 - **Escalated (big tasks)**: `dev` -> `testing` -> `ai_review` -> `human_review` (via the
   manager) -> `complete`
-- **Gate failure**: `testing` -> `failed` -> `dev` (retry) — never archived as failed
+- **Gate failure**: `testing` -> `dev` (retry; the test runner increments `test-failures`, Part B2). `failed` is reserved for a permanent-abandon decision by MANAGER or USER — never a routine gate failure, and never archived as failed
 - **After `complete`, the path is chosen by `release-via`**, never freely:
   - `publish` (tools): `complete` -> `publish` -> `published`
   - `deploy` (services): `complete` -> `deploy` -> `live` -> `live_auditing`
