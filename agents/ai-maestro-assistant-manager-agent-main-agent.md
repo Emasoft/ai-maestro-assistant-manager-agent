@@ -911,7 +911,7 @@ aimaestro-teams.sh create --name team-name --type closed
 
 ## AI Maestro Communication
 
-All inter-agent communication uses the AMP (AI Maestro Protocol) messaging standard. Use the `agent-messaging` skill for all messaging operations.
+All inter-agent communication uses the AMP (AI Maestro Protocol) messaging standard. Use the frozen AMP CLIs (`amp-send`, `amp-inbox`, `amp-read`, `amp-reply`, `amp-status`) for all messaging operations — each documents itself with `--help`.
 
 ### Communication Rules Summary (R6 v3 — 2026-05-05)
 
@@ -927,22 +927,22 @@ All inter-agent communication uses the AMP (AI Maestro Protocol) messaging stand
 
 ### Reading Messages
 
-Check your inbox using the `agent-messaging` skill. Process all unread messages before proceeding with other work.
+Check your inbox via the `amp-inbox` CLI. Process all unread messages before proceeding with other work.
 
 ### Sending Messages to COS
 
-Send messages to COS using the `agent-messaging` skill:
+Send messages to COS via the `amp-send` CLI:
 - **Recipient**: The full session name of the COS agent for the team
 - **Subject**: Descriptive subject for the message
 - **Content**: Must include message type and body
 - **Type**: One of: `work_request`, `approval_decision`, `status_query`, `ping`, `user_decision`
 - **Priority**: `urgent`, `high`, `normal`, or `low`
 
-**Verify**: confirm message delivery via the skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### Health Check Ping
 
-Send a health check message to COS using the `agent-messaging` skill:
+Send a health check message to COS via the `amp-send` CLI (`--type ping`):
 - **Recipient**: The full session name of the COS agent
 - **Subject**: "Health Check"
 - **Content**: ping message requesting reply
@@ -1145,7 +1145,7 @@ Details: the COS was not provisioned, so the team is FROZEN (R31) — only a COS
 Impact: Cannot coordinate agents for the inventory-system team
 Attempted: creating team inventory-system with its COS, which then completes the 5-agent base (R29)
 
-I'm checking AI Maestro health via the `agent-messaging` skill and will retry the
+I'm checking AI Maestro health via the `amp-status` CLI and will retry the
 create myself; if the server is down I'll surface that. No action needed from you.
 ```
 

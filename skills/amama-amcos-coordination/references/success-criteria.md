@@ -62,7 +62,7 @@ ls -la /path/to/new-project  # Directory exists
 cd /path/to/new-project && git status  # Git initialized
 ```
 
-Verify AMCOS is alive by sending a health check ping using the `agent-messaging` skill and confirming a `pong` response.
+Verify AMCOS is alive by sending a health check ping via the `amp-send` CLI (`--type request`) and confirming a `pong` response, or checking `amp-status`.
 
 **Self-Check Questions:**
 - Does the project directory exist at the agreed location?
@@ -92,7 +92,7 @@ Verify AMCOS is alive by sending a health check ping using the `agent-messaging`
 **Verification Evidence:**
 
 Verify the COS exists using the `ai-maestro-agents-management` skill's agent listing feature and `aimaestro-teams.sh show <team-id>`.
-Verify AMCOS responds by sending a health check ping using the `agent-messaging` skill.
+Verify AMCOS responds by sending a health check ping via the `amp-send` CLI (`--type request`).
 
 **Self-Check Questions:**
 - Did the team creation succeed (exit code 0) and the server auto-create the COS?
@@ -124,7 +124,7 @@ Verify AMCOS responds by sending a health check ping using the `agent-messaging`
 grep "AMCOS-REQUEST-12345" docs_dev/approvals/approval-log.md
 ```
 
-Verify the response was sent by checking sent messages using the `agent-messaging` skill, filtering for subjects containing the request ID.
+Verify the response was sent by confirming the `amp-send` command exited 0, and checking `amp-inbox`/`amp-read` for subjects containing the request ID.
 
 **Self-Check Questions:**
 - Did I correctly assess the risk level of the operation?

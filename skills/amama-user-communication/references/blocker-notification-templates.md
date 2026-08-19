@@ -136,7 +136,7 @@ not from memory: `trddgrep roots` lists every root blocker (the critical path),
 
 ### 3.2 AI Maestro message template for routing resolution
 
-Send a blocker resolution using the `agent-messaging` skill:
+Send a blocker resolution via the `amp-send` CLI (`--type response --priority high`):
 - **Recipient**: The agent that originally escalated the blocker (AMOA or AMCOS session name)
 - **Subject**: "RESOLUTION: Blocker for task <task-id> resolved by user"
 - **Priority**: `high`
@@ -150,7 +150,7 @@ Send a blocker resolution using the `agent-messaging` skill:
   - `additional_context`: Any extra information the user provided
   - `resolved_at`: ISO-8601 timestamp of the resolution
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### 3.3 When user asks for more information
 
@@ -218,7 +218,7 @@ User provides blocker resolution
       └─ YES → Route to the relevant role agent via AMCOS
 ```
 
-**Verify**: after routing the resolution via the `agent-messaging` skill, confirm message delivery via the skill's sent messages feature.
+**Verify**: after routing the resolution via the `amp-send` CLI, confirm the command exited 0 (delivery accepted by AI Maestro).
 
 ### 5.2 Confirmation to user
 

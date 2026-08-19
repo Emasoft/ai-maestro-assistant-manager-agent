@@ -50,7 +50,7 @@ amcos_delegation:
 
 AMAMA grants autonomy via command or AI Maestro message.
 
-Send an autonomy grant using the `agent-messaging` skill:
+Send an autonomy grant via the `amp-send` CLI (`--type autonomy_grant --priority high`):
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
@@ -63,7 +63,7 @@ Send an autonomy grant using the `agent-messaging` skill:
     - `allowed_branches`: List of branch patterns (e.g., `feature/*`)
   - `notification_level`: Reporting frequency (`all`, `important`, or `critical-only`)
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### Grant Parameters
 
@@ -88,7 +88,7 @@ AMAMA revokes autonomy when:
 
 ### Revocation Message
 
-Send an autonomy revocation using the `agent-messaging` skill:
+Send an autonomy revocation via the `amp-send` CLI (`--type autonomy_revoke --priority urgent`):
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Autonomous Mode Revoked"
 - **Priority**: `urgent`
@@ -98,7 +98,7 @@ Send an autonomy revocation using the `agent-messaging` skill:
   - `effective_immediately`: `true` (revocation always takes effect immediately)
   - `revoked_at`: ISO-8601 timestamp of revocation
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### Revocation Reasons
 

@@ -27,7 +27,7 @@ Before sending handoff to AMCOS or specialist agents:
   # Verify UUID uniqueness
   ! grep -r "UUID: <new-uuid>" docs_dev/handoffs/ && echo "UUID is unique"
   ```
-- [ ] **Target agent exists and is alive** - Send health ping before handoff using the `agent-messaging` skill
+- [ ] **Target agent exists and is alive** - Send health ping before handoff via the `amp-send` CLI (`--type ping`)
 - [ ] **File is valid markdown** - No syntax errors, proper structure
 - [ ] **File is readable by target agent** - Verify file permissions and path accessibility
 - [ ] **No [TBD] placeholders** - All placeholder text must be replaced with actual values

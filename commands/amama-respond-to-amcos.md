@@ -123,13 +123,13 @@ AMCOS will revise the request and resubmit.
 
 Before responding, you may want to see pending requests.
 
-Check your inbox using the `agent-messaging` skill. Filter for messages from AMCOS-prefixed senders to find approval requests.
+Check your inbox via the `amp-inbox` CLI. Filter for messages from AMCOS-prefixed senders to find approval requests.
 
 **Verify**: confirm you have reviewed all unread AMCOS messages before proceeding.
 
 ## Message Format Sent
 
-The command sends an approval response to AMCOS using the `agent-messaging` skill:
+The command sends an approval response to AMCOS via the `amp-send` CLI (`--type approval --priority high`):
 
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Approval Response: <request_id>"
@@ -142,7 +142,7 @@ The command sends an approval response to AMCOS using the `agent-messaging` skil
   - `conditions`: List of conditions (empty list if none)
   - `responded_at`: ISO-8601 timestamp of the response
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ## Error Conditions
 
@@ -157,13 +157,13 @@ The command sends an approval response to AMCOS using the `agent-messaging` skil
 ## Prerequisites
 
 1. **AI Maestro must be running**
-   Verify AI Maestro health using the `agent-messaging` skill's health check feature.
+   Verify AI Maestro health via the `amp-status` CLI.
 
 2. **AMCOS must be registered**
    Use the `ai-maestro-agents-management` skill to list agents and confirm an AMCOS agent is registered and active.
 
 3. **Pending request must exist**
-   Check your inbox using the `agent-messaging` skill and filter for unread AMCOS messages.
+   Check your inbox via the `amp-inbox` CLI and filter for unread AMCOS messages.
 
 ## Related Commands
 

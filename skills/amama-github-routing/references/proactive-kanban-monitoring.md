@@ -91,7 +91,7 @@ diff <(jq -S '[.items[] | {id, status, assignees}]' /tmp/kanban-snapshot-previou
 For each detected change:
 
 1. **Status Change Detected**
-   Send a kanban update notification to the team's **CHIEF-OF-STAFF** using the `agent-messaging` skill:
+   Send a kanban update notification to the team's **CHIEF-OF-STAFF** via the `amp-send` CLI (`--type kanban_update --priority normal`):
    - **Recipient**: the team's `chief-of-staff` agent (**never** `orchestrator-<project>` — that edge is forbidden under R6 v3; the COS relays to the ORCHESTRATOR)
    - **Subject**: "Kanban Card Status Changed"
    - **Content**: kanban_update type with card_id, card_title, old_status, new_status, changed_at

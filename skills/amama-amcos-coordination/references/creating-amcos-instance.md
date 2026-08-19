@@ -96,7 +96,7 @@ After creating the team (and its auto-created COS):
 
 ### Mandate Message
 
-Send a COS mandate notification using the `agent-messaging` skill:
+Send a COS mandate notification via the `amp-send` CLI (`--type notification --priority high`):
 - **Recipient**: The COS session name
 - **Subject**: "COS Mandate — Team Creation"
 - **Content**:

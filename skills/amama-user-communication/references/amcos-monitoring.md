@@ -22,7 +22,7 @@ AMAMA must proactively monitor AMCOS health and responsiveness to prevent commun
 
 ## Health Check Procedure
 
-Send a periodic AMCOS health check every 10 minutes during active work using the `agent-messaging` skill:
+Send a periodic AMCOS health check every 10 minutes during active work via the `amp-send` CLI (`--type ping`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "Periodic Health Check"
 - **Content**: ping type, message "Routine health check", expect_reply true, timeout 60
@@ -33,11 +33,11 @@ Send a periodic AMCOS health check every 10 minutes during active work using the
 
 ## AI Maestro Inbox Check
 
-Check your inbox every 2 minutes for approval requests using the `agent-messaging` skill. Query **only unread / new-since-last-poll** messages (not the whole inbox history), then filter those for content type `approval_request`.
+Check your inbox every 2 minutes for approval requests via the `amp-inbox` CLI (query unread only). Query **only unread / new-since-last-poll** messages (not the whole inbox history), then filter those for content type `approval_request`.
 
 ## Responsiveness Ping (15 Minute Timeout)
 
-If no response from AMCOS after 15 minutes since last message sent, send an urgent ping using the `agent-messaging` skill:
+If no response from AMCOS after 15 minutes since last message sent, send an urgent ping via the `amp-send` CLI (`--type ping --priority urgent`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "URGENT: Response Required"
 - **Content**: ping type, message "No response received for 15 minutes. Please acknowledge.", expect_reply true, timeout 30
@@ -52,7 +52,7 @@ If AMCOS fails to respond after the urgent ping (30 second timeout):
    Use the `ai-maestro-agents-management` skill to check **only the specific AMCOS session** (`amcos-<project>-coordinator`) — query/filter by that session id rather than listing all agents.
 
 2. **Check AI Maestro Health**
-   Use the `agent-messaging` skill's health check feature to verify AI Maestro is running.
+   Use the `amp-status` CLI to verify AI Maestro is running.
 
 3. **Notify the MAESTRO** (R36 — only the MAESTRO/DELEGATE; never a subordinate user)
    ```

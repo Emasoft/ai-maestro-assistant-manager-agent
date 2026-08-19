@@ -20,7 +20,7 @@ All messages sent to a COS-assigned agent require acknowledgment (ACK) to ensure
 
 ## ACK Message Format
 
-The COS-assigned agent must respond with an ACK message within the timeout period. The ACK message arrives via the `agent-messaging` skill with the following structure:
+The COS-assigned agent must respond with an ACK message within the timeout period. The ACK message arrives via the `amp-inbox`/`amp-read` CLIs with the following structure:
 
 - **Sender**: The COS-assigned agent's session name
 - **Subject**: "ACK: <original-subject>"
@@ -39,13 +39,13 @@ The COS-assigned agent must respond with an ACK message within the timeout perio
 
 **Step 2: Retry Once**
 
-Resend the original message with a retry flag using the `agent-messaging` skill:
+Resend the original message with a retry flag via the `amp-send` CLI (`--type request --priority high`):
 - **Recipient**: The COS-assigned agent's session name
 - **Subject**: "RETRY: <original-subject>"
 - **Content**: Same as original message, plus `retry_of` (original message ID) and `retry_count` (1)
 - **Priority**: `high`
 
-**Verify**: confirm message delivery via the skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 **Step 3: Escalate if Still No ACK**
 If no ACK after retry:

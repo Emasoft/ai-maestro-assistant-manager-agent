@@ -23,7 +23,7 @@ This example shows the complete flow of AMCOS requesting approval for a staging 
 
 ### AMCOS sends approval request
 
-AMCOS sends the following message using the `agent-messaging` skill:
+AMCOS sends the following message via the `amp-send` CLI (`--type request --priority high`):
 - **Sender**: `amcos-<project-name>`
 - **Subject**: "AMCOS Approval Request: Deploy v2.1.0 to staging"
 - **Priority**: `high`
@@ -46,7 +46,7 @@ AMAMA checks:
 
 ### AMAMA responds with approval
 
-Send an approval response using the `agent-messaging` skill:
+Send an approval response via the `amp-send` CLI (`--type approval --priority high`):
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Approval Response: amcos-req-a1b2c3d4"
 - **Priority**: `high`
@@ -57,7 +57,7 @@ Send an approval response using the `agent-messaging` skill:
   - `comment`: "Proceed with staging deployment"
   - `responded_at`: `2025-02-02T14:32:00Z`
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ---
 
@@ -71,7 +71,7 @@ User tells AMAMA: "Let AMCOS handle routine development tasks for the next 4 hou
 
 ### AMAMA sends autonomy grant
 
-Send an autonomy grant using the `agent-messaging` skill:
+Send an autonomy grant via the `amp-send` CLI (`--type notification --priority high`):
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
@@ -82,7 +82,7 @@ Send an autonomy grant using the `agent-messaging` skill:
   - `scope_limits`: max 100 files per operation, allowed branches `feature/*` and `fix/*`
   - `notification_level`: `important`
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### What AMCOS can now do autonomously
 
@@ -107,7 +107,7 @@ This example shows an autonomous operation completion notification.
 
 ### AMCOS sends completion notification
 
-AMCOS sends the following message using the `agent-messaging` skill:
+AMCOS sends the following message via the `amp-send` CLI (`--type notification --priority normal`):
 - **Sender**: `amcos-<project-name>`
 - **Subject**: "AMCOS Operation Complete: Feature implementation"
 - **Priority**: `normal`

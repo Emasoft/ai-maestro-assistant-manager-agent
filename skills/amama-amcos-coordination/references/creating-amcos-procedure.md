@@ -137,7 +137,7 @@ Then send the mandate (R30) authorizing the 5 base members + project MEMBERs.
 
 ### Step 4: Send Mandate Message
 
-Notify the COS of its mandate using the `agent-messaging` skill:
+Notify the COS of its mandate via the `amp-send` CLI (`--type cos-mandate --priority high`):
 
 - **Recipient**: `<cos-session-name>`
 - **Subject**: "COS Mandate — Team Creation"
@@ -149,11 +149,11 @@ Notify the COS of its mandate using the `agent-messaging` skill:
   - `mandate`: `team-creation`
 - **Priority**: `high`
 
-See the `agent-messaging` skill for full messaging details.
+See the frozen AMP CLIs (`amp-send`, `amp-inbox`, `amp-read`, `amp-reply`, `amp-status`) — each documents itself with `--help`.
 
 ### Step 5: Verify COS Acknowledgment
 
-Check inbox using the `agent-messaging` skill for a response from the COS within 30 seconds.
+Check inbox using the `amp-inbox` CLI (query unread only) for a response from the COS within 30 seconds.
 
 Expected response content:
 ```json

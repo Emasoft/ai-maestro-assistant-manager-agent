@@ -9,7 +9,7 @@
 
 **Reference for**: `amama-amcos-coordination` skill
 
-This document provides all message templates and formats for AI Maestro inter-agent communication between AMAMA and other agents (AMCOS, AMAA, AMOA, AMIA). Use the `agent-messaging` skill to send and receive all messages described here.
+This document provides all message templates and formats for AI Maestro inter-agent communication between AMAMA and other agents (AMCOS, AMAA, AMOA, AMIA). Use the frozen AMP CLIs (`amp-send`, `amp-inbox`, `amp-read`, `amp-reply`, `amp-status`) to send and receive all messages described here.
 
 ---
 
@@ -35,7 +35,7 @@ The message will arrive with the following structure:
   - `reversible`: Whether the operation can be undone (`true` or `false`)
 
 **How to read it**:
-Check your inbox using the `agent-messaging` skill. Filter for messages with content type `approval_request`.
+Check your inbox using the `amp-inbox` CLI (query unread only). Filter for messages with content type `approval_request`.
 
 **Response actions**:
 - Assess risk level
@@ -63,7 +63,7 @@ The message will arrive with the following structure:
   - `health`: One of `green`, `yellow`, or `red`
 
 **How to read it**:
-Check your inbox using the `agent-messaging` skill. Filter for messages with content type `status_report`.
+Check your inbox using the `amp-inbox` CLI (query unread only). Filter for messages with content type `status_report`.
 
 **Response actions**:
 - Parse status information
@@ -88,7 +88,7 @@ The response will arrive with the following structure:
   - `active_specialists`: List of currently active specialist roles (e.g., "AMOA", "AMIA")
 
 **How to read it**:
-Check your inbox using the `agent-messaging` skill. Filter for messages with content type `pong`.
+Check your inbox using the `amp-inbox` CLI (query unread only). Filter for messages with content type `pong`.
 
 **Response actions**:
 - Verify "status": "alive"
@@ -103,7 +103,7 @@ Check your inbox using the `agent-messaging` skill. Filter for messages with con
 
 **Use this when**: Responding to AMCOS approval request
 
-Send an approval decision to AMCOS using the `agent-messaging` skill:
+Send an approval decision to AMCOS via the `amp-send` CLI (`--type approval_decision --priority high`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "Approval Decision: <REQUEST-ID>"
 - **Content**: Must include the fields below
@@ -125,13 +125,13 @@ Send an approval decision to AMCOS using the `agent-messaging` skill:
 - `deny`: Operation rejected, do not proceed
 - `defer`: Need more information, request clarification
 
-**Example (autonomous approval)**: Send an approval decision using the `agent-messaging` skill:
+**Example (autonomous approval)**: Send an approval decision via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "Approval Decision: RUN-TESTS-001"
 - **Content**: approval_decision type, request_id "RUN-TESTS-001", decision "approve", reason "Routine operation, low risk, aligns with testing workflow", approved_by "amama"
 - **Priority**: `high`
 
-**Example (user-escalated denial)**: Send an approval decision using the `agent-messaging` skill:
+**Example (user-escalated denial)**: Send an approval decision via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "Approval Decision: DELETE-DATA-002"
 - **Content**: approval_decision type, request_id "DELETE-DATA-002", decision "deny", reason "User denied: operation is destructive and irreversible", approved_by "user", user_quote "No, do not delete. Archive instead."
@@ -143,7 +143,7 @@ Send an approval decision to AMCOS using the `agent-messaging` skill:
 
 **Use this when**: You escalated a request to the user and got their decision
 
-Send a user decision notification to AMCOS using the `agent-messaging` skill:
+Send a user decision notification to AMCOS via the `amp-send` CLI (`--type user_decision --priority urgent`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "User Decision: <REQUEST-ID>"
 - **Content**: Must include the fields below
@@ -159,7 +159,7 @@ Send a user decision notification to AMCOS using the `agent-messaging` skill:
 
 **Verify**: confirm message delivery via the skill's sent messages feature.
 
-**Example**: Send a user decision using the `agent-messaging` skill:
+**Example**: Send a user decision via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "User Decision: DEPLOY-PROD-001"
 - **Content**: user_decision type, request_id "DEPLOY-PROD-001", decision "approve", user_statement "Yes, deploy to production", timestamp "2026-02-05T14:30:00Z", context "User verified all tests passing and code review complete"
@@ -173,7 +173,7 @@ Send a user decision notification to AMCOS using the `agent-messaging` skill:
 
 **Use this when**: User asks for project status
 
-Send a status query to AMCOS using the `agent-messaging` skill:
+Send a status query to AMCOS via the `amp-send` CLI (`--type status_query --priority normal`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "Status Query"
 - **Content**: Must include the fields below
@@ -188,7 +188,7 @@ Send a status query to AMCOS using the `agent-messaging` skill:
 
 **Verify**: confirm message delivery via the skill's sent messages feature.
 
-**Example**: Send a status query using the `agent-messaging` skill:
+**Example**: Send a status query via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "Status Query"
 - **Content**: status_query type, scope "full", details "User asked: What is the status of the API implementation?", format "summary", timeout 30
@@ -202,7 +202,7 @@ Send a status query to AMCOS using the `agent-messaging` skill:
 
 **Use this when**: Verifying AMCOS is responsive (after assigning the chief-of-staff role, periodically, before delegating work)
 
-Send a health check ping using the `agent-messaging` skill:
+Send a health check ping via the `amp-send` CLI (`--type ping --priority normal`), or verify liveness directly via the `amp-status` CLI:
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "Health Check"
 - **Content**: ping type, requesting reply, with timeout
@@ -214,9 +214,9 @@ Send a health check ping using the `agent-messaging` skill:
 - `expect_reply`: true
 - `timeout`: 30 (seconds)
 
-**Verify**: check inbox for a `pong` response within the timeout period using the `agent-messaging` skill.
+**Verify**: check inbox for a `pong` response within the timeout period using the `amp-inbox` CLI.
 
-**Example**: Send a health check using the `agent-messaging` skill:
+**Example**: Send a health check via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "Health Check"
 - **Content**: ping type, message "Verify AMCOS alive", expect_reply true, timeout 30
@@ -232,7 +232,7 @@ Send a health check ping using the `agent-messaging` skill:
 
 **Use this when**: User gives a work request that should be handled by a specialist (AMOA, AMAA, AMIA) via AMCOS
 
-Send a work request to AMCOS using the `agent-messaging` skill:
+Send a work request to AMCOS via the `amp-send` CLI (`--type work_request --priority normal|high`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "User Request: <brief summary>"
 - **Content**: Must include the fields below
@@ -249,7 +249,7 @@ Send a work request to AMCOS using the `agent-messaging` skill:
 
 **Verify**: confirm message delivery via the skill's sent messages feature.
 
-**Example**: Send a work request using the `agent-messaging` skill:
+**Example**: Send a work request via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "User Request: Implement REST API"
 - **Content**: work_request type, specialist "AMOA", task "Build a REST API for inventory management with CRUD operations", user_context "User wants full inventory tracking system with authentication", priority "high", success_criteria "REST API with all CRUD endpoints, authentication, tests passing"
@@ -263,14 +263,14 @@ Send a work request to AMCOS using the `agent-messaging` skill:
 
 **Specialist routing**: Set specialist to `AMAA` (Architect)
 
-Send a design work request to AMCOS using the `agent-messaging` skill:
+Send a design work request to AMCOS via the `amp-send` CLI (`--type work_request --priority normal`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "User Request: <design task summary>"
 - **Content**: work_request type with specialist "AMAA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal`
 
-**Example**: Send a design work request using the `agent-messaging` skill:
+**Example**: Send a design work request via the `amp-send` CLI:
 - **Recipient**: `amcos-data-pipeline-coordinator`
 - **Subject**: "User Request: Design data pipeline architecture"
 - **Content**: work_request type, specialist "AMAA", task "Design architecture for real-time data pipeline processing 1M events/day", user_context "Need to process IoT sensor data from 10k devices, store in time-series DB, expose via API", priority "high", success_criteria "Architecture document with component diagrams, data flow, scalability plan"
@@ -284,14 +284,14 @@ Send a design work request to AMCOS using the `agent-messaging` skill:
 
 **Specialist routing**: Set specialist to `AMOA` (Orchestrator)
 
-Send an implementation work request to AMCOS using the `agent-messaging` skill:
+Send an implementation work request to AMCOS via the `amp-send` CLI (`--type work_request --priority normal|high`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "User Request: <implementation task summary>"
 - **Content**: work_request type with specialist "AMOA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal` (or `high` if urgent)
 
-**Example**: Send an implementation work request using the `agent-messaging` skill:
+**Example**: Send an implementation work request via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "User Request: Build REST API"
 - **Content**: work_request type, specialist "AMOA", task "Implement REST API with CRUD operations for inventory items", user_context "Database schema already designed. Need endpoints for: create item, update item, delete item, list items, search items.", priority "high", success_criteria "All endpoints working, tests passing, documented with OpenAPI spec"
@@ -305,20 +305,20 @@ Send an implementation work request to AMCOS using the `agent-messaging` skill:
 
 **Specialist routing**: Set specialist to `AMIA` (Integrator)
 
-Send a review/integration work request to AMCOS using the `agent-messaging` skill:
+Send a review/integration work request to AMCOS via the `amp-send` CLI (`--type work_request --priority normal`):
 - **Recipient**: `amcos-<project>-coordinator`
 - **Subject**: "User Request: <review/integration task summary>"
 - **Content**: work_request type with specialist "AMIA", task description, user_context, priority, success_criteria
 - **Type**: `work_request`
 - **Priority**: `normal`
 
-**Example (code review)**: Send a review work request using the `agent-messaging` skill:
+**Example (code review)**: Send a review work request via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "User Request: Review API implementation"
 - **Content**: work_request type, specialist "AMIA", task "Review REST API implementation for code quality, security, performance", user_context "AMOA completed implementation. User wants thorough review before merging to main.", priority "high", success_criteria "Code review complete, all issues addressed, PR approved and merged"
 - **Priority**: `normal`
 
-**Example (release)**: Send a release work request using the `agent-messaging` skill:
+**Example (release)**: Send a release work request via the `amp-send` CLI:
 - **Recipient**: `amcos-inventory-coordinator`
 - **Subject**: "User Request: Release version 2.0"
 - **Content**: work_request type, specialist "AMIA", task "Create release 2.0 with all new features, update changelog, tag release", user_context "All features complete, tests passing. User ready to release.", priority "normal", success_criteria "Release 2.0 tagged, changelog updated, release notes published"
@@ -330,9 +330,9 @@ Send a review/integration work request to AMCOS using the `agent-messaging` skil
 
 ### 5.1 How to send and receive messages
 
-Use the `agent-messaging` skill for all messaging operations. The skill handles all connection details, authentication, and API formatting automatically.
+Use the frozen AMP CLIs (`amp-send`, `amp-inbox`, `amp-read`, `amp-reply`, `amp-status`) for all messaging operations — each documents itself with `--help`. They handle all connection details, authentication, and API formatting automatically.
 
-**No manual API configuration required** - the `agent-messaging` skill manages connection details internally.
+**No manual API configuration required** - the AMP CLIs manage connection details internally.
 
 ---
 

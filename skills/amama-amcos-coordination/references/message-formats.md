@@ -12,7 +12,7 @@
 
 ## 1. AMCOS Approval Request Format
 
-This is the format AMCOS uses when sending approval requests to AMAMA. The message arrives via the `agent-messaging` skill with the following structure:
+This is the format AMCOS uses when sending approval requests to AMAMA. The message arrives in your inbox (check via the `amp-inbox` CLI, read with `amp-read`) with the following structure:
 
 - **Sender**: `amcos-<project-name>`
 - **Subject**: "AMCOS Approval Request: <operation summary>"
@@ -58,7 +58,7 @@ See [approval-response-workflow.md](approval-response-workflow.md) for the full 
 
 ### Grant Message
 
-Send an autonomy grant using the `agent-messaging` skill:
+Send an autonomy grant via the `amp-send` CLI (`--type autonomy_grant --priority high`):
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Autonomous Mode Grant"
 - **Priority**: `high`
@@ -71,11 +71,11 @@ Send an autonomy grant using the `agent-messaging` skill:
     - `allowed_branches`: List of branch patterns AMCOS can work on (e.g., `feature/*`)
   - `notification_level`: How often AMCOS reports back (`all`, `important`, or `critical-only`)
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### Revoke Message
 
-Send an autonomy revocation using the `agent-messaging` skill:
+Send an autonomy revocation via the `amp-send` CLI (`--type autonomy_revoke --priority urgent`):
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Autonomous Mode Revoked"
 - **Priority**: `urgent`
@@ -85,7 +85,7 @@ Send an autonomy revocation using the `agent-messaging` skill:
   - `effective_immediately`: `true` (revocation always takes effect immediately)
   - `revoked_at`: ISO-8601 timestamp of revocation
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 See [delegation-rules.md](delegation-rules.md) for full details on autonomy configuration.
 
@@ -93,7 +93,7 @@ See [delegation-rules.md](delegation-rules.md) for full details on autonomy conf
 
 ## 4. Completion Notification Format
 
-This is the format AMCOS uses when reporting completed operations. The message arrives via the `agent-messaging` skill with the following structure:
+This is the format AMCOS uses when reporting completed operations. The message arrives in your inbox (check via the `amp-inbox` CLI, read with `amp-read`) with the following structure:
 
 - **Sender**: `amcos-<project-name>`
 - **Subject**: "AMCOS Operation Complete: <operation summary>"

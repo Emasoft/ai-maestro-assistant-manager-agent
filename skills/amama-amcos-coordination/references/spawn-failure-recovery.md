@@ -164,7 +164,7 @@ When AMCOS or other agents fail to respond to messages.
    - AMCOS may be busy with approval workflow
 
 2. **Retry health ping once**
-   Send a health check message using the `agent-messaging` skill:
+   Send a health check message via the `amp-send` CLI (`--type health_check --priority normal`):
    - **Recipient**: `amcos-<project-name>`
    - **Subject**: "Health Check"
    - **Type**: `health_check`
@@ -211,7 +211,7 @@ When AMCOS or other agents fail to respond to messages.
    - Resolution: Escalated to user
    ```
 
-See the `agent-messaging` skill for full messaging API details.
+See the frozen AMP CLIs (`amp-send`, `amp-inbox`, `amp-read`, `amp-reply`, `amp-status`) — each documents itself with `--help`.
 
 ---
 
@@ -233,7 +233,7 @@ When approval workflow encounters errors.
    - Never guess user intent
 
 2. **Request clarification from AMCOS**
-   Send a clarification request using the `agent-messaging` skill:
+   Send a clarification request via the `amp-send` CLI (`--type clarification_request --priority high`):
    - **Recipient**: `amcos-<project-name>`
    - **Subject**: "Approval Clarification Needed"
    - **Content**: clarification_request type, message "Approval request incomplete. Missing: <field1>, <field2>. Please resend with full context."

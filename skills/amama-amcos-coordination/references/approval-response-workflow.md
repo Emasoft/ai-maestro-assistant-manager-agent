@@ -40,7 +40,7 @@ When AMCOS sends an approval request, AMAMA responds with one of:
 
 ## 2. Response Format
 
-AMAMA sends responses using the `agent-messaging` skill:
+AMAMA sends responses via the `amp-send` CLI (`--type approval --priority high`):
 
 - **Recipient**: `amcos-<project-name>`
 - **Subject**: "AMAMA Approval Response: <request_id>"
@@ -53,7 +53,7 @@ AMAMA sends responses using the `agent-messaging` skill:
   - `conditions`: Optional list of conditions AMCOS must follow if approved
   - `responded_at`: ISO-8601 timestamp of the response
 
-**Verify**: confirm message delivery via the `agent-messaging` skill's sent messages feature.
+**Verify**: confirm the `amp-send` command exited 0 (delivery accepted by AI Maestro).
 
 ### Field Descriptions
 

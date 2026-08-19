@@ -22,7 +22,7 @@ When a new project team is needed (you create it yourself — R29, no user appro
 - [ ] **Create the team yourself** via `aimaestro-teams.sh create --name N --type closed [...]` (R29) — the server auto-creates the COS
 - [ ] **Verify team created** (redirect `aimaestro-teams.sh list` to a scratch file, then `grep` it for the team name/id), and `chiefOfStaff` set via `aimaestro-teams.sh show <team-id>`
 - [ ] **Wake the COS** via `aimaestro-agent.sh wake <cos-id>` and grant its mandate (see "Checklist: Granting the COS Mandate")
-- [ ] **Send health check ping** to the COS using the `agent-messaging` skill (mandatory)
+- [ ] **Send health check ping** to the COS via the `amp-send` CLI (`--type request`) (mandatory)
 - [ ] **Verify AMCOS responding** (check inbox for pong within 30 seconds)
 - [ ] **Confirm the 5 base members** are being completed (team FROZEN until 5/5, R31)
 - [ ] **Register team** in `docs_dev/projects/project-registry.md`
@@ -38,19 +38,19 @@ When granting the auto-created COS its team-creation mandate (R30):
 - [ ] **Determine the COS session name** (the agent the server set as `chiefOfStaff`)
 - [ ] **Verify the COS is set** via `aimaestro-teams.sh show <team-id>` (`chiefOfStaff` field)
 - [ ] **Wake the COS** via `aimaestro-agent.sh wake <cos-id>`
-- [ ] **Send cos-mandate message** to the COS using the `agent-messaging` skill:
+- [ ] **Send cos-mandate message** to the COS via the `amp-send` CLI:
   - **Recipient**: `<cos-session-name>`
   - **Subject**: "COS Mandate — Team Creation"
   - **Type**: `cos-mandate`
   - **Content**: team ID, project name, `mandate: team-creation` (authorizes the 5-member base + project MEMBERs, R30)
   - **Priority**: `high`
-- [ ] **Wait for cos-mandate-accepted response** (check inbox within 30 seconds using the `agent-messaging` skill)
-- [ ] **Send health check ping** using the `agent-messaging` skill (mandatory):
+- [ ] **Wait for cos-mandate-accepted response** (check inbox within 30 seconds via the `amp-inbox` CLI)
+- [ ] **Send health check ping** via the `amp-send` CLI (mandatory):
   - **Recipient**: `<cos-session-name>`
   - **Subject**: "Health Check"
   - **Type**: `ping`
   - **Priority**: `normal`
-- [ ] **Verify AMCOS response** (check inbox for pong within 30 seconds using the `agent-messaging` skill)
+- [ ] **Verify AMCOS response** (check inbox for pong within 30 seconds via the `amp-inbox` CLI)
 - [ ] **Register AMCOS session** in active sessions log
 - [ ] **Report AMCOS ready** to user (team unfreezes once the 5 base members exist, R31)
 
@@ -60,7 +60,7 @@ When granting the auto-created COS its team-creation mandate (R30):
 
 When AMCOS sends an approval request:
 
-- [ ] **Read approval request** from inbox using the `agent-messaging` skill
+- [ ] **Read approval request** from inbox via the `amp-inbox`/`amp-read` CLIs
 - [ ] **Parse request details**:
   - Request ID
   - Operation description
@@ -79,7 +79,7 @@ When AMCOS sends an approval request:
   - [ ] Present request to user with risk assessment
   - [ ] Wait for user decision
   - [ ] Record user decision verbatim
-- [ ] **Send approval decision** to AMCOS using the `agent-messaging` skill:
+- [ ] **Send approval decision** to AMCOS via the `amp-send` CLI (`--type approval --priority high`):
   - **Recipient**: `amcos-<project>`
   - **Subject**: "Approval Decision: <REQUEST-ID>"
   - **Content**: approval_decision type with request_id, decision (approve/deny), and reason
@@ -105,7 +105,7 @@ When user gives a work request:
   - Send health ping (mandatory; may skip if the COS's liveness was confirmed within the last ~5 min this workflow)
   - If no team/COS exists for this project, create the team yourself via `aimaestro-teams.sh create` (R29) — the server auto-creates the COS
 - [ ] **Format work request** for AMCOS
-- [ ] **Send request** to AMCOS using the `agent-messaging` skill:
+- [ ] **Send request** to AMCOS via the `amp-send` CLI (`--type task --priority normal`):
   - **Recipient**: `amcos-<project>`
   - **Subject**: "User Request: <summary>"
   - **Content**: work_request type with specialist (AMOA/AMAA/AMIA), task description, and user_context
@@ -122,7 +122,7 @@ When user requests status:
 
 - [ ] **Parse status request** for scope (entire project? specific task?)
 - [ ] **Identify relevant agents** to query
-- [ ] **Send status query** to AMCOS using the `agent-messaging` skill:
+- [ ] **Send status query** to AMCOS via the `amp-send` CLI (`--type request --priority normal`):
   - **Recipient**: `amcos-<project>`
   - **Subject**: "Status Query"
   - **Content**: status_query type with scope (full/milestone/task)
