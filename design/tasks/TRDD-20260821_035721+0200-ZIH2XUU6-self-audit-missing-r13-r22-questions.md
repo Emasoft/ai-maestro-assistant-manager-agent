@@ -3,7 +3,7 @@ trdd-id: ZIH2XUU6
 title: Governance self-audit misses R13.2 no-implementation and R22 GitHub-authorship
 column: todo
 created: 2026-08-21T03:57:21+0200
-updated: 2026-08-21T03:57:21+0200
+updated: 2026-08-21T04:12:00+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -68,8 +68,15 @@ zeros results rather than a broken needle:
 | `grep -rlniE 'never write code\|no implementation\|does not write code\|write the code' skills/` (CONCEPT needle) | empty |
 | cited ids actually present in the 12 | R6 · R12.1 · R15.6 · R23.1–R23.5 · R26 · R28–R32 · R41 · R42/R42.8 · R49 |
 | persona constraint | `agents/ai-maestro-assistant-manager-agent-main-agent.md:121` — "**NO IMPLEMENTATION — THE ONE ABSOLUTE BOUNDARY (R13.2)** … never write code and never develop software … not 'just this once because it is small or urgent'" |
-| hub `docs/GOVERNANCE-RULES.md:581` (fetched via `gh api`) | R13.2, verdict **Explicit** — "Does **NOT** write code, does **NOT** design architecture…" |
-| hub `docs/GOVERNANCE-RULES.md:1196` | R22.1, verdict **Explicit (USER)** — every agent writing to GitHub MUST begin the body with a one-line self-identification |
+| `Emasoft/ai-maestro@fork/main` — `docs/GOVERNANCE-RULES.md:581` (fetched via `gh api`) | R13.2, verdict **Explicit** — "Does **NOT** write code, does **NOT** design architecture…" |
+| `Emasoft/ai-maestro@fork/main` — `docs/GOVERNANCE-RULES.md:1196` | R22.1, verdict **Explicit (USER)** — every agent writing to GitHub MUST begin the body with a one-line self-identification |
+
+**The tree is part of the citation.** A local hub checkout reads R13.2 at `:583`, not
+`:581` — that working tree is 313 commits ahead of `fork/main`, two of them above R13.2.
+Both line numbers are correct *of the tree they were read from*, so a line citation with
+no tree named is ambiguous by construction. The lines above name the pushed copy anyone
+can fetch; prefer that form. (The 313 unpushed commits are the USER's to push — noted
+here only because they explain the delta, not as work for this card.)
 
 The concept needle matters more than the id needle: it proves the rule is **verified
 absent**, not merely uncited under a different spelling.
@@ -101,6 +108,13 @@ nothing triggered the rule. A checklist built by enumerating *powers* will syste
 miss *prohibitions*, which is why the absolute one went missing while twelve narrower
 rules were caught. Any fix should say so, or the next omission is the same shape.
 
+**Q13/Q14 close the two instances; the CLASS stays open until both halves land.** The
+maintenance rule must fire on a prohibition, not only on a new power — *"new or
+newly-discovered PROHIBITION ⇒ its question in the same change"* — and someone must do
+one sweep of the standing prohibitions that predate the checklist, because by definition
+none of them ever triggered a "new power" event. Two rows fix today; the rule change plus
+the sweep fix the next one.
+
 ## Acceptance (closing checklist)
 
 - [ ] Q13 added — no-implementation, citing R13.2 (hub `docs/GOVERNANCE-RULES.md`; the
@@ -110,8 +124,13 @@ rules were caught. Any fix should say so, or the next omission is the same shape
       no-`@` form.
 - [ ] Menu row count and persona skills-list entry updated in the SAME change
       (`RP-SKILL-MENU-01`).
-- [ ] "Keeping this list honest" amended to cover standing PROHIBITIONS, not only new
-      powers.
+- [ ] "Keeping this list honest" amended to fire on a prohibition too — "new or
+      newly-discovered PROHIBITION ⇒ its question in the same change" — not only on a new
+      power.
+- [ ] ONE sweep of the standing prohibitions that predate the checklist (they trigger no
+      "new power" event, so nothing else will ever surface them). Any further gap it finds
+      gets its own card; this box closes when the sweep has been run, not when it comes
+      back empty.
 - [ ] A2 and A3 read and either confirmed (own card or folded in here) or recorded as
       refuted with what was tried.
 - [ ] All repo test scripts pass, incl. `test_skill_menu_matches_shipped`,
