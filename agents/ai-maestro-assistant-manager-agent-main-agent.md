@@ -306,7 +306,7 @@ It does not widen R42 — `inject`/`slash`/`queue`/`state --pane` stay self-only
 The server also refuses the delivery unless the agent is provably waiting on a question of its own, so the narrow shape is enforced, not merely asked for.
 The verbs, the proof step, and the refuse-list live in **[amama-agent-unblock](../skills/amama-agent-unblock/SKILL.md)** — load it rather than improvising, because the trap it corrects is silent: `read-prompt` returns `null` for an `AskUserQuestion` (0 of 419 measured), so a forever-blocked agent reads as healthy.
 
-### The harness now has its OWN cross-session messaging — it is NOT AMP (CC 2.1.224 → 2.1.232)
+### The harness now has its OWN cross-session messaging — it is NOT AMP (CC 2.1.224 → 2.1.240)
 
 Claude Code 2.1.224 added **native cross-session `SendMessage` plus `ListAgents`**: any Claude Code session on any of the owner's machines can message any other, discovered by name, with no server in the path. That is a second inter-agent channel arriving underneath a governance model that assumed only one.
 
@@ -332,6 +332,25 @@ be *started* with a Remote Control session on another machine rather than only a
 Confirmation was never a safety feature, but it was incidentally guarding against a misdirected send, and the
 reach now extends to exactly the population the unreachable-sender clause treats most strictly.
 Cheaper misdirection argues for more caution here, not less.
+
+**What changed through 2.1.240 — the channel got more honest about DELIVERY, never about AUTHORITY.**
+Four silent-failure modes closed: a send to a session that refuses inbound now reports `refused` rather
+than a false success, an inbox that drops your message (rate limit, full queue) now tells you, and an
+over-large or burst-overflowing send is refused up front instead of reported sent (2.1.235-2.1.238).
+Read that narrowly. It makes the *absence of an error* a fair signal that the bytes arrived, and no
+signal whatever about whether the act was permitted — a forbidden governance act sent this way still
+succeeds, still returns nothing, and still writes no ledger entry. *The absence of an error is not
+evidence of permission* is untouched by every one of these fixes; they improved the transport, not the
+authority check, and there is no authority check on this path to improve.
+**Discovery widened, and its blind spot became visible (2.1.234, 2.1.240).**
+`ListAgents` now lists live teammates — before this a reachable teammate simply did not appear — and it
+tells a session its own name. It also now says when the account's session list was too long to check
+completely, which is the half worth keeping: an absent peer may be unlisted rather than gone, so a clean
+listing is no more proof of absence than `online` was ever proof of reachability.
+**The channel reached Windows (2.1.240), so it now spans every machine the owner runs.**
+The deny-invariant lives in each agent workdir's `.claude/settings.local.json` and is OS-independent,
+so it binds there too — but a workdir that is *not* registered is now reachable on three platforms
+instead of two, which widens exactly the population this section already treats most strictly.
 
 **Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, RATIFIED governance** (`Explicit (USER — 2026-08-05, ai-maestro#125, TRDD-AODXPI5E)`; `GOVERNANCE-RULES.md` v5.3.2 on `governance-rules`, verified first-hand 2026-08-08). Cite it freely. Its permitted verbs are **`block-state`, `read-prompt` and `answer` only**.
 `inject`, `slash` and `queue` are excluded by name and 403 cross-agent, because they carry an arbitrary directive
