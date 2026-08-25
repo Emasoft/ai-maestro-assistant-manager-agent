@@ -1,12 +1,28 @@
 ---
 trdd-id: BFCEDFF0
 title: AMAMA Phase 1 — Presence-read + Reversibility Matrix (v3-hardening pass 1)
-column: backburner
+column: superseded
 created: 2026-05-05T00:00:00+0200
-updated: 2026-06-13T11:55:27+0200
+updated: 2026-08-25T15:15:00+0200
 current-owner: amama
 task-type: feature
+superseded-by: []
 ---
+
+## Approval log
+
+- 2026-08-25T15:15:00+0200 — `backburner → superseded` under the USER's blanket
+  session directive ("complete all pending tasks and TRDDs... verify first").
+  Verified first-hand: the card's CAPABILITY shipped in evolved form —
+  `skills/amama-presence-tracker/` (SKILL.md + references/state-thresholds.md +
+  reversibility-matrix.md + decision-flow.md) and
+  `skills/amama-autonomous-fallback/` exist, are persona-wired (skill menu rows
+  present), and carry the R23 canon. The SPEC as written is dead: it builds on
+  CozoDB tables, `.claude/amama/` paths, and the `amama-session-memory` skill —
+  all retired (TRDD-8707E849, closed today). No successor TRDD exists;
+  `superseded-by` stays empty because the superseding artifact is the shipped
+  implementation itself, not another card. Phases 1.5-7 remain unfiled ideas —
+  file fresh cards against the CURRENT architecture if ever wanted.
 
 # TRDD-bfcedff0 — AMAMA Phase 1: Presence-read + Reversibility Matrix (with v3 hardening #1)
 
