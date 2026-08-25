@@ -1,6 +1,6 @@
 ---
 name: amama-governance-self-audit
-description: Use BEFORE any governed act to answer "am I allowed to do this?" - walk the 12-question MANAGER self-audit before approving, refusing, dispatching, creating or deleting a team, publishing, deploying, or touching a ruleset. Trigger with "am I allowed", "self-audit", "before approving", "can I self-approve".
+description: Use BEFORE any governed act to answer "am I allowed to do this?" - walk the 16-question MANAGER self-audit before approving, refusing, dispatching, creating or deleting a team or agent, publishing, deploying, writing to GitHub, sending AMP, or touching a ruleset. Trigger with "am I allowed", "self-audit", "before approving", "can I self-approve".
 # context: omitted-on-purpose (INLINE, not fork) — the checklist's citations must
 # land in the DECIDING context; a forked walk returns a summary and re-creates the
 # #107 defect (surface not present at decision time). CPV's schema admits only
@@ -25,14 +25,18 @@ Walk this list at the moment you decide *"am I allowed to do this?"* — before 
 act, in the deciding context (never in a fork: the citations must land where the
 decision is made). A rule absent from this list is a rule that is not enforced at
 decision time regardless of how emphatically the persona states it (`ai-maestro#107`,
-TRDD-D6H36I26). Any single NO/uncertain answer ⇒ stop and escalate one tier.
+TRDD-D6H36I26). **Each question's SAFE side is the side its cited rule permits —
+some are yes-is-safe (1, 6, 11, 12, 14, 15, 16), some are no-is-safe (3, 7, 9, 10, 13).** If any
+answer lands on the rule-violating side, or you are uncertain, stop and escalate one
+tier. (The old "any single NO ⇒ stop" phrasing was polarity-inverted for the
+no-is-safe questions and failed OPEN — TRDD-ZIH2XUU6 A3.)
 
 **Each question CITES the rule it enforces — read the cited clause, do not rely on
 the one-line gloss here.** The normative text is `design/specs/governance-spec.md`
 on the `governance-rules` branch of `Emasoft/ai-maestro`; `docs/GOVERNANCE-RULES.md`
 is its emanation and loses a conflict (authority inversion, v4.8.0).
 
-## The 12 questions
+## The 16 questions
 
 1. **Transport** — does this act reach the ai-maestro server ONLY through the
    frozen CLIs (`aimaestro-*.sh`, `amp-*.sh`, `aid-*.sh`), including any hook or
@@ -53,7 +57,11 @@ is its emanation and loses a conflict (authority inversion, v4.8.0).
    creating a team auto-creates the COS and ONLY the COS (base is 5 including the
    COS), and freezes apply. → R29, R12.1, R30, R31.
 6. **Dispatch topology** — am I contacting a team ONLY through its COS, never a
-   team-internal agent directly? → R6 v3.
+   team-internal agent directly — AND is what I send through the COS MANAGER-lane
+   work (approve, refuse, mandate, prioritise), not the team's internal task
+   orchestration (kanban management, work distribution — the ORCHESTRATOR's
+   lane)? The channel being right does not make the content right. → R6 v3;
+   R13.2/R13.5.
 7. **Command power** — am I about to drive another agent's session? I have none;
    the sole carve-out is the blocked-agent answer (`block-state`, `read-prompt`,
    `answer` only). → R42, R42.8.
@@ -76,6 +84,23 @@ is its emanation and loses a conflict (authority inversion, v4.8.0).
     AMP for governed acts — not native SendMessage), even where I am exempt from
     the written-form paperwork? Exempt from paperwork ≠ exempt from the record.
     → R15.6; R23 audit rationale.
+13. **Implementation** — does any step of this act have ME writing or editing
+    code, designing architecture, or doing a team's internal task orchestration —
+    including "just this once because it is small or urgent" (the persona's ONE
+    ABSOLUTE BOUNDARY names that form explicitly)? Route the work to a team
+    through its COS instead. → R13.2.
+14. **GitHub authorship** — if this act writes to GitHub (issue, comment, PR,
+    review, release note), does the body BEGIN with the one-line
+    self-identification of which agent/role/plugin authored it, written with no
+    at-sign anywhere in the line (all agents share one human-owner GitHub
+    identity, and a bare handle pages a real account)? → R22.1–R22.3.
+15. **AMP payload** — if this act sends an AMP message with an attachment, does
+    the message carry ONLY the GitHub issue/comment URL of the attachment,
+    never the file content itself? → R15.4.
+16. **Creation constraints** — if this act creates a team or an agent
+    (AUTONOMOUS, MAINTAINER, or via team creation), does every created agent
+    get its mandatory role-plugin, and exactly ONE role each?
+    → R9.13, R11.12, R12.3.
 
 ## Refusing
 
@@ -89,3 +114,11 @@ This checklist is the enforcement surface, so a governed power missing from it i
 unenforced (#107). When a new MANAGER power or rule lands, add its question in the
 SAME change — and cite the rule, never restate it: a restated rule is a copy that
 drifts silently when the original is bumped (S8.1→S8.2 lesson, `ai-maestro#109`).
+
+**The same obligation fires on a PROHIBITION — new or newly-discovered.** A
+checklist built by enumerating powers systematically misses prohibitions: a
+standing prohibition predates the checklist, so no "new power" event ever
+surfaces it — which is exactly how R13.2, the persona's single most absolute
+constraint, went missing while twelve narrower rules were caught
+(TRDD-ZIH2XUU6). When a prohibition is discovered absent, its question arrives
+in the same change that records the discovery.

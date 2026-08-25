@@ -747,5 +747,46 @@ def test_case_insensitive_lookup_still_catches_ambiguity():
             assert raised, f"a colliding short id ({probe!r}) must still raise AmbiguousId"
 
 
+def test_mint_token_degrades_when_host_cli_missing():
+    """Host-verb bridge: a missing host CLI degrades to unverified without raising or blocking."""
+    saved = ppa._HOST_TRDD
+    ppa._HOST_TRDD = Path("/nonexistent/aimaestro-trdd.sh")
+    try:
+        out = ppa.mint_decision_token(
+            Path("/tmp"), "ABCD1234", approve=True, approver="manager", reason="x")
+        assert out["token"] == "unverified", out
+        assert "not installed" in out["why"], out
+    finally:
+        ppa._HOST_TRDD = saved
+
+
+def test_host_verify_reports_not_verified_when_cli_missing():
+    """Host-verb bridge: verify on a token-less host answers NOT VERIFIED (exit 2), not an error."""
+    saved = ppa._HOST_TRDD
+    ppa._HOST_TRDD = Path("/nonexistent/aimaestro-trdd.sh")
+    try:
+        verdict, code = ppa.host_verify(Path("/tmp"), "ABCD1234")
+        assert code == 2, (verdict, code)
+        assert verdict.startswith("NOT VERIFIED"), verdict
+    finally:
+        ppa._HOST_TRDD = saved
+
+
+def test_decide_annotates_token_status_and_still_moves_files():
+    """A failed token mint never blocks the decision: the file moves and the result carries the unverified annotation."""
+    saved = ppa._HOST_TRDD
+    ppa._HOST_TRDD = Path("/nonexistent/aimaestro-trdd.sh")
+    try:
+        with temp_repo() as (root, _ids):
+            ppa.write_manifest(root, ppa.list_pending(root))
+            outcome = ppa.decide(root, [1], [], "manager", "ok", "", False)
+            assert len(outcome["approved"]) == 1, outcome
+            rec = outcome["approved"][0]
+            assert rec["token"] == "unverified", rec
+            assert (root / rec["to"]).is_file(), rec
+    finally:
+        ppa._HOST_TRDD = saved
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))

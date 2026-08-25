@@ -1,9 +1,9 @@
 ---
 trdd-id: F5883DCC
 title: Fleet 3-pillars as proactive ama-* skills in the core plugin + governance-aware wiring + fool-proof rule injection
-column: planned
+column: complete
 created: 2026-06-13T18:10:42+0200
-updated: 2026-06-21T21:45:00+0200
+updated: 2026-08-25T15:25:00+0200
 current-owner: amama
 assignee: amama
 priority: 1
@@ -23,7 +23,26 @@ external-refs: ["github.com/Emasoft/ai-maestro-plugin"]
 
 # TRDD-f5883dcc — 3-pillars as proactive `ama-*` skills (core plugin) + governance-aware wiring
 
-## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-21
+## Approval log
+
+- 2026-08-25T15:25:00+0200 — `planned → complete` under the USER's blanket session
+  directive ("complete all pending tasks and TRDDs... verify first"). Closing
+  disposition, verified first-hand today: (1) Phase A far exceeded — core plugin
+  3.1.33 ships the FULL ama-* surface (trdd write/find/update/transition/server,
+  prrd get/find/edit/propose, kanban-render, proposal-approvals, plus panel/
+  portfolio/session/settings); (2) the AMAMA-exemplar slice was verified done
+  2026-06-21 and still holds; (3) B.1's GOAL — fool-proof governance-rule
+  injection on every machine — is ACHIEVED via the janitor install mechanism
+  (ai-maestro TRDD-DE9757LJ; rules present AND updated today in
+  ~/.claude/rules/), an architectural evolution superseding the "core
+  SessionStart hook" mechanism this card specified (core 3.1.33 hooks.json
+  carries no rule installer — none is needed); (4) B.2 (each other role plugin
+  wiring its agents to the ama-* slice) is cross-project per-repo work — routed
+  to the hub session for tracking (message b9aa3022, 2026-08-25); hub confirmed
+  it was untracked and filed it as ai-maestro:TRDD-8CL6EC48. AMAMA's in-control
+  scope is exhausted.
+
+## ⏵ STATE — READ THIS FIRST ON RESUME — 2026-06-21 (historical)
 
 **✅ UPDATE 2026-06-21 — AMAMA-exemplar (plan step 3) VERIFIED DONE.** AMAMA carries
 NO redundant 3-pillars skills (`amama-prrd-trdd-kanban` / `amama-proposal-approvals`

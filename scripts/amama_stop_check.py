@@ -66,6 +66,13 @@ def check_github_issues() -> tuple[int, list[str]]:
     """
     open_issues = []
 
+    # F7 (TRDD-282F61FE): the issue-block is a FLEET workflow — outside an AI
+    # Maestro context (no AID identity) a solo session must never be blocked
+    # from exiting by fleet-labelled issues. gh-unavailable already fail-softs;
+    # this gates the semantics, not just the tooling.
+    if not os.environ.get("AID_AUTH"):
+        return 0, []
+
     try:
         # Query open issues assigned to current user with assistant-manager label
         result = subprocess.run(

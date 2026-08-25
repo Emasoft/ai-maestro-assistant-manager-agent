@@ -63,6 +63,15 @@ Coordinates with COS-assigned agents. See [cos-definition](references/cos-defini
 
 Checklist: identify op type → verify agent registered → run the frozen CLI (`aimaestro-agent.sh` / `aimaestro-teams.sh`) → await ACK (30-60s).
 
+## Loop ownership (TRDD-9C392C3B M7)
+
+Column-transition ownership inside a team's pipeline, per the R6/workflow model
+and `manager-approval-defaults.md`: the **ORCHESTRATOR** owns the
+design→dispatch handshake; the **INTEGRATOR** owns the transition INTO
+`complete`/`published`/`live`; **no MEMBER self-marks a TRDD `complete`**. When
+coordinating through a COS, route a transition to its owner — never accept a
+completion claim from the agent that implemented the work.
+
 ## Output
 
 | Operation | Output |

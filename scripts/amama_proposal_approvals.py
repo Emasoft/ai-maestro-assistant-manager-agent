@@ -64,6 +64,7 @@ Usage:
     python3 amama_proposal_approvals.py decide --approved "4,6,2" [--json]
     python3 amama_proposal_approvals.py decide --refused "7,8" [--dry-run]
     python3 amama_proposal_approvals.py decide --approved "1,2" --refused "9"
+    python3 amama_proposal_approvals.py verify RGAQCQN6
 """
 
 from __future__ import annotations
@@ -353,6 +354,144 @@ class Proposal:
     created: str
     blocked_by: str = ""   # raw flow-style list value, e.g. "[TRDD-9a8aba94]"
     assignee: str = ""
+
+
+# --------------------------------------------------------------------------- #
+# Host-verb bridge (TRDD-DE33HN3J increment 4)
+# --------------------------------------------------------------------------- #
+# The deployed `aimaestro-trdd.sh approve|refuse` mints a host-signed
+# `approval-token:` into the card; `verify <id>` answers FROM the token
+# (exit 0 verified / 2 not verified / 1 error). The verbs are a minting
+# surface, not an authorization boundary: this local direct-file path stays
+# legal either way, at the cost that `verify` honestly reports NOT VERIFIED
+# (hub rulings, ai-maestro#66 Q1/Q3). The bridge is therefore best-effort by
+# design — every failure degrades to the local record and never blocks a
+# decision, because "a truthful 'I cannot prove this' beats a token paired
+# with a record that lies".
+#
+# THE WORKDIR TRAP this must never fall into (verified 2026-07-16): the trdd
+# verbs default `--agent` to the SERVER'S OWN repo, so calling them without
+# resolving the agent registered for THIS root would write into the hub's
+# tree. `aimaestro-agent.sh resolve --cwd <root>` is the only safe id source —
+# it matches the registry's `workingDirectory` — and its failure (no agent
+# registered here) is a hard "do not call the verb", never a fallback to the
+# server default.
+_HOST_BIN = Path.home() / ".local" / "bin"
+_HOST_TRDD = _HOST_BIN / "aimaestro-trdd.sh"
+_HOST_AGENT = _HOST_BIN / "aimaestro-agent.sh"
+_HOST_AUTH = _HOST_BIN / "aid-auth.sh"
+_HOST_TIMEOUT = 20  # seconds — a hung server must not hang a batch decision
+
+
+def _host_env() -> dict[str, str] | None:
+    """Environment carrying an AID bearer, or None when no auth path exists."""
+    env = dict(os.environ)
+    if env.get("AID_AUTH"):
+        return env
+    if not _HOST_AUTH.is_file():
+        return None
+    try:
+        out = subprocess.run(
+            [str(_HOST_AUTH)], capture_output=True, text=True, timeout=_HOST_TIMEOUT,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    token = (out.stdout or "").strip()
+    if out.returncode != 0 or not token:
+        return None
+    env["AID_AUTH"] = token
+    return env
+
+
+def _host_agent_id(root: Path, env: dict[str, str]) -> str | None:
+    """The agentId whose registered workingDirectory IS this root, else None."""
+    if not _HOST_AGENT.is_file():
+        return None
+    try:
+        out = subprocess.run(
+            [str(_HOST_AGENT), "resolve", "--cwd", str(root), "--json"],
+            capture_output=True, text=True, timeout=_HOST_TIMEOUT, env=env,
+        )
+        if out.returncode != 0:
+            return None
+        return json.loads(out.stdout).get("agentId") or None
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return None
+
+
+def mint_decision_token(
+    root: Path, short_id: str, *, approve: bool, approver: str, reason: str,
+) -> dict:
+    """Best-effort token mint via the host verb; never raises, never blocks.
+
+    Returns ``{"token": "minted"}`` or ``{"token": "unverified", "why": ...}``.
+    Must run BEFORE the local record is written: the server refuses to
+    re-decide an already-decided card, so verb-after-record would always miss
+    the token. The server writes into the same file (workdir == root), and the
+    local mutation reads the file after this returns, so the minted
+    `approval-token:` rides through `write_approval_record` untouched (the
+    preserve-token invariant is pinned by its own tests).
+    """
+    if not _HOST_TRDD.is_file():
+        return {"token": "unverified", "why": "host CLI not installed"}
+    env = _host_env()
+    if env is None:
+        return {"token": "unverified", "why": "no AID auth path (aid-init not run)"}
+    agent_id = _host_agent_id(root, env)
+    if agent_id is None:
+        return {
+            "token": "unverified",
+            "why": "no agent registered for this workdir "
+                   "(refusing the server-default tree)",
+        }
+    flag = "--rationale" if approve else "--reason"
+    cmd = [
+        str(_HOST_TRDD), "approve" if approve else "refuse", short_id,
+        "--approver", approver,
+        flag, reason or ("approved" if approve else "refused"),
+        "--agent", agent_id,
+    ]
+    try:
+        out = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=_HOST_TIMEOUT, env=env,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {"token": "unverified", "why": f"verb failed: {exc.__class__.__name__}"}
+    if out.returncode != 0:
+        detail = " ".join(((out.stderr or "") + " " + (out.stdout or "")).split())[:160]
+        return {"token": "unverified", "why": detail or "verb exited non-zero"}
+    return {"token": "minted"}
+
+
+def host_verify(root: Path, short_id: str) -> tuple[str, int]:
+    """Wrap ``aimaestro-trdd.sh verify <id>`` → (verdict line, exit code).
+
+    Exit map per the frozen manifest shape: 0 VERIFIED / 2 NOT VERIFIED /
+    1 error. A missing CLI or auth path reports NOT VERIFIED (exit 2) rather
+    than an error: the honest answer to "can you prove this approval?" on a
+    host with no token layer is "no", not "something broke".
+    """
+    if not _HOST_TRDD.is_file():
+        return ("NOT VERIFIED — host CLI not installed", 2)
+    env = _host_env()
+    if env is None:
+        return ("NOT VERIFIED — no AID auth path (aid-init not run)", 2)
+    cmd = [str(_HOST_TRDD), "verify", short_id]
+    agent_id = _host_agent_id(root, env)
+    if agent_id:
+        cmd += ["--agent", agent_id]
+    try:
+        out = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=_HOST_TIMEOUT, env=env,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return (f"ERROR — {exc.__class__.__name__}", 1)
+    text = " ".join(((out.stdout or "") + " " + (out.stderr or "")).split())[:200]
+    if out.returncode == 0:
+        return (f"VERIFIED — {text}" if text else "VERIFIED", 0)
+    if out.returncode == 2:
+        return (f"NOT VERIFIED — {text}" if text else "NOT VERIFIED", 2)
+    return (f"ERROR — {text}" if text else "ERROR", 1)
 
 
 def read_proposal(path: Path, root: Path) -> Proposal | None:
@@ -679,6 +818,15 @@ def decide(
                 "move": "(dry-run)",
             })
             return
+        # Token first, record second (TRDD-DE33HN3J increment 4): the host verb
+        # refuses to re-decide an already-decided card, so minting after the
+        # local record would always miss. The mint writes `approval-token:`
+        # into the file; apply_move reads the file AFTER this returns, so the
+        # token survives the local mutation verbatim.
+        token = mint_decision_token(
+            root, prop.short, approve=approve, approver=approver,
+            reason=(reason_approve if approve else reason_refuse),
+        )
         if approve:
             rec = apply_move(
                 root, src, target_col=APPROVED_COLUMN, dest_dir=tasks_dir(root),
@@ -691,7 +839,7 @@ def decide(
                 verb="REFUSED", approver=approver, requirement=prop.requirement,
                 reason=reason_refuse, decision="rejected",
             )
-        rec.update({"n": n, "short": prop.short, "title": prop.title})
+        rec.update({"n": n, "short": prop.short, "title": prop.title, **token})
         results.append(rec)
 
     for n in plan["approve"]:
@@ -1141,6 +1289,13 @@ def cmd_decide(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_verify(args: argparse.Namespace) -> int:
+    root = project_root(args.root)
+    verdict, code = host_verify(root, args.id)
+    print(verdict)
+    return code
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Batch-review design/proposals/ TRDDs.")
     parser.add_argument("--root", help="Project root (default: CLAUDE_PROJECT_DIR / git top / cwd)")
@@ -1182,6 +1337,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_arch.set_defaults(func=cmd_archive)
 
     # `cancel` is the convenience alias for `archive --state cancelled`.
+    p_ver = sub.add_parser(
+        "verify",
+        help="Verify a card's approval token via the host CLI "
+             "(exit 0 VERIFIED / 2 NOT VERIFIED / 1 error)",
+    )
+    p_ver.add_argument("id", help="8-char TRDD short id, e.g. RGAQCQN6")
+    p_ver.set_defaults(func=cmd_verify)
+
     p_can = sub.add_parser("cancel", help="Alias for `archive --state cancelled`")
     _add_archive_args(p_can)
     p_can.set_defaults(func=cmd_archive, state="cancelled")

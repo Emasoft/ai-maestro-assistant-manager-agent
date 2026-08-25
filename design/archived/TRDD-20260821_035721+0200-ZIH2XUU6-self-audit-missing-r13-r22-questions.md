@@ -1,9 +1,9 @@
 ---
 trdd-id: ZIH2XUU6
 title: Governance self-audit misses R13.2 no-implementation and R22 GitHub-authorship
-column: todo
+column: complete
 created: 2026-08-21T03:57:21+0200
-updated: 2026-08-21T04:12:00+0200
+updated: 2026-08-25T14:12:00+0200
 current-owner: amama
 assignee: amama
 priority: 2
@@ -117,21 +117,32 @@ the sweep fix the next one.
 
 ## Acceptance (closing checklist)
 
-- [ ] Q13 added — no-implementation, citing R13.2 (hub `docs/GOVERNANCE-RULES.md`; the
-      normative text is `design/specs/governance-spec.md` on `governance-rules`), never
-      restating it, and naming the "not just this once" form the persona uses.
-- [ ] Q14 added — GitHub authorship byline, citing R22.1–R22.3, including the deliberate
-      no-`@` form.
-- [ ] Menu row count and persona skills-list entry updated in the SAME change
-      (`RP-SKILL-MENU-01`).
-- [ ] "Keeping this list honest" amended to fire on a prohibition too — "new or
-      newly-discovered PROHIBITION ⇒ its question in the same change" — not only on a new
-      power.
-- [ ] ONE sweep of the standing prohibitions that predate the checklist (they trigger no
-      "new power" event, so nothing else will ever surface them). Any further gap it finds
-      gets its own card; this box closes when the sweep has been run, not when it comes
-      back empty.
-- [ ] A2 and A3 read and either confirmed (own card or folded in here) or recorded as
-      refuted with what was tried.
-- [ ] All repo test scripts pass, incl. `test_skill_menu_matches_shipped`,
-      `test_governance_citations`, `test_skill_frontmatter_intent`, `test_r23_conformance`.
+- [x] Q13 added — no-implementation, citing R13.2, never restating it, naming the
+      "just this once because it is small or urgent" form the persona uses.
+- [x] Q14 added — GitHub authorship byline, citing R22.1–R22.3, with the deliberate
+      no-at-sign form spelled out in the question.
+- [x] Menu row count and persona skills-list entry updated in the SAME change
+      (`RP-SKILL-MENU-01`; skill description + section header updated with them).
+- [x] "Keeping this list honest" amended — prohibitions (new or newly-discovered)
+      now fire the same same-change obligation, with the powers-vs-prohibitions
+      failure shape named.
+- [x] Sweep run 2026-08-25 over the spec's rule table (`governance-spec.md` on
+      `governance-rules`, prohibition-language grep, MANAGER-relevant filter).
+      Found 2 further gaps — R15.4 amp-carries-url-only, and
+      R9.13/R11.12/R12.3 creation-time role-plugin constraints — filed as
+      TRDD-EQULXUH8 per this box's rule.
+- [x] A2 CONFIRMED: R13.2 verbatim excludes "a team's internal task
+      orchestration" (spec :535) and Q6 checked only the channel — fix folded in
+      here (Q6 extended with the content clause, citing R13.2/R13.5).
+      A3 CONFIRMED by direct read: Q3/Q7/Q9/Q10 are yes-is-violation while the
+      decision rule said "any single NO ⇒ stop" — exactly 4 inversions, each
+      failing OPEN. Fix folded in here: the decision rule now names each
+      question's safe side instead of assuming yes-is-safe.
+- [x] `test_skill_menu_matches_shipped`, `test_governance_citations`,
+      `test_skill_frontmatter_intent`, `test_r23_conformance`: 15 passed.
+
+## Approval log
+
+- 2026-08-25T14:12:00+0200 — `todo → complete` under the USER's blanket session
+  directive ("complete all pending tasks and TRDDs... decide yourself... verify
+  first"). All boxes verified above; sweep findings spun off as TRDD-EQULXUH8.

@@ -1,9 +1,9 @@
 ---
 trdd-id: DE33HN3J
 title: Align AMAMA to the ai-maestro harness approval-record contract so the MANAGER can work in the harness
-column: todo
+column: complete
 created: 2026-07-16T10:22:25+0200
-updated: 2026-08-05T16:07:47+0200
+updated: 2026-08-25T14:40:00+0200
 current-owner: amama-manager
 task-type: bugfix
 scope: project
@@ -195,7 +195,21 @@ implementation-commits: [7edae93, 3ce3ae9, 49894b3, a72374b]
   (4) `write_approval_record` matches overlay Part A B3 (judge/datetime/approved + migrate-on-touch
   exactly-one-field); (5) manifest `verify <id>` shape confirmed: exit 0 verified / **2 NOT
   verified** / 1 error; `approve` MINTS a host-signed token since `d7531e53`.
-- **NEXT ACTION (increment 4, DEPLOY-GATED — wire only when the probe flips true):** route AMAMA
+- **✅ INCREMENT 4 DONE (2026-08-25) — the probe flipped TRUE and the wiring landed.**
+  Verified first-hand on the installed dispatch (not the branch): `~/.local/bin/aimaestro-trdd.sh`
+  now carries `cmd_verify` (:315, dispatch :621) with `--tier` a dead flag (title vocabulary live,
+  #69), and `aimaestro-teams.sh tasks` is deployed (:466) — the 4c388042 A.5 residue markers were
+  ALREADY gone (grep 0 hits). Shipped in `scripts/amama_proposal_approvals.py`: a host-verb bridge
+  (`mint_decision_token` runs BEFORE the local record so the server can still decide; every
+  failure degrades to direct-file with the decision result annotated `token: minted|unverified`)
+  plus a `verify <id>` subcommand wrapping the frozen 0/2/1 shape. The workdir trap is closed by
+  construction: the agent id comes ONLY from `aimaestro-agent.sh resolve --cwd <root> --json`
+  (registry `workingDirectory` match) — no resolution ⇒ no verb call, never the server-default
+  tree. 3 new no-mock degradation tests; 38/38 pass, ruff clean. Real run on this AID-less host:
+  `verify DE33HN3J` → "NOT VERIFIED — no AID auth path", exit 2 — the honest degradation the hub
+  ratified. The acceptance criterion is architecture-satisfied: the moment this workdir gets an
+  AID identity + registration, approvals mint tokens and report VERIFIED with no further code.
+- **~~NEXT ACTION (increment 4, DEPLOY-GATED — wire only when the probe flips true)~~:** route AMAMA
   approvals through the server's `aimaestro-trdd.sh approve` so a token is minted; wrap `verify`
   (0/2/1). ALSO absorb TRDD-4c388042's A.5 residue (same gate): once the `aimaestro-teams.sh
   tasks` verb is deployed, drop the stale `DECOUPLE-BLOCKED #36` markers in the status-reporting
@@ -322,3 +336,10 @@ hub: B1 ladder contradiction, B2 skill name, B3 log-line format, B4 `routed-via:
 
 `relevant-rules: [1]` — PRRD G1.1 (GitHub authorship self-identification) governs the issue
 posts made for this task.
+
+## Approval log
+
+- 2026-08-25T14:40:00+0200 — `todo → complete` under the USER's blanket session directive
+  ("complete all pending tasks and TRDDs... decide yourself... verify first"). Increments 1-3
+  were already shipped (v2.14.0+); increment 4's deploy gate was re-probed, found flipped, and
+  the wiring landed with real degradation tests (see STATE). Ships in the next publish.

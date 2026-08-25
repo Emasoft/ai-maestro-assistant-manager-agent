@@ -1,12 +1,11 @@
 ---
 trdd-id: 282F61FE
 title: Overnight fleet-readiness campaign — MANAGER coordination + AMAMA in-control finish
-column: backburner
+column: complete
 blocked-by: []
-review-after: 2026-09-15
 external-refs: ["github.com/Emasoft/ai-maestro/issues/47"]
 created: 2026-06-22T02:06:57+0200
-updated: 2026-08-19T00:55:00+0200
+updated: 2026-08-25T15:05:00+0200
 current-owner: amama
 assignee: amama
 priority: 0
@@ -21,6 +20,20 @@ test-requirements: [unit, lint, typecheck]
 ---
 
 # Overnight fleet-readiness campaign
+
+## Approval log
+
+- 2026-08-25T15:05:00+0200 — `backburner → complete` under the USER's blanket session
+  directive ("complete all pending tasks and TRDDs... verify first"). Closing
+  disposition, each point verified first-hand today: (1) every AMAMA-in-control item
+  is exhausted — C2/C3/C4 resolved (recorded below), C1 (retire the CozoDB skill)
+  EXECUTED today under TRDD-8707E849, F7 (AID-gate the stop-hook issue block)
+  IMPLEMENTED today with 2 regression tests (7/7 green); (2) the June deploy blockers
+  are stale — `aimaestro-teams.sh tasks` IS deployed (:466) and the 4c388042 A.5
+  residue markers are gone (grep 0 hits); (3) what remains is cross-fleet
+  monitor-and-nudge, which is the MANAGER's STANDING duty, not a finite card — the
+  peer-gated items live in their own repos' trackers. The `review-after: 2026-09-15`
+  park is dissolved with the card.
 
 ## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-06-22T02:06
 

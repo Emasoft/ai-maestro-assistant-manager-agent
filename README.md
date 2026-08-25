@@ -122,7 +122,6 @@ invitation to re-propose; the tool rejects a reasonless refusal.
 | `amama-amcos-coordination` | 16 | COS coordination: approvals, delegation, health checks, completions |
 | `amama-github-routing` | 7 | Routing GitHub operations (issues, PRs, projects, releases) via team labels |
 | `amama-label-taxonomy` | 2 | GitHub label taxonomy management and triage |
-| `amama-session-memory` | 5 | CozoDB-backed session memory, preferences, handoff tracking |
 | `amama-autonomous-fallback` | 2 | Approve-autonomously / defer / escalate when a peer approval arrives and the user is unavailable |
 | `amama-presence-tracker` | 1 | Compute the user's availability state (active/monitoring/away/dnd) for autonomous-fallback gating |
 | `amama-agent-unblock` | 0 | Detect whether a silent agent is BLOCKED and why (`block-state`, reads the terminal), and answer its pending question — the one permitted cross-agent command |
@@ -283,7 +282,6 @@ ai-maestro-assistant-manager-agent/
 │   ├── amama-label-taxonomy/          # GitHub label management + 2 reference docs
 │   ├── amama-presence-tracker/        # User availability state for autonomous-fallback + 1 reference doc
 │   ├── amama-role-routing/            # Request routing to specialists + 4 reference docs
-│   ├── amama-session-memory/          # CozoDB session memory + 5 reference docs
 │   ├── amama-status-reporting/        # Status report generation + 4 reference docs
 │   └── amama-user-communication/      # User interaction patterns + 6 reference docs
 ├── docs/                              # Published documentation

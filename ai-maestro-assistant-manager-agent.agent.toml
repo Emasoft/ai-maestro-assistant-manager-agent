@@ -24,7 +24,6 @@ primary = [
 ]
 secondary = [
     "amama-label-taxonomy",
-    "amama-session-memory",
 ]
 
 [agents]

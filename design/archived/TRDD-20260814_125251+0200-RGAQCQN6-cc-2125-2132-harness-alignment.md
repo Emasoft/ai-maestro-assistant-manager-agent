@@ -1,13 +1,13 @@
 ---
 trdd-id: RGAQCQN6
 title: Align AMAMA to Claude Code 2.1.225-2.1.232
-column: human_review
+column: complete
 blocked-by: []
 created: 2026-08-14T12:52:51+0200
-updated: 2026-08-19T00:55:00+0200
+updated: 2026-08-25T14:04:30+0200
 current-owner: amama-session
 task-type: infra
-approval-tier: 0
+min-approval-requirement: none
 relevant-rules: []
 external-refs: ["github.com/Emasoft/ai-maestro/issues/143", "https://code.claude.com/docs/en/release-notes"]
 ---
@@ -98,8 +98,9 @@ point 3 already treats most strictly.
 - [x] Verified `background: false` is still the correct opt-out post-2.1.232
 - [x] Persona section retitled to a range and the four deltas folded in, each
       stated WITH its non-implication
-- [ ] Delta folded into the PENDING hub ask (`ai-maestro#143`) rather than
-      opened as a second issue — blocked on the USER, same as `Y6V1TOGN`
+- [x] Delta folded into the PENDING hub ask (`ai-maestro#143`) rather than
+      opened as a second issue — posted 2026-08-25
+      (ai-maestro#143 comment 5410105190)
 
 ## Gotcha that will bite the next editor
 
@@ -113,6 +114,8 @@ publish gate reddens.
 
 ## Approval log
 
-## Wait state (2026-08-19, TRDD-QX6VFAXS hygiene)
+- 2026-08-25T14:04:30+0200 — `human_review → complete` under the USER's blanket session directive ("complete all pending tasks and TRDDs... decide yourself... verify first"). The last open box (fold the 2.1.225-232 delta into ai-maestro#143) executed and verified: comment 5410105190 posted. The #143 ruling itself gates no remaining box on THIS card — a wider ratification, if it comes, is Y6V1TOGN's conditional, not this card's.
 
-Awaiting a USER-tier hub decision: ai-maestro#143 — R42.3's "ONLY channel" clause is USER-tier; only the USER may correct it. Per hub Q3 ruling a USER-decision wait is `human_review` (blocked-by holds TRDD ids only). Resume in `dev` on the ruling.
+## Wait state (RESOLVED 2026-08-25)
+
+~~Awaiting a USER-tier hub decision~~ — the wait gated only the delta-fold, which is now posted into #143. Historical text: per hub Q3 ruling a USER-decision wait is `human_review` (blocked-by holds TRDD ids only).

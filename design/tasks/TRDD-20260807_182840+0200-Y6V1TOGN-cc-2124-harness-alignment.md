@@ -58,7 +58,7 @@ reconstructs what was said.
 - [x] Skills/agents audited against 2.1.208-2.1.224 for breaking harness changes
 - [x] Stale model-version claims corrected (`opus` is a FAMILY alias → Opus 5 since 2.1.219)
 - [x] Persona states the native-cross-session-messaging position
-- [ ] Hub asked to ratify or overturn that position (issue on Emasoft/ai-maestro)
+- [x] Hub asked to ratify or overturn that position (ai-maestro#143, verified OPEN 2026-08-25 — USER-tier, awaiting ruling)
 - [ ] If ratified wider: revisit the persona section and the AMP-only framing
 
 ## Notes

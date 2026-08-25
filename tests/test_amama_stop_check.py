@@ -140,15 +140,36 @@ def test_block_stop_on_unread_messages():
 
 
 def test_block_stop_on_open_github_issues():
-    """Open assistant-manager issues from `gh` JSON → main() returns 2 citing GitHub issues."""
+    """In a fleet context (AID_AUTH set), open assistant-manager issues → main() returns 2."""
     issues = json.dumps([{"title": "Wire up approval queue", "number": 42},
                          {"title": "Fix kanban round-trip", "number": 43}])
-    with hook_env(amp_stdout="0", gh_stdout=issues) as (_proj, run):
-        rc, out = run('{"hook_event_name": "Stop"}')
-        assert rc == 2, f"open issues must block (2), got {rc}"
-        payload = json.loads(out)
-        assert payload["decision"] == "block"
-        assert "2 open GitHub issue(s)" in payload["reason"]
+    saved_aid = os.environ.get("AID_AUTH")
+    os.environ["AID_AUTH"] = "mst_test_token"  # F7: the issue-block is fleet-gated
+    try:
+        with hook_env(amp_stdout="0", gh_stdout=issues) as (_proj, run):
+            rc, out = run('{"hook_event_name": "Stop"}')
+            assert rc == 2, f"open issues must block (2), got {rc}"
+            payload = json.loads(out)
+            assert payload["decision"] == "block"
+            assert "2 open GitHub issue(s)" in payload["reason"]
+    finally:
+        if saved_aid is None:
+            os.environ.pop("AID_AUTH", None)
+        else:
+            os.environ["AID_AUTH"] = saved_aid
+
+
+def test_no_aid_context_never_blocks_on_github_issues():
+    """F7 (TRDD-282F61FE): without AID_AUTH a solo session exits freely even with open fleet issues."""
+    issues = json.dumps([{"title": "Wire up approval queue", "number": 42}])
+    saved_aid = os.environ.pop("AID_AUTH", None)
+    try:
+        with hook_env(amp_stdout="0", gh_stdout=issues) as (_proj, run):
+            rc, _out = run('{"hook_event_name": "Stop"}')
+            assert rc == 0, f"solo session must never be issue-blocked, got {rc}"
+    finally:
+        if saved_aid is not None:
+            os.environ["AID_AUTH"] = saved_aid
 
 
 def test_subagent_exit_is_always_allowed():

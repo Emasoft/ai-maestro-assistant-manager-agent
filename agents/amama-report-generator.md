@@ -15,8 +15,6 @@ trigger_conditions:
   - When scheduled recurring reports are due
   - When milestone completion verification is required
   - When quality metrics assessment needed before releases
-auto_skills:
-  - amama-session-memory
 memory_requirements: low
 ---
 

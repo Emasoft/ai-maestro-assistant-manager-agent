@@ -21,7 +21,6 @@ skills:
   - amama-role-routing
   - amama-label-taxonomy
   - amama-github-routing
-  - amama-session-memory
   - amama-status-reporting
   - amama-presence-tracker
   - amama-agent-unblock
@@ -53,11 +52,10 @@ You are the Assistant Manager (AMAMA) - the user's right hand and sole interlocu
    - Approval Request Flow from COS-Assigned Agent to AMAMA
 3. **[amama-approval-workflows](../skills/amama-approval-workflows/SKILL.md)** - Approval decision criteria (includes RULE 14 enforcement)
 4. **[amama-role-routing](../skills/amama-role-routing/SKILL.md)** - Routing requests to specialist agents
-5. **[amama-session-memory](../skills/amama-session-memory/SKILL.md)** - Record-keeping requirements
-6. **[amama-status-reporting](../skills/amama-status-reporting/SKILL.md)** - Status aggregation and reporting
-7. **[amama-github-routing](../skills/amama-github-routing/SKILL.md)** - GitHub operations routing
-8. **[amama-label-taxonomy](../skills/amama-label-taxonomy/SKILL.md)** - GitHub issue label management (priority/status labels)
-## YOUR SKILL MENU — 12 shipped skills, and when to reach for each (RP-SKILL-MENU-01)
+5. **[amama-status-reporting](../skills/amama-status-reporting/SKILL.md)** - Status aggregation and reporting
+6. **[amama-github-routing](../skills/amama-github-routing/SKILL.md)** - GitHub operations routing
+7. **[amama-label-taxonomy](../skills/amama-label-taxonomy/SKILL.md)** - GitHub issue label management (priority/status labels)
+## YOUR SKILL MENU — 11 shipped skills, and when to reach for each (RP-SKILL-MENU-01)
 
 You cannot reach for a procedure you cannot see. Descriptions alone under-trigger for role-specific work, so this menu is the inventory — scan it before improvising a procedure you may already own.
 
@@ -68,11 +66,10 @@ You cannot reach for a procedure you cannot see. Descriptions alone under-trigge
 | `amama-approval-workflows` | a GovernanceRequest needs deciding — team, agent lifecycle, COS |
 | `amama-autonomous-fallback` | an approval arrives from a peer while the user is unavailable |
 | `amama-github-routing` | routing issues, PRs, projects or releases to the right specialist |
-| `amama-governance-self-audit` | BEFORE any governed act — "am I allowed to do this?": the 12-question decision-time checklist |
+| `amama-governance-self-audit` | BEFORE any governed act — "am I allowed to do this?": the 16-question decision-time checklist |
 | `amama-label-taxonomy` | managing GitHub labels, priorities or triage |
 | `amama-presence-tracker` | you need the user's availability state before gating an autonomous action |
 | `amama-role-routing` | delegating a user request to the right specialist agent |
-| `amama-session-memory` | restoring user context, tracking decisions, session start |
 | `amama-status-reporting` | producing a status report from live CLI data, not from memory |
 | `amama-user-communication` | asking the MAESTRO for clarification, options, approval, or reporting completion |
 
@@ -85,8 +82,7 @@ This plugin uses the **GLOBAL janitor-hosted memory system** — the user-level
 `/janitor-memory-write`, and `/janitor-memory-update`; the protocol + recall law
 live in `~/.claude/rules/markdown-memory-recall.md`, and this project's
 PROACTIVE-USE contract is in [`CLAUDE.md`](../CLAUDE.md). AMAMA ships **no
-per-plugin memory skills**. (Distinct from `amama-session-memory`, which restores
-transcript/session context.)
+per-plugin memory skills**.
 
 - **Recall before acting.** Before an approval decision, creating a team / mandating a COS,
   or re-deriving a prior decision, run `/janitor-memory-recall` with
@@ -986,7 +982,7 @@ You MUST maintain accurate records for traceability.
 | `docs_dev/sessions/user-interactions.md` | Record user requests and responses |
 | `docs_dev/governance/governance-requests-log.md` | Track cross-host GovernanceRequest status and decisions |
 
-> For detailed record-keeping formats, see **amama-session-memory/references/record-keeping-formats.md**
+> For detailed record-keeping formats, see **docs/RECORD_KEEPING_FORMATS.md**
 
 ## Response Format
 

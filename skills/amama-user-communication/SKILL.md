@@ -55,6 +55,13 @@ Copy this checklist and track your progress:
 - [ ] Include UUIDs and references
 - [ ] Send communication
 
+## Inbox priority (TRDD-9C392C3B M10)
+
+When the AI Maestro inbox shows unread messages, process them **URGENT > HIGH >
+NORMAL** — all of them — BEFORE resuming the current task. Messages can carry
+corrections, blocking issues, or completions the current work depends on;
+finishing the task first risks building on state a message already invalidated.
+
 ## Output
 
 | Type | When to Use |
