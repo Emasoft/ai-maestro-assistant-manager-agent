@@ -832,7 +832,7 @@ def decide(
             root, prop.short, approve=approve, approver=approver,
             reason=(reason_approve if approve else reason_refuse),
         )
-        if token["token"] == "minted":
+        if token["token"] == "minted" and not src.exists():
             dest_dir = tasks_dir(root) if approve else refused_dir(root)
             rec: dict = {
                 "verb": "approve" if approve else "refuse",
@@ -840,6 +840,29 @@ def decide(
                 "to": (dest_dir / src.name).relative_to(root).as_posix(),
                 "move": "host-verb",
             }
+        elif token["token"] == "minted" and src.exists():
+            # Postcondition failed: the verb reported success but the file is
+            # STILL in proposals/ — the DEPLOYED server predates the
+            # moveZone-in-approve shape (branch-vs-deployed lag). Without this
+            # check the card would be DECIDED-but-UNMOVED (approved, column set,
+            # yet re-offered by list_pending) — governance-record corruption in
+            # the success path. apply_move is the exact repair: the record
+            # rewrite is idempotent and the move completes the transition.
+            if approve:
+                rec = apply_move(
+                    root, src, target_col=APPROVED_COLUMN,
+                    dest_dir=tasks_dir(root), verb="APPROVED",
+                    approver=approver, requirement=prop.requirement,
+                    reason=reason_approve, decision="approved",
+                )
+            else:
+                rec = apply_move(
+                    root, src, target_col=REFUSED_COLUMN,
+                    dest_dir=refused_dir(root), verb="REFUSED",
+                    approver=approver, requirement=prop.requirement,
+                    reason=reason_refuse, decision="rejected",
+                )
+            rec["move"] = "host-verb+local-completion"
         elif approve:
             rec = apply_move(
                 root, src, target_col=APPROVED_COLUMN, dest_dir=tasks_dir(root),

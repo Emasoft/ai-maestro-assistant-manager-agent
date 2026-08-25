@@ -835,5 +835,47 @@ def test_verb_success_skips_local_move_entirely():
         assert (dest_dir / src.name).is_file(), "card must sit in tasks/ exactly once"
 
 
+def test_verb_success_without_server_move_falls_through_to_local_completion():
+    """Deployment-lag postcondition: a verb that exits 0 WITHOUT moving the file (older deployed server) triggers the local apply_move so the card is never decided-but-unmoved."""
+    saved = (ppa._HOST_TRDD, ppa._HOST_AGENT, os.environ.get("AID_AUTH"))
+    with temp_repo() as (root, _ids):
+        ppa.write_manifest(root, ppa.list_pending(root))
+        man = ppa.read_manifest(root)
+        it = next(i for i in man["items"] if int(i["n"]) == 1)
+        pending = {p.trdd_id: p for p in ppa.list_pending(root)}
+        prop = pending[it["trdd_id"]]
+        src = root / prop.file
+        dest_dir = ppa.tasks_dir(root)
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        # Stub emulating an OLDER deployed server: the approve verb records the
+        # decision and exits 0 but does NOT move the file out of proposals/.
+        stub_dir = root / "_stubs"
+        stub_dir.mkdir()
+        trdd_stub = stub_dir / "trdd.sh"
+        trdd_stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        agent_stub = stub_dir / "agent.sh"
+        agent_stub.write_text(
+            "#!/bin/sh\nprintf '{\"agentId\": \"test-agent\"}'\nexit 0\n",
+            encoding="utf-8")
+        for s in (trdd_stub, agent_stub):
+            s.chmod(0o755)
+        ppa._HOST_TRDD = trdd_stub
+        ppa._HOST_AGENT = agent_stub
+        os.environ["AID_AUTH"] = "mst_test"
+        try:
+            outcome = ppa.decide(root, [1], [], "manager", "ok", "", False)
+        finally:
+            ppa._HOST_TRDD, ppa._HOST_AGENT = saved[0], saved[1]
+            if saved[2] is None:
+                os.environ.pop("AID_AUTH", None)
+            else:
+                os.environ["AID_AUTH"] = saved[2]
+        rec = outcome["approved"][0]
+        assert rec["token"] == "minted", rec
+        assert rec["move"] == "host-verb+local-completion", rec
+        assert not src.exists(), "local completion must move the card out of proposals/"
+        assert (dest_dir / src.name).is_file(), "card must sit in tasks/ exactly once"
+
+
 if __name__ == "__main__":
     sys.exit(run_standalone(globals()))
