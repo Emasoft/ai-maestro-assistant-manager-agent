@@ -425,12 +425,15 @@ def mint_decision_token(
     """Best-effort token mint via the host verb; never raises, never blocks.
 
     Returns ``{"token": "minted"}`` or ``{"token": "unverified", "why": ...}``.
-    Must run BEFORE the local record is written: the server refuses to
-    re-decide an already-decided card, so verb-after-record would always miss
-    the token. The server writes into the same file (workdir == root), and the
-    local mutation reads the file after this returns, so the minted
-    `approval-token:` rides through `write_approval_record` untouched (the
-    preserve-token invariant is pinned by its own tests).
+    Must run BEFORE the local mutation, and a SUCCESS means the local mutation
+    must be SKIPPED entirely: the server verb performs the WHOLE transition —
+    zone move (proposals/→tasks/ or refused/), `column:`, the approval record,
+    `approval-token:`, and the log line (verified against `lib/trdd-store.ts`
+    `promoteTrdd`/`refuseTrdd` on the pushed `governance-rules` ref, 2026-08-25;
+    it also 409s any card not in proposals/, so verb-after-record can never
+    mint). Running the local move after a verb success would read a source path
+    the server already moved — the double-decide failure this comment exists to
+    prevent.
     """
     if not _HOST_TRDD.is_file():
         return {"token": "unverified", "why": "host CLI not installed"}
@@ -818,16 +821,26 @@ def decide(
                 "move": "(dry-run)",
             })
             return
-        # Token first, record second (TRDD-DE33HN3J increment 4): the host verb
-        # refuses to re-decide an already-decided card, so minting after the
-        # local record would always miss. The mint writes `approval-token:`
-        # into the file; apply_move reads the file AFTER this returns, so the
-        # token survives the local mutation verbatim.
+        # Token first (TRDD-DE33HN3J increment 4): the host verb 409s any card
+        # no longer in proposals/, so minting after the local move can never
+        # succeed. And on SUCCESS the verb has ALREADY done the whole
+        # transition server-side — zone move, column, record, token, log line
+        # (verified vs lib/trdd-store.ts promoteTrdd/refuseTrdd on the pushed
+        # governance-rules ref) — so the local mutation MUST be skipped: it
+        # would read a source path the server just moved.
         token = mint_decision_token(
             root, prop.short, approve=approve, approver=approver,
             reason=(reason_approve if approve else reason_refuse),
         )
-        if approve:
+        if token["token"] == "minted":
+            dest_dir = tasks_dir(root) if approve else refused_dir(root)
+            rec: dict = {
+                "verb": "approve" if approve else "refuse",
+                "from": prop.file,
+                "to": (dest_dir / src.name).relative_to(root).as_posix(),
+                "move": "host-verb",
+            }
+        elif approve:
             rec = apply_move(
                 root, src, target_col=APPROVED_COLUMN, dest_dir=tasks_dir(root),
                 verb="APPROVED", approver=approver, requirement=prop.requirement,

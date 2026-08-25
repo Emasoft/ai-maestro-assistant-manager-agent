@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import os
 import shutil
 import subprocess
 import sys
@@ -786,6 +787,52 @@ def test_decide_annotates_token_status_and_still_moves_files():
             assert (root / rec["to"]).is_file(), rec
     finally:
         ppa._HOST_TRDD = saved
+
+
+def test_verb_success_skips_local_move_entirely():
+    """When the host verb succeeds it has ALREADY moved+decided the card server-side; the local mutation must be skipped (no double-move, no read of the moved path)."""
+    saved = (ppa._HOST_TRDD, ppa._HOST_AGENT, os.environ.get("AID_AUTH"))
+    with temp_repo() as (root, _ids):
+        ppa.write_manifest(root, ppa.list_pending(root))
+        man = ppa.read_manifest(root)
+        it = next(i for i in man["items"] if int(i["n"]) == 1)
+        pending = {p.trdd_id: p for p in ppa.list_pending(root)}
+        prop = pending[it["trdd_id"]]
+        src = root / prop.file
+        dest_dir = ppa.tasks_dir(root)
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        # Stub host CLIs emulating the REAL server semantics (verified vs
+        # lib/trdd-store.ts promoteTrdd): the approve verb MOVES the file
+        # proposals/ -> tasks/ and rewrites column itself, then exits 0.
+        stub_dir = root / "_stubs"
+        stub_dir.mkdir()
+        trdd_stub = stub_dir / "trdd.sh"
+        trdd_stub.write_text(
+            "#!/bin/sh\n"
+            f'mv "{src}" "{dest_dir / src.name}"\n'
+            "exit 0\n", encoding="utf-8")
+        agent_stub = stub_dir / "agent.sh"
+        agent_stub.write_text(
+            "#!/bin/sh\nprintf '{\"agentId\": \"test-agent\"}'\nexit 0\n",
+            encoding="utf-8")
+        for s in (trdd_stub, agent_stub):
+            s.chmod(0o755)
+        ppa._HOST_TRDD = trdd_stub
+        ppa._HOST_AGENT = agent_stub
+        os.environ["AID_AUTH"] = "mst_test"
+        try:
+            outcome = ppa.decide(root, [1], [], "manager", "ok", "", False)
+        finally:
+            ppa._HOST_TRDD, ppa._HOST_AGENT = saved[0], saved[1]
+            if saved[2] is None:
+                os.environ.pop("AID_AUTH", None)
+            else:
+                os.environ["AID_AUTH"] = saved[2]
+        rec = outcome["approved"][0]
+        assert rec["token"] == "minted", rec
+        assert rec["move"] == "host-verb", rec
+        assert not src.exists(), "source must have been moved by the verb, not restored"
+        assert (dest_dir / src.name).is_file(), "card must sit in tasks/ exactly once"
 
 
 if __name__ == "__main__":
