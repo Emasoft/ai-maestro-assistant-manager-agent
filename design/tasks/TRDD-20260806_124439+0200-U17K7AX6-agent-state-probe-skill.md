@@ -1,11 +1,10 @@
 ---
 trdd-id: U17K7AX6
 title: Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
-column: blocked
-pre-block-column: testing
-blocked-by: [ai-maestro:TRDD-LT5N2JA4]
+column: testing
+blocked-by: []
 created: 2026-08-06T12:44:39+0200
-updated: 2026-08-19T00:55:00+0200
+updated: 2026-08-26T00:00:00+0200
 current-owner: amama-session
 task-type: feature
 approval-tier: 0
@@ -14,7 +13,31 @@ external-refs: ["ai-maestro:TRDD-LT5N2JA4", hub-directive-2026-08-06, "github.co
 
 # Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
 
-## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-06 (2nd)
+## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-26 (3rd)
+
+- **BLOCKER CLEARED.** The hub reports `ai-maestro:TRDD-LT5N2JA4` COMPLETE + deployed
+  (13c3e710, closed 69921da3). Column back to `testing`, `blocked-by` emptied.
+- **VERIFIED FIRST-HAND on this host** (not from the hub's message): `probe` is a real
+  verb in the DEPLOYED `~/.local/bin/aimaestro-agent.sh` (control-tested — a bogus verb
+  returns `Unknown command`, `probe` reaches the API), `cmd_probe` in
+  `~/.local/bin/agent-commands.sh:281` calls `GET /api/agents/<id>/probe`, and that route
+  answers **401 auth_required** unauthenticated (not 404), so it exists and is gated.
+- **NOT VERIFIABLE FROM HERE — the card's own NEXT ACTION is still open.** This host has
+  **no AID** (`aid-auth.sh` yields no usable bearer; the CLI reports "No authentication
+  method available"), so the probe PAYLOAD cannot be read from this session. Whether it
+  carries `lastError` (classified) + `blockedSince` is therefore UNCONFIRMED — do not
+  wire the skill to fields nobody has seen.
+- **ACCEPTANCE CRITERION 2 IS NOW CONTESTED, not met.** The hub states the agentlenspro
+  feed (`usage`) is **deliberately ABSENT** — no proven join key, and it must not be
+  synthesized. That is one of the three USER-named sources. Closing the card on the other
+  two would retire an unmet criterion silently, which is exactly what the 2nd STATE block
+  refused to do. Needs a USER/hub ruling: accept 2-of-3 as the final shape, or keep the
+  agentlenspro join as its own follow-up card.
+- **NEXT ACTION:** hub asked (both questions above). On answer: if the fields exist, wire
+  `skills/amama-agent-unblock/SKILL.md` to the single `probe` call replacing the
+  multi-call shape (its line 163 already names this supersession), then close.
+
+## ⏵ STATE — superseded, 2026-08-06 (2nd)
 
 - **SPEC LANDED, SKILL BUILT.** The hub's spec arrived the same day as
   [issue #35](https://github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35);
