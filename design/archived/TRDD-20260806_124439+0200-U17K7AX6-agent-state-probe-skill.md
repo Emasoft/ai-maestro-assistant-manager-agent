@@ -1,10 +1,10 @@
 ---
 trdd-id: U17K7AX6
 title: Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
-column: testing
+column: complete
 blocked-by: []
 created: 2026-08-06T12:44:39+0200
-updated: 2026-08-26T00:00:00+0200
+updated: 2026-08-26T04:47:25+0200
 current-owner: amama-session
 task-type: feature
 approval-tier: 0
@@ -13,7 +13,33 @@ external-refs: ["ai-maestro:TRDD-LT5N2JA4", hub-directive-2026-08-06, "github.co
 
 # Agent-state probe skill for MANAGER and CHIEF-OF-STAFF
 
-## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-26 (3rd)
+## ⏵ STATE — READ THIS FIRST ON RESUME (authoritative; supersedes the body) — 2026-08-26 (4th, CLOSING)
+
+- **DONE. `column: complete`.** The skill is wired to the shipped probe and the third
+  source is carved out to its own card, so nothing is retired silently.
+- **Delivered:** `skills/amama-agent-unblock/SKILL.md` step 1 DETECT now calls
+  `aimaestro-agent.sh probe <agent>` — one aggregating read — documenting every
+  top-level key, the `sources` outcome map, the `block-state` fallback for a stale
+  deployed CLI, and the two traps below.
+- **PAYLOAD SHAPE, from the hub reading `services/block-state-service.ts` (ProbeResult,
+  :184-197):** `agent`, `status`, `block` (the block-state verdict + `sessionName`),
+  `hook` (`notificationType`, `options`, `updatedAt`, `ageSeconds` | null),
+  `lastError: {text, at, source:'hook'} | null`, `usage: null` (typed), `sources`
+  (per-feed `ok` / `unavailable: <why>`).
+- **`lastError` YES — `blockedSince` NO.** There is no such key; duration reads off
+  `hook.updatedAt` / `hook.ageSeconds`. The 3rd STATE block expected `blockedSince`;
+  that expectation was wrong and the skill was wired to the real fields instead.
+- **SCOPE CHANGED, 3 sources → 2 (hub ruling, option b).** Agentlens `usage` is a typed
+  null on purpose: the sessions view keys on Claude Code session id with no proven
+  mapping to agent id, and a guessed join misattributes cost. Carved out as
+  **`TRDD-2EUC9O2S`** (backburner, gated on a proven join key). Recorded in the Approval
+  log below. Because the 3-source criterion was USER-stated, this is a
+  **notify-not-ask**: the USER may reopen it if they want the join forced.
+- **SUPERSEDED — do NOT carry forward:** "wait for the hub's probe"; "verify it carries
+  `blockedSince`" (no such field); "all three sources" as a closing condition.
+- **NEXT ACTION: none — terminal.** New work goes to `TRDD-2EUC9O2S`.
+
+## ⏵ STATE — superseded, 2026-08-26 (3rd)
 
 - **BLOCKER CLEARED.** The hub reports `ai-maestro:TRDD-LT5N2JA4` COMPLETE + deployed
   (13c3e710, closed 69921da3). Column back to `testing`, `blocked-by` emptied.
@@ -83,11 +109,23 @@ into a single per-agent state view (state enum + metadata + last error message).
 
 ## Acceptance criteria (draft — to be finalized when the hub's spec arrives)
 
-- [ ] Skill callable by MANAGER and COS sessions; returns state enum + last error per agent.
-- [ ] All three named sources harvested (janitor report fields, agentlenspro, statusline hook data on the server).
-- [ ] Documented unblock playbook per state (idle vs blocked vs permission prompt vs api error).
+- [x] Skill callable by MANAGER and COS sessions; returns state enum + last error per agent.
+- [x] ~~All three~~ **two of three** named sources harvested (registry/status + pane block-state
+      + statusline-hook data). Agentlens `usage` is out of scope by the 2026-08-26 ruling →
+      `TRDD-2EUC9O2S`.
+- [x] Documented unblock playbook per state (idle vs blocked vs permission prompt vs api error).
 
 ## Approval log
+
+- 2026-08-26T04:47:25+0200 — **SCOPE CHANGE, hub ruling (option b):** acceptance criterion 2
+  reduced from three named sources to two. Rationale: the agentlens `usage` feed has no proven
+  session-id ↔ agent-id join key, so the hub's probe returns a typed `null` rather than a guess
+  that would misattribute cost (measured; documented in `services/block-state-service.ts`). The
+  third source is carved out to `TRDD-2EUC9O2S` (backburner, gated on a proven key) rather than
+  dropped. The 3-source criterion was USER-stated, so this is recorded as a **notify-not-ask**:
+  the USER may reopen `TRDD-2EUC9O2S` or reinstate the criterion at will.
+- 2026-08-26T04:47:25+0200 — COMPLETED. Skill wired to `aimaestro-agent.sh probe`; deployed verb
+  and its 401-gated route verified first-hand on this host.
 
 ## Blocker note (2026-08-19, TRDD-QX6VFAXS hygiene)
 

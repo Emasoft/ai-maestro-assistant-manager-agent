@@ -50,17 +50,35 @@ Three consequences, each of which has bitten a live agent:
 
 - AMAMA persona loaded; you hold the `manager` title (a CHIEF-OF-STAFF may run this for **its own team only**; never an ASSISTANT).
 - `$AID_AUTH` in the session environment — the CLI resolves auth from it. **Never assemble a Bearer header, an endpoint URL, or a curl command.** Agent callers need no sudo token.
-- `aimaestro-session.sh` on `$PATH` and exposing `block-state`. If it reports `unknown command: block-state`, the PATH copy is stale — the repo and `~/.local/bin` are separate things. Report that to the user rather than routing around it.
+- `aimaestro-agent.sh` on `$PATH` and exposing `probe`, and `aimaestro-session.sh` exposing `block-state` (the fallback). If either reports `Unknown command`, that PATH copy is stale — the repo and `~/.local/bin` are separate things. Report that to the user rather than routing around it.
 
 ## Instructions
 
 ### 1. DETECT
 
 ```bash
-aimaestro-session.sh block-state <agent>
+aimaestro-agent.sh probe <agent>
 ```
 
-Returns JSON: `blocked` (bool), `reason`, `field` (`visible`/`empty`/`text` — is the input box there and clear), `choices` (option keys + labels), `excerpt` (the question verbatim), `hookDisagreed`, `sessionName`.
+One aggregating read (hub `TRDD-LT5N2JA4`), same `unblock-prompt` gate as `block-state` — MANAGER any agent, COS own team, never an ASSISTANT. Top-level keys:
+
+| Key | What it carries |
+|---|---|
+| `agent` | the registry record |
+| `status` | the resolved status ladder |
+| `block` | the same verdict `block-state` returns — `blocked`, `reason`, `field`, `choices[]`, `excerpt[]`, `hookDisagreed`, `sessionName` |
+| `hook` | `notificationType`, `options`, `updatedAt`, `ageSeconds` — or `null` |
+| `lastError` | `{text, at, source:'hook'}` or `null` |
+| `usage` | **typed `null`, deliberately** — see below |
+| `sources` | per-feed outcome string: `ok` or `unavailable: <why>` |
+
+**There is no `blockedSince`.** How long an agent has been stuck reads off `hook.updatedAt` / `hook.ageSeconds` — when the blocking hook state was stamped. Do not expect or synthesize the other name.
+
+**`usage` is null on purpose, not broken.** The agentlens sessions view keys on Claude Code session id with no proven mapping to agent id, so a join would misattribute cost. Leave it null and say so; never fill it by guessing.
+
+**Read `sources` before trusting a field.** A feed reading `unavailable: …` means that part of the picture is missing — report the gap rather than reading its absence as "nothing is wrong", which is the same mistake `read-prompt`'s `null` invites below.
+
+Falling back: if `probe` is missing from the deployed CLI (`Unknown command: probe`), the `~/.local/bin` copy is stale — report it, and use `aimaestro-session.sh block-state <agent>`, which returns the `block` half alone.
 
 ### 2. UNDERSTAND — only if the excerpt is not enough
 
@@ -160,5 +178,5 @@ aimaestro-session.sh block-state worker-gamma
 >
 > **Why `block-state` is load-bearing, and when that will change.** `read-prompt` returns what the plugin *hook* recorded, and across **419 live chat-state files it carried `AskUserQuestion` 0/419 times** — a `read-prompt`-only caller is blind to the one prompt shape that blocks an agent indefinitely, reading `null` while the agent looks healthy. That 0/419 is **not a permanent property**: it is `ai-maestro-plugin#59` measured — the shipped hook writer never captured the question text. A fix exists upstream, unpushed at time of writing. Records carry **`writerVersion`**, which is the discriminator: on a **pre-fix** writer a null `read-prompt` is that known gap and you must fall through to `block-state`; on a **fixed** writer a null is REAL and must **not** be dismissed. Branch on `writerVersion` once the fix ships — until then, treat every null as the gap.
 - [ai-maestro#35](https://github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35) — the hub's spec: the 419-file measurement, the Gate 0b fix that made `answer` work for `AskUserQuestion` at all, and the caveats.
-- `TRDD-U17K7AX6` (design/tasks/) — this plugin's card for the probe work; `TRDD-LT5N2JA4` (hub) — the aggregated probe that will supersede the multi-call shape.
+- `TRDD-U17K7AX6` (design/) — this plugin's card for the probe work; `TRDD-LT5N2JA4` (hub) — the aggregated probe, now shipped and wired into step 1 above.
 - [amama-presence-tracker](../amama-presence-tracker/SKILL.md) — the **user's** availability, not an agent's. Different question, different CLI.
