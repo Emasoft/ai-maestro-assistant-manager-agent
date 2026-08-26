@@ -66,8 +66,8 @@ One aggregating read (hub `TRDD-LT5N2JA4`), same `unblock-prompt` gate as `block
 |---|---|
 | `agent` | the registry record |
 | `status` | the resolved status ladder |
-| `block` | the same verdict `block-state` returns — `blocked`, `reason`, `field`, `choices[]`, `excerpt[]`, `hookDisagreed`, `sessionName` |
-| `hook` | `notificationType`, `options`, `updatedAt`, `ageSeconds` — or `null` |
+| `block` | the same verdict `block-state` returns — `blocked`, `reason`, `field`, `choices[]`, `excerpt[]`, `hookDisagreed`, `sessionName` — **or `null`** |
+| `hook` | `notificationType`, `message`, `options`, `updatedAt`, `ageSeconds` — or `null` |
 | `lastError` | `{text, at, source:'hook'}` or `null` |
 | `usage` | **typed `null`, deliberately** — see below |
 | `sources` | per-feed outcome string: `ok` or `unavailable: <why>` |
@@ -75,6 +75,8 @@ One aggregating read (hub `TRDD-LT5N2JA4`), same `unblock-prompt` gate as `block
 **There is no `blockedSince`.** How long an agent has been stuck reads off `hook.updatedAt` / `hook.ageSeconds` — when the blocking hook state was stamped. Do not expect or synthesize the other name.
 
 **`usage` is null on purpose, not broken.** The agentlens sessions view keys on Claude Code session id with no proven mapping to agent id, so a join would misattribute cost. Leave it null and say so; never fill it by guessing.
+
+**Both `block` and `hook` are nullable.** A null `block` is not "not blocked" — it is *no verdict*, which is a different fact; check `sources.pane` for why before concluding anything about the agent.
 
 **Read `sources` before trusting a field.** A feed reading `unavailable: …` means that part of the picture is missing — report the gap rather than reading its absence as "nothing is wrong", which is the same mistake `read-prompt`'s `null` invites below.
 
