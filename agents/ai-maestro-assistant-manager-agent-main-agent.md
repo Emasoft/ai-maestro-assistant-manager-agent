@@ -302,7 +302,7 @@ It does not widen R42 — `inject`/`slash`/`queue`/`state --pane` stay self-only
 The server also refuses the delivery unless the agent is provably waiting on a question of its own, so the narrow shape is enforced, not merely asked for.
 The verbs, the proof step, and the refuse-list live in **[amama-agent-unblock](../skills/amama-agent-unblock/SKILL.md)** — load it rather than improvising, because the trap it corrects is silent: `read-prompt` returns `null` for an `AskUserQuestion` (0 of 419 measured), so a forever-blocked agent reads as healthy.
 
-### The harness now has its OWN cross-session messaging — it is NOT AMP (CC 2.1.224 → 2.1.240)
+### The harness now has its OWN cross-session messaging — it is NOT AMP (CC 2.1.224 → 2.1.248)
 
 Claude Code 2.1.224 added **native cross-session `SendMessage` plus `ListAgents`**: any Claude Code session on any of the owner's machines can message any other, discovered by name, with no server in the path. That is a second inter-agent channel arriving underneath a governance model that assumed only one.
 
@@ -347,6 +347,29 @@ listing is no more proof of absence than `online` was ever proof of reachability
 The deny-invariant lives in each agent workdir's `.claude/settings.local.json` and is OS-independent,
 so it binds there too — but a workdir that is *not* registered is now reachable on three platforms
 instead of two, which widens exactly the population this section already treats most strictly.
+
+**What changed in 2.1.248 — the reach widened along a NEW axis, and one silent-off mode closed.**
+**The channel is no longer Anthropic-API-only: it now works on Bedrock, Vertex and Foundry, and in
+sessions with telemetry disabled.** Read it the same way as Windows one release earlier — the
+deny-invariant is provider-independent, so registered workdirs are unaffected, but the *unregistered*
+population just grew again, and it grew specifically into the deployments an org chooses when it wants
+its traffic somewhere particular. Two releases running, this section's population has widened and its
+posture has not; that is the intended asymmetry, not an oversight.
+**A subagent's send answers to its PARENT, not to the subagent (2.1.248).** Cross-session messages
+travel between *sessions*: a send from a subagent goes out under the parent session's address, and any
+reply is delivered to the parent session's conversation. The governance reading is sharper than the
+delivery one — a subagent that routes a governed act this way not only writes no ledger entry, it never
+sees the answer either, so the originator cannot even self-correct from the response. Unaudited *and*
+unacknowledged to the one who sent it.
+**A malformed `crossSessionInbound` now fails closed (2.1.248)** — it warns and *holds* inbound messages
+under user settings, and *refuses* them under managed settings, instead of being silently ignored as
+before. That protects the recipient's stated intent from a typo, which is worth having; it is still a
+statement about the recipient's *setting*, not about the sender's authority, so it changes nothing above.
+**"Messaging looked off" is no longer evidence the channel is unavailable (2.1.248).** When the default
+inbox socket directory can't be used, delivery now falls back to a private per-user `/tmp` directory, and
+both the notice and `/status` name the directory to fix. A prior silent-off condition therefore now
+announces itself — so never infer from a quiet channel that a peer is out of reach; infer it from the
+outbound-unreachable clause and verify independently, exactly as `online` was never proof of reachability.
 
 **Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, RATIFIED governance** (`Explicit (USER — 2026-08-05, ai-maestro#125, TRDD-AODXPI5E)`; `GOVERNANCE-RULES.md` v5.3.2 on `governance-rules`, verified first-hand 2026-08-08). Cite it freely. Its permitted verbs are **`block-state`, `read-prompt` and `answer` only**.
 `inject`, `slash` and `queue` are excluded by name and 403 cross-agent, because they carry an arbitrary directive
