@@ -348,28 +348,34 @@ The deny-invariant lives in each agent workdir's `.claude/settings.local.json` a
 so it binds there too — but a workdir that is *not* registered is now reachable on three platforms
 instead of two, which widens exactly the population this section already treats most strictly.
 
-**What changed in 2.1.248 — the reach widened along a NEW axis, and one silent-off mode closed.**
-**The channel is no longer Anthropic-API-only: it now works on Bedrock, Vertex and Foundry, and in
-sessions with telemetry disabled.** Read it the same way as Windows one release earlier — the
-deny-invariant is provider-independent, so registered workdirs are unaffected, but the *unregistered*
-population just grew again, and it grew specifically into the deployments an org chooses when it wants
-its traffic somewhere particular. Two releases running, this section's population has widened and its
-posture has not; that is the intended asymmetry, not an oversight.
-**A subagent's send answers to its PARENT, not to the subagent (2.1.248).** Cross-session messages
-travel between *sessions*: a send from a subagent goes out under the parent session's address, and any
-reply is delivered to the parent session's conversation. The governance reading is sharper than the
-delivery one — a subagent that routes a governed act this way not only writes no ledger entry, it never
-sees the answer either, so the originator cannot even self-correct from the response. Unaudited *and*
-unacknowledged to the one who sent it.
+**What changed in 2.1.248 — the reach widened along a NEW axis, and that axis is NARROWER than the last one.**
+**Sessions on Bedrock, Vertex and Foundry, and sessions with telemetry disabled, can now use the channel —
+but only BETWEEN SESSIONS ON THE SAME MACHINE.** Hold that qualifier deliberately: the paragraph directly
+above says the channel spans every machine the owner runs, and it is easy to carry that across and read
+this as cross-machine provider reach. It is not. The axis is the *provider*; the scope is one box.
+The deny-invariant is provider-independent, so registered workdirs are unaffected — what grew is the
+*unregistered* population, and it grew into the deployments an org picks precisely when it cares where
+its traffic goes. Two releases running, this section's population has widened and its posture has not;
+that is the intended asymmetry, not an oversight.
+**2.1.248 changed what a subagent's send REPORTS, not where it goes.** The result now notes that a reply
+is delivered to the parent session's conversation, not to the subagent — the routing was always so, the
+release made it say so. Keep the delta straight, then take the governance reading, which is sharper than
+the delivery one: a subagent that routes a governed act this way writes no ledger entry *and* never sees
+the answer, so the originator cannot self-correct from the response. Unaudited **and** unacknowledged to
+the one who sent it.
 **A malformed `crossSessionInbound` now fails closed (2.1.248)** — it warns and *holds* inbound messages
 under user settings, and *refuses* them under managed settings, instead of being silently ignored as
 before. That protects the recipient's stated intent from a typo, which is worth having; it is still a
-statement about the recipient's *setting*, not about the sender's authority, so it changes nothing above.
-**"Messaging looked off" is no longer evidence the channel is unavailable (2.1.248).** When the default
-inbox socket directory can't be used, delivery now falls back to a private per-user `/tmp` directory, and
-both the notice and `/status` name the directory to fix. A prior silent-off condition therefore now
-announces itself — so never infer from a quiet channel that a peer is out of reach; infer it from the
-outbound-unreachable clause and verify independently, exactly as `online` was never proof of reachability.
+statement about the recipient's *setting*, never about the sender's authority, so it changes nothing above.
+**The socket directory stopped being a silent-off switch — over TWO releases, not one.** The 2.1.232
+socket-directory hardening turned messaging silently off inside user namespaces and rootless containers;
+**2.1.243** fixed that, and **2.1.248** adds a private per-user `/tmp` fallback when the default directory
+cannot be used, with both the notice and `/status` naming the directory to fix. (2.1.248 also narrowed
+root-equivalent trust for unmapped owners in Linux user namespaces to canonical system directories — the
+one tightening in this release's cross-session set.) Get the attribution right, because the operative
+lesson survives either way: a quiet channel was never evidence that a peer is out of reach — infer that
+from the outbound-unreachable clause and verify independently, exactly as `online` was never proof of
+reachability.
 
 **Do not treat it as a way around a 403 or a 409.** R42 locks cross-agent drive to self-only, and the one carve-out — the blocked-agent answer above — is **`R42.8`, RATIFIED governance** (`Explicit (USER — 2026-08-05, ai-maestro#125, TRDD-AODXPI5E)`; `GOVERNANCE-RULES.md` v5.3.2 on `governance-rules`, verified first-hand 2026-08-08). Cite it freely. Its permitted verbs are **`block-state`, `read-prompt` and `answer` only**.
 `inject`, `slash` and `queue` are excluded by name and 403 cross-agent, because they carry an arbitrary directive

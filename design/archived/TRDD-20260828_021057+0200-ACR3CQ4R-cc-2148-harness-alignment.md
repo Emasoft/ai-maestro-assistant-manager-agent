@@ -1,12 +1,12 @@
 ---
 trdd-id: ACR3CQ4R
 title: Align AMAMA to Claude Code 2.1.248
-column: dev
+column: complete
 blocked-by: []
 created: 2026-08-28T02:10:57+0200
-updated: 2026-08-28T02:10:57+0200
+updated: 2026-08-28T02:34:00+0200
 release-via: publish
-implementation-commits: []
+implementation-commits: [c5d80f5]
 current-owner: amama-session
 task-type: infra
 min-approval-requirement: none
@@ -56,7 +56,56 @@ No key is added, and none should be added later without a new ruling.
 
 ## Acceptance
 
-- [ ] Cross-session section carries the 2.1.248 facts and its heading names 2.1.248.
-- [ ] No `experimental.cacheTtl` key in either agent file; the decision is recorded here.
-- [ ] `uv run pytest` green.
-- [ ] Every claim added is checked against the 2.1.248 release notes, not a subagent's paraphrase.
+- [x] Cross-session section carries the 2.1.248 facts and its heading names 2.1.248. (c5d80f5)
+- [x] No `experimental.cacheTtl` key in either agent file; the decision is recorded here.
+      Verified first-hand: `grep -rn cacheTtl agents/ *.toml` → no match. Independently
+      confirmed by the Fable advisor, which also noted that `promptCacheTtl` /
+      `subagentPromptCacheTtl` (2.1.243) being the operator's spelling *strengthens* the
+      no-adopt case, since the frontmatter key fires only when the operator configured
+      nothing. It raised one theoretical carve-out — an agent whose designed *cadence*
+      (not budget) cold-misses at 5m, e.g. a ~10-min heartbeat — which neither agent here
+      is: the main agent is interactive and `amama-report-generator` is a one-shot subagent.
+- [x] `uv run pytest` green — 164 passed.
+- [x] Every claim added is checked against the 2.1.248 release notes, not a subagent's
+      paraphrase. The scanners reported gaps; the four facts written into the section were
+      read off the changelog directly, and the section bounds re-verified with `sed`.
+
+## Note for a later reader
+
+The advisor flagged that `tests/test_skill_menu_matches_shipped.py` guards only `^model:`.
+If RP-MODEL-01's rationale is ever read as covering cost-bearing frontmatter *generally*
+rather than the model key specifically, that is an UPSTREAM ruling for the spec author
+(the precedent is `agents/amama-report-generator.md`, where a counterexample was reported
+upstream rather than quietly fixed) — not a guard this repo should widen unilaterally.
+Deliberately left un-actioned here.
+
+## Approval log
+
+- 2026-08-28T02:34:00+0200 — CORRECTION, post-close (append-only; the card stays `complete`).
+  An adversarial review found the acceptance box at line 69 was itself the claim that failed.
+  **c5d80f5 dropped a scope qualifier that sits in the same changelog sentence.** The release
+  note reads "Added cross-session messaging … *between sessions on the same machine* on Bedrock,
+  Vertex, and Foundry, and when telemetry is disabled"; the shipped prose said the channel "now
+  works on Bedrock, Vertex and Foundry" with no scope. Worse by placement: the paragraph directly
+  above ends "spans every machine the owner runs", so a reader carried that across and read
+  cross-machine provider reach. The error ran in the SAFE direction — it makes a governance agent
+  treat the unregistered population *more* strictly — but this section's whole value is
+  release-by-release precision, and it was imprecise on its own headline fact.
+  Two attribution drifts rode along: the silent-off condition was fixed in **2.1.243**, not
+  2.1.248 (2.1.248 only adds the `/tmp` fallback), and 2.1.248 changed what a subagent's send
+  **reports**, not where it routes. All three fixed in the follow-up commit, which also folds in
+  the release's one tightening (Linux user-namespace trust narrowing) that the first pass omitted.
+  Root cause, worth keeping: I lifted the provider names out of a sentence and left the scope
+  clause beside them — a PROXY READ, the same shape as trusting a pipe's exit status for a tool's.
+  Guardrail: when a changelog line is transcribed into shipped prose, quote the whole sentence
+  into the working note first, then compress; never compress straight from a read.
+- 2026-08-28T02:34:00+0200 — Two overclaims in the reporting, corrected for the record, no code
+  impact. (1) "Nothing false anywhere" was inherited from the 2026-08-27 pass, which probed
+  **12 selected topics** across 2.1.234–2.1.247 — clean on twelve probes is not clean, and I
+  repeated its conclusion as if exhaustive. (2) `164 passed` is a plugin **conformance** suite;
+  nothing in it reads the prose this card changed, so green proves no structural invariant broke
+  and is **not** evidence the four sentences are true. The box at line 68 should be read that
+  narrowly. What did hold up on independent check: the Edit anchored on unique text spanning two
+  paragraphs and Edit fails loudly on a non-match, so placement was proven, not assumed; the
+  `crossSessionInbound` hold/refuse split and the `/tmp` + `/status` facts are verbatim-supported;
+  the `cacheTtl` non-adoption stands.
