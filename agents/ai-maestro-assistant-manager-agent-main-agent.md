@@ -358,8 +358,9 @@ The deny-invariant is provider-independent, so registered workdirs are unaffecte
 its traffic goes. Two releases running, this section's population has widened and its posture has not;
 that is the intended asymmetry, not an oversight.
 **2.1.248 changed what a subagent's send REPORTS, not where it goes.** The result now notes that a reply
-is delivered to the parent session's conversation, not to the subagent — the routing was always so, the
-release made it say so. Keep the delta straight, then take the governance reading, which is sharper than
+is delivered to the parent session's conversation, not to the subagent. Say only that: the release note
+records a change to what the result REPORTS and makes no claim about when the routing began, so neither
+should this. Keep the delta straight, then take the governance reading, which is sharper than
 the delivery one: a subagent that routes a governed act this way writes no ledger entry *and* never sees
 the answer, so the originator cannot self-correct from the response. Unaudited **and** unacknowledged to
 the one who sent it.
@@ -371,8 +372,8 @@ statement about the recipient's *setting*, never about the sender's authority, s
 socket-directory hardening turned messaging silently off inside user namespaces and rootless containers;
 **2.1.243** fixed that, and **2.1.248** adds a private per-user `/tmp` fallback when the default directory
 cannot be used, with both the notice and `/status` naming the directory to fix. (2.1.248 also narrowed
-root-equivalent trust for unmapped owners in Linux user namespaces to canonical system directories — the
-one tightening in this release's cross-session set.) Get the attribution right, because the operative
+root-equivalent trust for unmapped owners in Linux user namespaces to canonical system directories — a
+tightening, alongside the `crossSessionInbound` fail-closed above.) Get the attribution right, because the operative
 lesson survives either way: a quiet channel was never evidence that a peer is out of reach — infer that
 from the outbound-unreachable clause and verify independently, exactly as `online` was never proof of
 reachability.

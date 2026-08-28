@@ -4,7 +4,7 @@ title: Align AMAMA to Claude Code 2.1.248
 column: complete
 blocked-by: []
 created: 2026-08-28T02:10:57+0200
-updated: 2026-08-28T02:34:00+0200
+updated: 2026-08-28T02:52:00+0200
 release-via: publish
 implementation-commits: [c5d80f5]
 current-owner: amama-session
@@ -109,3 +109,30 @@ Deliberately left un-actioned here.
   paragraphs and Edit fails loudly on a non-match, so placement was proven, not assumed; the
   `crossSessionInbound` hold/refuse split and the `/tmp` + `/status` facts are verbatim-supported;
   the `cacheTtl` non-adoption stands.
+- 2026-08-28T02:52:00+0200 — SECOND CORRECTION, post-close. The fix in b8d5293 introduced two
+  new defects of its own, both caught by review and both now repaired:
+  (1) **A self-contradicting superlative.** The paragraph called the Linux user-namespace trust
+  narrowing "the one tightening in this release's cross-session set" — two paragraphs after the
+  *same edit* said a malformed `crossSessionInbound` now **fails closed**, which is also a
+  tightening. The counterexample was in my own adjacent text; no source was needed to see it.
+  Enumerated properly, 2.1.248's cross-session bullets are: provider reach (widening),
+  `crossSessionInbound` hold/refuse (tightening), `/tmp` fallback (availability), user-namespace
+  trust narrowing (tightening), subagent-send reporting (reporting), non-Latin `@`-mention fix
+  (widening). Now reads "a tightening, alongside the `crossSessionInbound` fail-closed above",
+  which is true and links the two.
+  (2) **An unverified historical claim.** "the routing was always so" — the release note says only
+  that the *result now notes* the parent-session delivery and makes no claim about when the routing
+  began. Correcting the first error (stating a reporting change as a behaviour change) by asserting
+  its converse was still an assertion beyond the source. The four words are deleted and the prose
+  now says explicitly that the note makes no claim about the past.
+  Root cause is the SAME proxy shape one level up: in c5d80f5 I read part of a sentence for the
+  sentence; here I read my impression of a release for the release. Captured as a second USER-scope
+  lesson (`[^14]` on `debugging-methodology-verify-before-concluding`) because `[^13]` covers
+  quoting fidelity and would not have caught a quantifier claim. Findability of both lessons was
+  then verified by running the symptom queries, not by reasoning about the keyword overlap —
+  each returns the page ranked first.
+  Cleared on independent check, recorded so they are not re-litigated: the Approval-log append on a
+  terminal card is legal (terminal columns permit `updated:` plus the append-only Approval log);
+  "after the 2.1.232 hardening" reads as a regression note, so the causal phrasing is defensible;
+  and `update-mem-topic` is a CAS-guarded literal byte replace that refuses on ambiguity, reported
+  exactly one replacement, and left `memgrep validate` at NONE.
