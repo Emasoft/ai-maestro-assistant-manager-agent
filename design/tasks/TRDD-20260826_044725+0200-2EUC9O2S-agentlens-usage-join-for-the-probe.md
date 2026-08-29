@@ -27,9 +27,15 @@ recorded and reproducible.
 - **The only overlap is a path** (`workingDirectory` ↔ `workspace`), and it
   fails BOTH acceptance directions on live data:
   - uniqueness: one workdir (`…/Code/SKILL_FACTORY`) is claimed by TWO agents;
-  - coverage: 2 of 31 agentlens workspaces match an agent workdir; 93.5%
-    orphaned; **2.4%** of 19,367 session records attributable; 10 of 12 real
-    agent workdirs have zero coverage. Both matches are test agents.
+  - coverage: 6 of 244 agentlens workspaces match an agent workdir; **97.5%**
+    orphaned; **1.5%** of 26,855 session records attributable. One of the six
+    matches is degenerate — an agent registered with `workingDirectory: /` would
+    swallow every root-cwd session.
+  - **Figures CORRECTED 2026-08-29.** The first pass read
+    `log-sessions.delta.ndjson` alone — a partial file by construction, with a
+    LARGER `log-sessions.snapshot.ndjson` unread beside it. It reported 2/31 and
+    2.4%, and wrongly said both matches were test agents. Coverage is worse than
+    first stated, not better; `ai-maestro#155` was corrected on the record.
 - **Therefore `usage: null` + `sources.usage: unavailable` is CORRECT** and
   stays. A workspace join would misattribute cost — the exact failure below.
 - **NEXT ACTION:** none in this repo. This card can only be unblocked by an
