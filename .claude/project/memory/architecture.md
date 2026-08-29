@@ -1,8 +1,8 @@
 ---
 name: architecture
-description: "how does the ai-maestro-assistant-manager-agent (AMAMA, the MANAGER role plugin) work — overview, the main parts, where the key pieces live"
+description: "how does the ai-maestro-assistant-manager-agent (AMAMA, the MANAGER role plugin) work / what is AMAMA architecture / overview of the MANAGER role plugin / where do the main AMAMA parts live / where are the key AMAMA components / what does the MANAGER plugin own / how does AMAMA coordinate the other role plugins / where is the 3-pillars task system TRDD PRRD Kanban wired into AMAMA / who is the sole user interface and governance authority in AI Maestro / AMAMA parts map and functionality hub"
 ocd: 2026-06-14
-lmd: 2026-08-18
+lmd: 2026-08-29
 publish-globally: false
 metadata:
   node_type: memory
