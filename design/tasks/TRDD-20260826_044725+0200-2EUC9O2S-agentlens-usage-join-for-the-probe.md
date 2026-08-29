@@ -8,7 +8,8 @@ current-owner: amama-session
 task-type: feature
 min-approval-requirement: none
 blocked-by: []
-external-refs: ["ai-maestro:TRDD-LT5N2JA4", "github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35"]
+external-refs: ["ai-maestro:TRDD-LT5N2JA4", "github.com/Emasoft/ai-maestro-assistant-manager-agent/issues/35", "github.com/Emasoft/ai-maestro/issues/155"]
+review-after: 2026-11-01
 ---
 
 # Agentlens usage join for the agent-state probe
@@ -34,8 +35,15 @@ recorded and reproducible.
 - **NEXT ACTION:** none in this repo. This card can only be unblocked by an
   UPSTREAM change in another project (ai-maestro records the CC session id, or
   agentlens records the agent id). Per the cross-project rule this repo files an
-  issue and never edits them. Hub consulted 2026-08-29; awaiting its answer on
-  whether such a key already exists before filing.
+  issue and never edits them. **FILED: `Emasoft/ai-maestro#155`** — that issue is
+  the named blocker; this card moves only when it does. Hub consulted 2026-08-29
+  and confirmed it knows of no such field either.
+- **The ask is small, not a redesign — VERIFIED first-hand 2026-08-29:** a live
+  Claude Code hook payload carries BOTH halves of the join in one object
+  (`session_id` and `cwd` are adjacent keys). The id is available at hook time;
+  the gap is only that nothing persists it onto the agent record.
+- **`review-after: 2026-11-01`** parks this from drift until then. It is a
+  snooze, not a mute — if #155 lands sooner, open the card immediately.
 - **Evidence (read first, do not redo the probe):**
   `reports/amama-join-key-probe/20260829_225600+0200-2EUC9O2S-join-key-falsified.md`
 - **SUPERSEDED — do NOT carry forward:** the framing that this is parked pending

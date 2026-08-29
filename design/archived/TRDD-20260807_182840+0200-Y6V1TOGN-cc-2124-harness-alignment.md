@@ -1,10 +1,11 @@
 ---
 trdd-id: Y6V1TOGN
 title: Align AMAMA to Claude Code 2.1.208-2.1.224 and decide the native cross-session messaging question
-column: human_review
+column: complete
 blocked-by: []
 created: 2026-08-07T18:28:40+0200
-updated: 2026-08-19T00:55:00+0200
+updated: 2026-08-29T23:00:00+0200
+superseded-by: []
 current-owner: amama-session
 task-type: infra
 approval-tier: 0
@@ -59,7 +60,26 @@ reconstructs what was said.
 - [x] Stale model-version claims corrected (`opus` is a FAMILY alias → Opus 5 since 2.1.219)
 - [x] Persona states the native-cross-session-messaging position
 - [x] Hub asked to ratify or overturn that position (ai-maestro#143, verified OPEN 2026-08-25 — USER-tier, awaiting ruling)
-- [ ] If ratified wider: revisit the persona section and the AMP-only framing
+- [~] If ratified wider: revisit the persona section and the AMP-only framing —
+      **CARVED OUT to `TRDD-4413E2BA`, not met.** This criterion is conditional on
+      a ruling that does not exist; #143 remains OPEN with no USER decision. It
+      cannot be satisfied from inside this card, and holding the card in
+      `human_review` for it made the board assert a review nobody was performing.
+
+## Closing note — 2026-08-29
+
+Closed `complete` against the four unconditional criteria above, all of which are
+met. **Criterion 5 was carved out, not met**, into `TRDD-4413E2BA` (`backburner`,
+cites #143), which reopens only if and when #143 is ratified WIDER than the
+conservative position this card recorded. If #143 is ratified as posed, or
+refused, that card closes `cancelled` — the persona already states the position
+those outcomes leave correct.
+
+Verified before closing: #143 is OPEN, USER-tier, last updated 2026-08-25, 4
+comments, **none of which is the human USER deciding** — all four are agent
+sessions posting through the shared owner `gh` identity, the last one restating
+the ask as still open. No expected ruling date is recorded. The hub session
+measured the same independently and raised no objection to this split.
 
 ## Notes
 
